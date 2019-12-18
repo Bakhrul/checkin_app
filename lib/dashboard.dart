@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'dart:ui';
+import 'pages/events_personal/point_person.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 
@@ -29,7 +30,9 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.white,
         title: Text(
           "Dashboard",
-          style: prefix0.TextStyle(color: Colors.black,),
+          style: prefix0.TextStyle(
+            color: Colors.black,
+          ),
         ),
         iconTheme: new IconThemeData(color: Colors.black),
         actions: <Widget>[
@@ -172,6 +175,20 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: SingleChildScrollView(
         // padding: EdgeInsets.all(5.0),
+        child: Column(
+          children: <Widget>[
+            FlatButton(
+              child: Text('Testing'),
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PointEvents(),
+                    ));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

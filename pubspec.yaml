@@ -23,7 +23,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  shared_preferences: ^0.5.6
+  datetime_picker_formfield: ^0.4.3
+  intl: ^0.15.1  
+  image_picker:
+
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +63,7 @@ flutter:
   assets:
     - images/logo_alamraya.jpg
     - images/noimage.jpg
+    - images/add-image-icon-sm.png
 
   # fonts:
   #   - family: Schyler
