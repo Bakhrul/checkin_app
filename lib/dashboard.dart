@@ -171,7 +171,26 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.all(5.0),
+        child:
+        Column(
+          children: <Widget>[
+            FlatButton(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed:(){
+                Navigator.pushNamed(context, "/count_down");
+          },
+          child:Text('Check in peserta')
+          ),
+           FlatButton(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed:(){
+                Navigator.pushNamed(context, "/check_in");
+          },
+          child:Text('Buat Code Check In')
+          )
+        ]),
       ),
     );
   }
