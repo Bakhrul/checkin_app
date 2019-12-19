@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'dart:core';
 import 'dart:async';
 
 class CountDown extends StatefulWidget{
   CountDown({Key key}) : super(key : key);
+
 
   @override
   State<StatefulWidget> createState() {
@@ -14,18 +16,25 @@ class CountDown extends StatefulWidget{
 class _CountDown extends State<CountDown>{
 
 Timer _timer;
-int _minutes = 2;
+DateTime _date = new DateTime.now();
+int _minutes = 1;
 int _seconds = 0;
 var _count = '00:00';
-bool disable;
+bool disable = false;
 
 void initState() {
-        _seconds = _minutes * 60;
-        var _time = Duration(seconds: _seconds);
-        _count = '${(_time.inMinutes).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
+        getDifTime();
         startTimer();
     super.initState();
   }
+
+void getDifTime(){
+        DateTime _getDateExp = DateTime.parse('2019-12-19 12:00:00');
+        DateTime _dateExp = _getDateExp.add(Duration(seconds:300));
+        _seconds = _dateExp.difference(_date).inSeconds;
+        var _time = Duration(seconds: _seconds);
+        _count = _seconds < 1 ? "00:00":'${(_time.inMinutes).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
+}
 
 void startTimer() {
   const oneSec = const Duration(seconds: 1);
@@ -36,6 +45,7 @@ void startTimer() {
         return setState(
           () {
             if (_seconds < 1) {
+              disable = true;
               timer.cancel();
             } else {
               _seconds -= 1;
@@ -63,16 +73,6 @@ void startTimer() {
               color: Color(0xff25282b),
             ),
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              tooltip: 'Notifikasi',
-              onPressed: () {},
-            ),
-          ],
           backgroundColor: Colors.white
           ),
         body:
@@ -103,10 +103,16 @@ void startTimer() {
                   child:
                   RaisedButton(
                     padding : EdgeInsets.all(15.0),
-                    color: Colors.green,
+                    color: this.disable ? Colors.grey[400]:Colors.green,
                     textColor: Colors.white,
                     child:Text('Send'),
-                    onPressed:(){}
+                    onPressed:(){
+                      if(disable){
+                        print('gagal absen');
+                      }else{
+                        print('berhasil absen');
+                      }
+                    }
                   )
                 )
               ])

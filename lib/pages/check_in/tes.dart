@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 import 'dart:ui';
 
-class CheckIn extends StatefulWidget {
-  CheckIn({Key key, this.title}) : super(key: key);
+class Tes extends StatefulWidget {
+  Tes({Key key, this.title}) : super(key: key);
   final String title;
   @override
   State<StatefulWidget> createState() {
-    return _CheckInState();
+    return _Tes();
   }
 }
 
-class _CheckInState extends State<CheckIn>{
+class _Tes extends State<Tes> with SingleTickerProviderStateMixin {
+
+  Animation<double> animation;
+  AnimationController controller;
 
   Icon _searchIcon = new Icon(Icons.search); 
   Widget _appBarTitle = new Text('Buat code Checkin',style: TextStyle(color: Color(0xff25282b)));
+
+  void initState(){
+
+    controller = AnimationController(duration: Duration(seconds:1),vsync:this);
+    animation = Tween<double> (begin:0,end:100).animate(controller)
+                ..addListener((){
+                  print('ok');
+                });
+
+    super.initState();
+  }
 
   void _searchPressed(){
       setState((){

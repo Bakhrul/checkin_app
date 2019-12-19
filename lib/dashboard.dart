@@ -189,6 +189,14 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.pushNamed(context, "/check_in");
           },
           child:Text('Buat Code Check In')
+          ),
+          FlatButton(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed:(){
+                Navigator.pushNamed(context, "/tes");
+          },
+          child:Text('tes')
           )
         ]),
       ),
