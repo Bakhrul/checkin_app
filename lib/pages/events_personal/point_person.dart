@@ -17,6 +17,7 @@ class PointEvents extends StatefulWidget {
 }
 
 class _PointEventsState extends State<PointEvents> {
+
   @override
   void initState() {
     _scaffoldKeyPointPerson = GlobalKey<ScaffoldState>();
@@ -42,12 +43,13 @@ class _PointEventsState extends State<PointEvents> {
           ),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(
+              icon: new Icon(
                 Icons.search,
                 color: Colors.black,
               ),
               tooltip: 'Cari Provinsi',
-              onPressed: () {},
+              onPressed: () {
+              },
             ),
           ],
           backgroundColor: Colors.white),

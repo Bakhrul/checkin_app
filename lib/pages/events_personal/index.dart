@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create.dart';
+import 'manage_peserta.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeypersonalevent;
 
@@ -68,7 +69,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.green,fontSize: 15),
+                                color: Colors.green,
+                                fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
                     ),
@@ -97,7 +99,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.green,fontSize: 15),
+                                color: Colors.green,
+                                fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
                     ),
@@ -126,7 +129,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.green,fontSize: 15),
+                                color: Colors.green,
+                                fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
                     ),
@@ -218,8 +222,25 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         ),
                                       ),
                                       Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Icon(Icons.more_vert)),
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: Text("Lihat Detail"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Edit Event"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Tambahkan Asistan"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Batalkan Event"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -240,9 +261,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        print("tapped on container");
-                      },
                     ),
                     InkWell(
                       child: Container(
@@ -282,8 +300,16 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         ),
                                       ),
                                       Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Icon(Icons.more_vert)),
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: Text("Lihat Detail"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -304,9 +330,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        print("tapped on container");
-                      },
                     ),
                     InkWell(
                       child: Container(
@@ -346,8 +369,25 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         ),
                                       ),
                                       Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Icon(Icons.more_vert)),
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: Text("Lihat Detail"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Edit Event"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Tambahkan Asistan"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Batalkan Event"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -368,9 +408,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        print("tapped on container");
-                      },
                     ),
                     InkWell(
                       child: Container(
@@ -410,8 +447,25 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         ),
                                       ),
                                       Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Icon(Icons.more_vert)),
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: Text("Lihat Detail"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Edit Event"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Tambahkan Asistan"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Batalkan Event"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -432,9 +486,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        print("tapped on container");
-                      },
                     ),
                     InkWell(
                       child: Container(
@@ -474,8 +525,25 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         ),
                                       ),
                                       Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: Icon(Icons.more_vert)),
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: PopupMenuButton(
+                                          icon: Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: Text("Lihat Detail"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Edit Event"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Tambahkan Asistan"),
+                                            ),
+                                            PopupMenuItem(
+                                              child: Text("Batalkan Event"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   Padding(
@@ -496,9 +564,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        print("tapped on container");
-                      },
                     ),
                   ],
                 ),
@@ -517,7 +582,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             disabledTextColor: Colors.black,
             padding: EdgeInsets.all(15.0),
             splashColor: Colors.blueAccent,
-            onPressed: () async {},
+            onPressed: () async {
+              Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ManagePeserta()));
+            },
             child: Text(
               "Lihat Semua Event",
               style: TextStyle(fontSize: 14.0),

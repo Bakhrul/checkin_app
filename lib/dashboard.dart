@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'dart:ui';
 import 'pages/events_personal/point_person.dart';
+import 'pages/events_all/detail.dart';
+
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 
@@ -94,19 +96,6 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     ListTile(
                       title: Text(
-                        'Mengikuti Event',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontFamily: 'Roboto',
-                          color: Color(0xff25282b),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, "/follow_event");
-                      },
-                    ),
-                    ListTile(
-                      title: Text(
                         'Event Anda',
                         style: TextStyle(
                           fontSize: 16.0,
@@ -195,7 +184,7 @@ class _DashboardState extends State<Dashboard> {
           child:Text('Buat Code Check In')
           ),
           FlatButton(
-              child: Text('Testing'),
+              child: Text('Point Member'),
               onPressed: () async {
                 Navigator.push(
                     context,
@@ -204,6 +193,17 @@ class _DashboardState extends State<Dashboard> {
                     ));
               },
             ),
+            FlatButton(
+              child: Text('Detail Event'),
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ManajemenEventDetail(),
+                    ));
+              },
+            ),
+            
         ]),
       ),
     );

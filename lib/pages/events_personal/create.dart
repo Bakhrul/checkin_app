@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:io';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
 
+import 'package:intl/intl.dart';
+
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'listprovinsi.dart';
 import 'listkabupaten.dart';
 import 'listkecamatan.dart';
+import 'create_checkin.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
+String sifat = 'VIP';
+String tipe = 'Public';
 var datepicker;
-File _image;
-String category = 'Technology';
+
 void showInSnackBar(String value) {
   _scaffoldKeycreateevent.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -31,296 +31,622 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
   @override
   void initState() {
     _scaffoldKeycreateevent = GlobalKey<ScaffoldState>();
-    datepicker = FocusNode();
     super.initState();
+    datepicker = FocusNode();
   }
 
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = image;
-    });
-  }
+  bool monVal = false;
+  bool monVal2 = false;
+  bool monVal3 = false;
+  bool monVal4 = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      key: _scaffoldKeycreateevent,
-      appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Color(0xff25282b),
-          ),
-          title: new Text(
-            "Buat Event Sekarang",
-            style: TextStyle(
-              color: Color(0xff25282b),
-              fontSize: 14,
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Buat Event Sekarang',
+              style: TextStyle(fontSize: 14),
+            ),
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.directions_car), text: 'Informasi Event'),
+                Tab(icon: Icon(Icons.directions_transit), text: 'Add Assistan'),
+                Tab(
+                    icon: Icon(Icons.directions_bike),
+                    text: 'Checkin Scheduling'),
+              ],
             ),
           ),
-          backgroundColor: Colors.white),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              _image == null
-                  ? Image.asset('images/add-image-icon-sm.png',
-                      width: 120.0, height: 120.0)
-                  : Image.file(
-                      _image,
-                      width: 120.0,
-                      height: 120.0,
+          body: TabBarView(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(5.0),
+                child: Column(children: <Widget>[
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.assignment_ind, color: Colors.blue),
+                    title: TextField(
+                      decoration: InputDecoration(
+                          hintText: 'Nama Event / Acara',
+                          hintStyle:
+                              TextStyle(fontSize: 13, color: Colors.black)),
                     ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.green,
-                    textColor: Colors.white,
-                    disabledColor: Colors.green[400],
-                    disabledTextColor: Colors.white,
-                    padding: EdgeInsets.all(10.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: getImage,
-                    child: Text(
-                      'Ambil Gambar Sekarang',
-                      style: TextStyle(fontSize: 14.0),
+                  )),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.category, color: Colors.blue),
+                    title: DropdownButton<String>(
+                      isExpanded: true,
+                      value: tipe,
+                      elevation: 16,
+                      underline: Container(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          tipe = newValue;
+                        });
+                      },
+                      items: <String>[
+                        'Public',
+                        'Privat',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 5.0, left: 10.0, bottom: 20.0, right: 10.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.red,
-                    textColor: Colors.white,
-                    disabledColor: Colors.red[300],
-                    disabledTextColor: Colors.white,
-                    padding: EdgeInsets.all(10.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: _image == null
-                        ? null
-                        : () async {
-                            setState(() {
-                              _image = null;
-                            });
-                          },
-                    child: Text(
-                      'Hapus Gambar Terpilih',
-                      style: TextStyle(fontSize: 14.0),
+                  )),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.category, color: Colors.blue),
+                    title: DropdownButton<String>(
+                      isExpanded: true,
+                      value: sifat,
+                      elevation: 16,
+                      underline: Container(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          sifat = newValue;
+                        });
+                      },
+                      items: <String>[
+                        'VIP',
+                        'Gold',
+                        'Silver',
+                        'Regular',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                  ),
-                ),
-              ),
-              Container(
-                child: Text(
-                  'Informasi Tentang Event',
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.assignment_ind, color: Colors.green),
-                title: TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Nama Event / Acara',
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.category, color: Colors.green),
-                title: DropdownButton<String>(
-                  isExpanded: true,
-                  value: category,
-                  elevation: 16,
-                  underline: Container(
-                    height: 1,
-                    color: Colors.grey,
-                  ),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      category = newValue;
-                    });
-                  },
-                  items: <String>[
-                    'Technology',
-                    'Financial',
-                    'Keuangan',
-                    'Analisa'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.date_range, color: Colors.green),
-                title: DateTimeField(
-                  readOnly: true,
-                  format: DateFormat('dd-MM-yyy'),
-                  focusNode: datepicker,
-                  decoration: InputDecoration(
-                    hintText: 'Tanggal berlangsungnya event',
-                    hintStyle: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                  onShowPicker: (context, currentValue) {
-                    return showDatePicker(
-                        firstDate: DateTime.now(),
-                        context: context,
-                        initialDate: DateTime.now(),
-                        lastDate: DateTime(2100));
-                  },
-                  onChanged: (ini) {},
-                ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.access_time, color: Colors.green),
-                title: DateTimeField(
-                  format: DateFormat("HH:mm"),
-                  decoration: InputDecoration(
-                    hintText: 'Jam berlangsungnya event',
-                    hintStyle: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                  onShowPicker: (context, currentValue) async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.fromDateTime(
-                          currentValue ?? DateTime.now()),
-                    );
-                    return DateTimeField.convert(time);
-                  },
-                ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.create, color: Colors.green),
-                title: TextField(
-                  maxLines: 8,
-                  decoration: InputDecoration(
-                      hintText: 'Deskripsi Event',
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                ),
-              )),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 20.0,
-                  bottom: 10.0,
-                ),
-                child: new Text(
-                  'Alamat Berlangsungnya Event',
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.domain, color: Colors.green),
-                  title: Text(
-                    'Pilih Alamat Provinsi',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Provinsi()));
-                  },
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.domain, color: Colors.green),
-                  title: Text(
-                    'Pilih Alamat Kabupaten',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Kabupaten()));
-                  },
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.domain, color: Colors.green),
-                  title: Text('Pilih Alamat Kecamatan',
-                      style: TextStyle(fontSize: 13)),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Kecamatan()));
-                  },
-                ),
-              ),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.location_on, color: Colors.green),
-                title: TextField(
-                  maxLines: 8,
-                  decoration: InputDecoration(
-                      hintText: 'Alamat Lengkap',
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                ),
-              )),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.green,
-                    textColor: Colors.white,
-                    disabledColor: Colors.green[400],
-                    disabledTextColor: Colors.white,
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () async {
-                      setState(() {
-                        _image = null;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Buat Event Sekarang',
-                      style: TextStyle(fontSize: 14.0),
+                  )),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.date_range, color: Colors.blue),
+                    title: DateTimeField(
+                      readOnly: true,
+                      format: DateFormat('dd-MM-yyy'),
+                      focusNode: datepicker,
+                      decoration: InputDecoration(
+                        hintText: 'Tanggal berlangsungnya event',
+                        hintStyle: TextStyle(fontSize: 13, color: Colors.black),
+                      ),
+                      onShowPicker: (context, currentValue) {
+                        return showDatePicker(
+                            firstDate: DateTime.now(),
+                            context: context,
+                            initialDate: DateTime.now(),
+                            lastDate: DateTime(2100));
+                      },
+                      onChanged: (ini) {},
+                    ),
+                  )),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.access_time, color: Colors.blue),
+                    title: DateTimeField(
+                      format: DateFormat("HH:mm"),
+                      decoration: InputDecoration(
+                        hintText: 'Jam berlangsungnya event',
+                        hintStyle: TextStyle(fontSize: 13, color: Colors.black),
+                      ),
+                      onShowPicker: (context, currentValue) async {
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(
+                              currentValue ?? DateTime.now()),
+                        );
+                        return DateTimeField.convert(time);
+                      },
+                    ),
+                  )),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.create, color: Colors.blue),
+                    title: TextField(
+                      maxLines: 8,
+                      decoration: InputDecoration(
+                          hintText: 'Deskripsi Event',
+                          hintStyle:
+                              TextStyle(fontSize: 13, color: Colors.black)),
+                    ),
+                  )),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.domain, color: Colors.blue),
+                      title: Text(
+                        'Pilih Alamat Provinsi',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Provinsi()));
+                      },
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10.0, top: 10.0, right: 10.0, bottom: 20.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.white,
-                    textColor: Colors.green,
-                    disabledColor: Colors.white,
-                    disabledTextColor: Colors.green[400],
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () async {
-                      setState(() {
-                        _image = null;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "Batal Membuat Event / Acara",
-                      style: TextStyle(fontSize: 14.0),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.domain, color: Colors.blue),
+                      title: Text(
+                        'Pilih Alamat Kabupaten',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Kabupaten()));
+                      },
                     ),
                   ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.domain, color: Colors.blue),
+                      title: Text('Pilih Alamat Kecamatan',
+                          style: TextStyle(fontSize: 13)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Kecamatan()));
+                      },
+                    ),
+                  ),
+                  Card(
+                      child: ListTile(
+                    leading: Icon(Icons.location_on, color: Colors.blue),
+                    title: TextField(
+                      maxLines: 8,
+                      decoration: InputDecoration(
+                          hintText: 'Alamat Lengkap',
+                          hintStyle:
+                              TextStyle(fontSize: 13, color: Colors.black)),
+                    ),
+                  )),
+                ]),
+              ),
+              SingleChildScrollView(
+                padding: EdgeInsets.all(5.0),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                      ),
+                      child: TextField(
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.blue,
+                            ),
+                            hintText: "Cari Berdasarkan Nama Lengkap",
+                            border: InputBorder.none,
+                          )),
+                    ),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal = value;
+                          });
+                        },
+                      ),
+                    )),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal2,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal2 = value;
+                          });
+                        },
+                      ),
+                    )),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal3,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal3 = value;
+                          });
+                        },
+                      ),
+                    )),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal4,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal4 = value;
+                          });
+                        },
+                      ),
+                    )),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal2,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal2 = value;
+                          });
+                        },
+                      ),
+                    )),
+                    Card(
+                        child: ListTile(
+                      leading: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                'images/imgavatar.png',
+                              ),
+                            ),
+                          )),
+                      title: Text('Muhammad Bakhrul Bila Sakhil'),
+                      subtitle: Text('081285270793'),
+                      trailing: Checkbox(
+                        value: monVal2,
+                        onChanged: (bool value) {
+                          setState(() {
+                            monVal2 = value;
+                          });
+                        },
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  top: 15.0,
+                  right: 5.0,
+                  left: 5.0,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20.0, bottom: 10.0, right: 5.0, left: 5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Daftar Checkin',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          ButtonTheme(
+                            minWidth: 0, //wraps child's width
+                            height: 0,
+                            child: FlatButton(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.blue,
+                                    size: 16,
+                                  ),
+                                  Text('Tambahkan Checkin',
+                                      style: TextStyle(color: Colors.blue)),
+                                ],
+                              ),
+                              color: Colors.transparent,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              padding: EdgeInsets.all(0),
+                              onPressed: () async {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ManajemeCreateCheckin(),
+                                    ));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Container(
+                              height: 15.0,
+                              alignment: Alignment.center,
+                              width: 15.0,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          '12 September 2019 - KODECHECKIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        subtitle: Text('04:00 - 04:30'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // Add your onPressed code here!
+            },
+            child: Icon(Icons.check),
+            backgroundColor: Colors.blue,
           ),
         ),
       ),
