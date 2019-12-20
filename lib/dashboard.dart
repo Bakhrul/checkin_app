@@ -195,15 +195,6 @@ class _DashboardState extends State<Dashboard> {
           child:Text('Buat Code Check In')
           ),
           FlatButton(
-<<<<<<< HEAD
-            color: Colors.blue,
-            textColor: Colors.white,
-            onPressed:(){
-                Navigator.pushNamed(context, "/tes");
-          },
-          child:Text('tes')
-          )
-=======
               child: Text('Testing'),
               onPressed: () async {
                 Navigator.push(
@@ -213,7 +204,6 @@ class _DashboardState extends State<Dashboard> {
                     ));
               },
             ),
->>>>>>> 3d04f2d7f5c51c8a7c258f1e58714492696e77b9
         ]),
       ),
     );
