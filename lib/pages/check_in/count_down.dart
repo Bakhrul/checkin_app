@@ -30,8 +30,9 @@ bool disable = false;
   }
 
   void getDifTime(){
-        DateTime _getDateExp = DateTime.parse('2019-12-19 12:00:00');
+        DateTime _getDateExp = DateTime.parse('2019-12-20 13:05:00');
         DateTime _dateExp = _getDateExp.add(Duration(seconds:300));
+        
         _seconds = _dateExp.difference(_date).inSeconds;
         var _time = Duration(seconds: _seconds);
         _count = _seconds < 1 ? "00:00":'${(_time.inMinutes).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
@@ -51,7 +52,7 @@ void startTimer() {
             } else {
               _seconds -= 1;
               var _time = Duration(seconds: _seconds);
-              
+              print(_seconds);
               _count = '${(_time.inMinutes).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
             }
           },
