@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 //pages
 import 'dashboard.dart';
 import 'pages/events_all/index.dart';
+import 'pages/events_all/index_z.dart';
 import 'pages/events_personal/index.dart';
 import 'pages/check_in/check_in.dart';
 import 'pages/check_in/count_down.dart';
@@ -17,6 +18,7 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/check_in" : (BuildContext context) => CheckIn(),
   "/count_down" : (BuildContext context) => CountDown(),
   "/tes" : (BuildContext context) => Tes(),
+  "/index_z" : (BuildContext context) => EventAll()
 };
 void main() => runApp(MyApp());
 
