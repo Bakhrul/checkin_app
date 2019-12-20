@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'dart:ui';
 import 'dart:core';
 import 'dart:async';
@@ -22,13 +23,13 @@ int _seconds = 0;
 var _count = '00:00';
 bool disable = false;
 
-void initState() {
-        getDifTime();
+  void initState() {
+    getDifTime();
         startTimer();
     super.initState();
   }
 
-void getDifTime(){
+  void getDifTime(){
         DateTime _getDateExp = DateTime.parse('2019-12-19 12:00:00');
         DateTime _dateExp = _getDateExp.add(Duration(seconds:300));
         _seconds = _dateExp.difference(_date).inSeconds;
@@ -63,17 +64,17 @@ void startTimer() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Color(0xff25282b),
-          ),
-          title: new Text(
-            "Check In",
-            style: TextStyle(
+        appBar: new AppBar(
+            iconTheme: IconThemeData(
               color: Color(0xff25282b),
             ),
-          ),
-          backgroundColor: Colors.white
+            title: new Text(
+              "Check In",
+              style: TextStyle(
+                color: Color(0xff25282b),
+              ),
+            ),
+            backgroundColor: Colors.white
           ),
         body:
             Padding(
