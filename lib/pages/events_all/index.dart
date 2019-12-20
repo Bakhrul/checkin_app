@@ -110,7 +110,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Daftar Sekarang"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -148,9 +158,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  print("tapped on container");
-                },
               ),
               InkWell(
                 child: Container(
@@ -206,7 +213,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Daftar Sekarang"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -244,9 +261,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  print("tapped on container");
-                },
               ),
               InkWell(
                 child: Container(
@@ -302,7 +316,14 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -398,7 +419,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Daftar Sekarang"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -436,9 +467,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  print("tapped on container");
-                },
               ),
               InkWell(
                 child: Container(
@@ -494,7 +522,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Daftar Sekarang"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -532,9 +570,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  print("tapped on container");
-                },
               ),
               InkWell(
                 child: Container(
@@ -590,7 +625,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                 ),
                                 Padding(
                                     padding: const EdgeInsets.all(0.0),
-                                    child: Icon(Icons.more_vert)),
+                                    child: PopupMenuButton(
+                                    icon: Icon(Icons.more_vert),
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Lihat Detail"),
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Daftar Sekarang"),
+                                      ),
+                                    ],
+                                  ),),
                               ],
                             ),
                             Container(
@@ -628,9 +673,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ],
                   ),
                 ),
-                onTap: () {
-                  print("tapped on container");
-                },
               ),
             ],
           ),

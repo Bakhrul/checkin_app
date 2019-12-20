@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 //pages
 import 'dashboard.dart';
 import 'pages/events_all/index.dart';
-import 'pages/event_follow/index.dart';
 import 'pages/events_personal/index.dart';
 import 'pages/check_in/check_in.dart';
 import 'pages/check_in/count_down.dart';
+import 'splash_screen.dart';
 import 'pages/check_in/tes.dart';
 
 Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/dashboard": (BuildContext context) => Dashboard(),
   "/semua_event" : (BuildContext context) => ManajemenEvent(),
-  "/follow_event" : (BuildContext context) => ManajemeEventFollow(),
   "/personal_event" : (BuildContext context) => ManajemenEventPersonal(),
   "/check_in" : (BuildContext context) => CheckIn(),
   "/count_down" : (BuildContext context) => CountDown(),
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Dashboard(),
+      home: SplashScreen(),
       routes: routesX,
     );
   }
