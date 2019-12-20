@@ -202,7 +202,9 @@ class _DashboardState extends State<Dashboard> {
                           child:Text(('Event Berlangsung').toUpperCase(),style:TextStyle(color:Colors.white,fontSize:18),textAlign:TextAlign.center)
                         )
                     ),
-                    Column(
+                    Container(
+                      height:height,
+                      child:Column(
                       children: <Widget>[
                         Card(
                             child: ListTile(
@@ -231,20 +233,23 @@ class _DashboardState extends State<Dashboard> {
                                   )
                                 ],
                               ),  
-                              subtitle: Text(
-                                'A sufficiently long subtitle warrants three lines.'
-                              ),
+                              subtitle: Column(
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: <Widget>[
+                                      Text('A sufficiently long subtitle warrants three lines.'),
+                                   ],
+                                ),
                               trailing: Icon(Icons.more_vert),
                               isThreeLine:true,
                             ),
                           ),
                       ],
                     )
+                      )
                   ]
                 )
               ),
-              Container(
-                child:Column(
+              Column(
                   children:<Widget>[
                     GestureDetector(
                       onTap: futureEvent,
@@ -260,7 +265,9 @@ class _DashboardState extends State<Dashboard> {
                           child:Text(('Event Baru').toUpperCase(),style:TextStyle(color:Colors.white,fontSize:18),textAlign:TextAlign.center)
                         )
                     ),
-                    Column(
+                    Container(
+                      height:futureheight,
+                      child:Column(
                       children: <Widget>[
                         Card(
                             child: ListTile(
@@ -332,11 +339,11 @@ class _DashboardState extends State<Dashboard> {
                           ),
                       ],
                     )
+                    )
+                    
                   ]
-                )
-              ),
-              Container(
-                child:Column(
+                ),
+              Column(
                   children:<Widget>[
                     GestureDetector(
                       onTap: pastEvent,
@@ -352,7 +359,9 @@ class _DashboardState extends State<Dashboard> {
                           child:Text(('Event Selesai').toUpperCase(),style:TextStyle(color:Colors.white,fontSize:18),textAlign:TextAlign.center)
                         )
                     ),
-                    Column(
+                    Container(
+                      height:pastheight,
+                      child:Column(
                       children: <Widget>[
                         Card(
                             child: ListTile(
@@ -390,9 +399,9 @@ class _DashboardState extends State<Dashboard> {
                           ),
                       ],
                     )
+                    )
                   ]
-                )
-              ),
+                ),
             ]
           )
         )
