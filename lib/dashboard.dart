@@ -207,42 +207,50 @@ class _DashboardState extends State<Dashboard> {
                       child:Column(
                       children: <Widget>[
                         Card(
-                            child: ListTile(
-                              leading: Image.asset("images/noimage.jpg"),
-                              title: Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Nama Event',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
-                                    ),
-                                  Container(
-                                       padding : EdgeInsets.all(1.5),
-                                       margin: EdgeInsets.only(left:5.0),
-                                       decoration:BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                              topLeft: const Radius.circular(100.0),
-                                              topRight: const Radius.circular(100.0),
-                                              bottomLeft: const Radius.circular(100.0),
-                                              bottomRight: const Radius.circular(100.0),
-                                        )
-                                      ),
-                                      child: Icon(Icons.check,
-                                        color: Colors.white,
-                                        size: 12,
-                                      )
-                                  )
-                                ],
-                              ),  
-                              subtitle: Column(
-                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                   children: <Widget>[
-                                      Text('A sufficiently long subtitle warrants three lines.'),
-                                   ],
-                                ),
-                              trailing: Icon(Icons.more_vert),
-                              isThreeLine:true,
-                            ),
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
                       ],
                     )
                       )
@@ -270,73 +278,95 @@ class _DashboardState extends State<Dashboard> {
                       child:Column(
                       children: <Widget>[
                         Card(
-                            child: ListTile(
-                              leading: Image.asset("images/noimage.jpg"),
-                              title: Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Nama Event',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
-                                    ),
-                                  Container(
-                                       padding : EdgeInsets.all(1.5),
-                                       margin: EdgeInsets.only(left:5.0),
-                                       decoration:BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                              topLeft: const Radius.circular(100.0),
-                                              topRight: const Radius.circular(100.0),
-                                              bottomLeft: const Radius.circular(100.0),
-                                              bottomRight: const Radius.circular(100.0),
-                                        )
-                                      ),
-                                      child: Icon(Icons.check,
-                                        color: Colors.white,
-                                        size: 12,
-                                      )
-                                  )
-                                ],
-                              ),  
-                              subtitle: Text(
-                                'A sufficiently long subtitle warrants three lines.'
-                              ),
-                              trailing: Icon(Icons.more_vert),
-                              isThreeLine:true,
-                            ),
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        Card(
-                            child: ListTile(
-                              leading: Image.asset("images/noimage.jpg"),
-                              title: Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Nama Event',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
-                                    ),
-                                  Container(
-                                       padding : EdgeInsets.all(1.5),
-                                       margin: EdgeInsets.only(left:5.0),
-                                       decoration:BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                              topLeft: const Radius.circular(100.0),
-                                              topRight: const Radius.circular(100.0),
-                                              bottomLeft: const Radius.circular(100.0),
-                                              bottomRight: const Radius.circular(100.0),
-                                        )
-                                      ),
-                                      child: Icon(Icons.check,
-                                        color: Colors.white,
-                                        size: 12,
-                                      )
-                                  )
-                                ],
-                              ),  
-                              subtitle: Text(
-                                'A sufficiently long subtitle warrants three lines.'
-                              ),
-                              trailing: Icon(Icons.more_vert),
-                              isThreeLine:true,
-                            ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
                       ],
                     )
                     )
@@ -363,40 +393,140 @@ class _DashboardState extends State<Dashboard> {
                       height:pastheight,
                       child:Column(
                       children: <Widget>[
-                        Card(
-                            child: ListTile(
-                              leading: Image.asset("images/noimage.jpg"),
-                              title: Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Text('Nama Event',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16)),
-                                    ),
-                                  Container(
-                                       padding : EdgeInsets.all(1.5),
-                                       margin: EdgeInsets.only(left:5.0),
-                                       decoration:BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                              topLeft: const Radius.circular(100.0),
-                                              topRight: const Radius.circular(100.0),
-                                              bottomLeft: const Radius.circular(100.0),
-                                              bottomRight: const Radius.circular(100.0),
-                                        )
-                                      ),
-                                      child: Icon(Icons.check,
-                                        color: Colors.white,
-                                        size: 12,
-                                      )
-                                  )
-                                ],
-                              ),  
-                              subtitle: Text(
-                                'A sufficiently long subtitle warrants three lines.'
-                              ),
-                              trailing: Icon(Icons.more_vert),
-                              isThreeLine:true,
-                            ),
+                       Card(
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),Card(
+                child: ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                      color: Colors.lightBlue,
+                      width: 2.0,
+                    ))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '12/31/2019',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    'Komunitas Dev Junior',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text('12:00 - 13:00'),
+                  ),
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text("Daftar Sekarang"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
                       ],
                     )
                     )
