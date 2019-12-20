@@ -164,47 +164,6 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: SingleChildScrollView(
 
-        child:
-        Column(
-          children: <Widget>[
-            FlatButton(
-            color: Colors.blue,
-            textColor: Colors.white,
-            onPressed:(){
-                Navigator.pushNamed(context, "/count_down");
-          },
-          child:Text('Check in peserta')
-          ),
-           FlatButton(
-            color: Colors.blue,
-            textColor: Colors.white,
-            onPressed:(){
-                Navigator.pushNamed(context, "/check_in");
-          },
-          child:Text('Buat Code Check In')
-          ),
-          FlatButton(
-              child: Text('Point Member'),
-              onPressed: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PointEvents(),
-                    ));
-              },
-            ),
-            FlatButton(
-              child: Text('Detail Event'),
-              onPressed: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManajemenEventDetail(),
-                    ));
-              },
-            ),
-            
-        ]),
       ),
     );
   }
