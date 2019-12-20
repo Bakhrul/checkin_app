@@ -34,12 +34,12 @@ class _KabupatenState extends State<Kabupaten> {
       key: _scaffoldKeykabupaten,
       appBar: new AppBar(
           iconTheme: IconThemeData(
-            color: Color(0xff25282b),
+            color: Colors.white,
           ),
           title: new Text(
-            "Kabupaten",
+            "Pilih Kabupaten",
             style: TextStyle(
-              color: Color(0xff25282b),
+              color: Colors.white,
               fontSize: 14,
             ),
           ),
@@ -47,13 +47,13 @@ class _KabupatenState extends State<Kabupaten> {
           IconButton(
             icon: const Icon(
               Icons.search,
-              color: Colors.black,
+              color: Colors.white,
             ),
             tooltip: 'Cari Kabupaten',
             onPressed: () {},
           ),
         ],
-          backgroundColor: Colors.white),
+          backgroundColor: Colors.blue),
       body: Padding(
         padding: const EdgeInsets.only(top:20.0),
         child: SingleChildScrollView(
@@ -62,7 +62,7 @@ class _KabupatenState extends State<Kabupaten> {
             children: <Widget>[
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Pasuruan'),
                   onTap: () {
                     Navigator.pop(context);
@@ -71,7 +71,7 @@ class _KabupatenState extends State<Kabupaten> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Surabaya'),
                   onTap: () {
                     Navigator.pop(context);
@@ -80,7 +80,7 @@ class _KabupatenState extends State<Kabupaten> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Malang'),
                   onTap: () {
                     Navigator.pop(context);

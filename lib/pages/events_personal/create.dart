@@ -53,11 +53,11 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
             ),
             bottom: TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.directions_car), text: 'Informasi Event'),
-                Tab(icon: Icon(Icons.directions_transit), text: 'Add Assistan'),
+                Tab(icon: Icon(Icons.event), text: 'Informasi Event'),
+                Tab(icon: Icon(Icons.person), text: 'Tambah Wewenang'),
                 Tab(
-                    icon: Icon(Icons.directions_bike),
-                    text: 'Checkin Scheduling'),
+                    icon: Icon(Icons.schedule),
+                    text: 'Tambah Checkin'),
               ],
             ),
           ),
@@ -644,6 +644,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               // Add your onPressed code here!
+              Navigator.pop(context);
             },
             child: Icon(Icons.check),
             backgroundColor: Colors.blue,

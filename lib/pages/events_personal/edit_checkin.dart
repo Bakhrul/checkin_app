@@ -3,28 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
-
-
-GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
+GlobalKey<ScaffoldState> _scaffoldKeyeditcheckin;
 var datepicker;
 void showInSnackBar(String value) {
-  _scaffoldKeycreatecheckin.currentState
+  _scaffoldKeyeditcheckin.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
 }
 
-class ManajemeCreateCheckin extends StatefulWidget {
-  ManajemeCreateCheckin({Key key, this.title}) : super(key: key);
+class ManajemeEditCheckin extends StatefulWidget {
+  ManajemeEditCheckin({Key key, this.title}) : super(key: key);
   final String title;
   @override
   State<StatefulWidget> createState() {
-    return _ManajemeCreateCheckinState();
+    return _ManajemeEditCheckinState();
   }
 }
 
-class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
+class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
   @override
   void initState() {
-    _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
+    _scaffoldKeyeditcheckin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     super.initState();
   }
@@ -33,19 +31,19 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeycreatecheckin,
+      key: _scaffoldKeyeditcheckin,
       appBar: new AppBar(
-          iconTheme: IconThemeData(
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+        title: new Text(
+          "Edit Checkin Sekarang",
+          style: TextStyle(
             color: Colors.white,
+            fontSize: 14,
           ),
-          title: new Text(
-            "Buat Checkin Sekarang",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
-          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: SingleChildScrollView(
@@ -125,7 +123,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      'Buat Checkin Sekarang',
+                      'Update data checkin',
                       style: TextStyle(fontSize: 14.0),
                     ),
                   ),
@@ -147,7 +145,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Batal Membuat Checkin",
+                      "Batal update data checkin",
                       style: TextStyle(fontSize: 14.0),
                     ),
                   ),

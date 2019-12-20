@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:ui';
+import 'create_peserta.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyManagePeserta;
 
@@ -27,9 +29,10 @@ class _ManagePesertaState extends State<ManagePeserta> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Text(
-          "Manage Peserta",
+          "Kelola Peserta",
           style: TextStyle(
             color: Colors.white,
+            fontSize: 14,
           ),
         ),
         iconTheme: new IconThemeData(color: Colors.white),
@@ -42,60 +45,128 @@ class _ManagePesertaState extends State<ManagePeserta> {
             tooltip: 'Cari Peserta',
             onPressed: () {},
           ),
+          IconButton(
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            tooltip: 'Tambah Peserta',
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ManajemeCreatePeserta()));
+            },
+          ),
         ],
-      ),
-      drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            // Profil Drawer Here
-            //  Menu Section Here
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Card(
                 child: ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100.0),
-                  child: Container(
-                    height: 40.0,
-                    alignment: Alignment.center,
-                    width: 40.0,
-                    color: Colors.green,
-                    child: Icon(Icons.check, color: Colors.white),
-                  ),
-                ),
+              leading: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'images/imgavatar.png',
+                      ),
+                    ),
+                  )),
+              title: Text('Muhammad Bakhrul Bila Sakhil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text('081285270793'),
               ),
-              title: Text('Muhammad Bakhrul Bila Sakhil'),
-              subtitle: Text('081285270793'),
             )),
             Card(
                 child: ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100.0),
-                  child: Container(
-                    height: 40.0,
-                    alignment: Alignment.center,
-                    width: 40.0,
-                    decoration: BoxDecoration(
-                      color: Colors.red, //                   <--- border color
-                        border: Border.all(
-                      
-                      width: 5.0,
-                    )),
-                    color: Colors.red,
-                    child: Icon(Icons.check, color: Colors.white),
-                  ),
-                ),
+              leading: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'images/imgavatar.png',
+                      ),
+                    ),
+                  )),
+              title: Text('Muhammad Bakhrul Bila Sakhil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text('081285270793'),
               ),
-              title: Text('Muhammad Bakhrul Bila Sakhil'),
-              subtitle: Text('081285270793'),
+            )),
+            Card(
+                child: ListTile(
+              leading: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'images/imgavatar.png',
+                      ),
+                    ),
+                  )),
+              title: Text('Muhammad Bakhrul Bila Sakhil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text('081285270793'),
+              ),
+            )),
+            Card(
+                child: ListTile(
+              leading: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'images/imgavatar.png',
+                      ),
+                    ),
+                  )),
+              title: Text('Muhammad Bakhrul Bila Sakhil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text('081285270793'),
+              ),
+            )),
+            Card(
+                child: ListTile(
+              leading: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'images/imgavatar.png',
+                      ),
+                    ),
+                  )),
+              title: Text('Muhammad Bakhrul Bila Sakhil',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Text('081285270793'),
+              ),
             )),
           ],
         ),

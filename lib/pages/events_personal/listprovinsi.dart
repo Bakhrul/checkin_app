@@ -30,12 +30,12 @@ class _ProvinsiState extends State<Provinsi> {
       key: _scaffoldKeyprovinsi,
       appBar: new AppBar(
           iconTheme: IconThemeData(
-            color: Color(0xff25282b),
+            color: Colors.white,
           ),
           title: new Text(
             "Pilih Provinsi",
             style: TextStyle(
-              color: Color(0xff25282b),
+              color: Colors.white,
               fontSize: 14,
             ),
           ),
@@ -43,13 +43,13 @@ class _ProvinsiState extends State<Provinsi> {
             IconButton(
               icon: const Icon(
                 Icons.search,
-                color: Colors.black,
+                color: Colors.white,
               ),
               tooltip: 'Cari Provinsi',
               onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.white),
+          backgroundColor: Colors.blue),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0),
         child: SingleChildScrollView(
@@ -58,7 +58,7 @@ class _ProvinsiState extends State<Provinsi> {
             children: <Widget>[
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Jawa Timur'),
                   onTap: () {
                     Navigator.pop(context);
@@ -67,7 +67,7 @@ class _ProvinsiState extends State<Provinsi> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Jawa Tengah'),
                   onTap: () {
                     Navigator.pop(context);
@@ -76,7 +76,7 @@ class _ProvinsiState extends State<Provinsi> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.green),
+                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
                   title: Text('Jawa Barat'),
                   onTap: () {
                     Navigator.pop(context);

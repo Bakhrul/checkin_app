@@ -17,13 +17,11 @@ class PointEvents extends StatefulWidget {
 }
 
 class _PointEventsState extends State<PointEvents> {
-
   @override
   void initState() {
     _scaffoldKeyPointPerson = GlobalKey<ScaffoldState>();
     super.initState();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +30,12 @@ class _PointEventsState extends State<PointEvents> {
       key: _scaffoldKeyPointPerson,
       appBar: new AppBar(
           iconTheme: IconThemeData(
-            color: Color(0xff25282b),
+            color: Colors.white,
           ),
           title: new Text(
             "Points Member Events",
             style: TextStyle(
-              color: Color(0xff25282b),
+              color: Colors.white,
               fontSize: 14,
             ),
           ),
@@ -45,16 +43,15 @@ class _PointEventsState extends State<PointEvents> {
             IconButton(
               icon: new Icon(
                 Icons.search,
-                color: Colors.black,
+                color: Colors.white,
               ),
               tooltip: 'Cari Provinsi',
-              onPressed: () {
-              },
+              onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.white),
+          backgroundColor: Colors.blue),
       body: Padding(
-        padding: const EdgeInsets.only(top:10.0),
+        padding: const EdgeInsets.only(top: 10.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -64,97 +61,152 @@ class _PointEventsState extends State<PointEvents> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text('Jumlah Checkin Event',style: TextStyle(fontSize: 16),),
+                    child: Text(
+                      'Jumlah Checkin Event',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text('18 Orang',style: TextStyle(fontSize: 16,color: Colors.green,fontWeight: FontWeight.w500),),
+                    child: Text(
+                      '18 Orang',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ],
               ),
               Divider(),
               Card(
                 child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
+                  leading: Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'images/imgavatar.png',
+                          ),
+                        ),
+                      )),
                   title: Text('Muhammad Bakhrul Bila Sakhil'),
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Text('7 / 10 Total Absen'),
                   ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.w500,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  trailing: Text('87%',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ),
               Card(
                 child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
+                  leading: Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'images/imgavatar.png',
+                          ),
+                        ),
+                      )),
                   title: Text('Muhammad Bakhrul Bila Sakhil'),
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Text('7 / 10 Total Absen'),
                   ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.w500,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  trailing: Text('87%',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ),
               Card(
                 child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
+                  leading: Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'images/imgavatar.png',
+                          ),
+                        ),
+                      )),
                   title: Text('Muhammad Bakhrul Bila Sakhil'),
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Text('7 / 10 Total Absen'),
                   ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.w500,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  trailing: Text('87%',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ),
               Card(
                 child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
+                  leading: Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'images/imgavatar.png',
+                          ),
+                        ),
+                      )),
                   title: Text('Muhammad Bakhrul Bila Sakhil'),
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Text('7 / 10 Total Absen'),
                   ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.w500,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  trailing: Text('87%',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ),
               Card(
                 child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
+                  leading: Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                            'images/imgavatar.png',
+                          ),
+                        ),
+                      )),
                   title: Text('Muhammad Bakhrul Bila Sakhil'),
                   subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Text('7 / 10 Total Absen'),
                   ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Image.asset('images/noimage.jpg',width: 60.0,height: 60.0,),
-                  title: Text('Muhammad Bakhrul Bila Sakhil'),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
-                    child: Text('7 / 10 Total Absen'),
-                  ),
-                  trailing: Text('87%',style: TextStyle(color: Colors.green,fontWeight: FontWeight.w500,)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  trailing: Text('87%',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ),
             ],

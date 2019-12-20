@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'dart:ui';
-import 'pages/events_personal/point_person.dart';
-import 'pages/events_all/detail.dart';
 
+import 'pages/events_personal/list_multicheckin.dart';
+import 'pages/events_personal/manage_checkin.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 
@@ -32,7 +31,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.white,
         title: Text(
           "Dashboard",
-          style: prefix0.TextStyle(
+          style: TextStyle(
             color: Colors.black,
           ),
         ),
@@ -163,7 +162,10 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       body: SingleChildScrollView(
-
+        child: Column(
+          children: <Widget>[
+          ],
+        ),
       ),
     );
   }
