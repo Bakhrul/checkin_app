@@ -27,6 +27,10 @@ dependencies:
   intl: ^0.15.0  
   percent_indicator: "^2.1.1"
   image_picker:
+  dio:
+  http:
+  shared_preferences:
+  fluttertoast:
 
 
 dev_dependencies:
