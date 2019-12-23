@@ -33,6 +33,7 @@ dependencies:
   fluttertoast:
   firebase_auth:
   google_sign_in:
+  flutter_facebook_login:
 
 
 dev_dependencies:

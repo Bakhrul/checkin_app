@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Checkin Bisnis Kita5</string> 
+    <string name="facebook_app_id">1453384131496232</string> 
+    <string name="fb_login_protocol_scheme">fb1453384131496232</string>
+</resources>

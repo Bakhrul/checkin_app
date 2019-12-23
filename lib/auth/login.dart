@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
@@ -12,6 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   // List headsession = ['nama','username','id','nomor','jenis'];
   // List getsession = ['m_name','m_username','m_id','m_phone','m_gender'];
   login() async {
@@ -41,6 +45,19 @@ class _LoginPageState extends State<LoginPage> {
   }
   // return user;
 }
+
+signfacebook() async {
+    var facebooklogin = await FacebookLogin();
+    var result = await facebooklogin.logIn(['email']);
+    final token = result.accessToken.token;
+    final graphResponse = await http.get(
+                'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+    final profile = json.decode(graphResponse.body);
+    print(profile);
+    if(profile != null){
+      Navigator.pushNamed(context,'/dashboard');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +178,8 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.blueAccent,
                   padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/register');
+                    signfacebook();
+                    // Navigator.pushNamed(context, '/register');
                   },
                   child: Text("Facebook",
                     textAlign: TextAlign.center,
