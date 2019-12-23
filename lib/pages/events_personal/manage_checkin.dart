@@ -42,7 +42,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyManageCheckin,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         title: Text(
           "Kelola Waktu Checkin",
           style: TextStyle(
@@ -60,19 +60,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
             tooltip: 'Cari Checkin',
             onPressed: () {},
           ),
-          IconButton(
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            tooltip: 'Tambahkan Checkin',
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ManajemeCreateCheckin()));
-            },
-          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -88,7 +75,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       height: 15.0,
                       alignment: Alignment.center,
                       width: 15.0,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(41, 30, 47, 1),
                     ),
                   ),
                 ),
@@ -125,7 +112,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       height: 15.0,
                       alignment: Alignment.center,
                       width: 15.0,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(41, 30, 47, 1),
                     ),
                   ),
                 ),
@@ -162,7 +149,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       height: 15.0,
                       alignment: Alignment.center,
                       width: 15.0,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(41, 30, 47, 1),
                     ),
                   ),
                 ),
@@ -199,7 +186,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       height: 15.0,
                       alignment: Alignment.center,
                       width: 15.0,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(41, 30, 47, 1),
                     ),
                   ),
                 ),
@@ -236,7 +223,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       height: 15.0,
                       alignment: Alignment.center,
                       width: 15.0,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(41, 30, 47, 1),
                     ),
                   ),
                 ),
@@ -265,6 +252,14 @@ class _ManageCheckinState extends State<ManageCheckin> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ManajemeCreateCheckin()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }

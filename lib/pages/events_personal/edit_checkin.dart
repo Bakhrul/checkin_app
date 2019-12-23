@@ -33,6 +33,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyeditcheckin,
       appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -51,7 +52,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             children: <Widget>[
               Card(
                   child: ListTile(
-                leading: Icon(Icons.date_range, color: Colors.blue),
+                leading: Icon(Icons.date_range, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: DateTimeField(
                   readOnly: true,
                   format: DateFormat('dd-MM-yyy'),
@@ -72,7 +73,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.access_time, color: Colors.blue),
+                leading: Icon(Icons.access_time, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: DateTimeField(
                   format: DateFormat("HH:mm"),
                   decoration: InputDecoration(
@@ -91,7 +92,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.timeline, color: Colors.blue),
+                leading: Icon(Icons.timeline, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: TextField(
                   decoration: InputDecoration(
                       hintText: 'Durasi Checkin ( Menit )',
@@ -100,7 +101,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.create, color: Colors.blue),
+                leading: Icon(Icons.create, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: TextField(
                   decoration: InputDecoration(
                       hintText: 'KODE UNIK CHECKIN',
@@ -113,7 +114,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 child: SizedBox(
                   width: double.infinity,
                   child: RaisedButton(
-                    color: Colors.blue,
+                    color: Color.fromRGBO(41, 30, 47, 1),
                     textColor: Colors.white,
                     disabledColor: Colors.green[400],
                     disabledTextColor: Colors.white,
@@ -136,7 +137,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                   width: double.infinity,
                   child: RaisedButton(
                     color: Colors.white,
-                    textColor: Colors.blue,
+                    textColor: Color.fromRGBO(41, 30, 47, 1),
                     disabledColor: Colors.white,
                     disabledTextColor: Colors.green[400],
                     padding: EdgeInsets.all(15.0),

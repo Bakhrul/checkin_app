@@ -53,7 +53,7 @@ class _KecamatanState extends State<Kecamatan> {
             onPressed: () {},
           ),
         ],
-          backgroundColor: Colors.blue),
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0),
         child: SingleChildScrollView(
@@ -62,7 +62,7 @@ class _KecamatanState extends State<Kecamatan> {
             children: <Widget>[
               Card(
                   child: ListTile(
-                    leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                    leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: Text('Sukorejo'),
                     onTap: () {
                       Navigator.pop(context);
@@ -71,7 +71,7 @@ class _KecamatanState extends State<Kecamatan> {
                 ),
                 Card(
                   child: ListTile(
-                    leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                    leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: Text('Pandaan'),
                     onTap: () {
                       Navigator.pop(context);
@@ -80,7 +80,7 @@ class _KecamatanState extends State<Kecamatan> {
                 ),
                 Card(
                   child: ListTile(
-                    leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                    leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: Text('Purwosari'),
                     onTap: () {
                       Navigator.pop(context);

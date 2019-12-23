@@ -49,7 +49,7 @@ class _ProvinsiState extends State<Provinsi> {
               onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.blue),
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0),
         child: SingleChildScrollView(
@@ -58,7 +58,7 @@ class _ProvinsiState extends State<Provinsi> {
             children: <Widget>[
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                  leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                   title: Text('Jawa Timur'),
                   onTap: () {
                     Navigator.pop(context);
@@ -67,7 +67,7 @@ class _ProvinsiState extends State<Provinsi> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                  leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                   title: Text('Jawa Tengah'),
                   onTap: () {
                     Navigator.pop(context);
@@ -76,7 +76,7 @@ class _ProvinsiState extends State<Provinsi> {
               ),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.person_pin_circle, color: Colors.blue),
+                  leading: Icon(Icons.person_pin_circle, color: Color.fromRGBO(41, 30, 47, 1),),
                   title: Text('Jawa Barat'),
                   onTap: () {
                     Navigator.pop(context);

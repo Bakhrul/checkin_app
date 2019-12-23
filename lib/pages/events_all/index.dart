@@ -50,7 +50,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
               onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.blue),
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0,bottom: 10.0,right: 5.0,left: 5.0),
         child: SingleChildScrollView(

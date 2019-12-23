@@ -49,7 +49,7 @@ class _PointEventsState extends State<PointEvents> {
               onPressed: () {},
             ),
           ],
-          backgroundColor: Colors.blue),
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: SingleChildScrollView(
@@ -72,7 +72,7 @@ class _PointEventsState extends State<PointEvents> {
                       '18 Orang',
                       style: TextStyle(
                           fontSize: 16,
-                          color: Colors.blue,
+                          color: Color.fromRGBO(41, 30, 47, 1),
                           fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -100,7 +100,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                   trailing: Text('87%',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                         fontWeight: FontWeight.w500,
                       )),
                 ),
@@ -126,7 +126,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                   trailing: Text('87%',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                         fontWeight: FontWeight.w500,
                       )),
                 ),
@@ -152,7 +152,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                   trailing: Text('87%',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                         fontWeight: FontWeight.w500,
                       )),
                 ),
@@ -178,7 +178,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                   trailing: Text('87%',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                         fontWeight: FontWeight.w500,
                       )),
                 ),
@@ -204,7 +204,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                   trailing: Text('87%',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                         fontWeight: FontWeight.w500,
                       )),
                 ),

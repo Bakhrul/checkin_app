@@ -35,6 +35,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
@@ -53,7 +54,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
             children: <Widget>[
               Card(
                   child: ListTile(
-                leading: Icon(Icons.date_range, color: Colors.blue),
+                leading: Icon(Icons.date_range, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: DateTimeField(
                   readOnly: true,
                   format: DateFormat('dd-MM-yyy'),
@@ -74,7 +75,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.access_time, color: Colors.blue),
+                leading: Icon(Icons.access_time, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: DateTimeField(
                   format: DateFormat("HH:mm"),
                   decoration: InputDecoration(
@@ -93,7 +94,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.timeline, color: Colors.blue),
+                leading: Icon(Icons.timeline, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: TextField(
                   decoration: InputDecoration(
                       hintText: 'Durasi Checkin ( Menit )',
@@ -102,60 +103,23 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.create, color: Colors.blue),
+                leading: Icon(Icons.create, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: TextField(
                   decoration: InputDecoration(
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.blue,
-                    textColor: Colors.white,
-                    disabledColor: Colors.green[400],
-                    disabledTextColor: Colors.white,
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () async {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Buat Checkin Sekarang',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10.0, top: 10.0, right: 10.0, bottom: 20.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.white,
-                    textColor: Colors.blue,
-                    disabledColor: Colors.white,
-                    disabledTextColor: Colors.green[400],
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () async {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "Batal Membuat Checkin",
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.pop(context);
+        },
+        child: Icon(Icons.check),
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }

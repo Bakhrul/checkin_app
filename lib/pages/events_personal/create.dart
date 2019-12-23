@@ -47,9 +47,11 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Color.fromRGBO(41, 30, 47, 1),
             title: Text(
               'Buat Event Sekarang',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 16),
             ),
             bottom: TabBar(
               tabs: [
@@ -68,7 +70,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                 child: Column(children: <Widget>[
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.assignment_ind, color: Colors.blue),
+                    leading: Icon(Icons.assignment_ind, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: TextField(
                       decoration: InputDecoration(
                           hintText: 'Nama Event / Acara',
@@ -78,7 +80,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.category, color: Colors.blue),
+                    leading: Icon(Icons.category, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: DropdownButton<String>(
                       isExpanded: true,
                       value: tipe,
@@ -105,7 +107,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.category, color: Colors.blue),
+                    leading: Icon(Icons.category, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: DropdownButton<String>(
                       isExpanded: true,
                       value: sifat,
@@ -134,7 +136,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.date_range, color: Colors.blue),
+                    leading: Icon(Icons.date_range, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: DateTimeField(
                       readOnly: true,
                       format: DateFormat('dd-MM-yyy'),
@@ -155,7 +157,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.access_time, color: Colors.blue),
+                    leading: Icon(Icons.access_time, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: DateTimeField(
                       format: DateFormat("HH:mm"),
                       decoration: InputDecoration(
@@ -174,7 +176,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.create, color: Colors.blue),
+                    leading: Icon(Icons.create, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: TextField(
                       maxLines: 8,
                       decoration: InputDecoration(
@@ -185,7 +187,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Colors.blue),
+                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
                       title: Text(
                         'Pilih Alamat Provinsi',
                         style: TextStyle(fontSize: 13),
@@ -200,7 +202,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Colors.blue),
+                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
                       title: Text(
                         'Pilih Alamat Kabupaten',
                         style: TextStyle(fontSize: 13),
@@ -215,7 +217,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Colors.blue),
+                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
                       title: Text('Pilih Alamat Kecamatan',
                           style: TextStyle(fontSize: 13)),
                       onTap: () {
@@ -228,7 +230,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.location_on, color: Colors.blue),
+                    leading: Icon(Icons.location_on, color: Color.fromRGBO(41, 30, 47, 1),),
                     title: TextField(
                       maxLines: 8,
                       decoration: InputDecoration(
@@ -259,7 +261,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                                 EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                             prefixIcon: Icon(
                               Icons.search,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                             hintText: "Cari Berdasarkan Nama Lengkap",
                             border: InputBorder.none,
@@ -444,11 +446,11 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                                 children: <Widget>[
                                   Icon(
                                     Icons.add,
-                                    color: Colors.blue,
+                                    color: Color.fromRGBO(41, 30, 47, 1),
                                     size: 16,
                                   ),
                                   Text('Tambahkan Checkin',
-                                      style: TextStyle(color: Colors.blue)),
+                                      style: TextStyle(color: Color.fromRGBO(41, 30, 47, 1),)),
                                 ],
                               ),
                               color: Colors.transparent,
@@ -478,7 +480,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -502,7 +504,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -526,7 +528,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -550,7 +552,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -574,7 +576,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -598,7 +600,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -622,7 +624,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                               height: 15.0,
                               alignment: Alignment.center,
                               width: 15.0,
-                              color: Colors.blue,
+                              color: Color.fromRGBO(41, 30, 47, 1),
                             ),
                           ),
                         ),
@@ -647,7 +649,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
               Navigator.pop(context);
             },
             child: Icon(Icons.check),
-            backgroundColor: Colors.blue,
+            backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           ),
         ),
       ),
