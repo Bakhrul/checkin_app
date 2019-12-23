@@ -16,4 +16,7 @@ class MyNavigator{
   static void goToCountDown(BuildContext context){
     Navigator.pushNamed(context, "/count_down");
   }
+  static void goToDetailEvent(BuildContext context){
+    Navigator.pushNamed(context, "/detail_event");
+  }
 }
