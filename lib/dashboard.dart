@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'search_animation/default_app_bar.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 
@@ -77,8 +76,6 @@ class _DashboardState extends State<Dashboard> {
               ),
               tooltip: 'Notifikasi',
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => DefaultAppBar()));
               },
             ),
           ],
