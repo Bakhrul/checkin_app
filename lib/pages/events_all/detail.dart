@@ -28,21 +28,28 @@ class _ManajemenEventDetailState extends State<ManajemenEventDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventDetail,
-      appBar: new AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.blue,
-        ),
-        title: new Text(
-          "Detail Event",
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 16,
+      appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          title: Text(
+            "Detai Event",
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
+          iconTheme: new IconThemeData(color: Colors.white),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              tooltip: 'Notifikasi',
+              onPressed: () {
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
       body: Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
@@ -63,7 +70,7 @@ class _ManajemenEventDetailState extends State<ManajemenEventDetail> {
                             image: new DecorationImage(
                               fit: BoxFit.fill,
                               image: AssetImage(
-                                'images/imgavatar.png',
+                                'images/noimage.png',
                               ),
                             ),
                           )),
