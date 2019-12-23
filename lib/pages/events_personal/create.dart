@@ -47,10 +47,11 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: Color.fromRGBO(41, 30, 47, 1),
             title: Text(
               'Buat Event Sekarang',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 16),
             ),
             bottom: TabBar(
               tabs: [
