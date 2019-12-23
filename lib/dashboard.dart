@@ -245,6 +245,12 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                        onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
+                    ) 
+                    );
+                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
@@ -311,6 +317,12 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                            onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
+                    ) 
+                    );
+                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
@@ -360,6 +372,12 @@ class _DashboardState extends State<Dashboard> {
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
+                             onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
+                    ) 
+                    );
+                  },
                         trailing: PopupMenuButton(
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
@@ -422,6 +440,12 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                             onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
+                    ) 
+                    );
+                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
@@ -467,6 +491,12 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                             onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
+                    ) 
+                    );
+                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
@@ -512,6 +542,12 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                             onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
+                    ) 
+                    );
+                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
