@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'search_animation/default_app_bar.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 
@@ -59,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.white,
         key: _scaffoldKeyDashboard,
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           title: Text(
             "Dashboard",
@@ -74,7 +76,10 @@ class _DashboardState extends State<Dashboard> {
                 color: Colors.white,
               ),
               tooltip: 'Notifikasi',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DefaultAppBar()));
+              },
             ),
           ],
         ),
@@ -93,7 +98,10 @@ class _DashboardState extends State<Dashboard> {
                     backgroundColor: Colors.white,
                     child: Text(
                       "A",
-                      style: TextStyle(fontSize: 40.0,color: Color.fromRGBO(41, 30, 47, 1),),
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                      ),
                     ),
                   ),
                 ),
