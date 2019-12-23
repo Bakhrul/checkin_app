@@ -28,22 +28,28 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventDetail,
-      appBar: new AppBar(
-        
-        iconTheme: IconThemeData(
-          color: Colors.blue,
-        ),
-        title: new Text(
-          "Detail Event",
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 16,
+      appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          title: Text(
+            "Detail Event",
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
+          iconTheme: new IconThemeData(color: Colors.white),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              tooltip: 'Notifikasi',
+              onPressed: () {
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
       body: Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
@@ -65,7 +71,7 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
                             image: new DecorationImage(
                               fit: BoxFit.fill,
                               image: AssetImage(
-                                'images/imgavatar.png',
+                                'images/noimage.png',
                               ),
                             ),
                           )),
@@ -126,7 +132,7 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
+                    color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -172,7 +178,7 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
+                    color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -218,7 +224,7 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent,
+                    color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -292,7 +298,7 @@ class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisab
                         color: Colors.lightBlueAccent,
                         child: const Text(
                           "Registered",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),
                         ),
                       ),
                     )),
