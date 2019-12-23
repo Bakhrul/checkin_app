@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'detail.dart';
+import 'detail_event.dart';
+import 'package:flutter/cupertino.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
 
 void showInSnackBar(String value) {
   _scaffoldKeyEventAll.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
+}
+enum PageEnum{
+  kelolaRegisterPage,
 }
 
 class ManajemenEvent extends StatefulWidget {
@@ -22,6 +27,16 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   void initState() {
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
+  }
+  _onSelect(PageEnum value) {
+    switch (value) {
+      case PageEnum.kelolaRegisterPage:
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (BuildContext context) => RegisterEvents()));
+        break;
+      default:
+        break;
+    }
   }
 
   @override
@@ -101,10 +116,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
