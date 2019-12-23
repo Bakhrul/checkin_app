@@ -137,6 +137,19 @@ class _DashboardState extends State<Dashboard> {
                             Navigator.pushNamed(context, "/personal_event");
                           },
                         ),
+                         ListTile(
+                          title: Text(
+                            'Event Yang di Ikuti',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontFamily: 'Roboto',
+                              color: Color(0xff25282b),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(context, "/follow_event");
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -454,7 +467,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
@@ -505,7 +518,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
@@ -556,7 +569,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
