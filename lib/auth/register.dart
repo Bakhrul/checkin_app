@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-TextEditingController username = TextEditingController();
-TextEditingController password = TextEditingController();
+TextEditingController namadepan = TextEditingController();
+TextEditingController namabelakang = TextEditingController();
 TextEditingController email = TextEditingController();
-TextEditingController nama = TextEditingController();
 
 class Register extends StatefulWidget{
   @override
@@ -20,7 +19,7 @@ class _Register extends State<Register>{
   @override
   Widget build(BuildContext context) {
     final namaField = TextField(
-      controller: nama,
+      controller: namadepan,
       autofocus: true,
       obscureText: false,
       style: TextStyle(
@@ -30,7 +29,7 @@ class _Register extends State<Register>{
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Nama Pengguna",
+          hintText: "Nama Depan",
           hintStyle: TextStyle(fontWeight: FontWeight.w300, color: Colors.black38, fontSize: 14),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -48,7 +47,7 @@ class _Register extends State<Register>{
     );
 
     final emailField = TextField(
-      controller: email,
+      controller: namabelakang,
       autofocus: true,
       obscureText: false,
       style: TextStyle(
@@ -58,7 +57,7 @@ class _Register extends State<Register>{
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email Pengguna",
+          hintText: "Nama Belakang",
           hintStyle: TextStyle(fontWeight: FontWeight.w300, color: Colors.black38, fontSize: 14),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -76,7 +75,7 @@ class _Register extends State<Register>{
     );
 
     final usernameField = TextField(
-      controller: username,
+      controller: email,
       autofocus: true,
       obscureText: false,
       style: TextStyle(
@@ -86,33 +85,7 @@ class _Register extends State<Register>{
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Username",
-          hintStyle: TextStyle(fontWeight: FontWeight.w300, color: Colors.black38, fontSize: 14),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(color: Colors.black38)),
-          border:
-          OutlineInputBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(5.0),
-              topRight: Radius.circular(5.0),
-              bottomRight: Radius.circular(5.0),
-              bottomLeft: Radius.circular(5.0),
-            ),
-          )
-      ),
-    );
-    final passwordField = TextField(
-      controller: password,
-      obscureText: true,
-      style: TextStyle(
-        fontFamily: 'Roboto',
-        fontSize: 16.0,
-        color: Color(0xff25282b),
-      ),
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Kata Sandi",
+          hintText: "Email / HP",
           hintStyle: TextStyle(fontWeight: FontWeight.w300, color: Colors.black38, fontSize: 14),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -165,9 +138,10 @@ class _Register extends State<Register>{
           OutlineButton(
             padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              Navigator.pop(context);
+              // Navigator.pushNamed(context, '/login');
             },
-            child: Text("Login",
+            child: Text("Kembali",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
@@ -263,8 +237,6 @@ class _Register extends State<Register>{
                   emailField,
                   SizedBox(height: 15.0),
                   usernameField,
-                  SizedBox(height: 15.0),
-                  passwordField,
                   SizedBox(
                     height: 15.0,
                   ),

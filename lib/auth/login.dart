@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
@@ -20,6 +21,23 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
   }
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<FirebaseUser> signin() async {
+  final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+  final AuthCredential credential = GoogleAuthProvider.getCredential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+  );
+
+  final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+  print("signed in " + user.displayName);
+  // return user;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -110,19 +128,50 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 10),
-          OutlineButton(
-            padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
-            onPressed: () {
-              Navigator.pushNamed(context, '/register');
-            },
-            child: Text("Register",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                fontFamily: 'Roboto',
-                fontSize: 12.0,
-              ),
+          Container(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  color: Colors.redAccent,
+                  padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
+                  onPressed: () {
+                    // Navigator.pushNamed(context, '/register');
+                    signin();
+                  },
+                  child: Text("Google",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontFamily: 'Roboto',
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 20,),
+
+                RaisedButton(
+                  color: Colors.blueAccent,
+                  padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: Text("Facebook",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontFamily: 'Roboto',
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ),
+
+              ],
             ),
           ),
         ],
