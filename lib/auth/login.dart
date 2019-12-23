@@ -36,6 +36,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
   print("signed in " + user.displayName);
+  if(user.displayName != '' || user.displayName != null){
+    Navigator.pushNamed(context,'/dashboard');
+  }
   // return user;
 }
 
