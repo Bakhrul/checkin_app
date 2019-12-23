@@ -57,9 +57,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
               tabs: [
                 Tab(icon: Icon(Icons.event), text: 'Informasi Event'),
                 Tab(icon: Icon(Icons.person), text: 'Tambah Wewenang'),
-                Tab(
-                    icon: Icon(Icons.schedule),
-                    text: 'Tambah Checkin'),
+                Tab(icon: Icon(Icons.schedule), text: 'Tambah Checkin'),
               ],
             ),
           ),
@@ -70,7 +68,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                 child: Column(children: <Widget>[
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.assignment_ind, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.assignment_ind,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: TextField(
                       decoration: InputDecoration(
                           hintText: 'Nama Event / Acara',
@@ -80,7 +81,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.category, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.category,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: DropdownButton<String>(
                       isExpanded: true,
                       value: tipe,
@@ -107,7 +111,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.category, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.category,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: DropdownButton<String>(
                       isExpanded: true,
                       value: sifat,
@@ -136,7 +143,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.date_range, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.date_range,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: DateTimeField(
                       readOnly: true,
                       format: DateFormat('dd-MM-yyy'),
@@ -157,7 +167,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.access_time, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.access_time,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: DateTimeField(
                       format: DateFormat("HH:mm"),
                       decoration: InputDecoration(
@@ -176,7 +189,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.create, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.create,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: TextField(
                       maxLines: 8,
                       decoration: InputDecoration(
@@ -187,7 +203,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   )),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
+                      leading: Icon(
+                        Icons.domain,
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                      ),
                       title: Text(
                         'Pilih Alamat Provinsi',
                         style: TextStyle(fontSize: 13),
@@ -202,7 +221,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
+                      leading: Icon(
+                        Icons.domain,
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                      ),
                       title: Text(
                         'Pilih Alamat Kabupaten',
                         style: TextStyle(fontSize: 13),
@@ -217,7 +239,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                     child: ListTile(
-                      leading: Icon(Icons.domain, color: Color.fromRGBO(41, 30, 47, 1),),
+                      leading: Icon(
+                        Icons.domain,
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                      ),
                       title: Text('Pilih Alamat Kecamatan',
                           style: TextStyle(fontSize: 13)),
                       onTap: () {
@@ -230,7 +255,10 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                   ),
                   Card(
                       child: ListTile(
-                    leading: Icon(Icons.location_on, color: Color.fromRGBO(41, 30, 47, 1),),
+                    leading: Icon(
+                      Icons.location_on,
+                      color: Color.fromRGBO(41, 30, 47, 1),
+                    ),
                     title: TextField(
                       maxLines: 8,
                       decoration: InputDecoration(
@@ -450,7 +478,9 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                                     size: 16,
                                   ),
                                   Text('Tambahkan Checkin',
-                                      style: TextStyle(color: Color.fromRGBO(41, 30, 47, 1),)),
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(41, 30, 47, 1),
+                                      )),
                                 ],
                               ),
                               color: Colors.transparent,
@@ -491,6 +521,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -515,6 +558,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -539,6 +595,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -563,6 +632,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -587,6 +669,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -611,6 +706,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),
@@ -635,6 +743,19 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent> {
                             fontSize: 13,
                           ),
                         ),
+                        trailing: ButtonTheme(
+                        minWidth: 0.0,
+                        child: FlatButton(
+                          color: Colors.white,
+                          textColor: Colors.red,
+                          disabledColor: Colors.green[400],
+                          disabledTextColor: Colors.white,
+                          padding: EdgeInsets.all(15.0),
+                          splashColor: Colors.blueAccent,
+                          child: Icon(Icons.close,),
+                          onPressed: () async {
+                          },
+                        )),
                         subtitle: Text('04:00 - 04:30'),
                       ),
                     ),

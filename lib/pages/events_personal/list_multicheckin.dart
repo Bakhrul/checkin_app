@@ -23,37 +23,39 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
     datepicker = FocusNode();
     super.initState();
   }
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Daftar Checkin Peserta",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+      _searchQuery.clear();
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
+  
+  Widget appBarTitle = Text("Daftar Checkin Peserta",style: TextStyle(fontSize: 16),);
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeylistmulticheckin,
-      appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Daftar Checkin Peserta",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-        actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              tooltip: 'Cari Provinsi',
-              onPressed: () {
-                
-              },
-            ),
-          ],
-      ),
+      appBar: buildBar(context),
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: SingleChildScrollView(
@@ -653,6 +655,44 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
           ),
         ),
       ),
+    );
+  }
+  Widget buildBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor:Color.fromRGBO(41, 30, 47, 1),
+      actions: <Widget>[
+        IconButton(
+          icon: actionIcon,
+          onPressed: () {
+            setState(() {
+              if (this.actionIcon.icon == Icons.search) {
+                // ignore: new_with_non_type
+                this.actionIcon = new Icon(
+                  Icons.close,
+                  color: Colors.white,
+                );
+                this.appBarTitle = TextField(
+                  controller: _searchQuery,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: InputBorder.none,
+                      prefixIcon: new Icon(Icons.search, color: Colors.white),
+                      hintText: "Cari Berdasarkan Nama Peserta",
+                      hintStyle: TextStyle(color: Colors.white,fontSize: 14,)),
+                );
+              } else {
+                _handleSearchEnd();
+              }
+            });
+          },
+        ),
+      ],
     );
   }
 }

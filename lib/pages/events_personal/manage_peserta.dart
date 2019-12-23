@@ -6,6 +6,7 @@ import 'create_peserta.dart';
 GlobalKey<ScaffoldState> _scaffoldKeyManagePeserta;
 
 class ManagePeserta extends StatefulWidget {
+
   ManagePeserta({Key key, this.title}) : super(key: key);
   final String title;
   @override
@@ -21,32 +22,39 @@ class _ManagePesertaState extends State<ManagePeserta> {
     super.initState();
   }
 
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Kelola Peserta Event",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+      _searchQuery.clear();
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
+  
+  Widget appBarTitle = Text("Kelola Peserta Event",style: TextStyle(fontSize: 16),);
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyManagePeserta,
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-        title: Text(
-          "Kelola Peserta",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-        iconTheme: new IconThemeData(color: Colors.white),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            tooltip: 'Cari Peserta',
-            onPressed: () {},
-          ),
-        ],
-      ),
+      appBar: buildBar(context),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -166,6 +174,45 @@ class _ManagePesertaState extends State<ManagePeserta> {
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
+    );
+  }
+
+  Widget buildBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor:Color.fromRGBO(41, 30, 47, 1),
+      actions: <Widget>[
+        IconButton(
+          icon: actionIcon,
+          onPressed: () {
+            setState(() {
+              if (this.actionIcon.icon == Icons.search) {
+                // ignore: new_with_non_type
+                this.actionIcon = new Icon(
+                  Icons.close,
+                  color: Colors.white,
+                );
+                this.appBarTitle = TextField(
+                  controller: _searchQuery,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: InputBorder.none,
+                      prefixIcon: new Icon(Icons.search, color: Colors.white),
+                      hintText: "Cari Peserta Berdasarkan Nama",
+                      hintStyle: TextStyle(color: Colors.white,fontSize: 14,)),
+                );
+              } else {
+                _handleSearchEnd();
+              }
+            });
+          },
+        ),
+      ],
     );
   }
 }

@@ -467,7 +467,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
@@ -518,7 +518,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
@@ -569,7 +569,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
+                              child: Text("Lihat Detail"),
                             ),
                           ],
                         ),
