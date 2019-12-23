@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventDetail;
 
@@ -30,21 +29,28 @@ class _ManajemenEventDetailFollowingState
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventDetail,
-      appBar: new AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.blue,
-        ),
-        title: new Text(
-          "Detail Event",
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 16,
+      appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          title: Text(
+            "Detail Event",
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
+          iconTheme: new IconThemeData(color: Colors.white),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              tooltip: 'Notifikasi',
+              onPressed: () {
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
       body: Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
@@ -65,7 +71,7 @@ class _ManajemenEventDetailFollowingState
                             image: new DecorationImage(
                               fit: BoxFit.fill,
                               image: AssetImage(
-                                'images/imgavatar.png',
+                                'images/noimage.jpg',
                               ),
                             ),
                           )),
@@ -102,7 +108,7 @@ class _ManajemenEventDetailFollowingState
                       ),
                       Padding(
                           padding: const EdgeInsets.only(
-                              right: 15.0, left: 15.0, top: 20.0),
+                              right: 15.0, left: 15.0, top: 5.0),
                           child: Text(
                             'Meetup Flutter #2',
                             style: TextStyle(
@@ -254,30 +260,30 @@ class _ManajemenEventDetailFollowingState
                     ],
                   ),
                 ),
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 10.0,
-                      right: 15.0,
-                      left: 15.0,
-                    ),
-                    child: Text(
-                      'Tentang Event',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          height: 2,
-                        )),
-                  ),
-                ),
+                // Container(
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(
+                //       top: 10.0,
+                //       right: 15.0,
+                //       left: 15.0,
+                //     ),
+                //     child: Text(
+                //       'Tentang Event',
+                //       style: TextStyle(fontSize: 20),
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(15.0),
+                //     child: Text(
+                //         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged',
+                //         textAlign: TextAlign.center,
+                //         style: TextStyle(
+                //           height: 2,
+                //         )),
+                //   ),
+                // ),
                 Divider(),
                 Container(
                     margin: EdgeInsets.only(top: 2.0),

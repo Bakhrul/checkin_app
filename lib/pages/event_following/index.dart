@@ -1,6 +1,8 @@
 import 'package:checkin_app/pages/event_following/detail.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
+import 'check_in.dart';
+import 'package:flutter/cupertino.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
 
@@ -8,6 +10,11 @@ void showInSnackBar(String value) {
   _scaffoldKeyEventAll.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
 }
+
+enum PageEnum{
+    kelolaCheckinPage,
+    kelolaHistoryPage,
+  }
 
 class ManajemenEventFollowing extends StatefulWidget {
   ManajemenEventFollowing({Key key, this.title}) : super(key: key);
@@ -23,6 +30,20 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
   void initState() {
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
+  }
+  _onSelect(PageEnum value) {
+    switch (value) {
+      case PageEnum.kelolaCheckinPage:
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (BuildContext context) => CheckIn()));
+        break;
+        case PageEnum.kelolaHistoryPage:
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (BuildContext context) => ManajemenEventDetailFollowing()));
+        break;
+      default:
+        break;
+    }
   }
 
   @override
@@ -89,9 +110,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     'Komunitas Dev Junior pertama',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  //  onTap: () {
-                  //       Navigator.pushNamed(context, "/dashboard");
-                  //     },
+
                   onTap: (){                   
                     Navigator.push(context,
                      MaterialPageRoute(builder: (context) => ManajemenEventDetailFollowing()
@@ -102,11 +121,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -147,11 +171,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -192,11 +221,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -237,11 +271,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -282,11 +321,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -327,11 +371,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -372,11 +421,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
@@ -417,11 +471,16 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                        child: Text("Daftar Sekarang"),
+                        value: PageEnum.kelolaCheckinPage,
+                        child: Text("Checkin Sekarang"),
+                      ),
+                      PopupMenuItem(
+                        value: PageEnum.kelolaHistoryPage,
+                        child: Text("Lihat Detail"),
                       ),
                     ],
                   ),
