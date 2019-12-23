@@ -31,6 +31,8 @@ dependencies:
   http:
   shared_preferences:
   fluttertoast:
+  firebase_auth:
+  google_sign_in:
 
 
 dev_dependencies:
@@ -85,3 +87,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+module:
+  androidX: true

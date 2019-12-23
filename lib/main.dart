@@ -1,7 +1,9 @@
+import 'package:checkin_app/auth/register.dart';
 import 'package:checkin_app/pages/events_all/index.dart';
 import 'package:flutter/material.dart';
 
 //pages
+import 'auth/login.dart';
 import 'dashboard.dart';
 import 'pages/events_all/index.dart';
 import 'pages/events_all/index_z.dart';
@@ -18,7 +20,9 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/check_in" : (BuildContext context) => CheckIn(),
   "/count_down" : (BuildContext context) => CountDown(),
   "/tes" : (BuildContext context) => Tes(),
-  "/index_z" : (BuildContext context) => EventAll()
+  "/index_z" : (BuildContext context) => EventAll(),
+  "/login" : (BuildContext context) => LoginPage(),
+  "/register" : (BuildContext context) => Register(),
 };
 void main() => runApp(MyApp());
 
