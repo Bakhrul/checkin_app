@@ -7,16 +7,16 @@ void showInSnackBar(String value) {
       .showSnackBar(new SnackBar(content: new Text(value)));
 }
 
-class ManajemenEventDetail extends StatefulWidget {
-  ManajemenEventDetail({Key key, this.title}) : super(key: key);
+class ManajemenEventDetailDisabled extends StatefulWidget {
+  ManajemenEventDetailDisabled({Key key, this.title}) : super(key: key);
   final String title;
   @override
   State<StatefulWidget> createState() {
-    return _ManajemenEventDetailState();
+    return _ManajemenEventDetailDisabledState();
   }
 }
 
-class _ManajemenEventDetailState extends State<ManajemenEventDetail> {
+class _ManajemenEventDetailDisabledState extends State<ManajemenEventDetailDisabled> {
   @override
   void initState() {
     _scaffoldKeyEventDetail = GlobalKey<ScaffoldState>();
@@ -288,7 +288,7 @@ class _ManajemenEventDetailState extends State<ManajemenEventDetail> {
                       width: double.infinity,
                       // height: double.infinity,
                       child: RaisedButton(
-                        onPressed: () {},
+                        onPressed: null,
                         color: Colors.lightBlueAccent,
                         child: const Text(
                           "Registered",

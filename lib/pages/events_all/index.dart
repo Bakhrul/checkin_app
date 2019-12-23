@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'detail.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
 
@@ -84,9 +85,18 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     ),
                   ),
                   title: Text(
-                    'Komunitas Dev Junior',
+                    'Komunitas Dev Junior pertama',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  //  onTap: () {
+                  //       Navigator.pushNamed(context, "/dashboard");
+                  //     },
+                  onTap: (){                   
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
+                    ) 
+                    );
+                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),

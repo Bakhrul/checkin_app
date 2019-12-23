@@ -13,16 +13,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<Null> getSharedPrefs() async {
       Timer(Duration(seconds: 2),
-          () => Navigator.pushReplacementNamed(context, "/dashboard"));
+          () => Navigator.pushReplacementNamed(context, "/login"));
   }
 
   @override
   void initState() {
     // initPlatformState();
-    
     getSharedPrefs();
-
-
     super.initState();
   }
 
