@@ -43,9 +43,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Container(
                   child: Center(
                     child: Text(
-                      "Checkin App",
+                      "MOCIN",
                       style: TextStyle(
-                          color: Colors.blue,
+                          color: Color.fromRGBO(41, 30, 47, 1),
                           fontFamily: 'TitilliumWeb',
                           fontWeight: FontWeight.bold,
                           fontSize: 30.0),

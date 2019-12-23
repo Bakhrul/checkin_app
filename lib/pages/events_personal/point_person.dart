@@ -22,34 +22,39 @@ class _PointEventsState extends State<PointEvents> {
     _scaffoldKeyPointPerson = GlobalKey<ScaffoldState>();
     super.initState();
   }
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Kelola Hasil Absen Peserta",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+      _searchQuery.clear();
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
+  
+  Widget appBarTitle = Text("Kelola Hasil Absen Peserta",style: TextStyle(fontSize: 16),);
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyPointPerson,
-      appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-          title: new Text(
-            "Points Member Events",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: new Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              tooltip: 'Cari Provinsi',
-              onPressed: () {},
-            ),
-          ],
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
+      appBar: buildBar(context),
       body: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: SingleChildScrollView(
@@ -213,6 +218,44 @@ class _PointEventsState extends State<PointEvents> {
           ),
         ),
       ),
+    );
+  }
+  Widget buildBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor:Color.fromRGBO(41, 30, 47, 1),
+      actions: <Widget>[
+        IconButton(
+          icon: actionIcon,
+          onPressed: () {
+            setState(() {
+              if (this.actionIcon.icon == Icons.search) {
+                // ignore: new_with_non_type
+                this.actionIcon = new Icon(
+                  Icons.close,
+                  color: Colors.white,
+                );
+                this.appBarTitle = TextField(
+                  controller: _searchQuery,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: InputBorder.none,
+                      prefixIcon: new Icon(Icons.search, color: Colors.white),
+                      hintText: "Cari Berdasarkan Nama",
+                      hintStyle: TextStyle(color: Colors.white,fontSize: 14,)),
+                );
+              } else {
+                _handleSearchEnd();
+              }
+            });
+          },
+        ),
+      ],
     );
   }
 }
