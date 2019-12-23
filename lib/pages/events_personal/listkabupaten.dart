@@ -33,6 +33,7 @@ class _KabupatenState extends State<Kabupaten> {
       backgroundColor: Colors.white,
       key: _scaffoldKeykabupaten,
       appBar: new AppBar(
+        
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
@@ -53,7 +54,7 @@ class _KabupatenState extends State<Kabupaten> {
             onPressed: () {},
           ),
         ],
-          backgroundColor: Colors.blue),
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
       body: Padding(
         padding: const EdgeInsets.only(top:20.0),
         child: SingleChildScrollView(

@@ -30,6 +30,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeylistmulticheckin,
       appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

@@ -27,7 +27,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyManageAbsenPeserta,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         title: Text(
           "Kelola Absen Peserta",
           style: TextStyle(
@@ -47,75 +47,75 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
           ),
         ],
       ),
-      drawer: SafeArea(
-        child: Drawer(
-          child: Container(
-            color: Colors.blue,
+      // drawer: SafeArea(
+      //   child: Drawer(
+      //     child: Container(
+      //       color: Colors.blue,
             
-            child: Column(
+      //       child: Column(
               
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top:50.0,bottom: 50.0),
-                  child: Text('Indikator Absen Peserta Event',style: TextStyle(fontSize: 20,color: Colors.white,)),
-                ),
-                CircularPercentIndicator(
-                  radius: 160.0,
-                  lineWidth: 5.0,
-                  percent: 0.8,
-                  center: new Text(
-                    "30 / 70%",
-                    style:
-                        new TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: 14.0),
-                  ),
-                  backgroundColor: Colors.greenAccent,
-                  progressColor: Color.fromRGBO(179, 0, 179, 1.0),
-                  footer: new Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top:30.0,),
-                            child: Text("12 ",
-                                style: new TextStyle(
-                                     fontSize: 17.0,color: Colors.greenAccent)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top:30.0,),
-                            child: Text("/  478",
-                                style: new TextStyle(
-                                     fontSize: 17.0,color: Colors.white)),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top:15.0,),
-                            child: Text("466 ",
-                                style: new TextStyle(
-                                     fontSize: 17.0,color: Colors.purple)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top:15.0,),
-                            child: Text("/  478",
-                                style: new TextStyle(
-                                     fontSize: 17.0,color: Colors.white)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Profil Drawer Here
-                //  Menu Section Here
-              ],
-            ),
-          ),
-        ),
-      ),
+      //         children: <Widget>[
+      //           Padding(
+      //             padding: const EdgeInsets.only(top:50.0,bottom: 50.0),
+      //             child: Text('Indikator Absen Peserta Event',style: TextStyle(fontSize: 20,color: Colors.white,)),
+      //           ),
+      //           CircularPercentIndicator(
+      //             radius: 160.0,
+      //             lineWidth: 5.0,
+      //             percent: 0.8,
+      //             center: new Text(
+      //               "30 / 70%",
+      //               style:
+      //                   new TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: 14.0),
+      //             ),
+      //             backgroundColor: Colors.greenAccent,
+      //             progressColor: Color.fromRGBO(179, 0, 179, 1.0),
+      //             footer: new Column(
+      //               children: <Widget>[
+      //                 Row(
+      //                   mainAxisAlignment: MainAxisAlignment.center,
+      //                   children: <Widget>[
+      //                     Padding(
+      //                       padding: const EdgeInsets.only(top:30.0,),
+      //                       child: Text("12 ",
+      //                           style: new TextStyle(
+      //                                fontSize: 17.0,color: Colors.greenAccent)),
+      //                     ),
+      //                     Padding(
+      //                       padding: const EdgeInsets.only(top:30.0,),
+      //                       child: Text("/  478",
+      //                           style: new TextStyle(
+      //                                fontSize: 17.0,color: Colors.white)),
+      //                     ),
+      //                   ],
+      //                 ),
+      //                 Row(
+      //                   mainAxisAlignment: MainAxisAlignment.center,
+      //                   children: <Widget>[
+      //                     Padding(
+      //                       padding: const EdgeInsets.only(top:15.0,),
+      //                       child: Text("466 ",
+      //                           style: new TextStyle(
+      //                                fontSize: 17.0,color: Colors.purple)),
+      //                     ),
+      //                     Padding(
+      //                       padding: const EdgeInsets.only(top:15.0,),
+      //                       child: Text("/  478",
+      //                           style: new TextStyle(
+      //                                fontSize: 17.0,color: Colors.white)),
+      //                     ),
+      //                   ],
+      //                 ),
+      //               ],
+      //             ),
+      //           ),
+      //           // Profil Drawer Here
+      //           //  Menu Section Here
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

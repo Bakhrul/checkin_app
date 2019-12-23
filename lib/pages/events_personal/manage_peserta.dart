@@ -27,7 +27,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyManagePeserta,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         title: Text(
           "Kelola Peserta",
           style: TextStyle(
@@ -44,19 +44,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
             ),
             tooltip: 'Cari Peserta',
             onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            tooltip: 'Tambah Peserta',
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ManajemeCreatePeserta()));
-            },
           ),
         ],
       ),
@@ -170,6 +157,14 @@ class _ManagePesertaState extends State<ManagePeserta> {
             )),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ManajemeCreatePeserta()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }

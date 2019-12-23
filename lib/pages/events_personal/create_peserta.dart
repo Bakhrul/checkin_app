@@ -36,6 +36,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       backgroundColor: Color.fromRGBO(242, 242, 242, 1.0),
       key: _scaffoldKeycreatepeserta,
       appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -54,7 +55,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
             children: <Widget>[
               Card(
                   child: ListTile(
-                leading: Icon(Icons.category, color: Colors.blue),
+                leading: Icon(Icons.category, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: DropdownButton<String>(
                   isExpanded: true,
                   value: sifat,
@@ -97,7 +98,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                           EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       prefixIcon: Icon(
                         Icons.search,
-                        color: Colors.blue,
+                        color: Color.fromRGBO(41, 30, 47, 1),
                       ),
                       hintText: "Cari Berdasarkan Nama Lengkap",
                       border: InputBorder.none,
@@ -213,7 +214,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
           Navigator.pop(context);
         },
         child: Icon(Icons.check),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }

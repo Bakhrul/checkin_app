@@ -71,6 +71,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       backgroundColor: Colors.white,
       key: _scaffoldKeypersonalevent,
       appBar: new AppBar(
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -109,7 +110,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.blue,
+                                color: Color.fromRGBO(41, 30, 47, 1),
                                 fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
@@ -139,7 +140,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.blue,
+                                color: Color.fromRGBO(41, 30, 47, 1),
                                 fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
@@ -169,7 +170,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         child: Text('16 Event',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.blue,
+                                color: Color.fromRGBO(41, 30, 47, 1),
                                 fontSize: 15),
                             textAlign: TextAlign.right),
                       ),
@@ -186,33 +187,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     Text(
                       'Daftar Event',
                       style: TextStyle(fontSize: 16),
-                    ),
-                    ButtonTheme(
-                      minWidth: 0, //wraps child's width
-                      height: 0,
-                      child: FlatButton(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.add,
-                              color: Colors.blue,
-                              size: 16,
-                            ),
-                            Text('Buat Event',
-                                style: TextStyle(color: Colors.blue)),
-                          ],
-                        ),
-                        color: Colors.white,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        padding: EdgeInsets.all(0),
-                        onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ManajemeCreateEvent(),
-                              ));
-                        },
-                      ),
                     ),
                   ],
                 ),
@@ -550,6 +524,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ManajemeCreateEvent(),
+              ));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }
