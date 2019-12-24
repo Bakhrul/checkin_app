@@ -30,27 +30,26 @@ class _ManajemenEventDetailFollowingState
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventDetail,
       appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-          title: Text(
-            "Detail Event",
-            style: TextStyle(
+        centerTitle: true,
+        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        title: Text(
+          "Detail History Event",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: new IconThemeData(color: Colors.white),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.notifications,
               color: Colors.white,
             ),
+            tooltip: 'Notifikasi',
+            onPressed: () {},
           ),
-          iconTheme: new IconThemeData(color: Colors.white),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color: Colors.white,
-              ),
-              tooltip: 'Notifikasi',
-              onPressed: () {
-              },
-            ),
-          ],
-        ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
@@ -112,7 +111,7 @@ class _ManajemenEventDetailFollowingState
                           child: Text(
                             'Meetup Flutter #2',
                             style: TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromRGBO(41, 30, 47, 1),
                                 fontFamily: 'RobotoMono',
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold),
@@ -132,7 +131,7 @@ class _ManajemenEventDetailFollowingState
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlue[100],
+                    // color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -176,7 +175,7 @@ class _ManajemenEventDetailFollowingState
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlue[100],
+                    // color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -221,7 +220,7 @@ class _ManajemenEventDetailFollowingState
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.lightBlue[100],
+                    // color: Colors.lightBlue[100],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -292,12 +291,15 @@ class _ManajemenEventDetailFollowingState
                       //height: 40,
                       child: Column(
                         children: <Widget>[
-                          Text("History Absensi",style: TextStyle( fontSize: 20.0)),
-                          Divider(color: Colors.black),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text("History Absensi",
+                                style: TextStyle(fontSize: 20.0)),
+                          ),
+                          Divider(),
                           Card(
                               child: ListTile(
                             leading: Padding(
-                              
                               padding: const EdgeInsets.all(0.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100.0),
@@ -320,12 +322,16 @@ class _ManajemenEventDetailFollowingState
                                 ),
                               ),
                             ),
-                            title: Text('Muhammad Bakhrul Bila Sakhil',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                            title: Text(
+                              '12 September 2019 - KODECHECKIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text('081285270793'),
+                              child: Text('12 September 2019'),
                             ),
                           )),
                           Card(
@@ -355,12 +361,16 @@ class _ManajemenEventDetailFollowingState
                                 ),
                               ),
                             ),
-                            title: Text('Muhammad Bakhrul Bila Sakhil',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                            title: Text(
+                              '12 September 2019 - KODECHECKIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text('081285270793'),
+                              child: Text('12 September 2019'),
                             ),
                           )),
                           Card(
@@ -388,12 +398,16 @@ class _ManajemenEventDetailFollowingState
                                 ),
                               ),
                             ),
-                            title: Text('Muhammad Bakhrul Bila Sakhil',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                            title: Text(
+                              '12 September 2019 - KODECHECKIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text('081285270793'),
+                              child: Text('12 September 2019'),
                             ),
                           )),
                           Card(
@@ -421,12 +435,16 @@ class _ManajemenEventDetailFollowingState
                                 ),
                               ),
                             ),
-                            title: Text('Muhammad Bakhrul Bila Sakhil',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                            title: Text(
+                              '12 September 2019 - KODECHECKIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text('081285270793'),
+                              child: Text('12 September 2019'),
                             ),
                           )),
                           Card(
@@ -456,12 +474,16 @@ class _ManajemenEventDetailFollowingState
                                 ),
                               ),
                             ),
-                            title: Text('Muhammad Bakhrul Bila Sakhil',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500)),
+                            title: Text(
+                              '12 September 2019 - KODECHECKIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text('081285270793'),
+                              child: Text('12 September 2019'),
                             ),
                           )),
                         ],

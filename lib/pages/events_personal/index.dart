@@ -8,8 +8,6 @@ import 'list_multicheckin.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
 
-import '../events_all/detail.dart';
-
 GlobalKey<ScaffoldState> _scaffoldKeypersonalevent;
 enum PageEnum {
   kelolaPesertaPage,
@@ -224,12 +222,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     'Komunitas Dev Junior',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
@@ -296,12 +288,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     'Komunitas Dev Junior',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
@@ -368,12 +354,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     'Komunitas Dev Junior',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
@@ -440,12 +420,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     'Komunitas Dev Junior',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
@@ -512,12 +486,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     'Komunitas Dev Junior',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'detail.dart';
 import 'detail_event.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -28,6 +27,32 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
   }
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Semua Event",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+      _searchQuery.clear();
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
+  
+  Widget appBarTitle = Text("Semua Event",style: TextStyle(fontSize: 16),);
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
   _onSelect(PageEnum value) {
     switch (value) {
       case PageEnum.kelolaRegisterPage:
@@ -44,28 +69,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventAll,
-      appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-          title: new Text(
-            "Semua Event",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              tooltip: 'Notifikasi',
-              onPressed: () {},
-            ),
-          ],
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
+      appBar: buildBar(context),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0,bottom: 10.0,right: 5.0,left: 5.0),
         child: SingleChildScrollView(
@@ -106,12 +110,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   //  onTap: () {
                   //       Navigator.pushNamed(context, "/dashboard");
                   //     },
-                  onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
@@ -162,10 +160,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -207,10 +206,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -252,10 +252,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -297,10 +298,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -342,10 +344,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -387,10 +390,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -432,10 +436,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text('12:00 - 13:00'),
                   ),
-                  trailing: PopupMenuButton(
-                    icon: Icon(Icons.more_vert),
+                  trailing: PopupMenuButton<PageEnum>(
+                    onSelected: _onSelect,
                     itemBuilder: (context) => [
                       PopupMenuItem(
+                        value: PageEnum.kelolaRegisterPage,
                         child: Text("Daftar Sekarang"),
                       ),
                     ],
@@ -446,6 +451,44 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           ),
         ),
       ),
+    );
+  }
+  Widget buildBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor:Color.fromRGBO(41, 30, 47, 1),
+      actions: <Widget>[
+        IconButton(
+          icon: actionIcon,
+          onPressed: () {
+            setState(() {
+              if (this.actionIcon.icon == Icons.search) {
+                // ignore: new_with_non_type
+                this.actionIcon = new Icon(
+                  Icons.close,
+                  color: Colors.white,
+                );
+                this.appBarTitle = TextField(
+                  controller: _searchQuery,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: InputBorder.none,
+                      prefixIcon: new Icon(Icons.search, color: Colors.white),
+                      hintText: "Cari Berdasarkan Nama, Kategori , Tempat",
+                      hintStyle: TextStyle(color: Colors.white,fontSize: 14,)),
+                );
+              } else {
+                _handleSearchEnd();
+              }
+            });
+          },
+        ),
+      ],
     );
   }
 }

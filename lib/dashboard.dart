@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'pages/events_all/detail.dart';
-import 'pages/events_all/detail_disabled.dart';
+import 'pages/events_all/detail_event.dart';
+import 'package:flutter/cupertino.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
+enum PageEnum {
+  kelolaRegisterPage,
+}
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key, this.title}) : super(key: key);
@@ -55,6 +58,17 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  _onSelect(PageEnum value) {
+    switch (value) {
+      case PageEnum.kelolaRegisterPage:
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (BuildContext context) => RegisterEvents()));
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,8 +91,7 @@ class _DashboardState extends State<Dashboard> {
                 color: Colors.white,
               ),
               tooltip: 'Notifikasi',
-              onPressed: () {
-              },
+              onPressed: () {},
             ),
           ],
         ),
@@ -137,7 +150,7 @@ class _DashboardState extends State<Dashboard> {
                             Navigator.pushNamed(context, "/personal_event");
                           },
                         ),
-                         ListTile(
+                        ListTile(
                           title: Text(
                             'Event Yang di Ikuti',
                             style: TextStyle(
@@ -258,24 +271,18 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
-                    ) 
-                    );
-                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text("Daftar Sekarang"),
-                            ),
-                          ],
-                        ),
+                        // trailing: PopupMenuButton(
+                        //   icon: Icon(Icons.more_vert),
+                        //   itemBuilder: (context) => [
+                        //     PopupMenuItem(
+                        //       child: Text("Daftar Sekarang"),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ),
                   ],
@@ -330,20 +337,15 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                            onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
+                        trailing: PopupMenuButton<PageEnum>(
+                          onSelected: _onSelect,
                           itemBuilder: (context) => [
                             PopupMenuItem(
+                              value: PageEnum.kelolaRegisterPage,
                               child: Text("Daftar Sekarang"),
                             ),
                           ],
@@ -385,16 +387,11 @@ class _DashboardState extends State<Dashboard> {
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                             onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetail()
-                    ) 
-                    );
-                  },
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
+                        trailing: PopupMenuButton<PageEnum>(
+                          onSelected: _onSelect,
                           itemBuilder: (context) => [
                             PopupMenuItem(
+                              value: PageEnum.kelolaRegisterPage,
                               child: Text("Daftar Sekarang"),
                             ),
                           ],
@@ -453,24 +450,18 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                             onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
-                    ) 
-                    );
-                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text("Lihat Detail"),
-                            ),
-                          ],
-                        ),
+                        // trailing: PopupMenuButton(
+                        //   icon: Icon(Icons.more_vert),
+                        //   itemBuilder: (context) => [
+                        //     PopupMenuItem(
+                        //       child: Text("Lihat Detail"),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ),
                     Card(
@@ -504,24 +495,18 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                             onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
-                    ) 
-                    );
-                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text("Lihat Detail"),
-                            ),
-                          ],
-                        ),
+                        // trailing: PopupMenuButton(
+                        //   icon: Icon(Icons.more_vert),
+                        //   itemBuilder: (context) => [
+                        //     PopupMenuItem(
+                        //       child: Text("Lihat Detail"),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ),
                     Card(
@@ -555,24 +540,18 @@ class _DashboardState extends State<Dashboard> {
                           'Komunitas Dev Junior',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                             onTap: (){                   
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (context) => ManajemenEventDetailDisabled()
-                    ) 
-                    );
-                  },
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text('12:00 - 13:00'),
                         ),
-                        trailing: PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text("Lihat Detail"),
-                            ),
-                          ],
-                        ),
+                        // trailing: PopupMenuButton(
+                        //   icon: Icon(Icons.more_vert),
+                        //   itemBuilder: (context) => [
+                        //     PopupMenuItem(
+                        //       child: Text("Lihat Detail"),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ),
                   ],

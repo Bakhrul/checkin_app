@@ -2,6 +2,7 @@ import 'package:checkin_app/pages/event_following/detail.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
 import 'check_in.dart';
+import 'count_down.dart';
 import 'package:flutter/cupertino.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
@@ -31,11 +32,39 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
   }
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Mengikuti Event",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+      _searchQuery.clear();
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
+  
+  Widget appBarTitle = Text("Mengikuti Event",style: TextStyle(fontSize: 16),);
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+
+
   _onSelect(PageEnum value) {
     switch (value) {
       case PageEnum.kelolaCheckinPage:
         Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => CheckIn()));
+            builder: (BuildContext context) => CountDown()));
         break;
         case PageEnum.kelolaHistoryPage:
         Navigator.of(context).push(CupertinoPageRoute(
@@ -51,28 +80,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventAll,
-      appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-          title: new Text(
-            "Semua Event Yang Di Ikuti",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              tooltip: 'Notifikasi',
-              onPressed: () {},
-            ),
-          ],
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),),
+      appBar: buildBar(context),
       body: Padding(
         padding: const EdgeInsets.only(top:10.0,bottom: 10.0,right: 5.0,left: 5.0),
         child: SingleChildScrollView(
@@ -490,6 +498,44 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           ),
         ),
       ),
+    );
+  }
+  Widget buildBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor:Color.fromRGBO(41, 30, 47, 1),
+      actions: <Widget>[
+        IconButton(
+          icon: actionIcon,
+          onPressed: () {
+            setState(() {
+              if (this.actionIcon.icon == Icons.search) {
+                // ignore: new_with_non_type
+                this.actionIcon = new Icon(
+                  Icons.close,
+                  color: Colors.white,
+                );
+                this.appBarTitle = TextField(
+                  controller: _searchQuery,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: InputBorder.none,
+                      prefixIcon: new Icon(Icons.search, color: Colors.white),
+                      hintText: "Cari Berdasarkan Nama, Kategori , Tempat",
+                      hintStyle: TextStyle(color: Colors.white,fontSize: 14,)),
+                );
+              } else {
+                _handleSearchEnd();
+              }
+            });
+          },
+        ),
+      ],
     );
   }
 }
