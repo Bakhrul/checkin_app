@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   login() async {
     print('login');
     // await Auth(username: username,password: password ,name: 'login',nameStringsession: headsession , dataStringsession: getsession).getuser();
-    await Auth(username: username.text , password: password.text ).proses();
+    await Auth(username: username.text , password: password.text ).process();
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
   }
