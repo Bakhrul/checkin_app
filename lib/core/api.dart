@@ -28,7 +28,7 @@ class Auth{
   Auth({Key key , this.nameStringsession, this.dataStringsession, this.nameIntsession, this.dataIntsession, this.nameBoolsession, this.dataBoolsession,this.name ,this.username, this.password , this.getDataInt , this.getDataBool , this.getDataString});
 
 
-  proses() async {
+  process() async {
     Fluttertoast.showToast(msg:'Proses Login');
    try{
     final sendlogin = await http.post(noapiurl+'oauth/token', body: {
@@ -98,6 +98,28 @@ class Auth{
     }else{
     Fluttertoast.showToast(msg:'Profile Not Found');
     }
+  }
+
+  savesession() async {
+    if(nameStringsession != null){  
+        for(var i = 0; i < nameStringsession.length ; i++){
+          session.saveString(nameStringsession[i], dataStringsession != null ? dataStringsession[i] : nameStringsession[i]);
+        }
+      }
+      
+      if(nameIntsession != null){
+        for(var i = 0; i < nameIntsession.length ; i++){
+          session.saveInteger(nameIntsession[i],dataIntsession != null ? dataIntsession[i] : nameIntsession[i]);
+        }
+      }
+
+      if(nameBoolsession != null){
+        for(var i = 0; i < nameBoolsession.length ; i++){
+          session.saveBool(nameBoolsession[i], dataBoolsession != null ? dataBoolsession[i] : nameBoolsession[i]);
+        }
+      }
+    
+    return Fluttertoast.showToast(msg:'Success Save');
   }
 
   getsession() async {
