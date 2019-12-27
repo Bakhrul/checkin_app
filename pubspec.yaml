@@ -35,7 +35,6 @@ dependencies:
   google_sign_in:
   flutter_facebook_login:
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,6 +72,9 @@ flutter:
     - images/noimage.jpg
     - images/add-image-icon-sm.png
     - images/imgavatar.png
+    - images/facebook.png
+    - images/google.png
+    - images/bg-header.jpg
 
   # fonts:
   #   - family: Schyler

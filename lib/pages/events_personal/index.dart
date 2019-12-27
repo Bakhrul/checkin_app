@@ -32,10 +32,44 @@ class ManajemenEventPersonal extends StatefulWidget {
 }
 
 class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
+  var height;
+  var futureheight;
+  var pastheight;
+
   @override
   void initState() {
     _scaffoldKeypersonalevent = new GlobalKey<ScaffoldState>();
     super.initState();
+  }
+
+  void currentEvent() {
+    setState(() {
+      if (height == 0.0) {
+        height = null;
+      } else {
+        height = 0.0;
+      }
+    });
+  }
+
+  void futureEvent() {
+    setState(() {
+      if (futureheight == 0.0) {
+        futureheight = null;
+      } else {
+        futureheight = 0.0;
+      }
+    });
+  }
+
+  void pastEvent() {
+    setState(() {
+      if (pastheight == 0.0) {
+        pastheight = null;
+      } else {
+        pastheight = 0.0;
+      }
+    });
   }
 
   _onSelect(PageEnum value) {
@@ -82,459 +116,384 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             fontSize: 16,
           ),
         ),
+        actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              tooltip: 'Buat Event Sekarang',
+              onPressed: () {
+                Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ManajemeCreateEvent(),
+              ));
+              },
+            ),
+          ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Card(
-                  child: ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 7,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text(
-                          'Jumlah event yang dibuat',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text('16 Event',
-                            style: TextStyle(
+              InkWell(
+                  onTap: currentEvent,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10.0),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, top: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(('Event Berlangsung  ( 1 Event )').toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                                fontSize: 15),
-                            textAlign: TextAlign.right),
+                              )),
+                          Icon(height == null
+                              ? Icons.arrow_drop_down
+                              : Icons.arrow_drop_up),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )),
-              Card(
+                  )),
+              Container(
+                height: height,
+                child: Card(
                   child: ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 7,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text(
-                          'Jumlah event sudah diselenggarakan',
-                          style: TextStyle(fontSize: 15),
+                    leading: Container(
+                      padding: EdgeInsets.only(right: 10.0),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              right: BorderSide(
+                        color: Colors.lightBlue,
+                        width: 2.0,
+                      ))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              '12/31/2019',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    title: Text(
+                      'Komunitas Dev Junior',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text('12:00 - 13:00'),
+                    ),
+                    trailing: PopupMenuButton<PageEnum>(
+                      onSelected: _onSelect,
+                      icon: Icon(Icons.more_vert),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: PageEnum.kelolaPesertaPage,
+                          child: Text("Kelola Peserta"),
                         ),
-                      ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaWaktuCheckinPage,
+                          child: Text("Kelola waktu checkin"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaAbsenPesertaPage,
+                          child: Text("Kelola absen peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaCheckinPesertaPage,
+                          child: Text("Kelola checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaHasilAKhirPage,
+                          child: Text("Hasil akhir checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          child: Text("Hapus Event"),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text('16 Event',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                                fontSize: 15),
-                            textAlign: TextAlign.right),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              )),
-              Card(
+              ),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Divider(),
+              ),
+              InkWell(
+                  onTap: futureEvent,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10.0),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, top: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                              ('Event Yang Akan Datang ( 2 Event )')
+                                  .toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
+                          Icon(futureheight == null
+                              ? Icons.arrow_drop_down
+                              : Icons.arrow_drop_up),
+                        ],
+                      ),
+                    ),
+                  )),
+              Container(
+                height: futureheight,
+                child: Card(
                   child: ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 7,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text(
-                          'Jumlah event yang dibatalkan',
-                          style: TextStyle(fontSize: 15),
-                        ),
+                    leading: Container(
+                      padding: EdgeInsets.only(right: 10.0),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              right: BorderSide(
+                        color: Colors.lightBlue,
+                        width: 2.0,
+                      ))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              '12/31/2019',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Text('16 Event',
-                            style: TextStyle(
+                    title: Text(
+                      'Komunitas Dev Junior',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text('12:00 - 13:00'),
+                    ),
+                    trailing: PopupMenuButton<PageEnum>(
+                      onSelected: _onSelect,
+                      icon: Icon(Icons.more_vert),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: PageEnum.kelolaPesertaPage,
+                          child: Text("Kelola Peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaWaktuCheckinPage,
+                          child: Text("Kelola waktu checkin"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaAbsenPesertaPage,
+                          child: Text("Kelola absen peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaCheckinPesertaPage,
+                          child: Text("Kelola checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaHasilAKhirPage,
+                          child: Text("Hasil akhir checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          child: Text("Hapus Event"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                height: futureheight,
+                child: Card(
+                  child: ListTile(
+                    leading: Container(
+                      padding: EdgeInsets.only(right: 10.0),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              right: BorderSide(
+                        color: Colors.lightBlue,
+                        width: 2.0,
+                      ))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '12/31/2019',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              '12/31/2019',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    title: Text(
+                      'Komunitas Dev Junior',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text('12:00 - 13:00'),
+                    ),
+                    trailing: PopupMenuButton<PageEnum>(
+                      onSelected: _onSelect,
+                      icon: Icon(Icons.more_vert),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: PageEnum.kelolaPesertaPage,
+                          child: Text("Kelola Peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaWaktuCheckinPage,
+                          child: Text("Kelola waktu checkin"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaAbsenPesertaPage,
+                          child: Text("Kelola absen peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaCheckinPesertaPage,
+                          child: Text("Kelola checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaHasilAKhirPage,
+                          child: Text("Hasil akhir checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          child: Text("Hapus Event"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Divider(),
+              ),
+              InkWell(
+                  onTap: pastEvent,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10.0),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, top: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                              ('Event Telah Selesai ( 1 Event )').toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                                fontSize: 15),
-                            textAlign: TextAlign.right),
+                              )),
+                          Icon(pastheight == null
+                              ? Icons.arrow_drop_down
+                              : Icons.arrow_drop_up),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 20.0, bottom: 10.0, left: 10.0, right: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Daftar Event',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2.0,
-                    ))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '12/31/2019',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
+                  )),
+              Container(
+                height: pastheight,
+                child: Card(
+                  child: ListTile(
+                    leading: Container(
+                      padding: EdgeInsets.only(right: 10.0),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              right: BorderSide(
+                        color: Colors.lightBlue,
+                        width: 2.0,
+                      ))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
                             '12/31/2019',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  title: Text(
-                    'Komunitas Dev Junior',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text('12:00 - 13:00'),
-                  ),
-                  trailing: PopupMenuButton<PageEnum>(
-                    onSelected: _onSelect,
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: PageEnum.kelolaPesertaPage,
-                        child: Text("Kelola Peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaWaktuCheckinPage,
-                        child: Text("Kelola waktu checkin"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaAbsenPesertaPage,
-                        child: Text("Kelola absen peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaCheckinPesertaPage,
-                        child: Text("Kelola checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaHasilAKhirPage,
-                        child: Text("Hasil akhir checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        child: Text("Hapus Event"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2.0,
-                    ))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '12/31/2019',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            '12/31/2019',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              '12/31/2019',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
+                        ],
+                      ),
+                    ),
+                    title: Text(
+                      'Komunitas Dev Junior',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text('12:00 - 13:00'),
+                    ),
+                    trailing: PopupMenuButton<PageEnum>(
+                      onSelected: _onSelect,
+                      icon: Icon(Icons.more_vert),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: PageEnum.kelolaPesertaPage,
+                          child: Text("Kelola Peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaWaktuCheckinPage,
+                          child: Text("Kelola waktu checkin"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaAbsenPesertaPage,
+                          child: Text("Kelola absen peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaCheckinPesertaPage,
+                          child: Text("Kelola checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          value: PageEnum.kelolaHasilAKhirPage,
+                          child: Text("Hasil akhir checkin peserta"),
+                        ),
+                        PopupMenuItem(
+                          child: Text("Hapus Event"),
                         ),
                       ],
                     ),
-                  ),
-                  title: Text(
-                    'Komunitas Dev Junior',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text('12:00 - 13:00'),
-                  ),
-                  trailing: PopupMenuButton<PageEnum>(
-                    onSelected: _onSelect,
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: PageEnum.kelolaPesertaPage,
-                        child: Text("Kelola Peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaWaktuCheckinPage,
-                        child: Text("Kelola waktu checkin"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaAbsenPesertaPage,
-                        child: Text("Kelola absen peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaCheckinPesertaPage,
-                        child: Text("Kelola checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaHasilAKhirPage,
-                        child: Text("Hasil akhir checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        child: Text("Hapus Event"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2.0,
-                    ))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '12/31/2019',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            '12/31/2019',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  title: Text(
-                    'Komunitas Dev Junior',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text('12:00 - 13:00'),
-                  ),
-                  trailing: PopupMenuButton<PageEnum>(
-                    onSelected: _onSelect,
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: PageEnum.kelolaPesertaPage,
-                        child: Text("Kelola Peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaWaktuCheckinPage,
-                        child: Text("Kelola waktu checkin"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaAbsenPesertaPage,
-                        child: Text("Kelola absen peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaCheckinPesertaPage,
-                        child: Text("Kelola checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaHasilAKhirPage,
-                        child: Text("Hasil akhir checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        child: Text("Hapus Event"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2.0,
-                    ))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '12/31/2019',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            '12/31/2019',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  title: Text(
-                    'Komunitas Dev Junior',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text('12:00 - 13:00'),
-                  ),
-                  trailing: PopupMenuButton<PageEnum>(
-                    onSelected: _onSelect,
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: PageEnum.kelolaPesertaPage,
-                        child: Text("Kelola Peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaWaktuCheckinPage,
-                        child: Text("Kelola waktu checkin"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaAbsenPesertaPage,
-                        child: Text("Kelola absen peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaCheckinPesertaPage,
-                        child: Text("Kelola checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaHasilAKhirPage,
-                        child: Text("Hasil akhir checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        child: Text("Hapus Event"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.only(right: 10.0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            right: BorderSide(
-                      color: Colors.lightBlue,
-                      width: 2.0,
-                    ))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '12/31/2019',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            '12/31/2019',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  title: Text(
-                    'Komunitas Dev Junior',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text('12:00 - 13:00'),
-                  ),
-                  trailing: PopupMenuButton<PageEnum>(
-                    onSelected: _onSelect,
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: PageEnum.kelolaPesertaPage,
-                        child: Text("Kelola Peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaWaktuCheckinPage,
-                        child: Text("Kelola waktu checkin"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaAbsenPesertaPage,
-                        child: Text("Kelola absen peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaCheckinPesertaPage,
-                        child: Text("Kelola checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        value: PageEnum.kelolaHasilAKhirPage,
-                        child: Text("Hasil akhir checkin peserta"),
-                      ),
-                      PopupMenuItem(
-                        child: Text("Hapus Event"),
-                      ),
-                    ],
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ManajemeCreateEvent(),
-              ));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
     );
   }
