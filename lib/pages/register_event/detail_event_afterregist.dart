@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:checkin_app/pages/register_event/step_register_one.dart';
 
-class RegisterEvents extends StatefulWidget {
-  RegisterEvents({Key key}) : super(key: key);
+class AfterRegisterEvents extends StatefulWidget {
+  AfterRegisterEvents({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _RegisterEvent();
+    return _AfterRegisterEvents();
   }
 }
 
-class _RegisterEvent extends State<RegisterEvents> {
+class _AfterRegisterEvents extends State<AfterRegisterEvents> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,31 +135,6 @@ class _RegisterEvent extends State<RegisterEvents> {
                               ],
                             )),
                       ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          color: Color.fromRGBO(41, 30, 47, 1),
-                          textColor: Colors.white,
-                          disabledColor: Colors.green[400],
-                          disabledTextColor: Colors.white,
-                          padding: EdgeInsets.all(15.0),
-                          splashColor: Colors.blueAccent,
-                          onPressed: () async {
-                            Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegisterEventMethod(),
-                        ));
-                          },
-                          child: Text(
-                            "Daftar Sekarang",
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                      ),
                     ),
                   ]))
         ])

@@ -81,7 +81,9 @@ flutter:
     - images/facebook.png
     - images/google.png
     - images/bg-header.jpg
-
+    - images/like.png
+    - images/checked.png
+    - images/clipboard.png
   # fonts:
   #   - family: Schyler
   #     fonts:

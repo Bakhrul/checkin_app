@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'step_register_three.dart';
 
 class ConfirmEventGuest extends StatefulWidget{
   ConfirmEventGuest({Key key}) : super(key:key);
@@ -210,11 +211,16 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                     width: double.infinity,
                     child:RaisedButton(
                       color: Colors.black,
-                      child:Text('Mendaftar',style:TextStyle(
+                      padding: EdgeInsets.all(15.0),
+                      child:Text('Selanjutnya',style:TextStyle(
                         color:Colors.white
                       )),
                       onPressed:(){
-                         Navigator.pushNamed(context, '/waiting-event-verification');
+                         Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingEvent(),
+                        ));
                       }
                     )
                   )

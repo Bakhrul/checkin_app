@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/rendering.dart';
 
 class WaitingEvent extends StatefulWidget {
@@ -60,7 +61,7 @@ class _WaitingEvent extends State<WaitingEvent> {
                 Container(
                   padding: EdgeInsets.only(left:20.0,right:20.0),
                   margin: EdgeInsets.only(bottom:30.0),
-                  child:Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et",
+                  child:Text("Pendaftaran sebagai peserta event yang anda kirimkan telah kami terima, tunggu konfirmasi dari pembuatan event apakah pendaftaran anda diterima atau ditolak.",
                     textAlign: TextAlign.center,
                     style:TextStyle(
                       height: 1.5,
@@ -70,6 +71,7 @@ class _WaitingEvent extends State<WaitingEvent> {
                 ),
                 Container(
                   padding: EdgeInsets.all(20.0),
+                  margin: EdgeInsets.only(bottom: 20.0),
                   width:double.infinity,
                   child:Column(
                     children: <Widget>[
@@ -77,11 +79,11 @@ class _WaitingEvent extends State<WaitingEvent> {
                         width: double.infinity,
                         child:RaisedButton(
                               color:Color.fromRGBO(54, 55, 84, 1),
-                              child:Text("Reminder",style:TextStyle(
+                              child:Text("Kirim Notifikasi Konfirmasi",style:TextStyle(
                                 color:Colors.white
                               )),
                               onPressed: (){
-                                Navigator.pushNamed(context, '/finish_register');
+                                Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event");
                               }
                             )
                       ),
@@ -93,7 +95,7 @@ class _WaitingEvent extends State<WaitingEvent> {
                                 color:Colors.black
                               )),
                               onPressed: (){
-
+                                Fluttertoast.showToast(msg:"Anda Membatalkan Pendaftaran Anda");
                               }
                             )
                       )

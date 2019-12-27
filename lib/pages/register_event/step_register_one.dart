@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'step_register_self.dart';
+import 'step_register_someone.dart';
 
 class RegisterEventMethod extends StatefulWidget{
   RegisterEventMethod({Key key}) : super(key : key);
@@ -39,14 +41,15 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
             Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top:50.0,bottom:50.0),
+                  margin: EdgeInsets.only(top:50.0,bottom:20.0),
                   child:Center(
                     child: Image.asset("images/clipboard.png",height:150.0,width:150.0)
                   )
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom:30.0),
-                  child:Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et",
+                  padding: EdgeInsets.all(5.0),
+                  child:Text("Anda Bisa mendaftar event untuk anda sendiri atau apabila anda ingin mendaftarkan orang lain juga bisa mendaftarkan",
                     textAlign: TextAlign.center,
                     style:TextStyle(
                       height: 1.7,
@@ -63,11 +66,15 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                         width: double.infinity,
                         child:RaisedButton(
                               color:Color.fromRGBO(54, 55, 84, 1),
-                              child:Text("Mendaftar",style:TextStyle(
+                              child:Text("Daftar Untuk Sendiri",style:TextStyle(
                                 color:Colors.white
                               )),
                               onPressed: (){
-                                  Navigator.pushNamed(context, '/confirm-event');
+                                  Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmEvent(),
+                        ));
                               }
                             )
                       ),
@@ -79,7 +86,11 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.black
                               )),
                               onPressed: (){
-                                 Navigator.pushNamed(context, '/confirm-event-guest');
+                                 Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmEventGuest(),
+                        ));
                               }
                             )
                       )

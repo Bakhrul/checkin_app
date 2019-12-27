@@ -32,7 +32,7 @@ class GenerateScreenState extends State<GenerateScreen> {
           color: Colors.white,
         ),
         title: new Text(
-          "Generate",
+          "Generate QR CODE",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -45,7 +45,7 @@ class GenerateScreenState extends State<GenerateScreen> {
           onPressed: () async {
             Navigator.pop(context);
           },
-          child: Icon(Icons.arrow_forward_ios),
+          child: Icon(Icons.check),
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         ),
       ),
@@ -85,6 +85,7 @@ class GenerateScreenState extends State<GenerateScreen> {
               right: 10.0,
               bottom: _topSectionBottomPadding,
             ),
+            
             child: Container(
               height: _topSectionHeight,
               child: Row(
@@ -104,6 +105,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     padding: const EdgeInsets.only(left: 10.0),
                     child: FlatButton(
                       child: Text("SUBMIT"),
+                      textColor: Colors.green,
                       onPressed: () {
                         setState(() {
                           _dataString = _textController.text;
@@ -117,7 +119,7 @@ class GenerateScreenState extends State<GenerateScreen> {
             ),
           ),
           Expanded(
-            child: Center(
+            child: Container(
               child: RepaintBoundary(
                 key: globalKey,
                 child: QrImage(

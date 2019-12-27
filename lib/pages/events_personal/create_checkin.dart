@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
 
 
 
@@ -110,6 +111,73 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: BorderDirectional(
+                          bottom: BorderSide(width: 1 / 2, color: Colors.grey),
+                        )),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Center(
+                        child: Text(
+                          'Atau',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: 'Roboto',
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: BorderDirectional(
+                          bottom: BorderSide(width: 1 / 2, color: Colors.grey),
+                        )),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0, top: 20.0, right: 10.0, bottom: 20.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: RaisedButton(
+                    color: Colors.white,
+                    textColor: Color.fromRGBO(41, 30, 47, 1),
+                    disabledColor: Colors.white,
+                    disabledTextColor: Colors.green[400],
+                    padding: EdgeInsets.all(15.0),
+                    splashColor: Colors.blueAccent,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GenerateScreen()));
+                    },
+                    child: Text(
+                      "Dengan QR CODE",
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

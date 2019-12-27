@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
+import 'pages/register_event/step_register_six.dart';
+import 'pages/register_event/step_register_three.dart';
+import 'pages/events_all/detail_event.dart';
+import 'pages/register_event/detail_event_afterregist.dart';
 import 'utils/utils.dart';
+import 'pages/management_checkin/dashboard_checkin.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
@@ -22,7 +27,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   var height;
   var futureheight;
-  var pastheight;
+  var pastheight, heightmyevent;
 
   @override
   void initState() {
@@ -39,6 +44,16 @@ class _DashboardState extends State<Dashboard> {
         height = null;
       } else {
         height = 0.0;
+      }
+    });
+  }
+
+  void currentmyEvent() {
+    setState(() {
+      if (heightmyevent == 0.0) {
+        heightmyevent = null;
+      } else {
+        heightmyevent = 0.0;
       }
     });
   }
@@ -229,6 +244,7 @@ class _DashboardState extends State<Dashboard> {
               padding:
                   const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
                       style: TextStyle(
@@ -405,6 +421,130 @@ class _DashboardState extends State<Dashboard> {
           Container(
               child: Column(children: <Widget>[
             InkWell(
+                onTap: currentmyEvent,
+                child: Container(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10.0, right: 10.0, top: 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(('Event Anda').toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                        Icon(heightmyevent == null
+                            ? Icons.arrow_drop_down
+                            : Icons.arrow_drop_up),
+                      ],
+                    ),
+                  ),
+                )),
+            InkWell(
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                  height: heightmyevent,
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                        width: 80.0,
+                                        height: 80.0,
+                                        decoration: new BoxDecoration(
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
+                                          image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                              'images/bg-header.jpg',
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 5.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            '12 Agustus 2019',
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Text('Komunitas Dev Junior',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Text(
+                                              'Lemahbang Sukorejo Pasuruan',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DashboardCheckin(),
+                    ));
+              },
+            ),
+          ])),
+          Container(
+            padding: EdgeInsets.only(
+                left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
+            child: Divider(),
+          ),
+          Container(
+              child: Column(children: <Widget>[
+            InkWell(
                 onTap: currentEvent,
                 child: Container(
                   child: Padding(
@@ -425,29 +565,115 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-            Container(
-              height: height,
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(
-                          top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                      child: Column(
-                        children: <Widget>[
-                          Card(
-                            elevation: 1,
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 5,
-                                        child: Container(
-                                            width: 80.0,
-                                            height: 80.0,
+            InkWell(
+              child: Container(
+                height: height,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(
+                            top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              elevation: 1,
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 5,
+                                          child: Container(
+                                              width: 80.0,
+                                              height: 80.0,
+                                              decoration: new BoxDecoration(
+                                                borderRadius: new BorderRadius
+                                                        .only(
+                                                    topLeft:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    topRight:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    bottomLeft:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    bottomRight:
+                                                        const Radius.circular(
+                                                            5.0)),
+                                                image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: AssetImage(
+                                                    'images/bg-header.jpg',
+                                                  ),
+                                                ),
+                                              )),
+                                        ),
+                                        Expanded(
+                                          flex: 7,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15.0, right: 5.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  '12 Agustus 2019',
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5.0),
+                                                  child: Text(
+                                                      'Komunitas Dev Junior',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0),
+                                                  child: Text(
+                                                    'Lemahbang Sukorejo Pasuruan',
+                                                    style: TextStyle(
+                                                        color: Colors.grey),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.only(
+                                          left: 10.0, right: 10.0),
+                                      child: Divider()),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0, bottom: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
                                             decoration: new BoxDecoration(
+                                              color: Colors.green,
                                               borderRadius:
                                                   new BorderRadius.only(
                                                       topLeft: const Radius
@@ -460,156 +686,88 @@ class _DashboardState extends State<Dashboard> {
                                                               5.0),
                                                       bottomRight: const Radius
                                                           .circular(5.0)),
-                                              image: new DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: AssetImage(
-                                                  'images/bg-header.jpg',
-                                                ),
-                                              ),
-                                            )),
-                                      ),
-                                      Expanded(
-                                        flex: 7,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0, right: 5.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                '12 Agustus 2019',
-                                                style: TextStyle(
-                                                    color: Colors.blue,
-                                                    fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5.0),
-                                                child:
-                                                    Text('Komunitas Dev Junior',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 16,
-                                                        )),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10.0),
-                                                child: Text(
-                                                  'Lemahbang Sukorejo Pasuruan',
-                                                  style: TextStyle(
-                                                      color: Colors.grey),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0, right: 10.0),
-                                    child: Divider()),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10.0, bottom: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                          decoration: new BoxDecoration(
-                                            color: Colors.green,
-                                            borderRadius: new BorderRadius.only(
-                                                topLeft:
-                                                    const Radius.circular(5.0),
-                                                topRight:
-                                                    const Radius.circular(5.0),
-                                                bottomLeft:
-                                                    const Radius.circular(5.0),
-                                                bottomRight:
-                                                    const Radius.circular(5.0)),
-                                          ),
-                                          padding: EdgeInsets.all(5.0),
-                                          width: 120.0,
-                                          child: Text(
-                                            'Sudah Terdaftar',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
                                             ),
-                                            textAlign: TextAlign.center,
-                                          )),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 0),
-                                        child: ButtonTheme(
-                                          minWidth: 0, //wraps child's width
-                                          height: 0,
-                                          child: FlatButton(
-                                            child: Row(
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.favorite,
-                                                  color: wishlistone == true
-                                                      ? Colors.pink
-                                                      : Colors.grey,
-                                                  size: 18,
-                                                ),
-                                              ],
-                                            ),
-                                            color: Colors.white,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
                                             padding: EdgeInsets.all(5.0),
-                                            onPressed: () async {
-                                              setState(() {
-                                                if (wishlistone == true) {
-                                                  wishlistone = false;
-                                                } else {
-                                                  wishlistone = true;
-                                                }
-                                              });
-                                            },
+                                            width: 120.0,
+                                            child: Text(
+                                              'Sudah Terdaftar',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            )),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 0),
+                                          child: ButtonTheme(
+                                            minWidth: 0, //wraps child's width
+                                            height: 0,
+                                            child: FlatButton(
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.favorite,
+                                                    color: wishlistone == true
+                                                        ? Colors.pink
+                                                        : Colors.grey,
+                                                    size: 18,
+                                                  ),
+                                                ],
+                                              ),
+                                              color: Colors.white,
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              padding: EdgeInsets.all(5.0),
+                                              onPressed: () async {
+                                                setState(() {
+                                                  if (wishlistone == true) {
+                                                    wishlistone = false;
+                                                  } else {
+                                                    wishlistone = true;
+                                                  }
+                                                });
+                                              },
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          ],
+                        )),
+                    Positioned(
+                        width: 30.0,
+                        right: 10,
+                        top: -7,
+                        child: Container(
+                          decoration: new BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: new BorderRadius.only(
+                                topLeft: const Radius.circular(5.0),
+                                topRight: const Radius.circular(5.0),
+                                bottomLeft: const Radius.circular(5.0),
+                                bottomRight: const Radius.circular(5.0)),
                           ),
-                        ],
-                      )),
-                      Positioned(
-                            width: 30.0,
-                            right: 10,
-                            top: -7,
-                            child: Container(
-                                decoration: new BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: new BorderRadius.only(
-                                      topLeft: const Radius.circular(5.0),
-                                      topRight: const Radius.circular(5.0),
-                                      bottomLeft: const Radius.circular(5.0),
-                                      bottomRight: const Radius.circular(5.0)),
-                                ),
-                                padding: EdgeInsets.all(5.0),
-                                child: Icon(Icons.star_border,color: Colors.orangeAccent),)),
-                ],
+                          padding: EdgeInsets.all(5.0),
+                          child: Icon(Icons.star_border,
+                              color: Colors.orangeAccent),
+                        )),
+                  ],
+                ),
               ),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SuccesRegisteredEvent(),
+                    ));
+              },
             ),
           ])),
           Container(
@@ -640,26 +798,102 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-            Container(
-                margin: EdgeInsets.only(
-                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                height: futureheight,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                      width: 80.0,
-                                      height: 80.0,
+            InkWell(
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                  height: futureheight,
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                        width: 80.0,
+                                        height: 80.0,
+                                        decoration: new BoxDecoration(
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
+                                          image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                              'images/bg-header.jpg',
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 5.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            '12 Agustus 2019',
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Text('Komunitas Dev Junior',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Text(
+                                              'Lemahbang Sukorejo Pasuruan',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                                padding:
+                                    EdgeInsets.only(left: 10.0, right: 10.0),
+                                child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
                                       decoration: new BoxDecoration(
+                                        color: Colors.blue,
                                         borderRadius: new BorderRadius.only(
                                             topLeft: const Radius.circular(5.0),
                                             topRight:
@@ -668,150 +902,163 @@ class _DashboardState extends State<Dashboard> {
                                                 const Radius.circular(5.0),
                                             bottomRight:
                                                 const Radius.circular(5.0)),
-                                        image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                            'images/bg-header.jpg',
-                                          ),
+                                      ),
+                                      padding: EdgeInsets.all(5.0),
+                                      width: 120.0,
+                                      child: Text(
+                                        'Proses Daftar',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
                                         ),
+                                        textAlign: TextAlign.center,
                                       )),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 5.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '12 Agustus 2019',
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 0),
+                                    child: ButtonTheme(
+                                      minWidth: 0, //wraps child's width
+                                      height: 0,
+                                      child: FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.favorite,
+                                              color: wishlisttwo == true
+                                                  ? Colors.pink
+                                                  : Colors.grey,
+                                              size: 18,
+                                            ),
+                                          ],
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5.0),
-                                          child: Text('Komunitas Dev Junior',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text(
-                                            'Lemahbang Sukorejo Pasuruan',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        )
-                                      ],
+                                        color: Colors.white,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: EdgeInsets.all(5.0),
+                                        onPressed: () async {
+                                          setState(() {
+                                            if (wishlisttwo == true) {
+                                              wishlisttwo = false;
+                                            } else {
+                                              wishlisttwo = true;
+                                            }
+                                          });
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                    decoration: new BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(5.0),
-                                          topRight: const Radius.circular(5.0),
-                                          bottomLeft:
-                                              const Radius.circular(5.0),
-                                          bottomRight:
-                                              const Radius.circular(5.0)),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    width: 120.0,
-                                    child: Text(
-                                      'Proses Daftar',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 0),
-                                  child: ButtonTheme(
-                                    minWidth: 0, //wraps child's width
-                                    height: 0,
-                                    child: FlatButton(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.favorite,
-                                            color: wishlisttwo == true
-                                                ? Colors.pink
-                                                : Colors.grey,
-                                            size: 18,
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WaitingEvent(),
+                    ));
+              },
+            ),
+            InkWell(
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                  height: futureheight,
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                        width: 80.0,
+                                        height: 80.0,
+                                        decoration: new BoxDecoration(
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
+                                          image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                              'images/bg-header.jpg',
+                                            ),
                                           ),
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 5.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            '12 Agustus 2019',
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Text('Komunitas Dev Junior',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Text(
+                                              'Lemahbang Sukorejo Pasuruan',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          )
                                         ],
                                       ),
-                                      color: Colors.white,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: EdgeInsets.all(5.0),
-                                      onPressed: () async {
-                                        setState(() {
-                                          if (wishlisttwo == true) {
-                                            wishlisttwo = false;
-                                          } else {
-                                            wishlisttwo = true;
-                                          }
-                                        });
-                                      },
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )),
-            Container(
-                margin: EdgeInsets.only(
-                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                height: futureheight,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                      width: 80.0,
-                                      height: 80.0,
+                            Container(
+                                padding:
+                                    EdgeInsets.only(left: 10.0, right: 10.0),
+                                child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
                                       decoration: new BoxDecoration(
+                                        color: Colors.grey,
                                         borderRadius: new BorderRadius.only(
                                             topLeft: const Radius.circular(5.0),
                                             topRight:
@@ -820,130 +1067,67 @@ class _DashboardState extends State<Dashboard> {
                                                 const Radius.circular(5.0),
                                             bottomRight:
                                                 const Radius.circular(5.0)),
-                                        image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                            'images/bg-header.jpg',
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 5.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '12 Agustus 2019',
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5.0),
-                                          child: Text('Komunitas Dev Junior',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text(
-                                            'Lemahbang Sukorejo Pasuruan',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                    decoration: new BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(5.0),
-                                          topRight: const Radius.circular(5.0),
-                                          bottomLeft:
-                                              const Radius.circular(5.0),
-                                          bottomRight:
-                                              const Radius.circular(5.0)),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    width: 120.0,
-                                    child: Text(
-                                      'Belum Terdaftar',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 0),
-                                  child: ButtonTheme(
-                                    minWidth: 0, //wraps child's width
-                                    height: 0,
-                                    child: FlatButton(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.favorite,
-                                            color: wishlistthree == true
-                                                ? Colors.pink
-                                                : Colors.grey,
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
-                                      color: Colors.white,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
                                       padding: EdgeInsets.all(5.0),
-                                      onPressed: () async {
-                                        setState(() {
-                                          if (wishlistthree == true) {
-                                            wishlistthree = false;
-                                          } else {
-                                            wishlistthree = true;
-                                          }
-                                        });
-                                      },
+                                      width: 120.0,
+                                      child: Text(
+                                        'Belum Terdaftar',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      )),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 0),
+                                    child: ButtonTheme(
+                                      minWidth: 0, //wraps child's width
+                                      height: 0,
+                                      child: FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.favorite,
+                                              color: wishlistthree == true
+                                                  ? Colors.pink
+                                                  : Colors.grey,
+                                              size: 18,
+                                            ),
+                                          ],
+                                        ),
+                                        color: Colors.white,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: EdgeInsets.all(5.0),
+                                        onPressed: () async {
+                                          setState(() {
+                                            if (wishlistthree == true) {
+                                              wishlistthree = false;
+                                            } else {
+                                              wishlistthree = true;
+                                            }
+                                          });
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                )),
+                    ],
+                  )),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegisterEvents(),
+                    ));
+              },
+            ),
           ]),
           Container(
             padding: EdgeInsets.only(
@@ -972,302 +1156,330 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-            Container(
-                margin: EdgeInsets.only(
-                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                height: pastheight,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      decoration: new BoxDecoration(
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                        image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                            'images/bg-header.jpg',
-                                          ),
-                                        ),
-                                      )),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 5.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '12 Agustus 2019',
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5.0),
-                                          child: Text('Komunitas Dev Junior',
+            InkWell(
+                child: Container(
+                    margin: EdgeInsets.only(
+                        top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                    height: pastheight,
+                    child: Column(
+                      children: <Widget>[
+                        Card(
+                          elevation: 1,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 5,
+                                      child: Container(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          decoration: new BoxDecoration(
+                                            borderRadius: new BorderRadius.only(
+                                                topLeft:
+                                                    const Radius.circular(5.0),
+                                                topRight:
+                                                    const Radius.circular(5.0),
+                                                bottomLeft:
+                                                    const Radius.circular(5.0),
+                                                bottomRight:
+                                                    const Radius.circular(5.0)),
+                                            image: new DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: AssetImage(
+                                                'images/bg-header.jpg',
+                                              ),
+                                            ),
+                                          )),
+                                    ),
+                                    Expanded(
+                                      flex: 7,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 15.0, right: 5.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '12 Agustus 2019',
                                               style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              )),
+                                                  color: Colors.blue,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5.0),
+                                              child: Text(
+                                                  'Komunitas Dev Junior',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                  )),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Text(
+                                                'Lemahbang Sukorejo Pasuruan',
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text(
-                                            'Lemahbang Sukorejo Pasuruan',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                    decoration: new BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(5.0),
-                                          topRight: const Radius.circular(5.0),
-                                          bottomLeft:
-                                              const Radius.circular(5.0),
-                                          bottomRight:
-                                              const Radius.circular(5.0)),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    width: 120.0,
-                                    child: Text(
-                                      'Event Batal',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 0),
-                                  child: ButtonTheme(
-                                    minWidth: 0, //wraps child's width
-                                    height: 0,
-                                    child: FlatButton(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.favorite,
-                                            color: wishlistfour == true
-                                                ? Colors.pink
-                                                : Colors.grey,
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
-                                      color: Colors.white,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: EdgeInsets.all(5.0),
-                                      onPressed: () async {
-                                        setState(() {
-                                          if (wishlistfour == true) {
-                                            wishlistfour = false;
-                                          } else {
-                                            wishlistfour = true;
-                                          }
-                                        });
-                                      },
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )),
-            Container(
-                margin: EdgeInsets.only(
-                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                height: pastheight,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      decoration: new BoxDecoration(
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                        image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                            'images/bg-header.jpg',
-                                          ),
+                              ),
+                              Container(
+                                  padding:
+                                      EdgeInsets.only(left: 10.0, right: 10.0),
+                                  child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0, bottom: 10.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                        decoration: new BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
                                         ),
-                                      )),
-                                ),
-                                Expanded(
-                                  flex: 7,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 5.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '12 Agustus 2019',
+                                        padding: EdgeInsets.all(5.0),
+                                        width: 120.0,
+                                        child: Text(
+                                          'Event Batal',
                                           style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold),
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 0),
+                                      child: ButtonTheme(
+                                        minWidth: 0, //wraps child's width
+                                        height: 0,
+                                        child: FlatButton(
+                                          child: Row(
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.favorite,
+                                                color: wishlistfour == true
+                                                    ? Colors.pink
+                                                    : Colors.grey,
+                                                size: 18,
+                                              ),
+                                            ],
+                                          ),
+                                          color: Colors.white,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding: EdgeInsets.all(5.0),
+                                          onPressed: () async {
+                                            setState(() {
+                                              if (wishlistfour == true) {
+                                                wishlistfour = false;
+                                              } else {
+                                                wishlistfour = true;
+                                              }
+                                            });
+                                          },
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5.0),
-                                          child: Text('Komunitas Dev Junior',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+                onTap: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AfterRegisterEvents(),
+                      ));
+                }),
+            InkWell(
+                child: Container(
+                    margin: EdgeInsets.only(
+                        top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                    height: pastheight,
+                    child: Column(
+                      children: <Widget>[
+                        Card(
+                          elevation: 1,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 5,
+                                      child: Container(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          decoration: new BoxDecoration(
+                                            borderRadius: new BorderRadius.only(
+                                                topLeft:
+                                                    const Radius.circular(5.0),
+                                                topRight:
+                                                    const Radius.circular(5.0),
+                                                bottomLeft:
+                                                    const Radius.circular(5.0),
+                                                bottomRight:
+                                                    const Radius.circular(5.0)),
+                                            image: new DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: AssetImage(
+                                                'images/bg-header.jpg',
+                                              ),
+                                            ),
+                                          )),
+                                    ),
+                                    Expanded(
+                                      flex: 7,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 15.0, right: 5.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '12 Agustus 2019',
                                               style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              )),
+                                                  color: Colors.blue,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5.0),
+                                              child: Text(
+                                                  'Komunitas Dev Junior',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                  )),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0),
+                                              child: Text(
+                                                'Lemahbang Sukorejo Pasuruan',
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text(
-                                            'Lemahbang Sukorejo Pasuruan',
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                    decoration: new BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: new BorderRadius.only(
-                                          topLeft: const Radius.circular(5.0),
-                                          topRight: const Radius.circular(5.0),
-                                          bottomLeft:
-                                              const Radius.circular(5.0),
-                                          bottomRight:
-                                              const Radius.circular(5.0)),
-                                    ),
-                                    padding: EdgeInsets.all(5.0),
-                                    width: 120.0,
-                                    child: Text(
-                                      'Event Selesai',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 0),
-                                  child: ButtonTheme(
-                                    minWidth: 0, //wraps child's width
-                                    height: 0,
-                                    child: FlatButton(
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.favorite,
-                                            color: wishlistfive == true
-                                                ? Colors.pink
-                                                : Colors.grey,
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
-                                      color: Colors.white,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      padding: EdgeInsets.all(5.0),
-                                      onPressed: () async {},
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                  padding:
+                                      EdgeInsets.only(left: 10.0, right: 10.0),
+                                  child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0, bottom: 10.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                        decoration: new BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
+                                        ),
+                                        padding: EdgeInsets.all(5.0),
+                                        width: 120.0,
+                                        child: Text(
+                                          'Event Selesai',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 0),
+                                      child: ButtonTheme(
+                                        minWidth: 0, //wraps child's width
+                                        height: 0,
+                                        child: FlatButton(
+                                          child: Row(
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.favorite,
+                                                color: wishlistfive == true
+                                                    ? Colors.pink
+                                                    : Colors.grey,
+                                                size: 18,
+                                              ),
+                                            ],
+                                          ),
+                                          color: Colors.white,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          padding: EdgeInsets.all(5.0),
+                                          onPressed: () async {},
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )),
+                        ),
+                      ],
+                    )),
+                onTap: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SuccesRegisteredEvent(),
+                      ));
+                }),
           ]),
         ])));
   }

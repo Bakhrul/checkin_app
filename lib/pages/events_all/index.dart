@@ -2,9 +2,13 @@ import 'package:checkin_app/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'detail_event.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:checkin_app/pages/register_event/step_register_six.dart';
+import 'package:checkin_app/pages/register_event/step_register_three.dart';
+import 'detail_event.dart';
+import 'package:checkin_app/pages/register_event/detail_event_afterregist.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
-bool wishlistone,wishlisttwo,wishlistthree,wishlistfour;
+bool wishlistone, wishlisttwo, wishlistthree, wishlistfour;
 void showInSnackBar(String value) {
   _scaffoldKeyEventAll.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -87,11 +91,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
+                width: double.infinity,
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
                   child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
                           style: TextStyle(
@@ -266,313 +272,352 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   ]),
                 ),
               ),
-              Container(
-                  margin: EdgeInsets.only(
-                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Card(
-                        elevation: 1,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                        width: 80.0,
-                                        height: 80.0,
-                                        decoration: new BoxDecoration(
-                                          borderRadius: new BorderRadius.only(
-                                              topLeft:
-                                                  const Radius.circular(5.0),
-                                              topRight:
-                                                  const Radius.circular(5.0),
-                                              bottomLeft:
-                                                  const Radius.circular(5.0),
-                                              bottomRight:
-                                                  const Radius.circular(5.0)),
-                                          image: new DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: AssetImage(
-                                              'images/bg-header.jpg',
-                                            ),
-                                          ),
-                                        )),
-                                  ),
-                                  Expanded(
-                                    flex: 7,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15.0, right: 5.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            '12 Agustus 2019',
-                                            style: TextStyle(
-                                                color: Colors.blue,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 5.0),
-                                            child: Text('Komunitas Dev Junior',
+              InkWell(
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                      child: Column(
+                        children: <Widget>[
+                          Card(
+                            elevation: 1,
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 5,
+                                        child: Container(
+                                            width: 80.0,
+                                            height: 80.0,
+                                            decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft: const Radius
+                                                          .circular(5.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomLeft:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomRight: const Radius
+                                                          .circular(5.0)),
+                                              image: new DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                  'images/bg-header.jpg',
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      Expanded(
+                                        flex: 7,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15.0, right: 5.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                '12 Agustus 2019',
                                                 style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16,
-                                                )),
+                                                    color: Colors.blue,
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5.0),
+                                                child:
+                                                    Text('Komunitas Dev Junior',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16,
+                                                        )),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Text(
+                                                  'Lemahbang Sukorejo Pasuruan',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0),
-                                            child: Text(
-                                              'Lemahbang Sukorejo Pasuruan',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                                padding:
-                                    EdgeInsets.only(left: 10.0, right: 10.0),
-                                child: Divider()),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, bottom: 10.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                      decoration: new BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                      ),
-                                      padding: EdgeInsets.all(5.0),
-                                      width: 120.0,
-                                      child: Text(
-                                        'Sudah Terdaftar',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
                                         ),
-                                        textAlign: TextAlign.center,
-                                      )),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 0),
-                                    child: ButtonTheme(
-                                      minWidth: 0, //wraps child's width
-                                      height: 0,
-                                      child: FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.favorite,
-                                              color: wishlistone == true ? Colors.pink : Colors.grey,
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                        color: Colors.white,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        padding: EdgeInsets.all(5.0),
-                                        onPressed: () async {
-                                          setState(() {
-                                            if(wishlistone == true){
-                                              wishlistone = false;
-                                            }else{
-                                              wishlistone = true;
-                                            }
-                                          });
-                                        },
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-              Container(
-                  margin: EdgeInsets.only(
-                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Card(
-                        elevation: 1,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                        width: 80.0,
-                                        height: 80.0,
-                                        decoration: new BoxDecoration(
-                                          borderRadius: new BorderRadius.only(
-                                              topLeft:
-                                                  const Radius.circular(5.0),
-                                              topRight:
-                                                  const Radius.circular(5.0),
-                                              bottomLeft:
-                                                  const Radius.circular(5.0),
-                                              bottomRight:
-                                                  const Radius.circular(5.0)),
-                                          image: new DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: AssetImage(
-                                              'images/bg-header.jpg',
-                                            ),
+                                ),
+                                Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10.0, bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                          decoration: new BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: new BorderRadius.only(
+                                                topLeft:
+                                                    const Radius.circular(5.0),
+                                                topRight:
+                                                    const Radius.circular(5.0),
+                                                bottomLeft:
+                                                    const Radius.circular(5.0),
+                                                bottomRight:
+                                                    const Radius.circular(5.0)),
                                           ),
-                                        )),
-                                  ),
-                                  Expanded(
-                                    flex: 7,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15.0, right: 5.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            '12 Agustus 2019',
+                                          padding: EdgeInsets.all(5.0),
+                                          width: 120.0,
+                                          child: Text(
+                                            'Sudah Terdaftar',
                                             style: TextStyle(
-                                                color: Colors.blue,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold),
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 0),
+                                        child: ButtonTheme(
+                                          minWidth: 0, //wraps child's width
+                                          height: 0,
+                                          child: FlatButton(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.favorite,
+                                                  color: wishlistone == true
+                                                      ? Colors.pink
+                                                      : Colors.grey,
+                                                  size: 18,
+                                                ),
+                                              ],
+                                            ),
+                                            color: Colors.white,
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            padding: EdgeInsets.all(5.0),
+                                            onPressed: () async {
+                                              setState(() {
+                                                if (wishlistone == true) {
+                                                  wishlistone = false;
+                                                } else {
+                                                  wishlistone = true;
+                                                }
+                                              });
+                                            },
                                           ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 5.0),
-                                            child: Text('Komunitas Dev Junior',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SuccesRegisteredEvent(),
+                        ));
+                  }),
+              InkWell(
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                      child: Column(
+                        children: <Widget>[
+                          Card(
+                            elevation: 1,
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 5,
+                                        child: Container(
+                                            width: 80.0,
+                                            height: 80.0,
+                                            decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft: const Radius
+                                                          .circular(5.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomLeft:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomRight: const Radius
+                                                          .circular(5.0)),
+                                              image: new DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                  'images/bg-header.jpg',
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      Expanded(
+                                        flex: 7,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15.0, right: 5.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                '12 Agustus 2019',
                                                 style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16,
-                                                )),
+                                                    color: Colors.blue,
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5.0),
+                                                child:
+                                                    Text('Komunitas Dev Junior',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16,
+                                                        )),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Text(
+                                                  'Lemahbang Sukorejo Pasuruan',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0),
-                                            child: Text(
-                                              'Lemahbang Sukorejo Pasuruan',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                                padding:
-                                    EdgeInsets.only(left: 10.0, right: 10.0),
-                                child: Divider()),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, bottom: 10.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                      decoration: new BoxDecoration(
-                                        color: Colors.blue,
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                      ),
-                                      padding: EdgeInsets.all(5.0),
-                                      width: 120.0,
-                                      child: Text(
-                                        'Proses Daftar',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
                                         ),
-                                        textAlign: TextAlign.center,
-                                      )),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 0),
-                                    child: ButtonTheme(
-                                      minWidth: 0, //wraps child's width
-                                      height: 0,
-                                      child: FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.favorite,
-                                              color: wishlisttwo == true ? Colors.pink : Colors.grey,
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                        color: Colors.white,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        padding: EdgeInsets.all(5.0),
-                                        onPressed: () async {
-                                          setState(() {
-                                            if(wishlisttwo == true){
-                                              wishlisttwo = false;
-                                            }else{
-                                              wishlisttwo = true;
-                                            }
-                                          });
-                                        },
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10.0, bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                          decoration: new BoxDecoration(
+                                            color: Colors.blue,
+                                            borderRadius: new BorderRadius.only(
+                                                topLeft:
+                                                    const Radius.circular(5.0),
+                                                topRight:
+                                                    const Radius.circular(5.0),
+                                                bottomLeft:
+                                                    const Radius.circular(5.0),
+                                                bottomRight:
+                                                    const Radius.circular(5.0)),
+                                          ),
+                                          padding: EdgeInsets.all(5.0),
+                                          width: 120.0,
+                                          child: Text(
+                                            'Proses Daftar',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 0),
+                                        child: ButtonTheme(
+                                          minWidth: 0, //wraps child's width
+                                          height: 0,
+                                          child: FlatButton(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.favorite,
+                                                  color: wishlisttwo == true
+                                                      ? Colors.pink
+                                                      : Colors.grey,
+                                                  size: 18,
+                                                ),
+                                              ],
+                                            ),
+                                            color: Colors.white,
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            padding: EdgeInsets.all(5.0),
+                                            onPressed: () async {
+                                              setState(() {
+                                                if (wishlisttwo == true) {
+                                                  wishlisttwo = false;
+                                                } else {
+                                                  wishlisttwo = true;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-              Container(
+                          ),
+                        ],
+                      )),
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingEvent(),
+                        ));
+                  }),
+                  InkWell(
+              child :Container(
                   margin: EdgeInsets.only(
                       top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
                   child: Column(
@@ -696,7 +741,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           children: <Widget>[
                                             Icon(
                                               Icons.favorite,
-                                              color: wishlistthree == true ? Colors.pink : Colors.grey,
+                                              color: wishlistthree == true
+                                                  ? Colors.pink
+                                                  : Colors.grey,
                                               size: 18,
                                             ),
                                           ],
@@ -707,9 +754,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                         padding: EdgeInsets.all(5.0),
                                         onPressed: () async {
                                           setState(() {
-                                            if(wishlistthree == true){
+                                            if (wishlistthree == true) {
                                               wishlistthree = false;
-                                            }else{
+                                            } else {
                                               wishlistthree = true;
                                             }
                                           });
@@ -725,7 +772,16 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                       ),
                     ],
                   )),
-              Container(
+                  onTap: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegisterEvents(),
+                      ));
+                }
+                ),
+                InkWell(
+              child :Container(
                   margin: EdgeInsets.only(
                       top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
                   child: Column(
@@ -849,7 +905,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           children: <Widget>[
                                             Icon(
                                               Icons.favorite,
-                                              color: wishlistfour == true ?Colors.pink : Colors.grey,
+                                              color: wishlistfour == true
+                                                  ? Colors.pink
+                                                  : Colors.grey,
                                               size: 18,
                                             ),
                                           ],
@@ -860,9 +918,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                         padding: EdgeInsets.all(5.0),
                                         onPressed: () async {
                                           setState(() {
-                                            if(wishlistfour == true){
+                                            if (wishlistfour == true) {
                                               wishlistfour = false;
-                                            }else{
+                                            } else {
                                               wishlistfour = true;
                                             }
                                           });
@@ -878,6 +936,14 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                       ),
                     ],
                   )),
+                  onTap: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AfterRegisterEvents(),
+                      ));
+                }
+                ),
             ],
           ),
         ),
