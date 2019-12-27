@@ -26,6 +26,12 @@ dependencies:
   datetime_picker_formfield: ^0.4.3
   intl: ^0.15.0  
   percent_indicator: "^2.1.1"
+  draggable_fab: ^0.1.1
+  unicorndial: "^1.1.5"
+  material_design_icons_flutter: "2.7.94"
+  qr_flutter: ^3.1.0
+  path_provider: ^0.4.1
+  font_awesome_flutter: 
   image_picker:
   dio:
   http:
