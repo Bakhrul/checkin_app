@@ -217,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                                 top: 12.0,
                               ),
                               child: new Text(
-                                "Login Menggunakan Akun Google",
+                                "Google",
                                 style: TextStyle(
                                     color: Colors.black54,
                                     fontWeight: FontWeight.bold),
@@ -262,24 +262,29 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               )),
-                          new Container(
-                              height: 40.0,
-                              decoration: new BoxDecoration(
-                                  border: Border(
-                                left:
-                                    BorderSide(width: 0.2, color: Colors.grey),
-                              )),
-                              padding: EdgeInsets.only(
-                                left: 10.0,
-                                right: 10.0,
-                                top: 12.0,
-                              ),
-                              child: new Text(
-                                "Login Menggunakan Akun Facebook",
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.bold),
-                              )),
+                          Column(
+                            children: <Widget>[
+                              new Container(
+                                  height: 40.0,
+                                  decoration: new BoxDecoration(
+                                      border: Border(
+                                    left:
+                                        BorderSide(width: 0.2, color: Colors.grey),
+                                  )),
+                                  padding: EdgeInsets.only(
+                                    left: 10.0,
+                                    right: 10.0,
+                                    top: 12.0,
+                                  ),
+                                  child: new Text(
+                                    "Facebook",
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                            ],
+                          ),
                         ],
                       ),
                     ),

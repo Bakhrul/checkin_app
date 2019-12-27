@@ -94,8 +94,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
                           style: TextStyle(
@@ -374,7 +374,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                 const Radius.circular(5.0)),
                                       ),
                                       padding: EdgeInsets.all(5.0),
-                                      width: 100.0,
+                                      width: 120.0,
                                       child: Text(
                                         'Proses Daftar',
                                         style: TextStyle(
@@ -519,7 +519,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                 const Radius.circular(5.0)),
                                       ),
                                       padding: EdgeInsets.all(5.0),
-                                      width: 100.0,
+                                      width: 120.0,
                                       child: Text(
                                         'Belum Terdaftar',
                                         style: TextStyle(
@@ -664,7 +664,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                 const Radius.circular(5.0)),
                                       ),
                                       padding: EdgeInsets.all(5.0),
-                                      width: 100.0,
+                                      width: 120.0,
                                       child: Text(
                                         'Sudah Terdaftar',
                                         style: TextStyle(
@@ -809,7 +809,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                 const Radius.circular(5.0)),
                                       ),
                                       padding: EdgeInsets.all(5.0),
-                                      width: 100.0,
+                                      width: 120.0,
                                       child: Text(
                                         'Event Selesai',
                                         style: TextStyle(

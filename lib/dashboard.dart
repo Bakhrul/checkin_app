@@ -228,8 +228,7 @@ class _DashboardState extends State<Dashboard> {
             child: Padding(
               padding:
                   const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: <Widget>[
                   Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
                       style: TextStyle(
@@ -541,7 +540,7 @@ class _DashboardState extends State<Dashboard> {
                                                     const Radius.circular(5.0)),
                                           ),
                                           padding: EdgeInsets.all(5.0),
-                                          width: 100.0,
+                                          width: 120.0,
                                           child: Text(
                                             'Sudah Terdaftar',
                                             style: TextStyle(
@@ -742,7 +741,7 @@ class _DashboardState extends State<Dashboard> {
                                               const Radius.circular(5.0)),
                                     ),
                                     padding: EdgeInsets.all(5.0),
-                                    width: 100.0,
+                                    width: 120.0,
                                     child: Text(
                                       'Proses Daftar',
                                       style: TextStyle(
@@ -894,7 +893,7 @@ class _DashboardState extends State<Dashboard> {
                                               const Radius.circular(5.0)),
                                     ),
                                     padding: EdgeInsets.all(5.0),
-                                    width: 100.0,
+                                    width: 120.0,
                                     child: Text(
                                       'Belum Terdaftar',
                                       style: TextStyle(
@@ -1074,7 +1073,7 @@ class _DashboardState extends State<Dashboard> {
                                               const Radius.circular(5.0)),
                                     ),
                                     padding: EdgeInsets.all(5.0),
-                                    width: 100.0,
+                                    width: 120.0,
                                     child: Text(
                                       'Event Batal',
                                       style: TextStyle(
@@ -1226,7 +1225,7 @@ class _DashboardState extends State<Dashboard> {
                                               const Radius.circular(5.0)),
                                     ),
                                     padding: EdgeInsets.all(5.0),
-                                    width: 100.0,
+                                    width: 120.0,
                                     child: Text(
                                       'Event Selesai',
                                       style: TextStyle(
