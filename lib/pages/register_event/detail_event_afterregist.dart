@@ -30,9 +30,12 @@ class _AfterRegisterEvents extends State<AfterRegisterEvents> {
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
       body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-          Container(
-                          width: 350.0,
+          child:Column(children: <Widget>[
+        Stack(children: <Widget>[
+          Column(
+               children: <Widget>[
+                 Container(
+                          width: double.infinity,
                           height: 200.0,
                           decoration: new BoxDecoration(
                             shape: BoxShape.rectangle,
@@ -42,31 +45,9 @@ class _AfterRegisterEvents extends State<AfterRegisterEvents> {
                                 'images/noimage.jpg',
                               ),
                             ),
-                          )),
-        Stack(children: <Widget>[
-          Align(
-            alignment: Alignment(1.0, 1.0),
-            child: Container(
-                width: 100.0,
-                padding: EdgeInsets.only(
-                    top: 10.0, bottom: 10.0, left: 30.0, right: 10.0),
-                margin: EdgeInsets.only(top: 20),
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(41, 30, 47, 1),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
-                ),
-                child: Column(children: <Widget>[
-                  Text('12 Dec',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  Text('12:00', style: TextStyle(color: Colors.white))
-                ])),
-          ),
-          Container(
+                          )
+                        ),
+             Container(
               padding: EdgeInsets.all(20.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,8 +117,40 @@ class _AfterRegisterEvents extends State<AfterRegisterEvents> {
                             )),
                       ],
                     ),
-                  ]))
-        ])
+                  ]
+                )
+              )
+               ],
+             ),
+          Positioned(
+            top: 180.0,
+            right:0.0,
+            child: Container(
+                width: 140.0,
+                padding: EdgeInsets.only(
+                    top: 10.0, bottom: 10.0, left: 30.0, right: 20.0),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(41, 30, 47, 1),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12)),
+                ),
+                child: Row(children: <Widget>[
+                  Container(
+                    child:Text('12 Dec',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                  ),
+                  Container(
+                    margin:EdgeInsets.only(left:10),
+                    child:Text('12:00', style: TextStyle(color: Colors.white))
+                  )
+                ])),
+               )
+              ]
+             ),
       ])),
     );
   }

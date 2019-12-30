@@ -444,6 +444,178 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                           builder: (context) => SuccesRegisteredEvent(),
                         ));
                   }),
+                  InkWell(
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                      child: Column(
+                        children: <Widget>[
+                          Card(
+                            elevation: 1,
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 5,
+                                        child: Container(
+                                            width: 80.0,
+                                            height: 80.0,
+                                            decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  new BorderRadius.only(
+                                                      topLeft: const Radius
+                                                          .circular(5.0),
+                                                      topRight:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomLeft:
+                                                          const Radius.circular(
+                                                              5.0),
+                                                      bottomRight: const Radius
+                                                          .circular(5.0)),
+                                              image: new DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                  'images/bg-header.jpg',
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                      Expanded(
+                                        flex: 7,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15.0, right: 5.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                '12 Agustus 2019',
+                                                style: TextStyle(
+                                                    color: Colors.blue,
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5.0),
+                                                child:
+                                                    Text('Komunitas Dev Junior',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16,
+                                                        )),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Text(
+                                                  'Sukorejo Pasuruan',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10.0, bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                          decoration: new BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: new BorderRadius.only(
+                                                topLeft:
+                                                    const Radius.circular(5.0),
+                                                topRight:
+                                                    const Radius.circular(5.0),
+                                                bottomLeft:
+                                                    const Radius.circular(5.0),
+                                                bottomRight:
+                                                    const Radius.circular(5.0)),
+                                          ),
+                                          padding: EdgeInsets.all(5.0),
+                                          width: 120.0,
+                                          child: Text(
+                                            'Sudah Terdaftar',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 0),
+                                        child: ButtonTheme(
+                                          minWidth: 0, //wraps child's width
+                                          height: 0,
+                                          child: FlatButton(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.favorite,
+                                                  color: wishlistone == true
+                                                      ? Colors.pink
+                                                      : Colors.grey,
+                                                  size: 18,
+                                                ),
+                                              ],
+                                            ),
+                                            color: Colors.white,
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            padding: EdgeInsets.all(5.0),
+                                            onPressed: () async {
+                                              setState(() {
+                                                if (wishlistone == true) {
+                                                  wishlistone = false;
+                                                } else {
+                                                  wishlistone = true;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SuccesRegisteredEvent(checkin:1),
+                        ));
+                  }),
               InkWell(
                   child: Container(
                       margin: EdgeInsets.only(

@@ -204,7 +204,9 @@ class _LoginPageState extends State<LoginPage> {
                         style: BorderStyle.solid, //Style of the border
                         width: 0.2, //width of the border
                       ),
-                      onPressed: () async {},
+                      onPressed: () async {
+                        signin();
+                        },
                       child: new Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -262,7 +264,9 @@ class _LoginPageState extends State<LoginPage> {
                         style: BorderStyle.solid, //Style of the border
                         width: 0.2, //width of the border
                       ),
-                      onPressed: () async {},
+                      onPressed: () async {
+                        signfacebook();
+                        },
                       child: new Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
