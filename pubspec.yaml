@@ -30,6 +30,9 @@ dependencies:
   unicorndial: "^1.1.5"
   material_design_icons_flutter: "2.7.94"
   qr_flutter: ^3.1.0
+  # flutter_barcode_scanner: ^0.1.7
+  # qrscan: ^0.2.17
+  qrcode: ^1.0.4
   path_provider: ^0.4.1
   font_awesome_flutter: 
   image_picker:
@@ -37,7 +40,8 @@ dependencies:
   http:
   shared_preferences:
   fluttertoast:
-  firebase_auth:
+  firebase_core: ^0.4.3+1
+  firebase_auth: ^0.15.3
   google_sign_in:
   flutter_facebook_login:
 
@@ -84,6 +88,8 @@ flutter:
     - images/like.png
     - images/checked.png
     - images/clipboard.png
+    - images/scanning.png
+    - images/header-scanning.png
   # fonts:
   #   - family: Schyler
   #     fonts:
