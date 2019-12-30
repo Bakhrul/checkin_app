@@ -8,7 +8,7 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class GenerateScreen extends StatefulWidget {
   @override
@@ -123,16 +123,16 @@ class GenerateScreenState extends State<GenerateScreen> {
             child: Container(
               child: RepaintBoundary(
                 key: globalKey,
-                // child: QrImage(
-                //   data: _dataString,
-                //   size: 0.5 * bodyHeight,
-                //   // onError: (ex) {
-                //   //   print("[QR] ERROR - $ex");
-                //   //   setState((){
-                //   //     _inputErrorText = "Error! Maybe your input value is too long?";
-                //   //   });
-                //   // },
-                // ),
+                child: QrImage(
+                  data: _dataString,
+                  size: 0.5 * bodyHeight,
+                  // onError: (ex) {
+                  //   print("[QR] ERROR - $ex");
+                  //   setState((){
+                  //     _inputErrorText = "Error! Maybe your input value is too long?";
+                  //   });
+                  // },
+                ),
               ),
             ),
           ),
