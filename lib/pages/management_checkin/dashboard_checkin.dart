@@ -5,6 +5,7 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
+import 'list_peserta_checkin.dart';
 // import 'listprovinsi.dart';
 // import 'listkabupaten.dart';
 // import 'listkecamatan.dart';
@@ -101,7 +102,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           bottom: TabBar(
             controller: _tabController,
             tabs: [
-              Tab(icon: Icon(Icons.person), text: 'Peserta'),
+              Tab(icon: Icon(Icons.person), text: 'Peserta (3000)'),
               Tab(icon: Icon(Icons.schedule), text: 'Checkin'),
             ],
           ),
@@ -284,6 +285,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                 fontSize: 13,
                               ),
                             ),
+                             onTap: () async{
+                              Navigator.push(context, 
+                            MaterialPageRoute(
+                              builder: (context) => ListPesertaCheckin()
+                            ) 
+                            );
+                            },
                             // onTap: Navigator.push(context,MaterialPageRoute(builder: (context) => context)),
                             trailing: ButtonTheme(
                                 minWidth: 0.0,
@@ -323,6 +331,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                 fontSize: 13,
                               ),
                             ),
+                             onTap: () async{
+                              Navigator.push(context, 
+                            MaterialPageRoute(
+                              builder: (context) => ListPesertaCheckin()
+                            ) 
+                            );
+                            },
                             trailing: ButtonTheme(
                                 minWidth: 0.0,
                                 child: FlatButton(
@@ -380,6 +395,14 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                 fontSize: 13,
                               ),
                             ),
+                            
+                            onTap: () async{
+                              Navigator.push(context, 
+                            MaterialPageRoute(
+                              builder: (context) => ListPesertaCheckin()
+                            ) 
+                            );
+                            },
                             trailing: ButtonTheme(
                                 minWidth: 0.0,
                                 child: FlatButton(
@@ -418,6 +441,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                 fontSize: 13,
                               ),
                             ),
+                             onTap: () async{
+                              Navigator.push(context, 
+                            MaterialPageRoute(
+                              builder: (context) => ListPesertaCheckin()
+                            ) 
+                            );
+                            },
                             trailing: ButtonTheme(
                                 minWidth: 0.0,
                                 child: FlatButton(
@@ -450,7 +480,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   Widget _bottomButtons() {
     return _tabController.index == 1
-        ? FloatingActionButton(
+        ? DraggableFab(
+        child: FloatingActionButton(
             shape: StadiumBorder(),
             onPressed: () async {
               Navigator.push(
@@ -464,6 +495,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
               Icons.add,
               size: 20.0,
             ))
+      ) 
+        
         : null;
   }
 }

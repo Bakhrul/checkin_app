@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Container(
                   child: Center(
                     child: Text(
-                      "MOCIN",
+                      "MYOCIN",
                       style: TextStyle(
                           color: Color.fromRGBO(41, 30, 47, 1),
                           fontFamily: 'TitilliumWeb',

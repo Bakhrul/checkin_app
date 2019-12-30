@@ -1,3 +1,4 @@
+import 'package:checkin_app/pages/management_checkin/scan_qrcode_checkin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'detail_event_afterregist.dart';
@@ -66,6 +67,23 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                     width: double.infinity,
                     child: Column(
                       children: <Widget>[
+                        Container(
+                            width: double.infinity,
+                            child: RaisedButton(
+                                color: Colors.indigo,
+                                child: Text("Checkin",
+                                    style: TextStyle(color: Colors.white)),
+                                onPressed: () async {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScanQrcode(),
+                                      ));
+                                }
+                                )
+                              ),
+
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
