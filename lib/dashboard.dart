@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'auth/login.dart';
 import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/register_event/step_register_six.dart';
@@ -15,13 +16,29 @@ enum PageEnum {
   kelolaRegisterPage,
 }
 
+// class IkiIndex {
+  
+//   final String indexIki;
+//   final String title;
+
+//   IkiIndex(
+//       {@required this.indexIki,
+//       @required this.title,
+//      });
+// }
+
 class Dashboard extends StatefulWidget {
-  Dashboard({Key key, this.title}) : super(key: key);
-  final String title;
+  // final IkiIndex _indexIki;
+
+  // Dashboard({@required IkiIndex indexIki}) : _indexIki = indexIki;
+  Dashboard({Key key,  @required this.indexIki}) : super(key: key);
+  // final String title;
+  final String indexIki;
   @override
   State<StatefulWidget> createState() {
     return _DashboardState();
   }
+  
 }
 
 class _DashboardState extends State<Dashboard> {
@@ -109,6 +126,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
         backgroundColor: Colors.white,
         key: _scaffoldKeyDashboard,
@@ -119,7 +137,8 @@ class _DashboardState extends State<Dashboard> {
               children: <Widget>[
                 // Profil Drawer Here
                 UserAccountsDrawerHeader(
-                  accountName: Text("Muhammad Bakhrul Bila Sakhil"),
+                  // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
+                  accountName: Text(widget.indexIki),
                   accountEmail: Text("bakhrulrpl@gmail.com"),
                   decoration: BoxDecoration(
                     color: Color.fromRGBO(41, 30, 47, 1),
@@ -225,7 +244,9 @@ class _DashboardState extends State<Dashboard> {
                                 'Ya',
                                 style: TextStyle(color: Colors.cyan),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pop(context, MaterialPageRoute(builder: (context) => LoginPage() ));
+                              },
                             )
                           ],
                         ),
@@ -418,6 +439,7 @@ class _DashboardState extends State<Dashboard> {
               ]),
             ),
           ),
+          
           Container(
               child: Column(children: <Widget>[
             InkWell(
@@ -429,7 +451,7 @@ class _DashboardState extends State<Dashboard> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(('Event Anda').toUpperCase(),
+                          Text((widget.indexIki != 'user' ?'Event Anda' : 'Even Yang Anda Sukai').toUpperCase(),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -529,14 +551,18 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   )),
               onTap: () async {
+                
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DashboardCheckin(),
+                      builder: (context) => widget.indexIki != 'user' ? DashboardCheckin() : SuccesRegisteredEvent(),
                     ));
               },
             ),
-          ])),
+          ]
+          )
+        ),
+
           Container(
             padding: EdgeInsets.only(
                 left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),

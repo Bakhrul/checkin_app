@@ -1,9 +1,8 @@
+import 'package:checkin_app/pages/management_checkin/test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'generate_qrcode.dart';
 
@@ -85,7 +84,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: DateTimeField(
-                  format: DateFormat("HH:mm"),
+                  format: DateFormat("HH:mm:ss"),
                   decoration: InputDecoration(
                     hintText: 'Jam Berlangsungnya CheckIn',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
@@ -135,10 +134,10 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => GenerateScreen()));
+                              builder: (context) => HomePage()));
                     },
                     child: Text(
-                      "KODE UNIK CHECKIN",
+                      "Buat Keyword",
                       style: TextStyle(fontSize: 13, color: Colors.black),
                     ),
                   ),

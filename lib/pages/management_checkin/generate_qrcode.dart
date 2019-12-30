@@ -97,7 +97,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     child: TextField(
                       controller: _textController,
                       decoration: InputDecoration(
-                        hintText: "Kode Unik Checkin",
+                        hintText: "Keyword",
                         errorText: _inputErrorText,
                       ),
                     ),

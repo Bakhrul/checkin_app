@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
+import '../dashboard.dart';
 import 'register.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,11 +13,15 @@ TextEditingController password = TextEditingController();
 bool loading = false;
 
 class LoginPage extends StatefulWidget {
+  //   LoginPage({Key key, this.indexIkis, indexIki}) : super(key: key);
+  // final String indexIkis;
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // String indexIki;
+
   // List headsession = ['nama','username','id','nomor','jenis'];
   // List getsession = ['m_name','m_username','m_id','m_phone','m_gender'];
   login() async {
@@ -25,6 +30,20 @@ class _LoginPageState extends State<LoginPage> {
     await Auth(username: username.text, password: password.text).process();
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
+  }
+
+  loginStatic() {
+    if (username.text == 'user') {
+      Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Dashboard(indexIki: "user" )));
+    }else{
+       Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Dashboard(indexIki: "creator" )));
+    }
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -123,7 +142,8 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          login();
+          //login();
+          loginStatic();
         },
         child: Text(
           "Masuk",

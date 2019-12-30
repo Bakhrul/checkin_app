@@ -109,6 +109,7 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
     );
   }
 
+
   Widget _buildToolBar() {
         return Row(
           mainAxisSize: MainAxisSize.max,
