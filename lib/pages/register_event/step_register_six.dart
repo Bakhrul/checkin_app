@@ -2,9 +2,11 @@ import 'package:checkin_app/pages/management_checkin/scan_qrcode_checkin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'detail_event_afterregist.dart';
+import '../event_following/count_down.dart';
 
 class SuccesRegisteredEvent extends StatefulWidget {
-  SuccesRegisteredEvent({Key key}) : super(key: key);
+  final int checkin;
+  SuccesRegisteredEvent({Key key,this.checkin = 0}) : super(key: key);
 
   State<StatefulWidget> createState() {
     return _SuccesRegisteredEvent();
@@ -74,12 +76,21 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                 child: Text("Checkin",
                                     style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  Navigator.push(
+                                  if(widget.checkin == 0){
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             ScanQrcode(),
                                       ));
+                                  }else{
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CountDown(),
+                                      ));
+                                  } 
                                 }
                                 )
                               ),
