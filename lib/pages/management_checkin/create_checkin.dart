@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'generate_qrcode.dart';
 
@@ -16,6 +17,7 @@ void showInSnackBar(String value) {
 class ManajemeCreateCheckin extends StatefulWidget {
   ManajemeCreateCheckin({Key key, this.title}) : super(key: key);
   final String title;
+
   @override
   State<StatefulWidget> createState() {
     return _ManajemeCreateCheckinState();
@@ -23,6 +25,14 @@ class ManajemeCreateCheckin extends StatefulWidget {
 }
 
 class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
+  static const double _topSectionTopPadding = 50.0;
+  static const double _topSectionBottomPadding = 20.0;
+  static const double _topSectionHeight = 50.0;
+  GlobalKey globalKey = new GlobalKey();
+  String _dataString;
+  String _inputErrorText;
+  final TextEditingController _textController = TextEditingController();
+  
   @override
   void initState() {
     _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
@@ -32,6 +42,8 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   @override
   Widget build(BuildContext context) {
+    final bodyHeight = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
@@ -117,30 +129,24 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   Icons.create,
                   color: Color.fromRGBO(41, 30, 47, 1),
                 ),
-                title:  
-                // TextField(
-                //   decoration: InputDecoration(
-                //       hintText: 'KODE UNIK CHECKIN',
-                //       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                // ),
-                RaisedButton(
-                    color: Colors.white,
-                    textColor: Color.fromRGBO(41, 30, 47, 1),
-                    disabledColor: Colors.white,
-                    disabledTextColor: Colors.green[400],
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomePage()));
-                    },
-                    child: Text(
-                      "Buat Keyword",
-                      style: TextStyle(fontSize: 13, color: Colors.black),
-                    ),
-                  ),
+                trailing: FlatButton(
+                  child: Text("SUBMIT"),
+                  textColor: Colors.green,
+                  color: Color.fromRGBO(220, 237, 193, 99),
+                  onPressed: () {
+                    setState(() {
+                      _dataString = _textController.text;
+                      _inputErrorText = null;
+                    });
+                  },
+                ),
+                title: TextField(
+                  controller: _textController,
+                  decoration: InputDecoration(
+                      hintText: 'Keyword',
+                      errorText: _inputErrorText,
+                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
+                ),
               )),
               // Container(
               //   margin: EdgeInsets.only(top: 20.0),
@@ -209,25 +215,68 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
               //     ),
               //   ),
               // ),
+              Container(
+                padding: EdgeInsets.all(20.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: _builderGenerate(bodyHeight),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+              // Expanded(
+              //   child: Container(
+              //     child: RepaintBoundary(
+              //       key: globalKey,
+              //       child: QrImage(
+              //         data: _dataString,
+              //         size: 0.5 * bodyHeight,
+              //         // onError: (ex) {
+              //         //   print("[QR] ERROR - $ex");
+              //         //   setState((){
+              //         //     _inputErrorText = "Error! Maybe your input value is too long?";
+              //         //   });
+              //         // },
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
       ),
-      floatingActionButton: 
-      FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () async {
           Navigator.pop(context);
         },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     Navigator.pop(context);
-      //   },
-      //   child: Icon(Icons.arrow_forward_ios),
-      //   backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      // ),
     );
+  }
+
+  Widget _builderGenerate(bodyHeight) {
+    if (_dataString != null) {
+      return RepaintBoundary(
+        key: globalKey,
+        child: QrImage(
+          data: _dataString,
+          size: 0.5 * bodyHeight,
+          // onError: (ex) {
+          //   print("[QR] ERROR - $ex");
+          //   setState((){
+          //     _inputErrorText = "Error! Maybe your input value is too long?";
+          //   });
+          // },
+        ),
+      );
+    } else {
+      return RepaintBoundary(
+          child: Text("Buatlah Keyword Untuk Mendapatkan Kode Qr"));
+    }
   }
 }
