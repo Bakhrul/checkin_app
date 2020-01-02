@@ -33,18 +33,18 @@ class UserCheckinService {
     }
   }
 
-  // Future<bool> createProfile(Profile data) async {
-  //   final response = await client.post(
-  //     "$baseUrl/api/profile",
-  //     headers: {"content-type": "application/json"},
-  //     body: profileToJson(data),
-  //   );
-  //   if (response.statusCode == 201) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  Future<bool> createCheckin(Checkin data) async {
+    final response = await client.post(
+      "$baseUrl/alamraya/lumen_mobile/public/checkin",
+      headers: {"content-type": "application/json"},
+      body: checkinToJson(data),
+    );
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   // Future<bool> updateProfile(Profile data) async {
   //   final response = await client.put(
