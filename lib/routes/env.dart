@@ -1,7 +1,7 @@
 // The point below all this thing just for setting api, ty
 // Regard Previous Programmer
   // Online
-   String host = 'http://192.168.100.4/myocin';
+   String host = 'http://192.168.100.17/';
 
 
 

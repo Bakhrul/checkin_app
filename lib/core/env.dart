@@ -1,5 +1,5 @@
-String url = 'http://martabak.alamraya.site/api/';
-String noapiurl = 'http://martabak.alamraya.site/';
+String url = 'http://192.168.100.17/';
+String noapiurl = 'http://192.168.100.17/';
 
 // Custom api / Laravel Passport
 String key = "";

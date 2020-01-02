@@ -51,7 +51,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     datepicker = FocusNode();
         if (widget.checkin != null) {
       _isFieldDateValid = true;
-      _controllerDate.text = widget.checkin.checkin_date;
+      // _controllerDate.text = widget.checkin.checkin_date;
       // _isFieldEmailValid = true;
       // _controllerEmail.text = widget.profile.email;
       // _isFieldAgeValid = true;
@@ -156,26 +156,26 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           String timeEnd = _controllerTimeEnd.text.toString();
           String keyword = "_controllerEmail.text.toString()";
           // int age = int.parse(_controllerAge.text.toString());
-          Checkin checkin = Checkin(
-              checkin_key: keyword,
-              checkin_date: dateCheckin,
-              start_time: timeStart,
-              end_time: timeEnd);
+          // Checkin checkin = Checkin(
+          //     checkin_key: keyword,
+          //     checkin_date: dateCheckin,
+          //     start_time: timeStart,
+          //     end_time: timeEnd);
 
             // print(widget.checkin);
-            if (widget.checkin == null) {
-              _checkinService.createCheckin(checkin).then( ( isSuccess ) {
-                setState(() => _isLoading = false);
-                // print(_scaffoldKeycreatecheckin.currentState.context);
-                if (isSuccess) {
-                  Navigator.pop(_scaffoldKeycreatecheckin.currentState.context);
-                } else {
-                  _scaffoldKeycreatecheckin.currentState.showSnackBar(SnackBar(
-                    content: Text("Submit data failed"),
-                  ));
-                }
-              });
-            }
+            // if (widget.checkin == null) {
+            //   _checkinService.createCheckin(checkin).then( ( isSuccess ) {
+            //     setState(() => _isLoading = false);
+            //     // print(_scaffoldKeycreatecheckin.currentState.context);
+            //     if (isSuccess) {
+            //       Navigator.pop(_scaffoldKeycreatecheckin.currentState.context);
+            //     } else {
+            //       _scaffoldKeycreatecheckin.currentState.showSnackBar(SnackBar(
+            //         content: Text("Submit data failed"),
+            //       ));
+            //     }
+            //   });
+            // }
           
         },
         child: Icon(Icons.check),

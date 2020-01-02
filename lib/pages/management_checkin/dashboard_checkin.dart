@@ -1,4 +1,5 @@
 import 'package:checkin_app/api/checkin_service.dart';
+import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String sifat = 'VIP';
 String tipe = 'Public';
 var datepicker;
+List<UserCheckin> listPeserta;
+List<Checkin> listCheckin;
 
 void showInSnackBar(String value) {
   _scaffoldKeycreateevent.currentState
@@ -36,17 +39,58 @@ class DashboardCheckin extends StatefulWidget {
 class _DashboardCheckinState extends State<DashboardCheckin>
     with SingleTickerProviderStateMixin {
   BuildContext context;
-  UserCheckinService checkinService;
+  // UserCheckinService checkinService;
   TabController _tabController;
+
+  getDataMember() async {
+    listPeserta = [];
+    dynamic response =
+        await RequestGet(name: "api/get_user_checkin.json", customrequest: "")
+            .getdata();
+    print(response);
+    for (var i = 0; i < response.length; i++) {
+      UserCheckin peserta = UserCheckin(
+        name: response[i]["name"],
+        checkinTime: response[i]["checkin_time"],
+        numberOfRegist: response[i]["number_of_regist"],
+        picProfile: response[i]["pic_profile"],
+        eventId: response[i]["event_id"],
+      );
+
+      listPeserta.add(peserta);
+    }
+    setState(() {});
+  }
+
+  getDataCheckin() async {
+    listCheckin = [];
+    dynamic response =
+        await RequestGet(name: "api/get_checkin.json", customrequest: "")
+            .getdata();
+    print(response);
+    for (var i = 0; i < response.length; i++) {
+      Checkin checkin = Checkin(
+        checkinKey: response[i]["checkin_key"],
+        startTime: response[i]["start_time"],
+        endTime: response[i]["end_time"],
+        checkinDate: response[i]["checkin_date"],
+      );
+
+      listCheckin.add(checkin);
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
+    getDataMember();
+    getDataCheckin();
     _scaffoldKeycreateevent = GlobalKey<ScaffoldState>();
     _tabController = TabController(
         length: 2, vsync: _DashboardCheckinState(), initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
     datepicker = FocusNode();
-    checkinService = UserCheckinService();
+    // checkinService = UserCheckinService();
     super.initState();
   }
 
@@ -146,24 +190,27 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                           border: InputBorder.none,
                         )),
                   ),
-                  FutureBuilder(
-                      future: checkinService.getMemberEvent(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                                "Something wrong with message: ${snapshot.error.toString()}"),
-                          );
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          List<UserCheckin> memberEvent = snapshot.data;
-                          return _buildListViewMember(memberEvent);
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
+                  SingleChildScrollView(
+                    child: _buildListViewMember(),
+                  )
+                  // FutureBuilder(
+                  //     future: checkinService.getMemberEvent(),
+                  //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  //       if (snapshot.hasError) {
+                  //         return Center(
+                  //           child: Text(
+                  //               "Something wrong with message: ${snapshot.error.toString()}"),
+                  //         );
+                  //       } else if (snapshot.connectionState ==
+                  //           ConnectionState.done) {
+                  //         List<UserCheckin> memberEvent = snapshot.data;
+                  //         return _buildListViewMember(memberEvent);
+                  //       } else {
+                  //         return Center(
+                  //           child: CircularProgressIndicator(),
+                  //         );
+                  //       }
+                  //     }),
                 ],
               ),
             ),
@@ -173,24 +220,25 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                 right: 5.0,
                 left: 5.0,
               ),
-              child: FutureBuilder(
-                future: checkinService.getCheckin(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  // print(snapshot.connectionState);
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                          "Something wrong with message: ${snapshot.error.toString()}"),
-                    );
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    List<Checkin> checkin = snapshot.data;
-                    return _builderlistViewCheckin(checkin);
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
+              child: SafeArea(
+                child: _builderlistViewCheckin(),
+                // future: checkinService.getCheckin(),
+                // builder: (BuildContext context, AsyncSnapshot snapshot) {
+                //   // print(snapshot.connectionState);
+                //   if (snapshot.hasError) {
+                //     return Center(
+                //       child: Text(
+                //           "Something wrong with message: ${snapshot.error.toString()}"),
+                //     );
+                //   } else if (snapshot.connectionState == ConnectionState.done) {
+                //     List<Checkin> checkin = snapshot.data;
+                //     return _builderlistViewCheckin();
+                //   } else {
+                //     return Center(
+                //       child: CircularProgressIndicator(),
+                //     );
+                //   }
+                // },
               ),
 
               // Container(
@@ -308,127 +356,157 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     );
   }
 
-  Widget _buildListViewMember(List<UserCheckin> memberEvents) {
-    return SizedBox(
-      height: 500,
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          UserCheckin memberEvent = memberEvents[index];
-          print(index += index);
-          return Card(
-              child: ListTile(
-            leading: Container(
-                width: 40.0,
-                height: 40.0,
-                decoration: new BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: new DecorationImage(
-                    fit: BoxFit.fill,
-                    image: new NetworkImage(memberEvent.pic_profile),
-                  ),
-                )),
-            title: Text(memberEvent.name),
-            subtitle: Text(memberEvent.number_of_regist.toString()),
-          ));
-        },
-      ),
+  Widget _buildListViewMember() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Container(
+          child: Expanded(
+            child: SizedBox(
+                child: SingleChildScrollView(
+              child: Column(
+                  children: listPeserta
+                      .map((UserCheckin f) => Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: Container(
+                                  width: 40.0,
+                                  height: 40.0,
+                                  decoration: new BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: new DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image:
+                                              new NetworkImage(f.picProfile))),
+                                ),
+                                // trailing: Text(
+                                //   DateFormat('HH:mm:ss').format(DateTime.parse(f.name)).toString() ,
+                                //   style: TextStyle(color: Colors.grey),
+                                // ),
+                                title: Text(f.name),
+                                onTap: () {},
+                                subtitle: Text(f.name.toString()),
+                              ),
+                            ),
+                          ))
+                      .toList()),
+            )
+                // },
+                // itemCount: usercheckin.length,
+                // ),
+                ),
+          ),
+        ),
+      ],
     );
+    // return SingleChildScrollView(
+    //   child: Column(
+    //     children: listPeserta.map((UserCheckin f) => Padding(
+    //     padding: const EdgeInsets.only(top: 8.0),
+    //   )
+    //   )
+    //   )
+    // )
+    //     child: Card(
+    //         child: ListTile(
+    //       leading: Container(
+    //           width: 40.0,
+    //           height: 40.0,
+    //           decoration: new BoxDecoration(
+    //             shape: BoxShape.circle,
+    //             image: new DecorationImage(
+    //               fit: BoxFit.fill,
+    //               image: new NetworkImage("memberEvent.pic_profile"),
+    //             ),
+    //           )),
+    //       title: Text("memberEvent.name"),
+    //       subtitle: Text("memberEvent.number_of_regist.toString()"),
+    //     )));
   }
 
-  Widget _builderlistViewCheckin(List<Checkin> checkins) {
-    return Container(
-      child: Column(children: <Widget>[
+  Widget _builderlistViewCheckin() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
         Container(
-            margin: EdgeInsets.fromLTRB(0, 4, 10, 5),
+          child: Expanded(
             child: SizedBox(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              height: 400,
-              child: ListView.builder(
-                // children: <Widget>[
-
-                itemBuilder: (context, index) {
-                  Checkin checkin = checkins[index];
-                  String startTime = DateFormat('HH:mm:ss')
-                      .format(DateTime.parse(checkin.start_time))
-                      .toString();
-                  String endTime = DateFormat('HH:mm:ss')
-                      .format(DateTime.parse(checkin.end_time))
-                      .toString();
-                  String dateCheckin = DateFormat('dd-MM-yyyy')
-                      .format(DateTime.parse(checkin.checkin_date))
-                      .toString();
-                  // if (dateCheckin == ) {
-
-                  // }
-                  return Container(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Text(
-                            dateCheckin,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        Card(
-                          child: ListTile(
-                            leading: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100.0),
-                                child: Container(
-                                  height: 15.0,
-                                  alignment: Alignment.center,
-                                  width: 15.0,
-                                  color: Color.fromRGBO(41, 30, 47, 1),
+              child: SingleChildScrollView(
+                  child: Row(
+                      children: listPeserta
+                          .map((UserCheckin f) => Padding(
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10.0),
+                                      child: Text(
+                                        f.checkinTime,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Card(
+                                      child: ListTile(
+                                        leading: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
+                                            child: Container(
+                                              height: 15.0,
+                                              alignment: Alignment.center,
+                                              width: 15.0,
+                                              color:
+                                                  Color.fromRGBO(41, 30, 47, 1),
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          "checkin.checkin_key,",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ListPesertaCheckin()));
+                                        },
+                                        // onTap: Navigator.push(context,MaterialPageRoute(builder: (context) => context)),
+                                        trailing: ButtonTheme(
+                                            minWidth: 0.0,
+                                            child: FlatButton(
+                                              color: Colors.white,
+                                              textColor: Colors.red,
+                                              disabledColor: Colors.green[400],
+                                              disabledTextColor: Colors.white,
+                                              padding: EdgeInsets.all(15.0),
+                                              splashColor: Colors.blueAccent,
+                                              child: Icon(
+                                                Icons.close,
+                                              ),
+                                              onPressed: () async {},
+                                            )),
+                                        subtitle: Text(""),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ),
-                            title: Text(
-                              checkin.checkin_key,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 13,
-                              ),
-                            ),
-                            onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ListPesertaCheckin()));
-                            },
-                            // onTap: Navigator.push(context,MaterialPageRoute(builder: (context) => context)),
-                            trailing: ButtonTheme(
-                                minWidth: 0.0,
-                                child: FlatButton(
-                                  color: Colors.white,
-                                  textColor: Colors.red,
-                                  disabledColor: Colors.green[400],
-                                  disabledTextColor: Colors.white,
-                                  padding: EdgeInsets.all(15.0),
-                                  splashColor: Colors.blueAccent,
-                                  child: Icon(
-                                    Icons.close,
-                                  ),
-                                  onPressed: () async {},
-                                )),
-                            subtitle: Text("$startTime - $endTime"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              // ],
-            )
-            // )
-            )
-      ]),
+                              ))
+                          .toList())),
+            ),
+          ),
+        )
+
+        // )
+      ],
     );
   }
 
