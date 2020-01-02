@@ -2,15 +2,23 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../dashboard.dart';
 import 'register.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:checkin_app/storage/storage.dart';
+import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:checkin_app/routes/env.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:checkin_app/dashboard.dart';
 
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
 bool loading = false;
+bool _isLoading = false;
+Map<String, String> requestHeaders = Map();
 
 class LoginPage extends StatefulWidget {
   //   LoginPage({Key key, this.indexIkis, indexIki}) : super(key: key);
@@ -31,7 +39,134 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
   }
+    String msg = '';
+  
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void showInSnackBar(String value, {SnackBarAction action}) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+      action: action,
+    ));
+  }
+  // _login() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   try {
+  //     final getToken = await http.post(url('oauth/token'), body: {
+  //       'grant_type': grantType,
+  //       'client_id': clientId,
+  //       'client_secret': clientSecret,
+  //       "username": username.text,
+  //       "password": password.text,
+  //     });
+
+  //     print('getToken ' + getToken.body);
+
+  //     var getTokenDecode = json.decode(getToken.body);
+
+  //     if (getToken.statusCode == 200) {
+  //       if (getTokenDecode['error'] == 'invalid_credentials') {
+  //         showInSnackBar(getTokenDecode['message']);
+  //         msg = getTokenDecode['message'];
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       } else if (getTokenDecode['error'] == 'invalid_request') {
+  //         showInSnackBar(getTokenDecode['hint']);
+  //         msg = getTokenDecode['hint'];
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       } else if (getTokenDecode['token_type'] == 'Bearer') {
+  //         DataStore()
+  //             .setDataString('access_token', getTokenDecode['access_token']);
+  //         DataStore().setDataString('token_type', getTokenDecode['token_type']);
+          
+  //         List head = ['token_type','access_token'];
+  //         List value = [getTokenDecode['token_type'],getTokenDecode['access_token']];
+  //         Auth(nameStringsession: head , dataStringsession: value).savesession();
+
+  //       }
+  //       dynamic tokenType = getTokenDecode['token_type'];
+  //       dynamic accessToken = getTokenDecode['access_token'];
+  //       requestHeaders['Accept'] = 'application/json';
+  //       requestHeaders['Authorization'] = '$tokenType $accessToken';
+  //       try {
+  //         final getUser =
+  //             await http.get(url("api/user"), headers: requestHeaders);
+  //         // print('getUser ' + getUser.body);
+
+  //         if (getUser.statusCode == 200) {
+  //           dynamic datauser = json.decode(getUser.body);
+
+  //           DataStore store = new DataStore();
+
+  //           // store.setDataInteger("user_id", int.parse(datajson['user']["u_id"]));
+  //           store.setDataString("code", datauser['u_code'].toString());
+  //           store.setDataString("email", datauser['u_email']);
+  //           store.setDataString("name", datauser['u_name']);
+
+  //           print(datauser);
+
+  //           Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //               settings: RouteSettings(name: '/dashboard'),
+  //               builder: (BuildContext context) => Dashboard(),
+  //             ),
+  //           );
+  //           // print('statement else is true');
+  //           // print(datauser);
+  //           setState(() {
+  //             _isLoading = false;
+  //           });
+  //         } else {
+  //           showInSnackBar('Request failed with status: ${getUser.statusCode}');
+  //           setState(() {
+  //             _isLoading = false;
+  //           });
+  //         }
+  //       } on SocketException catch (_) {
+  //         showInSnackBar('Connection Timed Out');
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       } catch (e) {
+  //         print(e);
+  //         // showInSnackBar(e);
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       }
+  //     } else if (getToken.statusCode == 401) {
+  //       showInSnackBar('Username atau Password Salah');
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     } else {
+  //       showInSnackBar('Request failed with status: ${getToken.statusCode}');
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     }
+  //     // print(datajson.toString());
+
+  //   } on SocketException catch (_) {
+  //     showInSnackBar('Connection Timed Out');
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //     // showInSnackBar(e);
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
   loginStatic() {
     if (username.text == 'user') {
       Navigator.push(
