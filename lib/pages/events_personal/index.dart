@@ -9,6 +9,7 @@ import 'point_person.dart';
 import 'manage_peserta.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeypersonalevent;
+bool isLoading, isError;
 enum PageEnum {
   kelolaPesertaPage,
   kelolaWaktuCheckinPage,
@@ -71,6 +72,70 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       }
     });
   }
+  // Future<List<List>> listNotaAndroid() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   try {
+  //     final nota = await http.get(
+  //       url('api/listKeranjangAndroid'),
+  //       headers: requestHeaders,
+  //     );
+
+  //     if (nota.statusCode == 200) {
+  //       // return nota;
+  //       var notaJson = json.decode(nota.body);
+  //       var notas = notaJson['item'];
+  //       var totalharga = notaJson['totalharga'];
+  //       print('totalharga $totalharga');
+  //       print('notaJson $notaJson');
+
+  //       listNota = [];
+  //       for (var i in notas) {
+  //         ListOngoing notax = ListOngoing(
+  //           id: '${i['cart_id']}',
+  //           item: i['i_name'],
+  //           harga: i['ipr_sunitprice'],
+  //         );
+  //         listNota.add(notax);
+  //       }
+  //       setState(() {
+  //         isLoading = false;
+  //         isLogout = false;
+  //         isError = false;
+  //         totalhargaX = totalharga;
+  //       });
+  //       return listNota;
+  //     }else if(nota.statusCode == 401){
+  //       setState(() {
+  //         isLoading = false;
+  //         isLogout = true;
+  //         isError = false;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         isLoading = false;
+  //         isLogout = false;
+  //         isError = true;
+  //       });
+  //       return null;
+  //     }
+  //   } on TimeoutException catch (_) {
+  //     setState(() {
+  //         isLoading = false;
+  //         isLogout = false;
+  //         isError = true;
+  //       });
+  //     showInSnackBar('Timed out, Try again');
+  //   } catch (e) {
+  //     setState(() {
+  //         isLoading = false;
+  //         isError = true;
+  //       });
+  //     debugPrint('$e');
+  //   }
+  //   return null;
+  // }
 
   _onSelect(PageEnum value) {
     switch (value) {
