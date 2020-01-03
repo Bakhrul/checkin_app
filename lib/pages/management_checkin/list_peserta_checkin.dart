@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyListCheckin;
-List<ListPeserta> listPeserta;
+List<UserCheckin> listPeserta;
 
 void showInSnackBar(String value) {
   _scaffoldKeyListCheckin.currentState.showSnackBar(new SnackBar(
@@ -21,67 +21,50 @@ class ListPesertaCheckin extends StatefulWidget {
   _ListPesertaCheckinState createState() => _ListPesertaCheckinState();
 }
 
-class _ListPesertaCheckinState extends State<ListPesertaCheckin> {
-  // with SingleTickerProviderStateMixin {
+class _ListPesertaCheckinState extends State<ListPesertaCheckin> 
+  with SingleTickerProviderStateMixin {
   
   AnimationController _controller;
   BuildContext context;
-  UserCheckinService userCheckinService;
-  postData() async{
-    dynamic body = {
-      "name" : "h",
-      "age" : "89"
-    };
+ 
 
-   dynamic response  = await RequestPost(name: "alamraya/lumen_mobile/public/checkin",body: body).sendrequest(); 
-   print(response);
-
-  }
-
-  getData() async {
+   getData() async {
     listPeserta = [];
-   dynamic response  = await RequestGet(name: "api/get_checkin.json",customrequest: "").getdata(); 
-   print(response);
-   for (var i = 0; i < response.length; i++) {
-     ListPeserta peserta = ListPeserta(
-       name: response[i]["checkin_key"],
-       checkinTime: response[i]["checkin_key"],
-       numberOfRegist: response[i]["checkin_key"],
-       picProfile: response[i]["checkin_key"],
-     );
+    dynamic response =
+        await RequestGet(name: "api/get_user_checkin.json", customrequest: "")
+            .getdata();
+    for (var i = 0; i < response.length; i++) {
+      UserCheckin peserta = UserCheckin(
+        name: response[i]["name"],
+        checkinTime: response[i]["checkin_time"],
+        numberOfRegist: response[i]["number_of_regist"],
+        picProfile: response[i]["pic_profile"],
+        eventId: response[i]["event_id"],
+      );
 
-    listPeserta.add(peserta);
-   }
-  setState(() {
-    
-  });
+      listPeserta.add(peserta);
+    }
+    setState(() {});
   }
   @override
   void initState() {
     getData();
     super.initState();
     _scaffoldKeyListCheckin = GlobalKey<ScaffoldState>();
-    postData();
-    // _controller = AnimationController(vsync: this);
-    userCheckinService = UserCheckinService();
   }
 
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
-    // userCheckinService.getUserCheckin();
   }
 
   @override
   Widget build(BuildContext context) {
     this.context = context;
-
-    // userCheckinService.getUserCheckin().then((value) => print("value: $value"));
-
     return Scaffold(
       backgroundColor: Colors.white,
-      // key: _scaffoldKeyListCheckin,
+      key: _scaffoldKeyListCheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
@@ -114,31 +97,14 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin> {
                       Icons.search,
                       color: Color.fromRGBO(41, 30, 47, 1),
                     ),
-                    hintText: " Berdasarkan Nama hfghf Lengkap",
+                    hintText: " Berdasarkan Nama Lengkap",
                     border: InputBorder.none,
                   )),
             ),
 
             SafeArea(
               child: _builderListView(),
-            //   child: FutureBuilder(
-            //       future: userCheckinService.getUserCheckin(),
-            //       builder: (BuildContext context, AsyncSnapshot snapshot) {
-            //         if (snapshot.hasError) {
-            //           return Center(
-            //             child: Text(
-            //                 "Something wrong with message: ${snapshot.error.toString()}"),
-            //           );
-            //         } else if (snapshot.connectionState ==
-            //             ConnectionState.done) {
-            //           List<UserCheckin> usercheckin = snapshot.data;
-            //           return _builderListView(usercheckin);
-            //         } else {
-            //           return Center(
-            //             child: CircularProgressIndicator(),
-            //           );
-            //         }
-            //       }),
+           
             )
           ],
         )),
@@ -152,17 +118,10 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin> {
       children: <Widget>[
         Container(
           child: Expanded(
-            // padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: SizedBox(
-              height: 400,
-              // child: ListView.builder(
-                // itemBuilder: (context, index) {
-                  // shrinkWrap:
-                  // true;
-                  // UserCheckin userCheckin = usercheckin[index];
                   child: SingleChildScrollView(
                     child: Column(
-                      children: listPeserta.map((ListPeserta f) => Padding(
+                      children: listPeserta.map((UserCheckin f) => Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Card(
                           child: ListTile(
@@ -177,10 +136,6 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin> {
                                         f.picProfile
                                       ))),
                             ),
-                            // trailing: Text(
-                            //   DateFormat('HH:mm:ss').format(DateTime.parse(f.name)).toString() ,
-                            //   style: TextStyle(color: Colors.grey),
-                            // ),
                             title: Text(f.name),
                             onTap: () async {
                               Navigator.push(
@@ -194,21 +149,10 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin> {
                       )).toList()
                     ),
                   )
-                // },
-                // itemCount: usercheckin.length,
-              // ),
             ),
           ),
         ),
       ],
     );
   }
-}
-
-class ListPeserta{
-  var name;
-  var numberOfRegist;
-  var checkinTime;
-  var picProfile;
-  ListPeserta({Key key, this.name , this.checkinTime, this.numberOfRegist, this.picProfile});
 }

@@ -1,4 +1,4 @@
-String url = 'http://192.168.100.17/';
+String url = 'http://192.168.100.17/alamraya/myocin/public/api/';
 String noapiurl = 'http://192.168.100.17/';
 
 // Custom api / Laravel Passport

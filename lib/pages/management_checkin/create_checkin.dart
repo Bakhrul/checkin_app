@@ -1,14 +1,13 @@
 import 'package:checkin_app/api/checkin_service.dart';
+import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
-import 'package:checkin_app/model/user_checkin.dart';
-import 'package:checkin_app/pages/management_checkin/test.dart';
+import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
 import 'package:flutter/material.dart';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
-import 'generate_qrcode.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
 var datepicker;
@@ -40,16 +39,42 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   bool _isFieldDateValid;
   bool _isFieldTimeStartlValid;
   bool _isFieldTimeEndValid;
-  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _controllerGenerate = TextEditingController();
   TextEditingController _controllerDate = TextEditingController();
   TextEditingController _controllerTimeStart = TextEditingController();
   TextEditingController _controllerTimeEnd = TextEditingController();
+
+  postDataCheckin() async {
+    dynamic body = {
+      "event_id": "1",
+      "checkin_keyword": _controllerGenerate.text.toString(),
+      "start_time": _controllerTimeStart.text.toString(),
+      "end_time": _controllerTimeEnd.text.toString(),
+      "checkin_date": _controllerDate.text.toString()
+    };
+    print(body);
+
+    dynamic response =
+        await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
+            .sendrequest();
+    if (response == "success") {
+      Fluttertoast.showToast(
+          msg: "Success",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
+    }
+  }
 
   @override
   void initState() {
     _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
-        if (widget.checkin != null) {
+    if (widget.checkin != null) {
       _isFieldDateValid = true;
       // _controllerDate.text = widget.checkin.checkin_date;
       // _isFieldEmailValid = true;
@@ -57,13 +82,14 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       // _isFieldAgeValid = true;
       // _controllerAge.text = widget.profile.age.toString();
     }
+    // postDataCheckin();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final bodyHeight = MediaQuery.of(context).size.height -
-        MediaQuery.of(context).viewInsets.bottom;
+    MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
@@ -118,13 +144,13 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   color: Color.fromRGBO(220, 237, 193, 99),
                   onPressed: () {
                     setState(() {
-                      _dataString = _textController.text;
+                      _dataString = _controllerGenerate.text;
                       _inputErrorText = null;
                     });
                   },
                 ),
                 title: TextField(
-                  controller: _textController,
+                  controller: _controllerGenerate,
                   decoration: InputDecoration(
                       hintText: 'Keyword',
                       errorText: _inputErrorText,
@@ -151,32 +177,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() => _isLoading = true);
-          String dateCheckin = _controllerDate.text.toString();
-          String timeStart = _controllerTimeStart.text.toString();
-          String timeEnd = _controllerTimeEnd.text.toString();
-          String keyword = "_controllerEmail.text.toString()";
-          // int age = int.parse(_controllerAge.text.toString());
-          // Checkin checkin = Checkin(
-          //     checkin_key: keyword,
-          //     checkin_date: dateCheckin,
-          //     start_time: timeStart,
-          //     end_time: timeEnd);
-
-            // print(widget.checkin);
-            // if (widget.checkin == null) {
-            //   _checkinService.createCheckin(checkin).then( ( isSuccess ) {
-            //     setState(() => _isLoading = false);
-            //     // print(_scaffoldKeycreatecheckin.currentState.context);
-            //     if (isSuccess) {
-            //       Navigator.pop(_scaffoldKeycreatecheckin.currentState.context);
-            //     } else {
-            //       _scaffoldKeycreatecheckin.currentState.showSnackBar(SnackBar(
-            //         content: Text("Submit data failed"),
-            //       ));
-            //     }
-            //   });
-            // }
-          
+          postDataCheckin();
         },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -250,63 +251,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         );
   }
 
-  // Widget _buildTextFieldName() {
-  //   return TextField(
-  //     controller: _controllerName,
-  //     keyboardType: TextInputType.text,
-  //     decoration: InputDecoration(
-  //       labelText: "Full name",
-  //       errorText: _isFieldNameValid == null || _isFieldNameValid
-  //           ? null
-  //           : "Full name is required",
-  //     ),
-  //     onChanged: (value) {
-  //       bool isFieldValid = value.trim().isNotEmpty;
-  //       if (isFieldValid != _isFieldNameValid) {
-  //         setState(() => _isFieldNameValid = isFieldValid);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Widget _buildTextFieldEmail() {
-  //   return TextField(
-  //     controller: _controllerEmail,
-  //     keyboardType: TextInputType.emailAddress,
-  //     decoration: InputDecoration(
-  //       labelText: "Email",
-  //       errorText: _isFieldEmailValid == null || _isFieldEmailValid
-  //           ? null
-  //           : "Email is required",
-  //     ),
-  //     onChanged: (value) {
-  //       bool isFieldValid = value.trim().isNotEmpty;
-  //       if (isFieldValid != _isFieldEmailValid) {
-  //         setState(() => _isFieldEmailValid = isFieldValid);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Widget _buildTextFieldAge() {
-  //   return TextField(
-  //     controller: _controllerAge,
-  //     keyboardType: TextInputType.number,
-  //     decoration: InputDecoration(
-  //       labelText: "Age",
-  //       errorText: _isFieldAgeValid == null || _isFieldAgeValid
-  //           ? null
-  //           : "Age is required",
-  //     ),
-  //     onChanged: (value) {
-  //       bool isFieldValid = value.trim().isNotEmpty;
-  //       if (isFieldValid != _isFieldAgeValid) {
-  //         setState(() => _isFieldAgeValid = isFieldValid);
-  //       }
-  //     },
-  //   );
-  // }
-
   Widget _builderGenerate(bodyHeight) {
     if (_dataString != null) {
       return RepaintBoundary(
@@ -324,7 +268,27 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       );
     } else {
       return RepaintBoundary(
-          child: Text("Buatlah Keyword Untuk Mendapatkan Kode Qr"));
+          child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+              child: FlatButton(
+              color: Colors.blue,
+              textColor: Colors.white,
+              disabledColor: Colors.grey,
+              disabledTextColor: Colors.black,
+              padding: EdgeInsets.all(8.0),
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder: (context) => DirectCheckin() ));
+              },
+                child: Text("Direct Checkin"),
+          ))
+        ],
+      ));
     }
   }
 }
+
+
+
+// =========================================================================

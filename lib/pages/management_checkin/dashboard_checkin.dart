@@ -1,12 +1,11 @@
-import 'package:checkin_app/api/checkin_service.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:flutter/material.dart';
-
-import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import 'package:draggable_fab/draggable_fab.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
 import 'list_peserta_checkin.dart';
@@ -39,15 +38,18 @@ class DashboardCheckin extends StatefulWidget {
 class _DashboardCheckinState extends State<DashboardCheckin>
     with SingleTickerProviderStateMixin {
   BuildContext context;
-  // UserCheckinService checkinService;
   TabController _tabController;
+  static const List<IconData> icons = const [
+    Icons.sms,
+    Icons.mail,
+    Icons.phone
+  ];
 
   getDataMember() async {
     listPeserta = [];
     dynamic response =
-        await RequestGet(name: "api/get_user_checkin.json", customrequest: "")
+        await RequestGet(name: "checkin/getdata/member", customrequest: "")
             .getdata();
-    print(response);
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
         name: response[i]["name"],
@@ -65,12 +67,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   getDataCheckin() async {
     listCheckin = [];
     dynamic response =
-        await RequestGet(name: "api/get_checkin.json", customrequest: "")
+        await RequestGet(name: "checkin/getdata/checkin", customrequest: "")
             .getdata();
-    print(response);
     for (var i = 0; i < response.length; i++) {
       Checkin checkin = Checkin(
-        checkinKey: response[i]["checkin_key"],
+        checkinKey: response[i]["checkin_keyword"],
         startTime: response[i]["start_time"],
         endTime: response[i]["end_time"],
         checkinDate: response[i]["checkin_date"],
@@ -81,6 +82,38 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     setState(() {});
   }
 
+  deleteCheckin() async {
+    dynamic body = {
+      "event_id": "1",
+      "checkin_id": "7",
+      };
+    dynamic response = await RequestPost(
+            name:"checkin/deletedata/checkinreguler", body: body)
+        .sendrequest();
+    if (response  == "success") {
+      setState(() {});
+      Fluttertoast.showToast(
+        msg: "Data Berhasil Terhapus",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+    } else {
+      Fluttertoast.showToast(
+        msg: "Terjadi Kesalahan",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+    }
+  }
+ 
   @override
   void initState() {
     getDataMember();
@@ -90,7 +123,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         length: 2, vsync: _DashboardCheckinState(), initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
     datepicker = FocusNode();
-    // checkinService = UserCheckinService();
     super.initState();
   }
 
@@ -114,8 +146,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    // checkinService.getCheckin().then((value) => print("value: $value"));
-
+    String jumlahPeserta = listPeserta.length.toString();
     var childButtons = List<UnicornButton>();
     childButtons.add(UnicornButton(
         hasLabel: true,
@@ -148,6 +179,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
     return SafeArea(
       top: false,
+      key: _scaffoldKeycreateevent,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -156,7 +188,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           bottom: TabBar(
             controller: _tabController,
             tabs: [
-              Tab(icon: Icon(Icons.person), text: 'Peserta (3000)'),
+              Tab(icon: Icon(Icons.person), text: 'Peserta ( $jumlahPeserta )'),
               Tab(icon: Icon(Icons.schedule), text: 'Checkin'),
             ],
           ),
@@ -193,24 +225,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   SingleChildScrollView(
                     child: _buildListViewMember(),
                   )
-                  // FutureBuilder(
-                  //     future: checkinService.getMemberEvent(),
-                  //     builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  //       if (snapshot.hasError) {
-                  //         return Center(
-                  //           child: Text(
-                  //               "Something wrong with message: ${snapshot.error.toString()}"),
-                  //         );
-                  //       } else if (snapshot.connectionState ==
-                  //           ConnectionState.done) {
-                  //         List<UserCheckin> memberEvent = snapshot.data;
-                  //         return _buildListViewMember(memberEvent);
-                  //       } else {
-                  //         return Center(
-                  //           child: CircularProgressIndicator(),
-                  //         );
-                  //       }
-                  //     }),
                 ],
               ),
             ),
@@ -222,131 +236,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
               ),
               child: SafeArea(
                 child: _builderlistViewCheckin(),
-                // future: checkinService.getCheckin(),
-                // builder: (BuildContext context, AsyncSnapshot snapshot) {
-                //   // print(snapshot.connectionState);
-                //   if (snapshot.hasError) {
-                //     return Center(
-                //       child: Text(
-                //           "Something wrong with message: ${snapshot.error.toString()}"),
-                //     );
-                //   } else if (snapshot.connectionState == ConnectionState.done) {
-                //     List<Checkin> checkin = snapshot.data;
-                //     return _builderlistViewCheckin();
-                //   } else {
-                //     return Center(
-                //       child: CircularProgressIndicator(),
-                //     );
-                //   }
-                // },
               ),
-
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: <Widget>[
-              //       Padding(
-              //         padding: const EdgeInsets.only(bottom: 8.0, top: 10.0),
-              //         child: Text(
-              //           '13 September 2019',
-              //           style: TextStyle(
-              //               fontSize: 14,
-              //               color: Colors.blue,
-              //               fontWeight: FontWeight.w500),
-              //         ),
-              //       ),
-              //       Card(
-              //         child: ListTile(
-              //           leading: Padding(
-              //             padding: const EdgeInsets.all(10.0),
-              //             child: ClipRRect(
-              //               borderRadius: BorderRadius.circular(100.0),
-              //               child: Container(
-              //                 height: 15.0,
-              //                 alignment: Alignment.center,
-              //                 width: 15.0,
-              //                 color: Color.fromRGBO(41, 30, 47, 1),
-              //               ),
-              //             ),
-              //           ),
-              //           title: Text(
-              //             'KODECHECKIN',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.w500,
-              //               fontSize: 13,
-              //             ),
-              //           ),
-              //           onTap: () async {
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                     builder: (context) => ListPesertaCheckin()));
-              //           },
-              //           trailing: ButtonTheme(
-              //               minWidth: 0.0,
-              //               child: FlatButton(
-              //                 color: Colors.white,
-              //                 textColor: Colors.red,
-              //                 disabledColor: Colors.green[400],
-              //                 disabledTextColor: Colors.white,
-              //                 padding: EdgeInsets.all(15.0),
-              //                 splashColor: Colors.blueAccent,
-              //                 child: Icon(
-              //                   Icons.close,
-              //                 ),
-              //                 onPressed: () async {},
-              //               )),
-              //           subtitle: Text('04:00 - 04:30'),
-              //         ),
-              //       ),
-              //       Card(
-              //         child: ListTile(
-              //           leading: Padding(
-              //             padding: const EdgeInsets.all(10.0),
-              //             child: ClipRRect(
-              //               borderRadius: BorderRadius.circular(100.0),
-              //               child: Container(
-              //                 height: 15.0,
-              //                 alignment: Alignment.center,
-              //                 width: 15.0,
-              //                 color: Color.fromRGBO(41, 30, 47, 1),
-              //               ),
-              //             ),
-              //           ),
-              //           title: Text(
-              //             'KODECHECKIN',
-              //             style: TextStyle(
-              //               fontWeight: FontWeight.w500,
-              //               fontSize: 13,
-              //             ),
-              //           ),
-              //           onTap: () async {
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                     builder: (context) => ListPesertaCheckin()));
-              //           },
-              //           trailing: ButtonTheme(
-              //               minWidth: 0.0,
-              //               child: FlatButton(
-              //                 color: Colors.white,
-              //                 textColor: Colors.red,
-              //                 disabledColor: Colors.green[400],
-              //                 disabledTextColor: Colors.white,
-              //                 padding: EdgeInsets.all(15.0),
-              //                 splashColor: Colors.blueAccent,
-              //                 child: Icon(
-              //                   Icons.close,
-              //                 ),
-              //                 onPressed: () async {},
-              //               )),
-              //           subtitle: Text('04:00 - 04:30'),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             )
           ],
         ),
@@ -363,66 +253,36 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         Container(
           child: Expanded(
             child: SizedBox(
+                height: 400,
                 child: SingleChildScrollView(
-              child: Column(
-                  children: listPeserta
-                      .map((UserCheckin f) => Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: Container(
-                                  width: 40.0,
-                                  height: 40.0,
-                                  decoration: new BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image:
-                                              new NetworkImage(f.picProfile))),
+                  child: Column(
+                      children: listPeserta
+                          .map((UserCheckin f) => Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Card(
+                                  child: ListTile(
+                                    leading: Container(
+                                      width: 40.0,
+                                      height: 40.0,
+                                      decoration: new BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: new DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: new NetworkImage(
+                                                  f.picProfile))),
+                                    ),
+                                    title: Text(f.name),
+                                    onTap: () {},
+                                    subtitle: Text(f.name.toString()),
+                                  ),
                                 ),
-                                // trailing: Text(
-                                //   DateFormat('HH:mm:ss').format(DateTime.parse(f.name)).toString() ,
-                                //   style: TextStyle(color: Colors.grey),
-                                // ),
-                                title: Text(f.name),
-                                onTap: () {},
-                                subtitle: Text(f.name.toString()),
-                              ),
-                            ),
-                          ))
-                      .toList()),
-            )
-                // },
-                // itemCount: usercheckin.length,
-                // ),
-                ),
+                              ))
+                          .toList()),
+                )),
           ),
         ),
       ],
     );
-    // return SingleChildScrollView(
-    //   child: Column(
-    //     children: listPeserta.map((UserCheckin f) => Padding(
-    //     padding: const EdgeInsets.only(top: 8.0),
-    //   )
-    //   )
-    //   )
-    // )
-    //     child: Card(
-    //         child: ListTile(
-    //       leading: Container(
-    //           width: 40.0,
-    //           height: 40.0,
-    //           decoration: new BoxDecoration(
-    //             shape: BoxShape.circle,
-    //             image: new DecorationImage(
-    //               fit: BoxFit.fill,
-    //               image: new NetworkImage("memberEvent.pic_profile"),
-    //             ),
-    //           )),
-    //       title: Text("memberEvent.name"),
-    //       subtitle: Text("memberEvent.number_of_regist.toString()"),
-    //     )));
   }
 
   Widget _builderlistViewCheckin() {
@@ -433,16 +293,20 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           child: Expanded(
             child: SizedBox(
               child: SingleChildScrollView(
-                  child: Row(
-                      children: listPeserta
-                          .map((UserCheckin f) => Padding(
+                physics: const AlwaysScrollableScrollPhysics(),
+                
+                  child: Column(
+                      children: listCheckin
+                          .map((Checkin data) => Padding(
+                                padding: EdgeInsets.all(2),
                                 child: Column(
                                   children: <Widget>[
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10.0),
                                       child: Text(
-                                        f.checkinTime,
+                                        
+                                                data.checkinDate,
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.blue,
@@ -451,51 +315,87 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                     ),
                                     Card(
                                       child: ListTile(
-                                        leading: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(100.0),
-                                            child: Container(
-                                              height: 15.0,
-                                              alignment: Alignment.center,
-                                              width: 15.0,
-                                              color:
-                                                  Color.fromRGBO(41, 30, 47, 1),
+                                          leading: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100.0),
+                                              child: Container(
+                                                height: 15.0,
+                                                alignment: Alignment.center,
+                                                width: 15.0,
+                                                color: Color.fromRGBO(
+                                                    41, 30, 47, 1),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        title: Text(
-                                          "checkin.checkin_key,",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 13,
+                                          title: Text(
+                                            data.checkinKey,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 13,
+                                            ),
                                           ),
-                                        ),
-                                        onTap: () async {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ListPesertaCheckin()));
-                                        },
-                                        // onTap: Navigator.push(context,MaterialPageRoute(builder: (context) => context)),
-                                        trailing: ButtonTheme(
-                                            minWidth: 0.0,
-                                            child: FlatButton(
-                                              color: Colors.white,
-                                              textColor: Colors.red,
-                                              disabledColor: Colors.green[400],
-                                              disabledTextColor: Colors.white,
-                                              padding: EdgeInsets.all(15.0),
-                                              splashColor: Colors.blueAccent,
-                                              child: Icon(
-                                                Icons.close,
-                                              ),
-                                              onPressed: () async {},
-                                            )),
-                                        subtitle: Text(""),
-                                      ),
+                                          onTap: () async {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ListPesertaCheckin()));
+                                          },
+                                          trailing: ButtonTheme(
+                                              minWidth: 0.0,
+                                              child: FlatButton(
+                                                color: Colors.white,
+                                                textColor: Colors.red,
+                                                disabledColor:
+                                                    Colors.green[400],
+                                                disabledTextColor: Colors.white,
+                                                padding: EdgeInsets.all(15.0),
+                                                splashColor: Colors.blueAccent,
+                                                child: Icon(
+                                                  Icons.close,
+                                                ),
+                                                onPressed: () async {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title:
+                                                              Text("Warning"),
+                                                          content: Text(
+                                                              "Are you sure want to delete data?"),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                              child:
+                                                                  Text("Yes"),
+                                                              onPressed: () {
+                                                                deleteCheckin();
+
+                                                                Navigator.pop(context);
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              child: Text("No"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      });
+                                                },
+                                              )),
+                                          subtitle: Text(DateFormat('HH:mm:dd')
+                                                  .format(DateTime.parse(
+                                                      data.startTime))
+                                                  .toString() +
+                                              " - " +
+                                              DateFormat('HH:mm:dd')
+                                                  .format(DateTime.parse(
+                                                      data.endTime))
+                                                  .toString())),
                                     ),
                                   ],
                                 ),
@@ -504,13 +404,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
             ),
           ),
         )
-
-        // )
       ],
     );
   }
 
   Widget _bottomButtons() {
+    Color backgroundColor = Theme.of(context).cardColor;
+    Color foregroundColor = Theme.of(context).accentColor;
     return _tabController.index == 1
         ? DraggableFab(
             child: FloatingActionButton(
@@ -527,6 +427,56 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Icons.add,
                   size: 20.0,
                 )))
+
+        //   new Column(
+        //   mainAxisSize: MainAxisSize.min,
+        //   children: new List.generate(icons.length, (int index) {
+        //     Widget child = new Container(
+        //       height: 70.0,
+        //       width: 56.0,
+        //       alignment: FractionalOffset.topCenter,
+        //       child: new ScaleTransition(
+        //         scale: new CurvedAnimation(
+        //           parent: _controller,
+        //           curve: new Interval(
+        //             0.0,
+        //             1.0 - index / icons.length / 2.0,
+        //             curve: Curves.easeOut
+        //           ),
+        //         ),
+        //         child: new FloatingActionButton(
+        //           heroTag: null,
+        //           backgroundColor: backgroundColor,
+        //           mini: true,
+        //           child: new Icon(icons[index], color: foregroundColor),
+        //           onPressed: () {},
+        //         ),
+        //       ),
+        //     );
+        //     return child;
+        //   }).toList()..add(
+        //     new FloatingActionButton(
+        //       heroTag: null,
+        //       child: new AnimatedBuilder(
+        //         animation: _controller,
+        //         builder: (BuildContext context, Widget child) {
+        //           return new Transform(
+        //             transform: new Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+        //             alignment: FractionalOffset.center,
+        //             child: new Icon(_controller.isDismissed ? Icons.share : Icons.close),
+        //           );
+        //         },
+        //       ),
+        //       onPressed: () {
+        //         if (_controller.isDismissed) {
+        //           _controller.forward();
+        //         } else {
+        //           _controller.reverse();
+        //         }
+        //       },
+        //     ),
+        //   ),
+        // )
         : null;
   }
 }
