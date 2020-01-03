@@ -436,6 +436,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   child: Row(
                       children: listPeserta
                           .map((UserCheckin f) => Padding(
+                              padding:null,
                                 child: Column(
                                   children: <Widget>[
                                     Padding(
