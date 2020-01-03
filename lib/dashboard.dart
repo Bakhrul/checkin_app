@@ -31,7 +31,7 @@ class Dashboard extends StatefulWidget {
   // final IkiIndex _indexIki;
 
   // Dashboard({@required IkiIndex indexIki}) : _indexIki = indexIki;
-  Dashboard({Key key,  @required this.indexIki}) : super(key: key);
+  Dashboard({Key key,this.indexIki}) : super(key: key);
   // final String title;
   final String indexIki;
   @override

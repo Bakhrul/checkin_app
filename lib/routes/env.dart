@@ -1,7 +1,7 @@
 // The point below all this thing just for setting api, ty
 // Regard Previous Programmer
   // Online
-   String host = 'http://192.168.100.17/alamraya/myocin/public/api/';
+   String host = 'http://192.168.100.17/alamraya/myocin/api/';
   //  String host = 'http://192.168.43.115/myocin/public/';
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 

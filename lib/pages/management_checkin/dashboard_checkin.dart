@@ -294,11 +294,12 @@ class _DashboardCheckinState extends State<DashboardCheckin>
             child: SizedBox(
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                
+                padding: EdgeInsets.all(2),
                   child: Column(
                       children: listCheckin
                           .map((Checkin data) => Padding(
                                 padding: EdgeInsets.all(2),
+
                                 child: Column(
                                   children: <Widget>[
                                     Padding(
