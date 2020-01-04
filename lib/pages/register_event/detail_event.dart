@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:checkin_app/model/search_event.dart';
 
 class RegisterEvents extends StatefulWidget {
+
   RegisterEvents({Key key}) : super(key: key);
 
   @override
@@ -12,6 +14,11 @@ class RegisterEvents extends StatefulWidget {
 }
 
 class _RegisterEvent extends State<RegisterEvents> {
+
+  @override
+  initState(){
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +81,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                     Container(
                         padding: EdgeInsets.only(bottom: 10.0),
                         width: double.infinity,
-                        child: Text("Komunitas Dev Junior",
+                        child: Text("Komunitas De Junior",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20))),
                     Container(

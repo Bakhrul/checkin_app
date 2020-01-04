@@ -163,7 +163,7 @@ class _DashboardState extends State<Dashboard> {
                       children: <Widget>[
                         ListTile(
                           title: Text(
-                            'Semua Event',
+                            'Cari Event',
                             style: TextStyle(
                               fontSize: 16.0,
                               fontFamily: 'Roboto',
