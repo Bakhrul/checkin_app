@@ -175,7 +175,6 @@ class RequestGet{
         },
       );
       dynamic dataresponse = json.decode(data.body);
-      print(dataresponse.toString());
       if(data.statusCode == 200){
       return dataresponse;
     }else{
