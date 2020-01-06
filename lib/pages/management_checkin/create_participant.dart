@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user.dart';
 import 'package:checkin_app/pages/management_checkin/testing.dart';
+import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+
 
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
 var datepicker;
@@ -34,9 +36,9 @@ class _CreateParticipantState extends State<CreateParticipant>
 
   Future<String> getDataMember() async {
     var resp = await http.get(
-        Uri.encodeFull(
-            "http://192.168.100.3/alamraya/myocin/api/event/getdata/listusers"),
-        headers: {'accept': 'application/json'});
+        url(
+            "event/getdata/listusers"),
+        );
     return resp.body;
   }
 

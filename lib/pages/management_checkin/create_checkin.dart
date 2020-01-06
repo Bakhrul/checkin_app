@@ -43,6 +43,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   TextEditingController _controllerDate = TextEditingController();
   TextEditingController _controllerTimeStart = TextEditingController();
   TextEditingController _controllerTimeEnd = TextEditingController();
+  TextEditingController _controllerSessionname = TextEditingController();
 
   postDataCheckin() async {
     dynamic body = {
@@ -50,11 +51,13 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       "checkin_keyword": _controllerGenerate.text.toString(),
       "start_time": _controllerTimeStart.text.toString(),
       "end_time": _controllerTimeEnd.text.toString(),
-      "checkin_date": _controllerDate.text.toString()
+      "checkin_date": _controllerDate.text.toString(),
+      "session_name": _controllerSessionname.text.toString()
     };
     dynamic response =
         await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
             .sendrequest();
+    print(response);
     if (response == "success") {
       Fluttertoast.showToast(
           msg: "Success",
@@ -87,7 +90,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   @override
   Widget build(BuildContext context) {
     final bodyHeight = MediaQuery.of(context).size.height -
-    MediaQuery.of(context).viewInsets.bottom;
+        MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
@@ -109,6 +112,20 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              Card(
+                  child: ListTile(
+                leading: Icon(
+                  Icons.brightness_1,
+                  color: Color.fromRGBO(41, 30, 47, 1),
+                ),
+                title: TextField(
+                  controller: _controllerSessionname,
+                  decoration: InputDecoration(
+                      hintText: 'Nama Sesi',
+                      errorText: _inputErrorText,
+                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
+                ),
+              )),
               Card(
                   child: ListTile(
                       leading: Icon(
@@ -219,6 +236,16 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     );
   }
 
+  Widget _buildTextFieldNameSession() {
+    // return TextField(
+    //   controller: _controllerSessionname,
+    //   decoration: InputDecoration(
+    //       hintText: 'Nama Sesi',
+    //       errorText: _inputErrorText,
+    //       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
+    // );
+  }
+
   Widget _buildTextFieldDateCheckin() {
     return DateTimeField(
         controller: _controllerDate,
@@ -269,24 +296,23 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           child: Row(
         children: <Widget>[
           Expanded(
-            flex: 3,
+              flex: 3,
               child: FlatButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              disabledColor: Colors.grey,
-              disabledTextColor: Colors.black,
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context) => DirectCheckin() ));
-              },
+                color: Colors.blue,
+                textColor: Colors.white,
+                disabledColor: Colors.grey,
+                disabledTextColor: Colors.black,
+                padding: EdgeInsets.all(8.0),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DirectCheckin()));
+                },
                 child: Text("Direct Checkin"),
-          ))
+              ))
         ],
       ));
     }
   }
 }
-
-
 
 // =========================================================================

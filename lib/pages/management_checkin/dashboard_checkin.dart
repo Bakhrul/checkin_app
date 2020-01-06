@@ -142,6 +142,15 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   bool monVal3 = false;
   bool monVal4 = false;
   int currentIndex = 0;
+  
+ Widget appBarTitle = Text(
+    "Dashboard",
+    style: TextStyle(fontSize: 16),
+  );
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +194,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           centerTitle: true,
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
+          actions: <Widget>[
+            new IconButton( icon: new Icon(Icons.notifications_none),  tooltip: 'Air it', onPressed: () {}, ),
+          ],
           bottom: TabBar(
             controller: _tabController,
             tabs: [
@@ -273,7 +285,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                     ),
                                     title: Text(f.name),
                                     onTap: () {},
-                                    subtitle: Text(f.name.toString()),
+                                    subtitle: Text(f.email.toString()),
                                   ),
                                 ),
                               ))

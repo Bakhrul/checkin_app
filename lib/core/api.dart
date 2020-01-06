@@ -218,6 +218,7 @@ class RequestPost{
           'Authorization' : token,
         },
       );
+      print(data);
       dynamic dataresponse = json.decode(data.body);
       if(data.statusCode == 200){
         if(msg != null){

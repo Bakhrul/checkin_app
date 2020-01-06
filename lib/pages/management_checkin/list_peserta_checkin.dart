@@ -35,9 +35,9 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
             .getdata();
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
-        name: response[i]["name"],
-        checkinTime: response[i]["checkin_time"],
-        numberOfRegist: response[i]["number_of_regist"],
+       name: response[i]["name"],
+        email: response[i]["email"],
+        position: response[i]["position"],
         picProfile: response[i]["pic_profile"],
         eventId: response[i]["event_id"],
       );
