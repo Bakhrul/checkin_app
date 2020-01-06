@@ -4,10 +4,12 @@ import 'detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'detail_event.dart';
 import 'package:checkin_app/model/search_event.dart';
+import '../register_event/step_register_three.dart';
+import '../register_event/step_register_six.dart';
 import 'package:http/http.dart' as http;
+import "dart:convert";
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
-bool wishlistone, wishlisttwo, wishlistthree, wishlistfour;
 void showInSnackBar(String value) {
   _scaffoldKeyEventAll.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -28,31 +30,137 @@ class ManajemenEvent extends StatefulWidget {
 
 class _ManajemenEventState extends State<ManajemenEvent> {
 
-  List<SearchEvent> _event =[];
+  List<SearchEvent> _event = [];
   SearchEvent searchEvent = new SearchEvent();
+  int page = 1;
+  bool _isLoading = true;
+  bool _isLoadingPagination = false;
+  ScrollController pageScroll = new ScrollController();
+  int manyPage;
+  TextEditingController _searchQuery = new TextEditingController();
 
   @override
   void initState() {
-     _getAll();
+    _getAll();
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
-    wishlistone = true;
-    wishlisttwo = true;
-    wishlistthree = true;
-    wishlistfour = true;
+    _searchQuery.addListener(_search);
+    pageScroll.addListener((){
+       if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
+         _getPage();
+       }
+    });
   }
 
-   _getAll() async {
+  @override
+  void dispose() {
+    pageScroll.dispose();
+    _searchQuery.dispose();
+    super.dispose();
+  }
+
+  Future<List<SearchEvent>> _search() async {
+       
+       setState((){
+         _isLoading = true;
+         page = manyPage;
+       });
+
+       Map<String, String> head = {'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
+       Map<String, dynamic> body = {'search':_searchQuery.text.toString()};
+       var data = await http.post('http://localhost:8000/api/search',headers:head,body:body);
+
+       if(data.statusCode == 200){
+
+        Map rawData = json.decode(data.body);
+        
+        if(mounted){
+            setState((){
+            _event.clear();
+            for(var x in rawData['data']){
+              _event.add(SearchEvent.fromJson(x));
+            }
+
+            _isLoading = false;
+
+          });
+        } 
+      }
+
+      return _event;
+  }
+
+  Future<List> _getAll() async {
      Map<String, String> head = {'Content-Type':'application/json','Accept':'application/json','Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
-      var data = await http.get('http://localhost:8000/api/event',headers:head);
+      
+     var data = await http.get('http://localhost:8000/api/event/page/$page',headers:head);
 
       if(data.statusCode == 200){
-        setState((){
-           _event = searchEvent.searchEventFromJson(data.body);
-        });
-      }else{
-        print('ok');
+
+        Map rawData = json.decode(data.body);
+
+        if(mounted){
+            setState((){
+            manyPage = rawData['num_page'];
+            _event.clear();
+
+            for(var x in rawData['data']){
+              _event.add(SearchEvent.fromJson(x));
+            }
+
+            _isLoading = false;
+          });
+        } 
       }
+
+      return _event;
+  }
+
+  Future _getPage() async {
+      
+      if(page == manyPage){
+        return false;
+      }
+
+      setState((){
+          _isLoadingPagination = true;
+          page = page + 1; 
+      });
+
+      Map<String, String> head = {'Content-Type':'application/json','Accept':'application/json','Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
+      
+      var data = await http.get('http://localhost:8000/api/event/page/$page',headers:head);
+
+      if(data.statusCode == 200){
+
+        Map rawData = json.decode(data.body);
+
+        if(mounted){
+            setState((){
+            for(var x in rawData['data']){
+              _event.add(SearchEvent.fromJson(x));
+            }
+            _isLoadingPagination = false;
+            print(page);
+          });
+        } 
+      }
+
+      return _event;
+  }
+
+  Future<dynamic> _wish(String wish,int eventId,int index) async {
+    int newWish = wish == '1'? 0:1;
+    Map<String, String> head = {'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
+    Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
+    var data = await http.post('http://localhost:8000/api/wish',headers:head,body:body);
+
+    if(data.statusCode == 200){
+      setState((){
+        _event[index].wish = newWish.toString();
+      });
+    }
+
   }
 
   void _handleSearchEnd() {
@@ -69,11 +177,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           fontSize: 16,
         ),
       );
+      
       _searchQuery.clear();
+      _isLoading = true;
+      page = 1;
+      _getAll();
     });
   }
-
-  final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
     "Semua Event",
@@ -288,10 +398,15 @@ class _ManajemenEventState extends State<ManajemenEvent> {
               //     ]),
               //   ),
               // ),
-                  Expanded(
+              Expanded(
                     child:
+                      _isLoading ? 
+                      Center(
+                        child:CircularProgressIndicator()
+                      ):
                       ListView.builder(
                       itemCount:_event.length,
+                      controller: pageScroll,
                       itemBuilder:(BuildContext context, index){
                       return new InkWell(
                         child: Container(
@@ -393,7 +508,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           children: <Widget>[
                                             Container(
                                                 decoration: new BoxDecoration(
-                                                  color: Colors.green,
+                                                  color: _event[index].color,
                                                   borderRadius: new BorderRadius.only(
                                                       topLeft:
                                                           const Radius.circular(5.0),
@@ -407,7 +522,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                 padding: EdgeInsets.all(5.0),
                                                 width: 120.0,
                                                 child: Text(
-                                                  'Sudah Terdaftar',
+                                                  _event[index].statusRegistered,
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 12,
@@ -438,15 +553,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       MaterialTapTargetSize
                                                           .shrinkWrap,
                                                   padding: EdgeInsets.all(5.0),
-                                                  onPressed: () async {
-                                                    setState(() {
-                                                      if (wishlistone == true) {
-                                                        wishlistone = false;
-                                                      } else {
-                                                        wishlistone = true;
-                                                      }
-                                                    });
-                                                  },
+                                                  onPressed:() async {
+                                                    _wish(_event[index].wish,_event[index].id,index);
+                                                  } 
                                                 ),
                                               ),
                                             ),
@@ -462,10 +571,28 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RegisterEvents(id:_event[index].id),
+                                builder: (context) {
+                                  switch(_event[index].statusRegistered){
+                                  case 'sudah terdaftar':
+                                       return SuccesRegisteredEvent();
+                                       break;
+                                  case 'proses':
+                                       return WaitingEvent();
+                                       break;
+                                  default:
+                                       return RegisterEvents(id:_event[index].id);
+                                       break;
+                                }
+                                }
                               ));
                         });
-                      }
+                       } 
+                    )
+                  ),
+                  Container(
+                    height:_isLoadingPagination ? 50:0,
+                    child:Center(
+                      child:CircularProgressIndicator()
                     )
                   )
             ],
@@ -497,7 +624,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   ),
                   decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          EdgeInsets.fromLTRB(20.0, 15.0, 10.0, 15.0),
                       border: InputBorder.none,
                       prefixIcon: new Icon(Icons.search, color: Colors.white),
                       hintText: "Cari Berdasarkan Nama, Kategori , Tempat",

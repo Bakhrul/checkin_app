@@ -1,5 +1,6 @@
 import "dart:convert";
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 class SearchEvent{
 
@@ -14,6 +15,8 @@ class SearchEvent{
     String hour;
     String wish;
     int wishId;
+    String statusRegistered;
+    Color color;
 
   SearchEvent({
       this.id,
@@ -26,13 +29,38 @@ class SearchEvent{
       this.hour,
       this.user,
       this.wish,
-      this.wishId
+      this.wishId,
+      this.statusRegistered,
+      this.color
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
+
       String dateStart = DateFormat("dd MMM").format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));
       String hours = DateFormat("Hm:ms").format(DateTime.parse(map['ev_time_start']));
+      String status;
+      Color color;
+
+      switch(map['ep_status']){
+        case 'b':
+             status = 'belum terdaftar';
+             color = Colors.grey;
+             break;
+        case 'p':
+             status = 'proses';
+             color = Colors.orange;
+             break;
+        case 's':
+             status = 'sudah terdaftar';
+             color = Colors.green;
+             break;
+        default:
+             status = 'belum terdaftar';
+             color = Colors.grey;
+             break;
+      }
+
       return SearchEvent(
         id:map['ev_id'],
         title:map['ev_title'],
@@ -42,6 +70,8 @@ class SearchEvent{
         start:dateStart,
         end:dateEnd,
         hour:hours,
+        statusRegistered:status,
+        color:color,
         wish:map['ew_wish'],
         user:map['ew_user_id']
       );

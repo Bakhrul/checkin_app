@@ -21,7 +21,7 @@ class _RegisterEvent extends State<RegisterEvents> {
 
   SearchEvent searchEvent = new SearchEvent();
   SearchEvent dataEvent;
-  String title = '';
+  bool _isLoading = true;
 
   @override
   void initState(){
@@ -38,8 +38,8 @@ class _RegisterEvent extends State<RegisterEvents> {
         Map rawData = json.decode(data.body);
         setState((){
            dataEvent = SearchEvent.fromJson(rawData['data']);
+           _isLoading = false;
         });
-        print(dataEvent);
       }else{
         print('ok');
       }
@@ -62,7 +62,10 @@ class _RegisterEvent extends State<RegisterEvents> {
         ),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
-      body: SingleChildScrollView(
+      body: _isLoading ? 
+              Center(
+                  child:CircularProgressIndicator()
+              ):SingleChildScrollView(
           child:Column(children: <Widget>[
         Stack(children: <Widget>[
           Column(
@@ -88,7 +91,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                     Container(
                         padding: EdgeInsets.only(bottom: 10.0),
                         width: double.infinity,
-                        child: Text(title,
+                        child: Text(dataEvent.title,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20))),
                     Container(
