@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
-import 'manage_peserta.dart';
+import 'manage_admin.dart';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
@@ -252,7 +252,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                         AlertDialog(
                                       title: Text('Peringatan!'),
                                       content: Text(
-                                          'Apakah Anda Ingin Menambahkan Peserta ini ke Event Anda? '),
+                                          'Apakah Anda Ingin Menambahkan Admin ini ke Event Anda? '),
                                       actions: <Widget>[
                                         FlatButton(
                                           child: Text('Tidak'),
@@ -274,7 +274,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                                       headers: requestHeaders,
                                                       body: {
                                                     'event': widget.event,
-                                                    'admin':
+                                                    'peserta':
                                                         listUserItem[index].id,
                                                   });
 
@@ -291,19 +291,19 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              ManagePeserta(event: widget.event)));
+                                                              ManageAdmin(event: widget.event)));
                                                 } else if (hapuswishlistJson[
                                                         'status'] ==
                                                     'sudah ada') {
                                                   Fluttertoast.showToast(
                                                       msg:
-                                                          "Member ini sudah terdaftar pada event anda");
+                                                          "Akun ini sudah terdaftar menjadi admin event anda");
                                                 } else if (hapuswishlistJson[
                                                         'status'] ==
                                                     'belumacc') {
                                                   Fluttertoast.showToast(
                                                       msg:
-                                                          "Pendaftaran member ini menunggu persetujuan dari anda");
+                                                          "Permintaan menjadi admin menunggu persetujuan");
                                                 }
                                               } else {
                                                 print(hapuswishlist.body);
