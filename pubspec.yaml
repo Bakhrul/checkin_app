@@ -90,6 +90,8 @@ flutter:
     - images/clipboard.png
     - images/scanning.png
     - images/header-scanning.png
+    - images/empty-white-box.png
+    - images/system-eror.png
     - images/clubs.json
   # fonts:
   #   - family: Schyler

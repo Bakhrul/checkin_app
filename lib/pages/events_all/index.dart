@@ -1,6 +1,5 @@
 import 'package:checkin_app/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'detail_event.dart';
 import 'package:checkin_app/model/search_event.dart';
@@ -117,7 +116,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   }
 
   Future _getPage() async {
-      
       if(page == manyPage){
         return false;
       }

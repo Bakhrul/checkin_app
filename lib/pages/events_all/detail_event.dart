@@ -165,10 +165,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                           padding: EdgeInsets.all(15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () async {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterEventMethod(),
+                          builder: (context) => RegisterEventMethod(id:dataEvent.id),
                         ));
                           },
                           child: Text(

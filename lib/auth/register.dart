@@ -1,22 +1,88 @@
+import 'package:checkin_app/auth/login.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'login.dart';
+import 'dart:convert';
+import 'package:checkin_app/routes/env.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-TextEditingController namadepan = TextEditingController();
-TextEditingController namabelakang = TextEditingController();
+Map<String, dynamic> formSerialize;
+Map<String, String> requestHeaders = Map();
+TextEditingController namalengkap = TextEditingController();
 TextEditingController email = TextEditingController();
-
+TextEditingController password = TextEditingController();
+bool isLoading;
 class Register extends StatefulWidget {
   @override
   _Register createState() => _Register();
 }
 
 class _Register extends State<Register> {
-  register() {}
+  void initState() {
+    super.initState();
+    isLoading = true;
+    namalengkap.text = '';
+    email.text = '';
+    password.text = '';
+  }
+
+  void dispose() {
+    super.dispose();
+  }
+  void register() async {
+    formSerialize = Map<String, dynamic>();
+    formSerialize['namakelengkap'] = null;
+    formSerialize['email'] = null;
+    formSerialize['password'] = null;
+    formSerialize['namalengkap'] = namalengkap.text;
+    formSerialize['email'] = email.text;
+    formSerialize['password'] = password.text;
+
+    print(formSerialize);
+
+    Map<String, dynamic> requestHeadersX = requestHeaders;
+
+    requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+    try {
+      final response = await http.post(
+        url('api/registeruser'),
+        // headers: requestHeadersX,
+        body: {
+          'type_platform': 'android',
+          'data': jsonEncode(formSerialize),
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic responseJson = jsonDecode(response.body);
+        if (responseJson['status'] == 'success') {
+          Fluttertoast.showToast(msg: "Berhasil Mendaftarkan Akun");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
+        }else if(responseJson['status'] == 'emailnotavailable'){
+          Fluttertoast.showToast(msg: "Email telah digunakan, mohon gunakan email lainnya");
+        }
+        print('response decoded $responseJson');
+      } else {
+        print('${response.body}');
+        Fluttertoast.showToast(
+            msg: "Gagal Mendaftarkan Akun Silahkan Coba Kembali");
+      }
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Akun, Silahkan Coba Kembali");
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final namaField = TextField(
-      controller: namadepan,
+      controller: namalengkap,
       autofocus: true,
       obscureText: false,
       style: TextStyle(
@@ -26,7 +92,7 @@ class _Register extends State<Register> {
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Nama Depan",
+          hintText: "Nama Lengkap",
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -43,9 +109,7 @@ class _Register extends State<Register> {
     );
 
     final emailField = TextField(
-      controller: namabelakang,
-      autofocus: true,
-      obscureText: false,
+      controller: email,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,
@@ -53,7 +117,7 @@ class _Register extends State<Register> {
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Nama Belakang",
+          hintText: "Email",
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -69,10 +133,9 @@ class _Register extends State<Register> {
           )),
     );
 
-    final usernameField = TextField(
-      controller: email,
-      autofocus: true,
-      obscureText: false,
+    final passwordField = TextField(
+      controller: password,
+      obscureText: true,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,
@@ -80,7 +143,7 @@ class _Register extends State<Register> {
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email / HP",
+          hintText: "Password",
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -103,7 +166,27 @@ class _Register extends State<Register> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          register();
+          setState(() {
+            isLoading = true;
+          });
+          if(namalengkap.text == null || namalengkap.text == ''){
+            setState(() {
+            isLoading = false;
+          });
+            Fluttertoast.showToast(msg: "Nama Lengkap Tidak Boleh Kosong");
+          }else if(email.text == null || email.text == ''){
+            setState(() {
+            isLoading = false;
+          });
+            Fluttertoast.showToast(msg: "Email Tidak Boleh Kosong");
+          }else if(password.text == null || password.text == ''){
+            setState(() {
+            isLoading = false;
+          });
+            Fluttertoast.showToast(msg: "Password Tidak Boleh Kosong");
+          }else{
+            register();
+          }
         },
         child: Text(
           "Daftar",
@@ -145,7 +228,7 @@ class _Register extends State<Register> {
                 SizedBox(height: 15.0),
                 emailField,
                 SizedBox(height: 15.0),
-                usernameField,
+                passwordField,
                 SizedBox(
                   height: 15.0,
                 ),

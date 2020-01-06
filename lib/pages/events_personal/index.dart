@@ -1,8 +1,10 @@
 import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/cupertino.dart';
 import 'create.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'manage_absenpeserta.dart';
 import 'package:http/http.dart' as http;
@@ -14,9 +16,10 @@ import 'model.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeypersonalevent;
 bool isLoading, isError;
+String tokenType, accessToken;
 String jumlahongoingX, jumlahwillcomeX, jumlahdoneeventX;
+Map<String, String> requestHeaders = Map();
 List<ListOngoingEvent> listItemOngoing = [];
 List<ListWillComeEvent> listItemWillCome = [];
 List<ListDoneEvent> listItemDoneEvent = [];
@@ -26,11 +29,6 @@ enum PageEnum {
   kelolaAbsenPesertaPage,
   kelolaCheckinPesertaPage,
   kelolaHasilAKhirPage,
-}
-
-void showInSnackBar(String value) {
-  _scaffoldKeypersonalevent.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
 }
 
 class ManajemenEventPersonal extends StatefulWidget {
@@ -49,9 +47,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
 
   @override
   void initState() {
-    _scaffoldKeypersonalevent = new GlobalKey<ScaffoldState>();
     super.initState();
     listOngoingEvent();
+    getHeaderHTTP();
     isLoading = true;
     jumlahongoingX = null;
     jumlahwillcomeX = null;
@@ -89,14 +87,37 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     });
   }
 
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
   Future<List<List>> listOngoingEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
     try {
       final ongoingevent = await http.post(
         url('api/getongoingmyevent'),
-        // headers: requestHeaders,
+        headers: requestHeaders,
       );
 
       if (ongoingevent.statusCode == 200) {
@@ -109,8 +130,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           ListOngoingEvent notax = ListOngoingEvent(
             id: '${i['ev_id']}',
             title: i['ev_title'],
-            waktuawal: i['tanggalawal'],
-            waktuakhir: i['tanggalakhir'],
+            waktuawal: i['ev_time_start'],
+            waktuakhir: i['ev_time_end'],
             fullday: i['ev_allday'],
           );
           listItemOngoing.add(notax);
@@ -121,8 +142,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = false;
         });
         listWillComeEvent();
+      } else if (ongoingevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       } else {
-        print('error');
         print(ongoingevent.body);
         setState(() {
           isLoading = false;
@@ -135,7 +162,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         isLoading = false;
         isError = true;
       });
-      showInSnackBar('Timed out, Try again');
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -154,13 +181,22 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
   }
 
   Future<List<ListWillComeEvent>> listWillComeEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
     try {
       final willcomeevent = await http.post(
         url('api/getwillcomemyevent'),
-        // headers: requestHeaders,
+        headers: requestHeaders,
       );
 
       if (willcomeevent.statusCode == 200) {
@@ -187,6 +223,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           jumlahwillcomeX = jumlahwillcome;
         });
         listDoneEvent();
+      } else if (willcomeevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       } else {
         print(willcomeevent.body);
         setState(() {
@@ -200,7 +243,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         isLoading = false;
         isError = true;
       });
-      showInSnackBar('Timed out, Try again');
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -212,13 +255,22 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
   }
 
   Future<List<ListWillComeEvent>> listDoneEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
     try {
       final doneevent = await http.post(
         url('api/getdonemyevent'),
-        // headers: requestHeaders,
+        headers: requestHeaders,
       );
 
       if (doneevent.statusCode == 200) {
@@ -243,6 +295,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = false;
           jumlahdoneeventX = jumlahdoneevent;
         });
+      } else if (doneevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       } else {
         setState(() {
           isLoading = false;
@@ -255,7 +314,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         isLoading = false;
         isError = true;
       });
-      showInSnackBar('Timed out, Try again');
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -265,7 +324,57 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     }
     return null;
   }
-  
+  void modalKonfirmasiAcc(idX, idevent) {
+    
+  }
+
+  void modalKonfirmasiDeciline(idX, idevent) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Peringatan!'),
+        content: Text('Apakah Anda Ingin Menolak Pendaftaran Event'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Tidak'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          FlatButton(
+            textColor: Colors.green,
+            child: Text('Ya'),
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                final hapuswishlist = await http.post(
+                    url('api/accpeserta_event'),
+                    headers: requestHeaders,
+                    body: {'idpeserta': idX,'idevent' : idevent });
+
+                if (hapuswishlist.statusCode == 200) {
+                  var hapuswishlistJson = json.decode(hapuswishlist.body);
+                  if (hapuswishlistJson['status'] == 'success') {
+                    setState(() {
+                      getHeaderHTTP();
+                    });
+                  } else if (hapuswishlistJson['status'] == 'Error') {
+                    Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                  }
+                } else {
+                  Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                }
+              } on TimeoutException catch (_) {
+                Fluttertoast.showToast(msg: "Timed out, Try again");
+              } catch (e) {
+                print(e);
+              }
+            },
+          )
+        ],
+      ),
+    );
+  }
 
   _onSelect(PageEnum value) {
     switch (value) {
@@ -298,7 +407,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeypersonalevent,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
@@ -328,278 +436,206 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           ),
         ],
       ),
-      body:
-      isLoading == true ?
-      Center(
-                        child: CircularProgressIndicator(),
-                      ):
-       Padding(
-        padding: const EdgeInsets.only(top: 30.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              RefreshIndicator(
-                      onRefresh: () => listOngoingEvent(),
-                      child: Column(
-                        children: <Widget>[
-                          InkWell(
-                              onTap: currentEvent,
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 10.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10.0, top: 0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                          (jumlahongoingX == null
-                                                  ? 'Event Berlangsung  ( 0 Event )'
-                                                  : 'Event Berlangsung  ( $jumlahongoingX Event )')
-                                              .toUpperCase(),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          )),
-                                      Icon(height == null
-                                          ? Icons.arrow_drop_down
-                                          : Icons.arrow_drop_up),
-                                    ],
+      body: isLoading == true
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.only(top: 30.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    RefreshIndicator(
+                        onRefresh: () => listOngoingEvent(),
+                        child: Column(
+                          children: <Widget>[
+                            InkWell(
+                                onTap: currentEvent,
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 10.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0, top: 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                            (jumlahongoingX == null
+                                                    ? 'Event Berlangsung  ( 0 Event )'
+                                                    : 'Event Berlangsung  ( $jumlahongoingX Event )')
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            )),
+                                        Icon(height == null
+                                            ? Icons.arrow_drop_down
+                                            : Icons.arrow_drop_up),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )),
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: listItemOngoing
-                                  .map((ListOngoingEvent item) => Container(
-                                        height: height,
-                                        child: Card(
-                                          child: ListTile(
-                                            leading: Container(
-                                              padding:
-                                                  EdgeInsets.only(right: 10.0),
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      right: BorderSide(
-                                                color: Colors.lightBlue,
-                                                width: 2.0,
-                                              ))),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    '12/31/2019',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10.0),
-                                                    child: Text(
-                                                      '12/31/2019',
+                                )),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 10.0,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: listItemOngoing
+                                    .map((ListOngoingEvent item) => Container(
+                                          height: height,
+                                          child: Card(
+                                            child: ListTile(
+                                              leading: Container(
+                                                padding: EdgeInsets.only(
+                                                    right: 10.0),
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        right: BorderSide(
+                                                  color: Colors.lightBlue,
+                                                  width: 2.0,
+                                                ))),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      item.waktuawal == null
+                                                          ? 'Unknown Date'
+                                                          : DateFormat(
+                                                                  'dd-MM-y')
+                                                              .format(DateTime
+                                                                  .parse(item
+                                                                      .waktuawal)),
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                  ),
-                                                ],
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0),
+                                                      child: Text(
+                                                        item.waktuakhir == null
+                                                            ? 'Unknown Date'
+                                                            : DateFormat(
+                                                                    'dd-MM-y')
+                                                                .format(DateTime
+                                                                    .parse(item
+                                                                        .waktuakhir)),
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            title: Text(
-                                              item.title == null
-                                                  ? 'Unknown Nama Event'
-                                                  : item.title,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0),
-                                              child: Text('12:00 - 13:00'),
-                                            ),
-                                            trailing: PopupMenuButton<PageEnum>(
-                                              onSelected: _onSelect,
-                                              icon: Icon(Icons.more_vert),
-                                              itemBuilder: (context) => [
-                                                PopupMenuItem(
-                                                  value: PageEnum
-                                                      .kelolaPesertaPage,
-                                                  child: Text("Kelola Peserta"),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: PageEnum
-                                                      .kelolaWaktuCheckinPage,
-                                                  child: Text(
-                                                      "Kelola waktu checkin"),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: PageEnum
-                                                      .kelolaAbsenPesertaPage,
-                                                  child: Text(
-                                                      "Kelola absen peserta"),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: PageEnum
-                                                      .kelolaCheckinPesertaPage,
-                                                  child: Text(
-                                                      "Kelola checkin peserta"),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: PageEnum
-                                                      .kelolaHasilAKhirPage,
-                                                  child: Text(
-                                                      "Hasil akhir checkin peserta"),
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Hapus Event"),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            child: Divider(),
-                          ),
-                          InkWell(
-                            onTap: futureEvent,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 10.0),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10.0, right: 10.0, top: 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                        (jumlahwillcomeX == null
-                                                ? 'Event Yang Akan Datang  ( 0 Event )'
-                                                : 'Event Yang Akan Datang  ( $jumlahwillcomeX Event )')
-                                            .toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        )),
-                                    Icon(futureheight == null
-                                        ? Icons.arrow_drop_down
-                                        : Icons.arrow_drop_up),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: listItemWillCome
-                                  .map((ListWillComeEvent item) => Container(
-                                      height: futureheight,
-                                      child: Card(
-                                          child: ListTile(
-                                        leading: Container(
-                                          padding: EdgeInsets.only(right: 10.0),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  right: BorderSide(
-                                            color: Colors.lightBlue,
-                                            width: 2.0,
-                                          ))),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                item.waktuawal == null ?'12/31/2019' : item.waktuawal,
+                                              title: Text(
+                                                item.title == null ||
+                                                        item.title == ''
+                                                    ? 'Unknown Nama Event'
+                                                    : item.title,
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              // Padding(
-                                              //   padding: const EdgeInsets.only(
-                                              //       top: 10.0),
-                                              //   child: Text(
-                                              //     '12/31/2019',
-                                              //     style: TextStyle(
-                                              //         fontWeight:
-                                              //             FontWeight.bold),
-                                              //   ),
-                                              // ),
+                                              trailing: PopupMenuButton<PageEnum>(
+                                            onSelected: (PageEnum value) {
+                                              switch (value) {
+                                                case PageEnum.kelolaPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManagePeserta(event: item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaWaktuCheckinPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageCheckin(event: item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaAbsenPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAbsenPeserta()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaCheckinPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ListMultiCheckin()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaHasilAKhirPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              PointEvents()));
+                                                  break;
+                                                default:
+                                                  break;
+                                              }
+                                            },
+                                            icon: Icon(Icons.more_vert),
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaPesertaPage,
+                                                child: Text("Kelola Peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaWaktuCheckinPage,
+                                                child: Text(
+                                                    "Kelola waktu checkin"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaAbsenPesertaPage,
+                                                child: Text(
+                                                    "Kelola absen peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaCheckinPesertaPage,
+                                                child: Text(
+                                                    "Kelola checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaHasilAKhirPage,
+                                                child: Text(
+                                                    "Hasil akhir checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Hapus Event"),
+                                              ),
                                             ],
                                           ),
-                                        ),
-                                        title: Text(
-                                          item.title == null ? 'Unknown Nama Event' : item.title,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        subtitle: Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text('12:00 - 13:00'),
-                                        ),
-                                        trailing: PopupMenuButton<PageEnum>(
-                                          onSelected: _onSelect,
-                                          icon: Icon(Icons.more_vert),
-                                          itemBuilder: (context) => [
-                                            PopupMenuItem(
-                                              value: PageEnum.kelolaPesertaPage,
-                                              child: Text("Kelola Peserta"),
                                             ),
-                                            PopupMenuItem(
-                                              value: PageEnum
-                                                  .kelolaWaktuCheckinPage,
-                                              child:
-                                                  Text("Kelola waktu checkin"),
-                                            ),
-                                            PopupMenuItem(
-                                              value: PageEnum
-                                                  .kelolaAbsenPesertaPage,
-                                              child:
-                                                  Text("Kelola absen peserta"),
-                                            ),
-                                            PopupMenuItem(
-                                              value: PageEnum
-                                                  .kelolaCheckinPesertaPage,
-                                              child: Text(
-                                                  "Kelola checkin peserta"),
-                                            ),
-                                            PopupMenuItem(
-                                              value:
-                                                  PageEnum.kelolaHasilAKhirPage,
-                                              child: Text(
-                                                  "Hasil akhir checkin peserta"),
-                                            ),
-                                            PopupMenuItem(
-                                              child: Text("Hapus Event"),
-                                            ),
-                                          ],
-                                        ),
-                                      ))))
-                                  .toList(),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            child: Divider(),
-                          ),
-                          InkWell(
-                              onTap: pastEvent,
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              child: Divider(),
+                            ),
+                            InkWell(
+                              onTap: futureEvent,
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 10.0),
                                 child: Padding(
@@ -610,110 +646,361 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                          (jumlahdoneeventX == null
-                                                  ? 'Event Telah Selesai  ( 0 Event )'
-                                                  : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
+                                          (jumlahwillcomeX == null
+                                                  ? 'Event Yang Akan Datang  ( 0 Event )'
+                                                  : 'Event Yang Akan Datang  ( $jumlahwillcomeX Event )')
                                               .toUpperCase(),
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           )),
-                                      Icon(pastheight == null
+                                      Icon(futureheight == null
                                           ? Icons.arrow_drop_down
                                           : Icons.arrow_drop_up),
                                     ],
                                   ),
                                 ),
-                              )),
-                              Container(
-                            margin: EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: listItemDoneEvent
-                                  .map((ListDoneEvent item) => Container(
-                            height: pastheight,
-                            child: Card(
-                              child: ListTile(
-                                leading: Container(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          right: BorderSide(
-                                    color: Colors.lightBlue,
-                                    width: 2.0,
-                                  ))),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        '12/31/2019',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 10.0),
-                                        child: Text(
-                                          '12/31/2019',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                title: Text(
-                                  item.title == null ? 'Unknown Nama Event' : item.title,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text('12:00 - 13:00'),
-                                ),
-                                trailing: PopupMenuButton<PageEnum>(
-                                  onSelected: _onSelect,
-                                  icon: Icon(Icons.more_vert),
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: PageEnum.kelolaPesertaPage,
-                                      child: Text("Kelola Peserta"),
-                                    ),
-                                    PopupMenuItem(
-                                      value: PageEnum.kelolaWaktuCheckinPage,
-                                      child: Text("Kelola waktu checkin"),
-                                    ),
-                                    PopupMenuItem(
-                                      value: PageEnum.kelolaAbsenPesertaPage,
-                                      child: Text("Kelola absen peserta"),
-                                    ),
-                                    PopupMenuItem(
-                                      value: PageEnum.kelolaCheckinPesertaPage,
-                                      child: Text("Kelola checkin peserta"),
-                                    ),
-                                    PopupMenuItem(
-                                      value: PageEnum.kelolaHasilAKhirPage,
-                                      child:
-                                          Text("Hasil akhir checkin peserta"),
-                                    ),
-                                    PopupMenuItem(
-                                      child: Text("Hapus Event"),
-                                    ),
-                                  ],
-                                ),
                               ),
                             ),
-                                  ))
-                                  .toList(),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 10.0,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: listItemWillCome
+                                    .map((ListWillComeEvent item) => Container(
+                                        height: futureheight,
+                                        child: Card(
+                                            child: ListTile(
+                                          leading: Container(
+                                            padding:
+                                                EdgeInsets.only(right: 10.0),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    right: BorderSide(
+                                              color: Colors.lightBlue,
+                                              width: 2.0,
+                                            ))),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  item.waktuawal == null
+                                                      ? 'Unknown Date'
+                                                      : DateFormat('dd-MM-y')
+                                                          .format(DateTime
+                                                              .parse(item
+                                                                  .waktuawal)),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0),
+                                                  child: Text(
+                                                    item.waktuakhir == null
+                                                        ? 'Unknown Date'
+                                                        : DateFormat('dd-MM-y')
+                                                            .format(DateTime
+                                                                .parse(item
+                                                                    .waktuakhir)),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          title: Text(
+                                            item.title == null ||
+                                                    item.title == ''
+                                                ? 'Unknown Nama Event'
+                                                : item.title,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          trailing: PopupMenuButton<PageEnum>(
+                                            onSelected: (PageEnum value) {
+                                              switch (value) {
+                                                case PageEnum.kelolaPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManagePeserta(event: item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaWaktuCheckinPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageCheckin(event: item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaAbsenPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAbsenPeserta()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaCheckinPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ListMultiCheckin()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaHasilAKhirPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              PointEvents()));
+                                                  break;
+                                                default:
+                                                  break;
+                                              }
+                                            },
+                                            icon: Icon(Icons.more_vert),
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaPesertaPage,
+                                                child: Text("Kelola Peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaWaktuCheckinPage,
+                                                child: Text(
+                                                    "Kelola waktu checkin"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaAbsenPesertaPage,
+                                                child: Text(
+                                                    "Kelola absen peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaCheckinPesertaPage,
+                                                child: Text(
+                                                    "Kelola checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaHasilAKhirPage,
+                                                child: Text(
+                                                    "Hasil akhir checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Hapus Event"),
+                                              ),
+                                            ],
+                                          ),
+                                        ))))
+                                    .toList(),
+                              ),
                             ),
-                          ),
-                        ],
-                      )),
-            ],
-          ),
-        ),
-      ),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              child: Divider(),
+                            ),
+                            InkWell(
+                                onTap: pastEvent,
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 10.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0, top: 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                            (jumlahdoneeventX == null
+                                                    ? 'Event Telah Selesai  ( 0 Event )'
+                                                    : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            )),
+                                        Icon(pastheight == null
+                                            ? Icons.arrow_drop_down
+                                            : Icons.arrow_drop_up),
+                                      ],
+                                    ),
+                                  ),
+                                )),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 10.0,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: listItemDoneEvent
+                                    .map((ListDoneEvent item) => Container(
+                                          height: pastheight,
+                                          child: Card(
+                                            child: ListTile(
+                                              leading: Container(
+                                                padding: EdgeInsets.only(
+                                                    right: 10.0),
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        right: BorderSide(
+                                                  color: Colors.lightBlue,
+                                                  width: 2.0,
+                                                ))),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      item.waktuawal == null
+                                                          ? 'Unknown Date'
+                                                          : DateFormat(
+                                                                  'dd-MM-y')
+                                                              .format(DateTime
+                                                                  .parse(item
+                                                                      .waktuawal)),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0),
+                                                      child: Text(
+                                                        item.waktuakhir == null
+                                                            ? 'Unknown Date'
+                                                            : DateFormat(
+                                                                    'dd-MM-y')
+                                                                .format(DateTime
+                                                                    .parse(item
+                                                                        .waktuakhir)),
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              title: Text(
+                                                item.title == null ||
+                                                        item.title == ''
+                                                    ? 'Unknown Nama Event'
+                                                    : item.title,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              trailing: PopupMenuButton<PageEnum>(
+                                            onSelected: (PageEnum value) {
+                                              switch (value) {
+                                                case PageEnum.kelolaPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManagePeserta(event:item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaWaktuCheckinPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageCheckin(event : item.id)));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaAbsenPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAbsenPeserta()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaCheckinPesertaPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ListMultiCheckin()));
+                                                  break;
+                                                case PageEnum
+                                                    .kelolaHasilAKhirPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              PointEvents()));
+                                                  break;
+                                                default:
+                                                  break;
+                                              }
+                                            },
+                                            icon: Icon(Icons.more_vert),
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaPesertaPage,
+                                                child: Text("Kelola Peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaWaktuCheckinPage,
+                                                child: Text(
+                                                    "Kelola waktu checkin"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaAbsenPesertaPage,
+                                                child: Text(
+                                                    "Kelola absen peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaCheckinPesertaPage,
+                                                child: Text(
+                                                    "Kelola checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaHasilAKhirPage,
+                                                child: Text(
+                                                    "Hasil akhir checkin peserta"),
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Hapus Event"),
+                                              ),
+                                            ],
+                                          ),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
