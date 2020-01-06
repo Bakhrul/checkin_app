@@ -43,15 +43,15 @@ class SearchEvent{
       Color color;
 
       switch(map['ep_status']){
-        case 'b':
+        case 'C':
              status = 'belum terdaftar';
              color = Colors.grey;
              break;
-        case 'p':
+        case 'P':
              status = 'proses';
              color = Colors.orange;
              break;
-        case 's':
+        case 'A':
              status = 'sudah terdaftar';
              color = Colors.green;
              break;

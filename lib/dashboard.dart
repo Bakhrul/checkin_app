@@ -7,7 +7,6 @@ import 'pages/register_event/step_register_six.dart';
 import 'pages/register_event/step_register_three.dart';
 import 'pages/events_all/detail_event.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
-import 'utils/utils.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyDashboard;

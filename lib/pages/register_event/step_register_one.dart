@@ -3,7 +3,8 @@ import 'step_register_self.dart';
 import 'step_register_someone.dart';
 
 class RegisterEventMethod extends StatefulWidget{
-  RegisterEventMethod({Key key}) : super(key : key);
+  final int id;
+  RegisterEventMethod({Key key,this.id}) : super(key : key);
 
   State<StatefulWidget> createState(){
     return _RegisterEventMethod();
@@ -70,10 +71,10 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.white
                               )),
                               onPressed: (){
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ConfirmEvent(),
+                          builder: (context) => ConfirmEvent(id:widget.id),
                         ));
                               }
                             )
