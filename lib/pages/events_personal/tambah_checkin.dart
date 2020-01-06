@@ -40,6 +40,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     _tanggalakhir = 'kosong';
     super.initState();
   }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -109,6 +110,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
             Fluttertoast.showToast(msg: "Berhasil Membuat Checkin");
+            Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

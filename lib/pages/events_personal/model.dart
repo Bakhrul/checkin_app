@@ -109,6 +109,7 @@ class ListCheckinEvent {
    String code;
    String timestart;
    String timeend;
+   String typecheckin;
    
   
   ListCheckinEvent(
@@ -118,6 +119,7 @@ class ListCheckinEvent {
       this.code,
       this.timestart,
       this.timeend,
+      this.typecheckin,
       });
 }
 class ListPesertaEvent {

@@ -325,105 +325,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
                                           listadminevent[index].status == 'P'
-                                              ? ButtonTheme(
-                                                  minWidth: 0.0,
-                                                  child: FlatButton(
-                                                    color: Colors.white,
-                                                    textColor: Colors.red,
-                                                    disabledColor:
-                                                        Colors.green[400],
-                                                    disabledTextColor:
-                                                        Colors.white,
-                                                    padding:
-                                                        EdgeInsets.all(0.0),
-                                                    splashColor:
-                                                        Colors.blueAccent,
-                                                    child: Icon(
-                                                      Icons.close,
-                                                    ),
-                                                    onPressed: () async {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            AlertDialog(
-                                                          title: Text(
-                                                              'Peringatan!'),
-                                                          content: Text(
-                                                              'Apakah Anda Ingin Menolak Pendaftaran Event?'),
-                                                          actions: <Widget>[
-                                                            FlatButton(
-                                                              child:
-                                                                  Text('Tidak'),
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            ),
-                                                            FlatButton(
-                                                              textColor:
-                                                                  Colors.green,
-                                                              child: Text('Ya'),
-                                                              onPressed:
-                                                                  () async {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                try {
-                                                                  final hapuswishlist = await http.post(
-                                                                      url(
-                                                                          'api/tolakpeserta_event'),
-                                                                      headers:
-                                                                          requestHeaders,
-                                                                      body: {
-                                                                        'idpeserta':
-                                                                            listadminevent[index].idpeserta,
-                                                                        'idevent':
-                                                                            listadminevent[index].idevent
-                                                                      });
-                                                                  print(
-                                                                      hapuswishlist);
-                                                                  if (hapuswishlist
-                                                                          .statusCode ==
-                                                                      200) {
-                                                                    var hapuswishlistJson =
-                                                                        json.decode(
-                                                                            hapuswishlist.body);
-                                                                    if (hapuswishlistJson[
-                                                                            'status'] ==
-                                                                        'success') {
-                                                                      setState(
-                                                                          () {
-                                                                        listadminevent[index].status =
-                                                                            'C';
-                                                                      });
-                                                                    } else if (hapuswishlistJson[
-                                                                            'status'] ==
-                                                                        'Error') {
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                    }
-                                                                  } else {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                  }
-                                                                } on TimeoutException catch (_) {
-                                                                  Fluttertoast
-                                                                      .showToast(
-                                                                          msg:
-                                                                              "Timed out, Try again");
-                                                                } catch (e) {
-                                                                  print(e);
-                                                                }
-                                                              },
-                                                            )
-                                                          ],
-                                                        ),
-                                                      );
-                                                    },
-                                                  ))
+                                              ? Container()
                                               : ButtonTheme(
                                                   minWidth: 0.0,
                                                   child: FlatButton(
@@ -449,7 +351,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                           title: Text(
                                                               'Peringatan!'),
                                                           content: Text(
-                                                              'Apakah Anda Ingin Menghapus Pendaftaran Event?'),
+                                                              'Apakah Anda Ingin Menghapus Admin Event?'),
                                                           actions: <Widget>[
                                                             FlatButton(
                                                               child:
@@ -522,108 +424,6 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                       );
                                                     },
                                                   )),
-                                          listadminevent[index].status == 'P'
-                                              ? ButtonTheme(
-                                                  minWidth: 0.0,
-                                                  child: FlatButton(
-                                                    color: Colors.white,
-                                                    textColor: Colors.green,
-                                                    disabledColor:
-                                                        Colors.green[400],
-                                                    disabledTextColor:
-                                                        Colors.white,
-                                                    padding:
-                                                        EdgeInsets.all(0.0),
-                                                    splashColor:
-                                                        Colors.blueAccent,
-                                                    child: Icon(
-                                                      Icons.check,
-                                                    ),
-                                                    onPressed: () async {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            AlertDialog(
-                                                          title: Text(
-                                                              'Peringatan!'),
-                                                          content: Text(
-                                                              'Apakah Anda Ingin Menerima Pendaftaran Event?'),
-                                                          actions: <Widget>[
-                                                            FlatButton(
-                                                              child:
-                                                                  Text('Tidak'),
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            ),
-                                                            FlatButton(
-                                                              textColor:
-                                                                  Colors.green,
-                                                              child: Text('Ya'),
-                                                              onPressed:
-                                                                  () async {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                try {
-                                                                  final accpeserta = await http.post(
-                                                                      url(
-                                                                          'api/accpeserta_event'),
-                                                                      headers:
-                                                                          requestHeaders,
-                                                                      body: {
-                                                                        'idpeserta':
-                                                                            listadminevent[index].idpeserta,
-                                                                        'idevent':
-                                                                            listadminevent[index].idevent
-                                                                      });
-
-                                                                  if (accpeserta
-                                                                          .statusCode ==
-                                                                      200) {
-                                                                    var hapuswishlistJson =
-                                                                        json.decode(
-                                                                            accpeserta.body);
-                                                                    print(
-                                                                        hapuswishlistJson);
-                                                                    if (hapuswishlistJson[
-                                                                            'status'] ==
-                                                                        'success') {
-                                                                      setState(
-                                                                          () {
-                                                                        listadminevent[index].status =
-                                                                            'A';
-                                                                      });
-                                                                    } else if (hapuswishlistJson[
-                                                                            'status'] ==
-                                                                        'Error') {
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Request failed with status: ${accpeserta.statusCode}");
-                                                                    }
-                                                                  } else {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Request failed with status: ${accpeserta.statusCode}");
-                                                                  }
-                                                                } on TimeoutException catch (_) {
-                                                                  Fluttertoast
-                                                                      .showToast(
-                                                                          msg:
-                                                                              "Timed out, Try again");
-                                                                } catch (e) {
-                                                                  print(e);
-                                                                }
-                                                              },
-                                                            )
-                                                          ],
-                                                        ),
-                                                      );
-                                                    },
-                                                  ))
-                                              : Container(),
                                         ],
                                       ),
                                     ));

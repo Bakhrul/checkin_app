@@ -86,6 +86,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
             code: i['ec_keyword'],
             timestart: i['ec_time_start'],
             timeend: i['ec_time_end'],
+            typecheckin: i['ec_type'],
           );
           listcheckinevent.add(willcomex);
         }
@@ -293,21 +294,125 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                         ),
                                       ),
                                       trailing: PopupMenuButton<PageEnum>(
-                                        onSelected: (PageEnum value) {
+                                        onSelected: (PageEnum value) async {
                                           switch (value) {
                                             case PageEnum.editCheckinPage:
                                               Navigator.of(context).push(
                                                   CupertinoPageRoute(
                                                       builder: (BuildContext
                                                               context) =>
-                                                          ManajemeEditCheckin()));
+                                                          ManajemeEditCheckin(
+                                                            event:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .idevent,
+                                                            idcheckin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .id,
+                                                            namacheckin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .name,
+                                                            kodecheckin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .code,
+                                                            timestart:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .timestart,
+                                                            typecheckin: listcheckinevent[index].typecheckin,
+                                                            timeend:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .timeend,
+                                                          )));
                                               break;
-                                              case PageEnum.deleteCheckinPage:
-                                              Navigator.of(context).push(
-                                                  CupertinoPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          ManajemeEditCheckin()));
+                                            case PageEnum.deleteCheckinPage:
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  title: Text('Peringatan!'),
+                                                  content: Text(
+                                                      'Apakah Anda Ingin Menghapus Checkin Event?'),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                      child: Text('Tidak'),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    FlatButton(
+                                                      textColor: Colors.green,
+                                                      child: Text('Ya'),
+                                                      onPressed: () async {
+                                                        Navigator.pop(context);
+                                                        try {
+                                                          final hapuswishlist =
+                                                              await http.post(
+                                                                  url('api/deletecheckin_event'),
+                                                                  headers: requestHeaders,
+                                                                  body: {
+                                                                'event':
+                                                                    listcheckinevent[
+                                                                            index]
+                                                                        .idevent,
+                                                                'checkin':
+                                                                    listcheckinevent[
+                                                                            index]
+                                                                        .id
+                                                              });
+                                                          print(hapuswishlist);
+                                                          if (hapuswishlist
+                                                                  .statusCode ==
+                                                              200) {
+                                                            var hapuswishlistJson =
+                                                                json.decode(
+                                                                    hapuswishlist
+                                                                        .body);
+                                                            if (hapuswishlistJson[
+                                                                    'status'] ==
+                                                                'success') {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg:
+                                                                          "Berhasil Menghapus Checkin Event");
+                                                              setState(() {
+                                                                listcheckinevent.remove(
+                                                                    listcheckinevent[
+                                                                        index]);
+                                                              });
+                                                            } else if (hapuswishlistJson[
+                                                                    'status'] ==
+                                                                'Error') {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg:
+                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
+                                                            }
+                                                          } else {
+                                                            print(hapuswishlist
+                                                                .body);
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "Request failed with status: ${hapuswishlist.statusCode}");
+                                                          }
+                                                        } on TimeoutException catch (_) {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Timed out, Try again");
+                                                        } catch (e) {
+                                                          print(e);
+                                                        }
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+
                                               break;
                                             default:
                                               break;
@@ -345,8 +450,11 @@ class _ManageCheckinState extends State<ManageCheckin> {
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ManajemenTambahCheckin(event: widget.event)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ManajemenTambahCheckin(event: widget.event)));
         },
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),

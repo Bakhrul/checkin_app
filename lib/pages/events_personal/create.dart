@@ -190,7 +190,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                         ),
                         title: DateTimeField(
                           decoration: InputDecoration(
-                            hintText: 'Tanggal Akhir Checkin',
+                            hintText: 'Tanggal Akhir Event',
                             hintStyle:
                                 TextStyle(fontSize: 13, color: Colors.black),
                           ),
@@ -618,6 +618,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
             Fluttertoast.showToast(msg: "Berhasil Membuat Event");
+            Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
