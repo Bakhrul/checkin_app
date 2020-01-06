@@ -2,7 +2,7 @@
 // Regard Previous Programmer
   // Online
 
-   String host = 'http://192.168.100.12/alamraya/myocin/api/';
+   String host = 'http://192.168.100.12/alamraya/myocin/';
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 
 
@@ -18,6 +18,8 @@
 url(pathname){
   var path = pathname;  
 	var outp = host + path;
+        print(outp);
+
 	return outp;
 }
 

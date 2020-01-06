@@ -4,6 +4,7 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user.dart';
 import 'package:checkin_app/pages/management_checkin/testing.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,13 +33,42 @@ class _CreateParticipantState extends State<CreateParticipant>
 
   List<DropdownMenuItem<String>> _dropDownTypes;
   String _currentType;
+  String tokenType, accessToken;
+  Map<String, String> requestHeaders = Map();
   String _currentSearch;
 
+Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
   Future<String> getDataMember() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    // setState(() {
+    //   isLoading = true;
+    // });
     var resp = await http.get(
         url(
-            "event/getdata/listusers"),
+            "api/event/getdata/listusers"),headers: requestHeaders,
         );
+        print(resp.body);
     return resp.body;
   }
 
@@ -47,7 +77,7 @@ class _CreateParticipantState extends State<CreateParticipant>
       "event_id": "1",
       "position": _currentType,
       "user_id": _currentSearch,
-      "status": "R"
+      "status": "a"
     };
     dynamic response =
         await RequestPost(name: "event/postdata/addparticipant", body: body)
@@ -69,6 +99,7 @@ class _CreateParticipantState extends State<CreateParticipant>
   
   @override
   void initState() {
+    getHeaderHTTP();
     _dropDownTypes = getDropDownMenuItems();
     _currentType = _dropDownTypes[0].value;
     super.initState();
