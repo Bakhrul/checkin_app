@@ -2,15 +2,8 @@
 // Regard Previous Programmer
   // Online
 
-<<<<<<< HEAD
-   String host = 'http://192.168.100.12/alamraya/myocin/';
-=======
-
-   String host = 'http://192.168.43.115/bisniskita_myocin/';
-
-  //  String host = 'http://192.168.100.1/order/myocin';
-  //  String host = 'http://192.168.43.115/myocin/public/';
->>>>>>> 9e86a6ba04b4de0f419012a59151b31e13b59b9d
+   String host = 'http://alamraya.club/';
+  //  String host = 'http://192.168.100.12/alamraya/myocin/';
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 
 

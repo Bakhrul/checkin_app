@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user.dart';
-import 'package:checkin_app/pages/management_checkin/testing.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +93,15 @@ Future<void> getHeaderHTTP() async {
           textColor: Colors.white,
           fontSize: 16.0);
       Navigator.pop(context);
+    }else if(response == 1000){
+      Fluttertoast.showToast(
+          msg: "Peserta Telah Terdaftar",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
   

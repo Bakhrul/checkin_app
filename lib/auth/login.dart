@@ -94,8 +94,8 @@ class _LoginPageState extends State<LoginPage> {
           
           List head = ['token_type','access_token'];
           List value = [getTokenDecode['token_type'],getTokenDecode['access_token']];
-          Auth(nameStringsession: head , dataStringsession: value).savesession();
-
+          await Auth(nameStringsession: head , dataStringsession: value).savesession();
+         
         }
         dynamic tokenType = getTokenDecode['token_type'];
         dynamic accessToken = getTokenDecode['access_token'];
