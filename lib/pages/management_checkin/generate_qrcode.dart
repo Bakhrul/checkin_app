@@ -20,7 +20,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   static const double _topSectionBottomPadding = 20.0;
   static const double _topSectionHeight = 50.0;
 
-  GlobalKey globalKey = new GlobalKey();
+  // GlobalKey globalKey = new GlobalKey();
   String _dataString = "Hello from this QR";
   String _inputErrorText;
   final TextEditingController _textController = TextEditingController();
@@ -53,24 +53,24 @@ class GenerateScreenState extends State<GenerateScreen> {
     );
   }
 
-  Future<void> _captureAndSharePng() async {
-    try {
-      RenderRepaintBoundary boundary =
-          globalKey.currentContext.findRenderObject();
-      var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
+  // Future<void> _captureAndSharePng() async {
+  //   try {
+  //     RenderRepaintBoundary boundary =
+  //         globalKey.currentContext.findRenderObject();
+  //     var image = await boundary.toImage();
+  //     ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+  //     Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.png').create();
-      await file.writeAsBytes(pngBytes);
+  //     final tempDir = await getTemporaryDirectory();
+  //     final file = await new File('${tempDir.path}/image.png').create();
+  //     await file.writeAsBytes(pngBytes);
 
-      final channel = const MethodChannel('channel:me.alfian.share/share');
-      channel.invokeMethod('shareFile', 'image.png');
-    } catch (e) {
-      print(e.toString());
-    }
-  }
+  //     final channel = const MethodChannel('channel:me.alfian.share/share');
+  //     channel.invokeMethod('shareFile', 'image.png');
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 
   _contentWidget() {
     final bodyHeight = MediaQuery.of(context).size.height -
@@ -122,7 +122,7 @@ class GenerateScreenState extends State<GenerateScreen> {
           Expanded(
             child: Container(
               child: RepaintBoundary(
-                key: globalKey,
+                // key: globalKey,
                 child: QrImage(
                   data: _dataString,
                   size: 0.5 * bodyHeight,

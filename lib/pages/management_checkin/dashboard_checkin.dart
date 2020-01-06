@@ -16,17 +16,11 @@ import 'list_peserta_checkin.dart';
 // import 'listkecamatan.dart';
 // import 'create_checkin.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String sifat = 'VIP';
 String tipe = 'Public';
 var datepicker;
 List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
-
-void showInSnackBar(String value) {
-  _scaffoldKeycreateevent.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 class DashboardCheckin extends StatefulWidget {
   DashboardCheckin({Key key, this.title}) : super(key: key);
@@ -73,6 +67,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
             .getdata();
     for (var i = 0; i < response.length; i++) {
       Checkin checkin = Checkin(
+        id: response[i]["id"],
+        eventId: response[i]["event_id"],
         checkinKey: response[i]["checkin_keyword"],
         startTime: response[i]["start_time"],
         endTime: response[i]["end_time"],
@@ -80,6 +76,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       );
 
       listCheckin.add(checkin);
+      print(response);
     }
     setState(() {});
   }
@@ -118,7 +115,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   void initState() {
     getDataMember();
     getDataCheckin();
-    _scaffoldKeycreateevent = GlobalKey<ScaffoldState>();
     _tabController = TabController(
         length: 2, vsync: _DashboardCheckinState(), initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
@@ -188,7 +184,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
     return SafeArea(
       top: false,
-      key: _scaffoldKeycreateevent,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -351,7 +346,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        ListPesertaCheckin()));
+                                                        ListPesertaCheckin( id: data.id.toString(),eventid: data.eventId.toString()  )));
                                           },
                                           trailing: ButtonTheme(
                                               minWidth: 0.0,
@@ -420,7 +415,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   }
 
   Widget _bottomButtons() {
-    print(_tabController.index);
     return _tabController.index == 1
         ? DraggableFab(
             child: FloatingActionButton(

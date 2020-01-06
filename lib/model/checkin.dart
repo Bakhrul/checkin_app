@@ -2,12 +2,13 @@ import 'dart:convert';
 
 class Checkin {
   int id;
+  int eventId;
   String checkinKey;
   String startTime;
   String endTime;
   String checkinDate;
 
-  Checkin({this.id = 0, this.checkinKey, this.startTime,this.endTime, this.checkinDate});
+  Checkin({this.id = 0,this.eventId = 0, this.checkinKey, this.startTime,this.endTime, this.checkinDate});
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {
   //   return Checkin(

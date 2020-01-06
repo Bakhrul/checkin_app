@@ -17,6 +17,9 @@ void showInSnackBar(String value) {
 }
 
 class ListPesertaCheckin extends StatefulWidget {
+  final String id;
+  final String eventid;
+  ListPesertaCheckin({Key key, @required this.id, @required this.eventid}) : super(key: key);
   @override
   _ListPesertaCheckinState createState() => _ListPesertaCheckinState();
 }
@@ -26,12 +29,12 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
   
   AnimationController _controller;
   BuildContext context;
- 
 
    getData() async {
+     print("this Id"+widget.id);
     listPeserta = [];
     dynamic response =
-        await RequestGet(name: "api/get_user_checkin.json", customrequest: "")
+        await RequestGet(name: "checkin/getdata/participant/", customrequest: "${widget.id}/${widget.eventid}")
             .getdata();
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(

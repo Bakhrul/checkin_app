@@ -9,12 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
 var datepicker;
-void showInSnackBar(String value) {
-  _scaffoldKeycreatecheckin.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
+
 
 class ManajemeCreateCheckin extends StatefulWidget {
   Checkin checkin;
@@ -73,7 +69,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   @override
   void initState() {
-    _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
+    // _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     if (widget.checkin != null) {
       _isFieldDateValid = true;
@@ -93,7 +89,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeycreatecheckin,
+      // key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
