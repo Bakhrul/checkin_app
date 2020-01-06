@@ -3,12 +3,12 @@ import 'dart:convert';
 class UserCheckin {
   int id;
   String name;
-  int numberOfRegist;
-  String checkinTime;
+  String email;
+  String position;
   int eventId;
   String picProfile;
 
-  UserCheckin({this.id = 0, this.name, this.numberOfRegist = 0,this.checkinTime, this.eventId = 0,this.picProfile});
+  UserCheckin({this.id = 0, this.name, this.email ,this.position, this.eventId = 0,this.picProfile});
 
 //   factory UserCheckin.fromJson(Map<String, dynamic> map) {
 //     return UserCheckin(

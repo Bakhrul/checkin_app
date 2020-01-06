@@ -1,10 +1,8 @@
 // The point below all this thing just for setting api, ty
 // Regard Previous Programmer
   // Online
-// <<<<<<< HEAD
-//    String host = 'http://192.168.100.17/';
-// =======
-   String host = 'http://192.168.43.115/bisniskita_myocin/';
+
+   String host = 'http://192.168.100.12/alamraya/myocin/api/';
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 
 
@@ -20,7 +18,6 @@
 url(pathname){
   var path = pathname;  
 	var outp = host + path;
-
 	return outp;
 }
 
