@@ -27,7 +27,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final GlobalKey<ScaffoldState> _scaffoldKeyDashboard = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
+      GlobalKey<ScaffoldState>();
   var height;
   var futureheight;
   var pastheight, heightmyevent;
@@ -118,6 +119,11 @@ class _DashboardState extends State<Dashboard> {
   );
   Icon actionIcon = Icon(
     Icons.search,
+    color: Colors.white,
+  );
+
+  Icon notifIcon = Icon(
+    Icons.more_vert,
     color: Colors.white,
   );
 
@@ -1543,6 +1549,37 @@ class _DashboardState extends State<Dashboard> {
               }
             });
           },
+        ),
+        new Stack(
+          children: <Widget>[
+            new IconButton(
+                icon: Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/notifications");
+                }),
+            new Positioned(
+              right: 6,
+              top: 2,
+              child: new Container(
+                height: 20.0,
+                alignment: Alignment.center,
+                width: 20.0,
+                decoration: new BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                constraints: BoxConstraints(),
+                child: Text(
+                  '100',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
