@@ -575,45 +575,46 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: <Widget>[
-                                                          Container(
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                color:
-                                                                    Colors.blue,
-                                                                borderRadius: new BorderRadius
-                                                                        .only(
-                                                                    topLeft:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    topRight:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    bottomLeft:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    bottomRight:
-                                                                        const Radius.circular(
-                                                                            5.0)),
-                                                              ),
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(5.0),
-                                                              width: 120.0,
-                                                              child: Text(
-                                                                'Proses Daftar',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              )),
+                                                          Container(),
+                                                          // Container(
+                                                          //     decoration:
+                                                          //         new BoxDecoration(
+                                                          //       color:
+                                                          //           Colors.blue,
+                                                          //       borderRadius: new BorderRadius
+                                                          //               .only(
+                                                          //           topLeft:
+                                                          //               const Radius.circular(
+                                                          //                   5.0),
+                                                          //           topRight:
+                                                          //               const Radius.circular(
+                                                          //                   5.0),
+                                                          //           bottomLeft:
+                                                          //               const Radius.circular(
+                                                          //                   5.0),
+                                                          //           bottomRight:
+                                                          //               const Radius.circular(
+                                                          //                   5.0)),
+                                                          //     ),
+                                                          //     padding:
+                                                          //         EdgeInsets
+                                                          //             .all(5.0),
+                                                          //     width: 120.0,
+                                                          //     child: Text(
+                                                          //       'Proses Daftar',
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         color: Colors
+                                                          //             .white,
+                                                          //         fontSize: 12,
+                                                          //         fontWeight:
+                                                          //             FontWeight
+                                                          //                 .w500,
+                                                          //       ),
+                                                          //       textAlign:
+                                                          //           TextAlign
+                                                          //               .center,
+                                                          //     )),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -719,12 +720,12 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             ],
                                           )),
                                       onTap: () async {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WaitingEvent(),
-                                            ));
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           WaitingEvent(),
+                                        //     ));
                                       });
                                 },
                               ),
