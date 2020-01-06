@@ -2,9 +2,11 @@ import 'package:checkin_app/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'detail_event.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/model/search_event.dart';
 import '../register_event/step_register_three.dart';
 import '../register_event/step_register_six.dart';
+import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
 import "dart:convert";
 
@@ -17,6 +19,9 @@ void showInSnackBar(String value) {
 enum PageEnum {
   kelolaRegisterPage,
 }
+
+String tokenType, accessToken;
+Map<String, String> requestHeaders = Map();
 
 class ManajemenEvent extends StatefulWidget {
   ManajemenEvent({Key key, this.title}) : super(key: key);
@@ -40,6 +45,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
   @override
   void initState() {
+    getHeaderHTTP();
     _getAll();
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
@@ -65,13 +71,26 @@ class _ManajemenEventState extends State<ManajemenEvent> {
          page = manyPage;
        });
 
-       Map<String, String> head = {'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
-       Map<String, dynamic> body = {'search':_searchQuery.text.toString()};
-       var data = await http.post('http://localhost:8000/api/search',headers:head,body:body);
+      var storage = new DataStore();
+      var tokenTypeStorage = await storage.getDataString('token_type');
+      var accessTokenStorage = await storage.getDataString('access_token');
 
-       if(data.statusCode == 200){
+      tokenType = tokenTypeStorage;
+      accessToken = accessTokenStorage;
+      requestHeaders['Accept'] = 'application/json';
+      requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-        Map rawData = json.decode(data.body);
+      Map<String, dynamic> body = {'search':_searchQuery.text.toString()};
+
+    final ongoingevent = await http.post(
+        url('api/search'),
+        headers: requestHeaders,
+        body:body
+      );
+print(ongoingevent.body);
+      if (ongoingevent.statusCode == 200) {
+
+        Map rawData = json.decode(ongoingevent.body);
         
         if(mounted){
             setState((){
@@ -89,15 +108,39 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       return _event;
   }
 
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
   Future<List> _getAll() async {
-     Map<String, String> head = {'Content-Type':'application/json','Accept':'application/json','Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
-      
-     var data = await http.get('http://localhost:8000/api/event/page/$page',headers:head);
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
 
-      if(data.statusCode == 200){
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-        Map rawData = json.decode(data.body);
+    final ongoingevent = await http.get(
+        url('api/event/page/$page'),
+        headers: requestHeaders,
+      );
+print(ongoingevent.body);
+      if (ongoingevent.statusCode == 200) {
 
+        Map rawData = json.decode(ongoingevent.body);
+         
         if(mounted){
             setState((){
             manyPage = rawData['num_page'];
@@ -120,18 +163,28 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         return false;
       }
 
-      setState((){
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    setState((){
           _isLoadingPagination = true;
           page = page + 1; 
       });
 
-      Map<String, String> head = {'Content-Type':'application/json','Accept':'application/json','Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
-      
-      var data = await http.get('http://localhost:8000/api/event/page/$page',headers:head);
+    final ongoingevent = await http.get(
+        url('api/event/page/$page'),
+        headers: requestHeaders,
+      );
+print(ongoingevent.body);
+      if (ongoingevent.statusCode == 200) {
 
-      if(data.statusCode == 200){
-
-        Map rawData = json.decode(data.body);
+        Map rawData = json.decode(ongoingevent.body);
 
         if(mounted){
             setState((){
@@ -148,12 +201,26 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   }
 
   Future<dynamic> _wish(String wish,int eventId,int index) async {
-    int newWish = wish == '1'? 0:1;
-    Map<String, String> head = {'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE0MWEwNGQzM2NmNzBlNWZjMDk0MGYwMTA5NTQ4ZDFlZjc1NTdjYTNkZjc2ZGE2NTk0ZDg0OTM0ZWIxZWZmOTVmODMwNDUzYWNjMDBiOWQ2In0.eyJhdWQiOiIxIiwianRpIjoiYTQxYTA0ZDMzY2Y3MGU1ZmMwOTQwZjAxMDk1NDhkMWVmNzU1N2NhM2RmNzZkYTY1OTRkODQ5MzRlYjFlZmY5NWY4MzA0NTNhY2MwMGI5ZDYiLCJpYXQiOjE1Nzc5ODE4NzEsIm5iZiI6MTU3Nzk4MTg3MSwiZXhwIjoxNjA5NjA0MjcxLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.T34QK_ocXFDmQCUQhnwMshAvHKqN0a0Jr_13Q8Bv02ez4u19KVH_h6a3Bk90HnpKOJPU3AcOTsanL0H57tGKxV9rFm8nnI1oKm-ZIoASR4MT9XrWd0T2Zj09qBJQY_-pfFRqk1r8G78ic9-_NaMmUhJxua8IdzNs_0DvySm2oIofKEDN4D14IPiSEUwlEBtMHIJXo8eKtiEGMrJbXYD0-P9tJL3vdflZGFTL72OvJdRNjpVgnCQMAuSFVTAtytQDEMnIjH41rNCbw-whyaalQBVIjWIGtwIaAtOX_3b_NcaNF0j8xtRkFMR2bV3p7cLJ77oQmvTVVcguTW15b3TPLje9K0aaYgUVwRpgiGxP3ySwJXfuoarrZ_sFNTMNA0awMlTh5J3iDgfnX33SuLnDOERu3WYd0dpx6fefGbYtbz73J9l7vY2ub5KozWJ3VxpLjIq0UbPor6m_qL7knys-NMDCDfK7uM6ZiI5ioV8W8gN3BPZ2bYYN6rqWtVqKxs5mFQJpRdS11Q-J50Qyf_wTqP3aigUzOGfeqSzmKSmmUfv1CHCQ6rs_RL8UdeHhWmvxDxnMIzdwLqZoBUG5zr1IQn6IXLkp7gwKV4gHRkxOnQuYIJwNPEi1bFm8N9y-e0Kl3ymTBODo-6B9VDGR6WmI0PYlf-yq4eXnghIkEsFnG6w'};
-    Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
-    var data = await http.post('http://localhost:8000/api/wish',headers:head,body:body);
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
 
-    if(data.statusCode == 200){
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    int newWish = wish == '1'? 0:1;
+    Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
+
+    final ongoingevent = await http.post(
+        url('api/wish'),
+        headers: requestHeaders,
+        body:body
+      );
+print(ongoingevent.body);
+    if (ongoingevent.statusCode == 200) {
+
       setState((){
         _event[index].wish = newWish.toString();
       });

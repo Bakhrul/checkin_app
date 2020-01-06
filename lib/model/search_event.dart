@@ -38,7 +38,7 @@ class SearchEvent{
 
       String dateStart = DateFormat("dd MMM").format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));
-      String hours = DateFormat("Hm:ms").format(DateTime.parse(map['ev_time_start']));
+      String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
 
