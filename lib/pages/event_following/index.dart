@@ -371,7 +371,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         ListKategoriEvent(
                                           color: false,
                                         );
-                                        listkategoriEvent[index].color = false;
+                                        // listkategoriEvent[index].color = false;
                                       });
                                     } else {
                                       setState(() {
@@ -379,7 +379,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         ListKategoriEvent(
                                           color: false,
                                         );
-                                        listkategoriEvent[index].color = true;
+                                        // listkategoriEvent[index].color = true;
                                       });
                                     }
                                     listFilterFollowingEvent();
