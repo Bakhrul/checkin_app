@@ -2,6 +2,7 @@ import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'manage_admin.dart';
 import 'package:flutter/cupertino.dart';
 import 'create.dart';
 import 'package:checkin_app/storage/storage.dart';
@@ -29,6 +30,8 @@ enum PageEnum {
   kelolaAbsenPesertaPage,
   kelolaCheckinPesertaPage,
   kelolaHasilAKhirPage,
+  kelolaadminPage,
+  deleteEvent,
 }
 
 class ManajemenEventPersonal extends StatefulWidget {
@@ -545,6 +548,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                               trailing: PopupMenuButton<PageEnum>(
                                             onSelected: (PageEnum value) {
                                               switch (value) {
+                                                case PageEnum.kelolaadminPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAdmin(event: item.id)));
+                                                  break;
                                                 case PageEnum.kelolaPesertaPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
@@ -584,12 +594,25 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   context) =>
                                                               PointEvents()));
                                                   break;
+                                                  case PageEnum
+                                                    .deleteEvent:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              PointEvents()));
+                                                  break;
                                                 default:
                                                   break;
                                               }
                                             },
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaadminPage,
+                                                child: Text("Kelola Admin / Co - Host"),
+                                              ),
                                               PopupMenuItem(
                                                 value:
                                                     PageEnum.kelolaPesertaPage,
@@ -620,6 +643,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     "Hasil akhir checkin peserta"),
                                               ),
                                               PopupMenuItem(
+                                                value: PageEnum
+                                                    .deleteEvent,
                                                 child: Text("Hapus Event"),
                                               ),
                                             ],
@@ -727,6 +752,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                           trailing: PopupMenuButton<PageEnum>(
                                             onSelected: (PageEnum value) {
                                               switch (value) {
+                                                case PageEnum.kelolaadminPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAdmin(event: item.id)));
+                                                  break;
                                                 case PageEnum.kelolaPesertaPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
@@ -772,6 +804,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                             },
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaadminPage,
+                                                child: Text("Kelola Admin / Co - Host"),
+                                              ),
                                               PopupMenuItem(
                                                 value:
                                                     PageEnum.kelolaPesertaPage,
@@ -910,6 +947,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                               trailing: PopupMenuButton<PageEnum>(
                                             onSelected: (PageEnum value) {
                                               switch (value) {
+                                                case PageEnum.kelolaadminPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManageAdmin(event: item.id)));
+                                                  break;
                                                 case PageEnum.kelolaPesertaPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
@@ -955,6 +999,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                             },
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value:
+                                                    PageEnum.kelolaadminPage,
+                                                child: Text("Kelola Admin / Co - Host"),
+                                              ),
                                               PopupMenuItem(
                                                 value:
                                                     PageEnum.kelolaPesertaPage,

@@ -568,6 +568,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
       formSerialize['keyword'] = List();
       formSerialize['timeendcheckin'] = List();
       formSerialize['timestartcheckin'] = List();
+      formSerialize['typecheckin'] = List();
 
       formSerialize['title'] = _namaeventController.text;
       formSerialize['deskripsi'] = _deskripsieventController.text;
@@ -594,6 +595,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
         formSerialize['keyword'].add(listcheckinAdd[i].keyword);
         formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
         formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
+        formSerialize['typecheckin'].add('T');
       }
 
       print(formSerialize);

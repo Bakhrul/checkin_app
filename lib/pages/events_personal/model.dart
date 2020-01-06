@@ -139,4 +139,23 @@ class ListPesertaEvent {
       });
 }
 
+class ListAdminEvent {
+   String idevent;
+   String idpeserta;
+   String nama;
+   String email;
+   String posisi;
+   String status;
+   
+  
+  ListAdminEvent(
+      {this.idevent,
+      this.idpeserta,
+      this.nama,
+      this.email,
+      this.posisi,
+      this.status,
+      });
+}
+
 
