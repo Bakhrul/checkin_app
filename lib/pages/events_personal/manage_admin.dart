@@ -8,24 +8,25 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'tambah_admin.dart';
 import 'model.dart';
 import 'dart:core';
 
 String tokenType, accessToken;
-List<ListPesertaEvent> listpesertaevent = [];
+List<ListAdminEvent> listadminevent = [];
 bool isLoading, isError;
 Map<String, String> requestHeaders = Map();
 
-class ManagePeserta extends StatefulWidget {
-  ManagePeserta({Key key, this.title, this.event}) : super(key: key);
+class ManageAdmin extends StatefulWidget {
+  ManageAdmin({Key key, this.title, this.event}) : super(key: key);
   final String title, event;
   @override
   State<StatefulWidget> createState() {
-    return _ManagePesertaState();
+    return _ManageAdminState();
   }
 }
 
-class _ManagePesertaState extends State<ManagePeserta> {
+class _ManageAdminState extends State<ManageAdmin> {
   @override
   void initState() {
     super.initState();
@@ -65,18 +66,18 @@ class _ManagePesertaState extends State<ManagePeserta> {
     });
     try {
       final checkinevent = await http.post(
-        url('api/listpesertaevent'),
+        url('api/listadminevent'),
         body: {'event': widget.event},
         headers: requestHeaders,
       );
 
       if (checkinevent.statusCode == 200) {
         var listuserJson = json.decode(checkinevent.body);
-        var listUsers = listuserJson['peserta'];
+        var listUsers = listuserJson['admin'];
         print(listUsers);
-        listpesertaevent = [];
+        listadminevent = [];
         for (var i in listUsers) {
-          ListPesertaEvent willcomex = ListPesertaEvent(
+          ListAdminEvent willcomex = ListAdminEvent(
             idevent: '${i['ep_events']}',
             idpeserta: '${i['ep_participants']}',
             nama: i['us_name'],
@@ -84,7 +85,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
             status: i['ep_status'],
             email: i['us_email'],
           );
-          listpesertaevent.add(willcomex);
+          listadminevent.add(willcomex);
         }
         setState(() {
           isLoading = false;
@@ -143,7 +144,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
   final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
-    "Kelola Peserta Event",
+    "Kelola Co Host / Admin Event",
     style: TextStyle(fontSize: 16),
   );
   Icon actionIcon = Icon(
@@ -218,7 +219,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                   padding: const EdgeInsets.only(top: 0.0),
                   child: Column(
                     children: <Widget>[
-                      listpesertaevent.length == 0
+                      listadminevent.length == 0
                           ? Padding(
                               padding: const EdgeInsets.only(top: 20.0),
                               child: Column(children: <Widget>[
@@ -236,7 +237,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Event Belum Memiliki Peserta Sama Sekali",
+                                      "Event Belum Memiliki Admin Sama Sekali",
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.black45,
@@ -252,7 +253,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                               child: Scrollbar(
                                 child: ListView.builder(
                                   // scrollDirection: Axis.horizontal,
-                                  itemCount: listpesertaevent.length,
+                                  itemCount: listadminevent.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Card(
@@ -271,13 +272,13 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                           )),
                                       title:
                                        Text(
-                                          listpesertaevent[index].nama ==
+                                          listadminevent[index].nama ==
                                                       null ||
-                                                  listpesertaevent[index]
+                                                  listadminevent[index]
                                                           .nama ==
                                                       ''
                                               ? 'Nama Tidak Diketahui'
-                                              : listpesertaevent[index].nama,
+                                              : listadminevent[index].nama,
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500)),
@@ -285,30 +286,30 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                         padding:
                                             const EdgeInsets.only(top: 15.0),
                                         child: Text(
-                                          listpesertaevent[index].status == 'P'
+                                          listadminevent[index].status == 'P'
                                               ? 'Menunggu Konfirmasi'
-                                              : listpesertaevent[index]
+                                              : listadminevent[index]
                                                           .status ==
                                                       'C'
                                                   ? 'Pendaftaran Ditolak'
-                                                  : listpesertaevent[index]
+                                                  : listadminevent[index]
                                                               .status ==
                                                           'A'
                                                       ? 'Pendaftaran Diterima'
                                                       : 'Status Tidak Diketahui',
-                                          style: listpesertaevent[index]
+                                          style: listadminevent[index]
                                                       .status ==
                                                   'P'
                                               ? TextStyle(
                                                   fontWeight: FontWeight.w500)
-                                              : listpesertaevent[index]
+                                              : listadminevent[index]
                                                           .status ==
                                                       'C'
                                                   ? TextStyle(
                                                       fontWeight: FontWeight
                                                           .w500,
                                                       color: Colors.red)
-                                                  : listpesertaevent[index]
+                                                  : listadminevent[index]
                                                               .status ==
                                                           'A'
                                                       ? TextStyle(
@@ -323,7 +324,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          listpesertaevent[index].status == 'P'
+                                          listadminevent[index].status == 'P'
                                               ? ButtonTheme(
                                                   minWidth: 0.0,
                                                   child: FlatButton(
@@ -375,9 +376,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           requestHeaders,
                                                                       body: {
                                                                         'idpeserta':
-                                                                            listpesertaevent[index].idpeserta,
+                                                                            listadminevent[index].idpeserta,
                                                                         'idevent':
-                                                                            listpesertaevent[index].idevent
+                                                                            listadminevent[index].idevent
                                                                       });
                                                                   print(
                                                                       hapuswishlist);
@@ -392,7 +393,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         'success') {
                                                                       setState(
                                                                           () {
-                                                                        listpesertaevent[index].status =
+                                                                        listadminevent[index].status =
                                                                             'C';
                                                                       });
                                                                     } else if (hapuswishlistJson[
@@ -474,9 +475,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           requestHeaders,
                                                                       body: {
                                                                         'peserta':
-                                                                            listpesertaevent[index].idpeserta,
+                                                                            listadminevent[index].idpeserta,
                                                                         'event':
-                                                                            listpesertaevent[index].idevent
+                                                                            listadminevent[index].idevent
                                                                       });
                                                                   print(
                                                                       hapuswishlist);
@@ -491,7 +492,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         'success') {
                                                                       setState(
                                                                           () {
-                                                                        listpesertaevent.remove(listpesertaevent[index]);
+                                                                        listadminevent.remove(listadminevent[index]);
                                                                       });
                                                                     } else if (hapuswishlistJson[
                                                                             'status'] ==
@@ -521,7 +522,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                       );
                                                     },
                                                   )),
-                                          listpesertaevent[index].status == 'P'
+                                          listadminevent[index].status == 'P'
                                               ? ButtonTheme(
                                                   minWidth: 0.0,
                                                   child: FlatButton(
@@ -573,9 +574,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           requestHeaders,
                                                                       body: {
                                                                         'idpeserta':
-                                                                            listpesertaevent[index].idpeserta,
+                                                                            listadminevent[index].idpeserta,
                                                                         'idevent':
-                                                                            listpesertaevent[index].idevent
+                                                                            listadminevent[index].idevent
                                                                       });
 
                                                                   if (accpeserta
@@ -591,7 +592,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         'success') {
                                                                       setState(
                                                                           () {
-                                                                        listpesertaevent[index].status =
+                                                                        listadminevent[index].status =
                                                                             'A';
                                                                       });
                                                                     } else if (hapuswishlistJson[
@@ -639,7 +640,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ManajemeCreatePeserta(event: widget.event)));
+                      ManajemenTambahAdmin(event: widget.event)));
         },
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),

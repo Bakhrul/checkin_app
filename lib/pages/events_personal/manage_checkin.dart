@@ -9,17 +9,18 @@ import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'tambah_checkin.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:core';
 
-GlobalKey<ScaffoldState> _scaffoldKeyManageCheckin;
 bool isLoading, isError;
 String tokenType, accessToken;
 List<ListCheckinEvent> listcheckinevent = [];
 Map<String, String> requestHeaders = Map();
 enum PageEnum {
   editCheckinPage,
+  deleteCheckinPage,
 }
 
 class ManageCheckin extends StatefulWidget {
@@ -34,7 +35,6 @@ class ManageCheckin extends StatefulWidget {
 class _ManageCheckinState extends State<ManageCheckin> {
   @override
   void initState() {
-    _scaffoldKeyManageCheckin = GlobalKey<ScaffoldState>();
     super.initState();
     getHeaderHTTP();
   }
@@ -168,7 +168,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyManageCheckin,
       appBar: buildBar(context),
       body: isLoading == true
           ? Center(
@@ -267,15 +266,16 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                 // scrollDirection: Axis.horizontal,
                                 itemCount: listcheckinevent.length,
                                 itemBuilder: (BuildContext context, int index) {
-
-                                DateTime waktuawal = DateTime.parse(
-                                    listcheckinevent[index].timestart);
-                                DateTime waktuakhir = DateTime.parse(
-                                    listcheckinevent[index].timeend);
-                                String timestart =
-                                    DateFormat('dd-MM-y HH:mm:ss').format(waktuawal);
-                                String timeend =
-                                    DateFormat('dd-MM-y HH:mm:ss').format(waktuakhir);
+                                  DateTime waktuawal = DateTime.parse(
+                                      listcheckinevent[index].timestart);
+                                  DateTime waktuakhir = DateTime.parse(
+                                      listcheckinevent[index].timeend);
+                                  String timestart =
+                                      DateFormat('dd-MM-y HH:mm:ss')
+                                          .format(waktuawal);
+                                  String timeend =
+                                      DateFormat('dd-MM-y HH:mm:ss')
+                                          .format(waktuakhir);
                                   return Card(
                                     child: ListTile(
                                       leading: Padding(
@@ -293,7 +293,26 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                         ),
                                       ),
                                       trailing: PopupMenuButton<PageEnum>(
-                                        onSelected: _onSelect,
+                                        onSelected: (PageEnum value) {
+                                          switch (value) {
+                                            case PageEnum.editCheckinPage:
+                                              Navigator.of(context).push(
+                                                  CupertinoPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          ManajemeEditCheckin()));
+                                              break;
+                                              case PageEnum.deleteCheckinPage:
+                                              Navigator.of(context).push(
+                                                  CupertinoPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          ManajemeEditCheckin()));
+                                              break;
+                                            default:
+                                              break;
+                                          }
+                                        },
                                         icon: Icon(Icons.more_vert),
                                         itemBuilder: (context) => [
                                           PopupMenuItem(
@@ -301,6 +320,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                             child: Text("Edit"),
                                           ),
                                           PopupMenuItem(
+                                            value: PageEnum.deleteCheckinPage,
                                             child: Text("Delete"),
                                           ),
                                         ],
@@ -312,7 +332,8 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                           fontSize: 13,
                                         ),
                                       ),
-                                      subtitle: Text('${timestart} - ${timeend}'),
+                                      subtitle:
+                                          Text('${timestart} - ${timeend}'),
                                     ),
                                   );
                                 },
@@ -325,7 +346,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ManajemeCreateCheckin()));
+              MaterialPageRoute(builder: (context) => ManajemenTambahCheckin(event: widget.event)));
         },
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
