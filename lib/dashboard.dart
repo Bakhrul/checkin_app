@@ -1,58 +1,47 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'auth/login.dart';
 import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/register_event/step_register_six.dart';
 import 'pages/register_event/step_register_three.dart';
-import 'pages/events_all/detail_event.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
-import 'utils/utils.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeyDashboard;
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
 enum PageEnum {
   kelolaRegisterPage,
 }
 
-// class IkiIndex {
-  
-//   final String indexIki;
-//   final String title;
-
-//   IkiIndex(
-//       {@required this.indexIki,
-//       @required this.title,
-//      });
-// }
-
 class Dashboard extends StatefulWidget {
   // final IkiIndex _indexIki;
 
   // Dashboard({@required IkiIndex indexIki}) : _indexIki = indexIki;
-  Dashboard({Key key,  @required this.indexIki}) : super(key: key);
+  Dashboard({Key key, this.title}) : super(key: key);
   // final String title;
-  final String indexIki;
+  final String title;
   @override
   State<StatefulWidget> createState() {
     return _DashboardState();
   }
-  
 }
 
 class _DashboardState extends State<Dashboard> {
+  final GlobalKey<ScaffoldState> _scaffoldKeyDashboard = GlobalKey<ScaffoldState>();
   var height;
   var futureheight;
   var pastheight, heightmyevent;
 
   @override
   void initState() {
-    _scaffoldKeyDashboard = GlobalKey<ScaffoldState>();
     super.initState();
     wishlisttwo = true;
     wishlistthree = true;
     wishlistfive = true;
+  }
+
+  void dispose() {
+    super.dispose();
   }
 
   void currentEvent() {
@@ -113,6 +102,14 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  String _username;
+  Future<Null> removeSharedPrefs() async {
+    DataStore dataStore = new DataStore();
+    dataStore.clearData();
+    _username = await dataStore.getDataString("name");
+    print(_username);
+  }
+
   final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
@@ -126,7 +123,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
         backgroundColor: Colors.white,
         key: _scaffoldKeyDashboard,
@@ -138,7 +134,7 @@ class _DashboardState extends State<Dashboard> {
                 // Profil Drawer Here
                 UserAccountsDrawerHeader(
                   // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
-                  accountName: Text(widget.indexIki),
+                  accountName: Text('Administrator'),
                   accountEmail: Text("bakhrulrpl@gmail.com"),
                   decoration: BoxDecoration(
                     color: Color.fromRGBO(41, 30, 47, 1),
@@ -245,7 +241,11 @@ class _DashboardState extends State<Dashboard> {
                                 style: TextStyle(color: Colors.cyan),
                               ),
                               onPressed: () {
-                                Navigator.pop(context, MaterialPageRoute(builder: (context) => LoginPage() ));
+                                removeSharedPrefs();
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pushReplacementNamed(
+                                    context, "/login");
                               },
                             )
                           ],
@@ -440,7 +440,6 @@ class _DashboardState extends State<Dashboard> {
               ]),
             ),
           ),
-          
           Container(
               child: Column(children: <Widget>[
             InkWell(
@@ -452,7 +451,7 @@ class _DashboardState extends State<Dashboard> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                          Text((widget.indexIki != 'user' ?'Event Anda' : 'Even Yang Anda Sukai').toUpperCase(),
+                        Text(('Event Anda').toUpperCase(),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -552,18 +551,14 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   )),
               onTap: () async {
-                
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => widget.indexIki != 'user' ? DashboardCheckin() : SuccesRegisteredEvent(),
+                      builder: (context) => DashboardCheckin(),
                     ));
               },
             ),
-          ]
-          )
-        ),
-
+          ])),
           Container(
             padding: EdgeInsets.only(
                 left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),

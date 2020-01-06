@@ -5,15 +5,21 @@ import 'package:checkin_app/routes/env.dart';
 import 'count_down.dart';
 import 'model.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/cupertino.dart';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:ui';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
 import '../events_all/detail_event.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/pages/register_event/detail_event_afterregist.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
+String tokenType,accessToken;
+Map<String, String> requestHeaders = Map();
 List<ListFollowingEvent> listItemFollowing = [];
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isFilter;
@@ -50,14 +56,23 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
   }
 
   Future<List<ListFollowingEvent>> listDoneEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
       filterX = 'all';
     });
     try {
       final followevent = await http.post(
-        url('api/getfollowingevent'),body: {'filter' : filterX}
-        // headers: requestHeaders,
+        url('api/getfollowingevent'),body: {'filter' : filterX},
+        headers: requestHeaders,
       );
 
       if (followevent.statusCode == 200) {
@@ -83,8 +98,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           isError = false;
         });
         listKategoriEvent();
+      } else if(followevent.statusCode == 401){
+        Fluttertoast.showToast(msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
       } else {
-        print('eror');
         setState(() {
           isLoading = false;
           isError = true;
@@ -92,14 +112,12 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         return null;
       }
     } on TimeoutException catch (_) {
-      print('eror');
       setState(() {
         isLoading = false;
         isError = true;
       });
-      showInSnackBar('Timed out, Try again');
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      print('eror');
       setState(() {
         isLoading = false;
         isError = true;
@@ -109,17 +127,24 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     return null;
   }
   Future<List<ListFollowingEvent>> listFilterFollowingEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
     setState(() {
       isFilter = true;
     });
     try {
       final followevent = await http.post(
-        url('api/getfollowingevent'),body: {'filter' : filterX}
-        // headers: requestHeaders,
+        url('api/getfollowingevent'),body: {'filter' : filterX},
+        headers: requestHeaders,
       );
 
       if (followevent.statusCode == 200) {
-        // return nota;
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['eventfollow'];
 
@@ -140,8 +165,14 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           isFilter = false;
           isError = false;
         });
-      } else {
-        print('eror');
+      }else if(followevent.statusCode == 401){
+        Fluttertoast.showToast(msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isFilter = false;
+          isError = true;
+        });
+      }else {
+        print(followevent.body);
         setState(() {
           isFilter = false;
           isError = true;
@@ -149,12 +180,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         return null;
       }
     } on TimeoutException catch (_) {
-      print('eror');
       setState(() {
         isFilter = false;
         isError = true;
       });
-      showInSnackBar('Timed out, Try again');
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isFilter = false;
@@ -195,8 +225,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           isError = false;
         });
       } else {
-        print('eror');
         print(kategorievent.body);
+        print(kategorievent.statusCode);
         setState(() {
           isLoading = false;
           isError = true;

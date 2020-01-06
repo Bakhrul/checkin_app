@@ -3,12 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import 'create_peserta.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:checkin_app/storage/storage.dart';
+import 'package:checkin_app/routes/env.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+import 'model.dart';
+import 'dart:core';
 
-GlobalKey<ScaffoldState> _scaffoldKeyManagePeserta;
+String tokenType, accessToken;
+List<ListPesertaEvent> listpesertaevent = [];
+bool isLoading, isError;
+Map<String, String> requestHeaders = Map();
 
 class ManagePeserta extends StatefulWidget {
-  ManagePeserta({Key key, this.title}) : super(key: key);
-  final String title;
+  ManagePeserta({Key key, this.title, this.event}) : super(key: key);
+  final String title, event;
   @override
   State<StatefulWidget> createState() {
     return _ManagePesertaState();
@@ -18,8 +28,98 @@ class ManagePeserta extends StatefulWidget {
 class _ManagePesertaState extends State<ManagePeserta> {
   @override
   void initState() {
-    _scaffoldKeyManagePeserta = GlobalKey<ScaffoldState>();
     super.initState();
+    isLoading = true;
+    isError = false;
+    getHeaderHTTP();
+    print(requestHeaders);
+    listcheckin();
+  }
+
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
+  Future<List<List>> listcheckin() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final checkinevent = await http.post(
+        url('api/listpesertaevent'),
+        body: {'event': widget.event},
+        headers: requestHeaders,
+      );
+
+      if (checkinevent.statusCode == 200) {
+        var listuserJson = json.decode(checkinevent.body);
+        var listUsers = listuserJson['peserta'];
+        print(listUsers);
+        listpesertaevent = [];
+        for (var i in listUsers) {
+          ListPesertaEvent willcomex = ListPesertaEvent(
+            idevent: '${i['ep_events']}',
+            idpeserta: '${i['ep_participants']}',
+            nama: i['us_name'],
+            posisi: i['ep_position'].toString(),
+            status: i['ep_status'],
+            email: i['us_email'],
+          );
+          listpesertaevent.add(willcomex);
+        }
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+      } else if (checkinevent.statusCode == 401) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+      } else {
+        print(checkinevent.body);
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      print('eror');
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+    return null;
   }
 
   void _handleSearchEnd() {
@@ -39,6 +139,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
       _searchQuery.clear();
     });
   }
+
   final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
@@ -54,129 +155,393 @@ class _ManagePesertaState extends State<ManagePeserta> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyManagePeserta,
       appBar: buildBar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Card(
-                child: ListTile(
-              leading: Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: new DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage(
-                        'images/imgavatar.png',
+      body: isLoading == true
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : isError == true
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => getHeaderHTTP(),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
                       ),
-                    ),
-                  )),
-              title: Text('Muhammad Bakhrul Bila Sakhil',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Text(
-                  'Menunggu Konfirmasi',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ButtonTheme(
-                      minWidth: 0.0,
-                      child: FlatButton(
-                        color: Colors.white,
-                        textColor: Colors.red,
-                        disabledColor: Colors.green[400],
-                        disabledTextColor: Colors.white,
-                        padding: EdgeInsets.all(0.0),
-                        splashColor: Colors.blueAccent,
-                        child: Icon(
-                          Icons.close,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
                         ),
-                        onPressed: () async {
-                          Fluttertoast.showToast(msg:"Terima kasih telah melakukan konfirmasi");
-                        },
-                      )),
-                      ButtonTheme(
-                      minWidth: 0.0,
-                      child: FlatButton(
-                        color: Colors.white,
-                        textColor: Colors.green,
-                        disabledColor: Colors.green[400],
-                        disabledTextColor: Colors.white,
-                        padding: EdgeInsets.all(0.0),
-                        splashColor: Colors.blueAccent,
-                        child: Icon(
-                          Icons.check,
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        onPressed: () async {
-                          Fluttertoast.showToast(msg:"Terima kasih telah melakukan konfirmasi");
-                        },
-                      )),
-                ],
-              ),
-            )),
-            Card(
-                child: ListTile(
-              leading: Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: new DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage(
-                        'images/imgavatar.png',
                       ),
-                    ),
-                  )),
-              title: Text('Muhammad Bakhrul Bila Sakhil',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Text(
-                  'Pendaftaran Ditolak',
-                  style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
-                ),
-              ),
-            )),
-            Card(
-                child: ListTile(
-              leading: Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: new DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage(
-                        'images/imgavatar.png',
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              getHeaderHTTP();
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  )),
-              title: Text('Muhammad Bakhrul Bila Sakhil',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Text(
-                  'Sudah Terdaftar',
-                  style: TextStyle(
-                      color: Colors.green, fontWeight: FontWeight.w500),
+                    ]),
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  child: Column(
+                    children: <Widget>[
+                      listpesertaevent.length == 0
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Column(children: <Widget>[
+                                new Container(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child:
+                                      Image.asset("images/empty-white-box.png"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 30.0,
+                                    left: 15.0,
+                                    right: 15.0,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Event Belum Memiliki Peserta Sama Sekali",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black45,
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            )
+                          : Expanded(
+                              child: Scrollbar(
+                                child: ListView.builder(
+                                  // scrollDirection: Axis.horizontal,
+                                  itemCount: listpesertaevent.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Card(
+                                        child: ListTile(
+                                      leading: Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: new DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: AssetImage(
+                                                'images/imgavatar.png',
+                                              ),
+                                            ),
+                                          )),
+                                      title: Text(
+                                          listpesertaevent[index].nama ==
+                                                      null ||
+                                                  listpesertaevent[index]
+                                                          .nama ==
+                                                      ''
+                                              ? 'Nama Tidak Diketahui'
+                                              : listpesertaevent[index].nama,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500)),
+                                      subtitle: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
+                                        child: Text(
+                                          listpesertaevent[index].status == 'P'
+                                              ? 'Menunggu Konfirmasi'
+                                              : listpesertaevent[index]
+                                                          .status ==
+                                                      'C'
+                                                  ? 'Pendaftaran Ditolak'
+                                                  : listpesertaevent[index]
+                                                              .status ==
+                                                          'A'
+                                                      ? 'Pendaftaran Diterima'
+                                                      : 'Status Tidak Diketahui',
+                                          style: listpesertaevent[index]
+                                                      .status ==
+                                                  'P'
+                                              ? TextStyle(
+                                                  fontWeight: FontWeight.w500)
+                                              : listpesertaevent[index]
+                                                          .status ==
+                                                      'C'
+                                                  ? TextStyle(
+                                                      fontWeight: FontWeight
+                                                          .w500,
+                                                      color: Colors.red)
+                                                  : listpesertaevent[index]
+                                                              .status ==
+                                                          'A'
+                                                      ? TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.green)
+                                                      : TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                        ),
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          listpesertaevent[index].status == 'P'
+                                              ? ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.red,
+                                                    disabledColor:
+                                                        Colors.green[400],
+                                                    disabledTextColor:
+                                                        Colors.white,
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed: () async {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                              'Peringatan!'),
+                                                          content: Text(
+                                                              'Apakah Anda Ingin Menolak Pendaftaran Event?'),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                              child:
+                                                                  Text('Tidak'),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              textColor:
+                                                                  Colors.green,
+                                                              child: Text('Ya'),
+                                                              onPressed:
+                                                                  () async {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                try {
+                                                                  final hapuswishlist = await http.post(
+                                                                      url(
+                                                                          'api/tolakpeserta_event'),
+                                                                      headers:
+                                                                          requestHeaders,
+                                                                      body: {
+                                                                        'idpeserta':
+                                                                            listpesertaevent[index].idpeserta,
+                                                                        'idevent':
+                                                                            listpesertaevent[index].idevent
+                                                                      });
+                                                                  print(
+                                                                      hapuswishlist);
+                                                                  if (hapuswishlist
+                                                                          .statusCode ==
+                                                                      200) {
+                                                                    var hapuswishlistJson =
+                                                                        json.decode(
+                                                                            hapuswishlist.body);
+                                                                    if (hapuswishlistJson[
+                                                                            'status'] ==
+                                                                        'success') {
+                                                                      setState(
+                                                                          () {
+                                                                        listpesertaevent[index].status =
+                                                                            'C';
+                                                                      });
+                                                                    } else if (hapuswishlistJson[
+                                                                            'status'] ==
+                                                                        'Error') {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                    }
+                                                                  } else {
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                  }
+                                                                } on TimeoutException catch (_) {
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                          msg:
+                                                                              "Timed out, Try again");
+                                                                } catch (e) {
+                                                                  print(e);
+                                                                }
+                                                              },
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ))
+                                              : Container(),
+                                          listpesertaevent[index].status == 'P'
+                                              ? ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.green,
+                                                    disabledColor:
+                                                        Colors.green[400],
+                                                    disabledTextColor:
+                                                        Colors.white,
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.check,
+                                                    ),
+                                                    onPressed: () async {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                              'Peringatan!'),
+                                                          content: Text(
+                                                              'Apakah Anda Ingin Menerima Pendaftaran Event?'),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                              child:
+                                                                  Text('Tidak'),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              textColor:
+                                                                  Colors.green,
+                                                              child: Text('Ya'),
+                                                              onPressed:
+                                                                  () async {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                try {
+                                                                  final accpeserta = await http.post(
+                                                                      url(
+                                                                          'api/accpeserta_event'),
+                                                                      headers:
+                                                                          requestHeaders,
+                                                                      body: {
+                                                                        'idpeserta':
+                                                                            listpesertaevent[index].idpeserta,
+                                                                        'idevent':
+                                                                            listpesertaevent[index].idevent
+                                                                      });
+
+                                                                  if (accpeserta
+                                                                          .statusCode ==
+                                                                      200) {
+                                                                    var hapuswishlistJson =
+                                                                        json.decode(
+                                                                            accpeserta.body);
+                                                                    print(
+                                                                        hapuswishlistJson);
+                                                                    if (hapuswishlistJson[
+                                                                            'status'] ==
+                                                                        'success') {
+                                                                      setState(
+                                                                          () {
+                                                                        listpesertaevent[index].status =
+                                                                            'A';
+                                                                      });
+                                                                    } else if (hapuswishlistJson[
+                                                                            'status'] ==
+                                                                        'Error') {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Request failed with status: ${accpeserta.statusCode}");
+                                                                    }
+                                                                  } else {
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Request failed with status: ${accpeserta.statusCode}");
+                                                                  }
+                                                                } on TimeoutException catch (_) {
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                          msg:
+                                                                              "Timed out, Try again");
+                                                                } catch (e) {
+                                                                  print(e);
+                                                                }
+                                                              },
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ))
+                                              : Container(),
+                                        ],
+                                      ),
+                                    ));
+                                  },
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
                 ),
-              ),
-            )),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ManajemeCreatePeserta()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ManajemeCreatePeserta(event: widget.event)));
         },
         child: Icon(Icons.add),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),

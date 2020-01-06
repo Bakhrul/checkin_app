@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
-import '../dashboard.dart';
 import 'register.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -10,9 +9,9 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:checkin_app/dashboard.dart';
 
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
@@ -30,8 +29,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // String indexIki;
 
-  // List headsession = ['nama','username','id','nomor','jenis'];
-  // List getsession = ['m_name','m_username','m_id','m_phone','m_gender'];
+  void initState() {
+    _isLoading = false;
+    username.text = '';
+    password.text = '';
+    super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
+  }
   login() async {
     print('login');
     // await Auth(username: username,password: password ,name: 'login',nameStringsession: headsession , dataStringsession: getsession).getuser();
@@ -42,142 +49,116 @@ class _LoginPageState extends State<LoginPage> {
     String msg = '';
   
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  void showInSnackBar(String value, {SnackBarAction action}) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(value),
-      action: action,
-    ));
-  }
-  // _login() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   try {
-  //     final getToken = await http.post(url('oauth/token'), body: {
-  //       'grant_type': grantType,
-  //       'client_id': clientId,
-  //       'client_secret': clientSecret,
-  //       "username": username.text,
-  //       "password": password.text,
-  //     });
-
-  //     print('getToken ' + getToken.body);
-
-  //     var getTokenDecode = json.decode(getToken.body);
-
-  //     if (getToken.statusCode == 200) {
-  //       if (getTokenDecode['error'] == 'invalid_credentials') {
-  //         showInSnackBar(getTokenDecode['message']);
-  //         msg = getTokenDecode['message'];
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       } else if (getTokenDecode['error'] == 'invalid_request') {
-  //         showInSnackBar(getTokenDecode['hint']);
-  //         msg = getTokenDecode['hint'];
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       } else if (getTokenDecode['token_type'] == 'Bearer') {
-  //         DataStore()
-  //             .setDataString('access_token', getTokenDecode['access_token']);
-  //         DataStore().setDataString('token_type', getTokenDecode['token_type']);
-          
-  //         List head = ['token_type','access_token'];
-  //         List value = [getTokenDecode['token_type'],getTokenDecode['access_token']];
-  //         Auth(nameStringsession: head , dataStringsession: value).savesession();
-
-  //       }
-  //       dynamic tokenType = getTokenDecode['token_type'];
-  //       dynamic accessToken = getTokenDecode['access_token'];
-  //       requestHeaders['Accept'] = 'application/json';
-  //       requestHeaders['Authorization'] = '$tokenType $accessToken';
-  //       try {
-  //         final getUser =
-  //             await http.get(url("api/user"), headers: requestHeaders);
-  //         // print('getUser ' + getUser.body);
-
-  //         if (getUser.statusCode == 200) {
-  //           dynamic datauser = json.decode(getUser.body);
-
-  //           DataStore store = new DataStore();
-
-  //           // store.setDataInteger("user_id", int.parse(datajson['user']["u_id"]));
-  //           store.setDataString("code", datauser['u_code'].toString());
-  //           store.setDataString("email", datauser['u_email']);
-  //           store.setDataString("name", datauser['u_name']);
-
-  //           print(datauser);
-
-  //           Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //               settings: RouteSettings(name: '/dashboard'),
-  //               builder: (BuildContext context) => Dashboard(),
-  //             ),
-  //           );
-  //           // print('statement else is true');
-  //           // print(datauser);
-  //           setState(() {
-  //             _isLoading = false;
-  //           });
-  //         } else {
-  //           showInSnackBar('Request failed with status: ${getUser.statusCode}');
-  //           setState(() {
-  //             _isLoading = false;
-  //           });
-  //         }
-  //       } on SocketException catch (_) {
-  //         showInSnackBar('Connection Timed Out');
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       } catch (e) {
-  //         print(e);
-  //         // showInSnackBar(e);
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       }
-  //     } else if (getToken.statusCode == 401) {
-  //       showInSnackBar('Username atau Password Salah');
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     } else {
-  //       showInSnackBar('Request failed with status: ${getToken.statusCode}');
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     }
-  //     // print(datajson.toString());
-
-  //   } on SocketException catch (_) {
-  //     showInSnackBar('Connection Timed Out');
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //     // showInSnackBar(e);
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
+  // void showInSnackBar(String value, {SnackBarAction action}) {
+  //   _scaffoldKey.currentState.showSnackBar(new SnackBar(
+  //     content: new Text(value),
+  //     action: action,
+  //   ));
   // }
-  loginStatic() {
-    if (username.text == 'user') {
-      Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Dashboard(indexIki: "user" )));
-    }else{
-       Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Dashboard(indexIki: "creator" )));
+  _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final getToken = await http.post(url('oauth/token'), body: {
+        'grant_type': grantType,
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        "username": username.text,
+        "password": password.text,
+      });
+
+      print('getToken ' + getToken.body);
+
+      var getTokenDecode = json.decode(getToken.body);
+
+      if (getToken.statusCode == 200) {
+        if (getTokenDecode['error'] == 'invalid_credentials') {
+          Fluttertoast.showToast(msg: getTokenDecode['message']);
+          msg = getTokenDecode['message'];
+          setState(() {
+            _isLoading = false;
+          });
+        } else if (getTokenDecode['error'] == 'invalid_request') {
+          Fluttertoast.showToast(msg: getTokenDecode['hint']);
+          msg = getTokenDecode['hint'];
+          setState(() {
+            _isLoading = false;
+          });
+        } else if (getTokenDecode['token_type'] == 'Bearer') {
+          DataStore()
+              .setDataString('access_token', getTokenDecode['access_token']);
+          DataStore().setDataString('token_type', getTokenDecode['token_type']);
+          
+          List head = ['token_type','access_token'];
+          List value = [getTokenDecode['token_type'],getTokenDecode['access_token']];
+          Auth(nameStringsession: head , dataStringsession: value).savesession();
+
+        }
+        dynamic tokenType = getTokenDecode['token_type'];
+        dynamic accessToken = getTokenDecode['access_token'];
+        requestHeaders['Accept'] = 'application/json';
+        requestHeaders['Authorization'] = '$tokenType $accessToken';
+        try {
+          final getUser =
+              await http.get(url("api/user"), headers: requestHeaders);
+          // print('getUser ' + getUser.body);
+
+          if (getUser.statusCode == 200) {
+            dynamic datauser = json.decode(getUser.body);
+
+            DataStore store = new DataStore();
+            store.setDataString("id", datauser['us_code'].toString());
+            store.setDataString("email", datauser['us_email']);
+            store.setDataString("name", datauser['us_name']);
+
+            print(datauser);
+
+            Navigator.pushReplacementNamed(context, "/dashboard");
+            setState(() {
+              _isLoading = false;
+            });
+          } else {
+            Fluttertoast.showToast(msg: "Request failed with status: ${getUser.statusCode}");
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        } on SocketException catch (_) {
+          Fluttertoast.showToast(msg: "Connection Timed Out");
+          setState(() {
+            _isLoading = false;
+          });
+        } catch (e) {
+          print(e);
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else if (getToken.statusCode == 401) {
+        Fluttertoast.showToast(msg: "Username atau Password salah");
+        setState(() {
+          _isLoading = false;
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Request failed with status: ${getToken.statusCode}");
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(msg: "Connection Timed Out");
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print(e);
     }
   }
 
@@ -229,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Nama Pengguna",
+          hintText: "Alamat Email",
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -276,12 +257,12 @@ class _LoginPageState extends State<LoginPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
+        onPressed: _isLoading == true ? null : () async {
           //login();
-          loginStatic();
+          _login();
         },
         child: Text(
-          "Masuk",
+          _isLoading == true ? "Tunggu Sebentar" :"Masuk" ,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -300,27 +281,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             width: double.infinity,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // RaisedButton(
-                //   color: Colors.redAccent,
-                //   padding: EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
-                //   onPressed: () {
-                //     // Navigator.pushNamed(context, '/register');
-                //     signin();
-                //   },
-                //   child: Text(
-                //     "Google",
-                //     textAlign: TextAlign.center,
-                //     style: TextStyle(
-                //       fontWeight: FontWeight.w600,
-                //       color: Colors.white,
-                //       fontFamily: 'Roboto',
-                //       fontSize: 12.0,
-                //     ),
-                //   ),
-                // ),
                 SizedBox(
                   width: 20,
                 ),

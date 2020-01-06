@@ -1,13 +1,15 @@
+import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:flutter/material.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
-import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
-
-
+import 'model.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
-var datepicker;
+TextEditingController _namacheckinController = new TextEditingController();
+TextEditingController _kodecheckinController = new TextEditingController();
+var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 void showInSnackBar(String value) {
   _scaffoldKeycreatecheckin.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -23,11 +25,21 @@ class ManajemeCreateCheckin extends StatefulWidget {
 }
 
 class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
+  final format = DateFormat("yyyy-MM-dd HH:mm:ss");
   @override
   void initState() {
     _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
-    datepicker = FocusNode();
+    firstdate = FocusNode();
+    lastdate = FocusNode();
+    _namacheckinController.text = '';
+    _kodecheckinController.text = '';
+    _tanggalawal = 'kosong';
+    _tanggalakhir = 'kosong';
     super.initState();
+  }
+
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -37,17 +49,17 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-          iconTheme: IconThemeData(
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+        title: new Text(
+          "Buat Checkin Sekarang",
+          style: TextStyle(
             color: Colors.white,
+            fontSize: 14,
           ),
-          title: new Text(
-            "Buat Checkin Sekarang",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
-          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: SingleChildScrollView(
@@ -55,136 +67,135 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
             children: <Widget>[
               Card(
                   child: ListTile(
-                leading: Icon(Icons.date_range, color: Color.fromRGBO(41, 30, 47, 1),),
-                title: DateTimeField(
-                  readOnly: true,
-                  format: DateFormat('dd-MM-yyy'),
-                  focusNode: datepicker,
-                  decoration: InputDecoration(
-                    hintText: 'Tanggal Berlangsungnya Checkin',
-                    hintStyle: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                  onShowPicker: (context, currentValue) {
-                    return showDatePicker(
-                        firstDate: DateTime.now(),
-                        context: context,
-                        initialDate: DateTime.now(),
-                        lastDate: DateTime(2100));
-                  },
-                  onChanged: (ini) {},
+                leading: Icon(
+                  Icons.create,
+                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.access_time, color: Color.fromRGBO(41, 30, 47, 1),),
-                title: DateTimeField(
-                  format: DateFormat("HH:mm"),
-                  decoration: InputDecoration(
-                    hintText: 'Jam Berlangsungnya CheckIn',
-                    hintStyle: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                  onShowPicker: (context, currentValue) async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.fromDateTime(
-                          currentValue ?? DateTime.now()),
-                    );
-                    return DateTimeField.convert(time);
-                  },
-                ),
-              )),
-              Card(
-                  child: ListTile(
-                leading: Icon(Icons.timeline, color: Color.fromRGBO(41, 30, 47, 1),),
                 title: TextField(
+                  controller: _namacheckinController,
                   decoration: InputDecoration(
-                      hintText: 'Durasi Checkin ( Menit )',
+                      hintText: 'Nama Checkin',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
               Card(
                   child: ListTile(
-                leading: Icon(Icons.create, color: Color.fromRGBO(41, 30, 47, 1),),
+                leading: Icon(
+                  Icons.access_time,
+                  color: Color.fromRGBO(41, 30, 47, 1),
+                ),
+                title: DateTimeField(
+                  decoration: InputDecoration(
+                    hintText: 'Waktu Awal dimulainya checkin',
+                    hintStyle: TextStyle(fontSize: 13, color: Colors.black),
+                  ),
+                  readOnly: true,
+                  format: format,
+                  focusNode: firstdate,
+                  onShowPicker: (context, currentValue) async {
+                    final date = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now(),
+                        initialDate: currentValue ?? DateTime.now(),
+                        lastDate: DateTime(2100));
+                    if (date != null) {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(
+                            currentValue ?? DateTime.now()),
+                      );
+                      return DateTimeField.combine(date, time);
+                    } else {
+                      return currentValue;
+                    }
+                  },
+                  onChanged: (ini) {
+                    setState(() {
+                      _tanggalawal = ini == null ? 'kosong' : ini.toString();
+                    });
+                  },
+                ),
+              )),
+              Card(
+                  child: ListTile(
+                      leading: Icon(
+                        Icons.access_time,
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                      ),
+                      title: DateTimeField(
+                        decoration: InputDecoration(
+                          hintText: 'Waktu Akhir Checkin',
+                          hintStyle:
+                              TextStyle(fontSize: 13, color: Colors.black),
+                        ),
+                        readOnly: true,
+                        format: format,
+                        focusNode: lastdate,
+                        onShowPicker: (context, currentValue) async {
+                          final date = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime.now(),
+                              initialDate: currentValue ?? DateTime.now(),
+                              lastDate: DateTime(2100));
+                          if (date != null) {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now()),
+                            );
+                            return DateTimeField.combine(date, time);
+                          } else {
+                            return currentValue;
+                          }
+                        },
+                        onChanged: (ini) {
+                          setState(() {
+                            _tanggalakhir =
+                                ini == null ? 'kosong' : ini.toString();
+                          });
+                        },
+                      ))),
+              Card(
+                  child: ListTile(
+                leading: Icon(
+                  Icons.create,
+                  color: Color.fromRGBO(41, 30, 47, 1),
+                ),
                 title: TextField(
+                  controller: _kodecheckinController,
                   decoration: InputDecoration(
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
-              Container(
-                margin: EdgeInsets.only(top: 20.0),
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: BorderDirectional(
-                          bottom: BorderSide(width: 1 / 2, color: Colors.grey),
-                        )),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Center(
-                        child: Text(
-                          'Atau',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Roboto',
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: BorderDirectional(
-                          bottom: BorderSide(width: 1 / 2, color: Colors.grey),
-                        )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 10.0, top: 20.0, right: 10.0, bottom: 20.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    color: Colors.white,
-                    textColor: Color.fromRGBO(41, 30, 47, 1),
-                    disabledColor: Colors.white,
-                    disabledTextColor: Colors.green[400],
-                    padding: EdgeInsets.all(15.0),
-                    splashColor: Colors.blueAccent,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GenerateScreen()));
-                    },
-                    child: Text(
-                      "Dengan QR CODE",
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          if(_namacheckinController.text == null || _namacheckinController.text == ''){
+            Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
+          }else if(_kodecheckinController.text == null || _kodecheckinController.text == ''){
+            Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
+          }else if(_tanggalawal == 'kosong'){
+            Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
+          }else if(_tanggalakhir == 'kosong'){
+            Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
+          }else{
+            setState(() {
+            ListCheckinAdd notax = ListCheckinAdd(
+              nama: _namacheckinController.text,
+              keyword: _kodecheckinController.text,
+              timestart: _tanggalawal == 'kosong' ? null : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal)),
+              timeend: _tanggalakhir == 'kosong' ? null : DateFormat('dd-MM-y HH:mm:ss')
+                  .format(DateTime.parse(_tanggalakhir)),
+            );
+            listcheckinAdd.add(notax);
+          });
           Navigator.pop(context);
+          }
+          
         },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),

@@ -4,7 +4,7 @@
 // <<<<<<< HEAD
 //    String host = 'http://192.168.100.17/';
 // =======
-   String host = 'http://192.168.43.115/myocin/public/';
+   String host = 'http://192.168.43.115/bisniskita_myocin/';
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 
 
