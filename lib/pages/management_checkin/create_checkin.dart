@@ -52,8 +52,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       "end_time": _controllerTimeEnd.text.toString(),
       "checkin_date": _controllerDate.text.toString()
     };
-    print(body);
-
     dynamic response =
         await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
             .sendrequest();

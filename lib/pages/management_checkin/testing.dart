@@ -1,140 +1,146 @@
-import 'package:checkin_app/api/api_service.dart';
-import 'package:checkin_app/model/profile.dart';
-import 'package:flutter/material.dart';
+// import 'dart:convert';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
+// import 'package:checkin_app/core/api.dart';
+// import 'package:checkin_app/model/clubs.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_typeahead/flutter_typeahead.dart';
+// import 'package:flutter/services.dart';
+// import 'package:http/http.dart' as http;
 
-class _HomeScreenState extends State<HomeScreen> {
-  BuildContext context;
-  ApiService apiService;
+// class TestingExample extends StatefulWidget {
+//   @override
+//   _TestingExampleState createState() => _TestingExampleState();
+// }
 
-  @override
-  void initState() {
-    super.initState();
-    apiService = ApiService();
-  }
+// class _TestingExampleState extends State<TestingExample> {
+//   Club club = new Club();
+//   TextEditingController _textFieldController = new TextEditingController();
 
-  @override
-  Widget build(BuildContext context) {
-    this.context = context;
-    apiService.getProfiles().then((value) => print("value: $value"));
-    return SafeArea(
-      child: FutureBuilder(
-        future: apiService.getProfiles(),
-        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                  "Something wrong with message: ${snapshot.error.toString()}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            List<Profile> profiles = snapshot.data;
-            return _buildListView(profiles);
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-    );
-  }
+//   Future<String> getDataMember() async {
+//     // return rootBundle.loadString('images/clubs.json');
+//     var resp = await http.get(Uri.encodeFull("http://192.168.100.3/alamraya/myocin/api/event/getdata/listusers"),headers: { 'accept':'application/json' });
+//        return resp.body;
+//     // return resp.body.toString();
+//   }
+//   // print(loadJson();
+// //  getDataMember() async {
+// //     // listPeserta = [];
+// //     var response =
+// //         await RequestGet(name: "event/getdata/listusers", customrequest: "")
+// //             .getdata();
+// //             return response;
+// //  }
+// //     // for (var i = 0; i < response.length; i++) {
+// //     //   UserCheckin peserta = UserCheckin(
+// //     //     name: response[i]["name"],
+// //     //     checkinTime: response[i]["checkin_time"],
+// //     //     numberOfRegist: response[i]["number_of_regist"],
+// //     //     picProfile: response[i]["pic_profile"],
+// //     //     eventId: response[i]["event_id"],
+// //     //   );
 
-  Widget _buildListView(List<Profile> profiles) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          Profile profile = profiles[index];
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      profile.name,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                    Text(profile.email),
-                    Text(profile.age.toString()),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text("Warning"),
-                                    content: Text(
-                                        "Are you sure want to delete data profile ${profile.name}?"),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text("Yes"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          // apiService
-                                          //     .deleteProfile(profile.id)
-                                          //     .then((isSuccess) {
-                                          //   if (isSuccess) {
-                                          //     setState(() {});
-                                          //     Scaffold.of(this.context)
-                                          //         .showSnackBar(SnackBar(
-                                          //             content: Text(
-                                          //                 "Delete data success")));
-                                          //   } else {
-                                          //     Scaffold.of(this.context)
-                                          //         .showSnackBar(SnackBar(
-                                          //             content: Text(
-                                          //                 "Delete data failed")));
-                                          //   }
-                                          // });
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text("No"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          },
-                          child: Text(
-                            "Delete",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              // return FormAddScreen(profile: profile);
-                            }));
-                          },
-                          child: Text(
-                            "Edit",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-        itemCount: profiles.length,
-      ),
-    );
-  }
-}
+// //     //   listPeserta.add(peserta);
+// //     // }
+// //     setState(() {});
+// //   }
+//   @override
+//   void dispose() {
+//     _textFieldController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Autocomplete Search'),
+//         centerTitle: true,
+//       ),
+//       body: FutureBuilder<String>(
+//         future: getDataMember(),
+//         builder: (context, snapshot) {
+//           if (snapshot.hasData) {
+//             final dataMaster = DataMaster.fromJson(json.decode(snapshot.data));
+//             return _buildContainer(dataMaster.clubs);
+//           } else {
+//             return Center(
+//               child: Text('Error load data'),
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+
+//   Widget _buildContainer(List<Club> clubs) {
+//     return Container(
+//       padding: EdgeInsets.all(20.0),
+//       child: Center(
+//         child: Column(
+//           children: <Widget>[
+//             _buildTextField(clubs),
+//             SizedBox(height: 16.0),
+//             _buildOutput(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildTextField(List<Club> clubs) {
+//     return TypeAheadFormField(
+//       textFieldConfiguration: TextFieldConfiguration(
+//         autofocus: false,
+//         controller: _textFieldController,
+//         style: TextStyle(
+//           color: Colors.black54,
+//           fontSize: 18.0,
+//         ),
+//         keyboardType: TextInputType.text,
+//         decoration: InputDecoration(
+//           labelText: "Search Football Club",
+//           labelStyle: TextStyle(color: Colors.black38),
+//           enabledBorder: UnderlineInputBorder(
+//             borderSide: BorderSide(color: Colors.blueAccent),
+//           ),
+//         ),
+//       ),
+//       suggestionsCallback: (String query) {
+//         return getClubSuggestions(query, clubs);
+//       },
+//       onSuggestionSelected: (Club club) {
+//         setState(() {
+//           this.club = club;
+//         });
+//         _textFieldController.text = club.name;
+//       },
+//       noItemsFoundBuilder: (BuildContext context) {
+//         return ListTile(
+//           title: Text('Club not found..'),
+//         );
+//       },
+//       itemBuilder: (BuildContext context, Club club) {
+//         return ListTile(
+//           title: Text(club.name),
+//           subtitle: Text(
+//             'ID : ${club.id}, Code : ${club.code}',
+//             style: TextStyle(
+//               fontSize: 12.0,
+//               fontStyle: FontStyle.italic,
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+
+//   Widget _buildOutput() {
+//     return Text("""
+//     Result for club selected :
+    
+//     ID    : ${club.id ?? '-'}
+//     Name  : ${club.name ?? '-'}
+//     Code  : ${club.code ?? '-'}"""
+//     );
+//   }
+// }

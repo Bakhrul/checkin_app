@@ -138,10 +138,10 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
                             ),
                             title: Text(f.name),
                             onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (contexxt) => HomeScreen()));
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => HomeScreen()));
                             },
                             subtitle: Text(f.name.toString()),
                           ),

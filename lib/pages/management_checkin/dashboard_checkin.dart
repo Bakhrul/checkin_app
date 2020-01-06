@@ -1,5 +1,6 @@
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
+import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -8,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
+import 'create_participant.dart';
 import 'list_peserta_checkin.dart';
 // import 'listprovinsi.dart';
 // import 'listkabupaten.dart';
@@ -18,7 +20,7 @@ GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String sifat = 'VIP';
 String tipe = 'Public';
 var datepicker;
-List<UserCheckin> listPeserta;
+List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
 
 void showInSnackBar(String value) {
@@ -48,13 +50,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   getDataMember() async {
     listPeserta = [];
     dynamic response =
-        await RequestGet(name: "checkin/getdata/member", customrequest: "")
+        await RequestGet(name: "event/getdata/participant", customrequest: "")
             .getdata();
     for (var i = 0; i < response.length; i++) {
-      UserCheckin peserta = UserCheckin(
+      UserParticipant peserta = UserParticipant(
         name: response[i]["name"],
-        checkinTime: response[i]["checkin_time"],
-        numberOfRegist: response[i]["number_of_regist"],
+        email: response[i]["email"],
+        position: response[i]["position"],
         picProfile: response[i]["pic_profile"],
         eventId: response[i]["event_id"],
       );
@@ -86,34 +88,32 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     dynamic body = {
       "event_id": "1",
       "checkin_id": "7",
-      };
-    dynamic response = await RequestPost(
-            name:"checkin/deletedata/checkinreguler", body: body)
-        .sendrequest();
-    if (response  == "success") {
+    };
+    dynamic response =
+        await RequestPost(name: "checkin/deletedata/checkinreguler", body: body)
+            .sendrequest();
+    if (response == "success") {
       setState(() {});
       Fluttertoast.showToast(
-        msg: "Data Berhasil Terhapus",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+          msg: "Data Berhasil Terhapus",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } else {
       Fluttertoast.showToast(
-        msg: "Terjadi Kesalahan",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+          msg: "Terjadi Kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
- 
+
   @override
   void initState() {
     getDataMember();
@@ -257,7 +257,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                 child: SingleChildScrollView(
                   child: Column(
                       children: listPeserta
-                          .map((UserCheckin f) => Padding(
+                          .map((UserParticipant f) => Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Card(
                                   child: ListTile(
@@ -293,21 +293,18 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           child: Expanded(
             child: SizedBox(
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(2),
+                  padding: EdgeInsets.all(2),
                   child: Column(
                       children: listCheckin
                           .map((Checkin data) => Padding(
                                 padding: EdgeInsets.all(2),
-
                                 child: Column(
                                   children: <Widget>[
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10.0),
                                       child: Text(
-                                        
-                                                data.checkinDate,
+                                        data.checkinDate,
                                         style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.blue,
@@ -373,7 +370,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                               onPressed: () {
                                                                 deleteCheckin();
 
-                                                                Navigator.pop(context);
+                                                                Navigator.pop(
+                                                                    context);
                                                               },
                                                             ),
                                                             FlatButton(
@@ -410,8 +408,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   }
 
   Widget _bottomButtons() {
-    Color backgroundColor = Theme.of(context).cardColor;
-    Color foregroundColor = Theme.of(context).accentColor;
+    print(_tabController.index);
     return _tabController.index == 1
         ? DraggableFab(
             child: FloatingActionButton(
@@ -428,56 +425,20 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Icons.add,
                   size: 20.0,
                 )))
-
-        //   new Column(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: new List.generate(icons.length, (int index) {
-        //     Widget child = new Container(
-        //       height: 70.0,
-        //       width: 56.0,
-        //       alignment: FractionalOffset.topCenter,
-        //       child: new ScaleTransition(
-        //         scale: new CurvedAnimation(
-        //           parent: _controller,
-        //           curve: new Interval(
-        //             0.0,
-        //             1.0 - index / icons.length / 2.0,
-        //             curve: Curves.easeOut
-        //           ),
-        //         ),
-        //         child: new FloatingActionButton(
-        //           heroTag: null,
-        //           backgroundColor: backgroundColor,
-        //           mini: true,
-        //           child: new Icon(icons[index], color: foregroundColor),
-        //           onPressed: () {},
-        //         ),
-        //       ),
-        //     );
-        //     return child;
-        //   }).toList()..add(
-        //     new FloatingActionButton(
-        //       heroTag: null,
-        //       child: new AnimatedBuilder(
-        //         animation: _controller,
-        //         builder: (BuildContext context, Widget child) {
-        //           return new Transform(
-        //             transform: new Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
-        //             alignment: FractionalOffset.center,
-        //             child: new Icon(_controller.isDismissed ? Icons.share : Icons.close),
-        //           );
-        //         },
-        //       ),
-        //       onPressed: () {
-        //         if (_controller.isDismissed) {
-        //           _controller.forward();
-        //         } else {
-        //           _controller.reverse();
-        //         }
-        //       },
-        //     ),
-        //   ),
-        // )
-        : null;
+        : DraggableFab(
+            child: FloatingActionButton(
+                shape: StadiumBorder(),
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateParticipant(),
+                      ));
+                },
+                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                child: Icon(
+                  Icons.add,
+                  size: 20.0,
+                )));
   }
 }
