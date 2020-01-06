@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qrcode/qrcode.dart';
 
+import 'checkin_manual.dart';
+
 class ScanQrcode extends StatefulWidget {
   @override
   _ScanQrcodeState createState() => _ScanQrcodeState();
@@ -134,8 +136,17 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
           Align(
             heightFactor: 20.0,
             alignment: Alignment.topCenter,
-            child: _buildEventCapture()
+            child: FlatButton(child: Text("Tidak dapat menggunakan kamera?",style: TextStyle(color: Colors.blue ,fontSize: 14,decoration: TextDecoration.underline,)
+            
+            ,), onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinManual()));
+            },),
           ),
+          // Align(
+          //   heightFactor: 20.0,
+          //   alignment: Alignment.topCenter,
+          //   child: _buildEventCapture()
+          // ),
           Align(
             alignment: Alignment.bottomCenter,
             child: _buildToolBar(),
@@ -172,9 +183,11 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
 
   Widget _buildToolBar() {
     return Row(
+
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        
         FlatButton(
           onPressed: () {
             _captureController.pause();

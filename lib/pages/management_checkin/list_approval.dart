@@ -1,39 +1,23 @@
-import 'package:checkin_app/api/checkin_service.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+  List<UserCheckin> listPeserta;
 
-GlobalKey<ScaffoldState> _scaffoldKeyListCheckin;
-List<UserCheckin> listPeserta;
-
-void showInSnackBar(String value) {
-  _scaffoldKeyListCheckin.currentState.showSnackBar(new SnackBar(
-    content: new Text(value),
-  ));
-}
-
-class ListPesertaCheckin extends StatefulWidget {
-  final String id;
-  final String eventid;
-  ListPesertaCheckin({Key key, @required this.id, @required this.eventid}) : super(key: key);
+class ListApproval extends StatefulWidget {
   @override
-  _ListPesertaCheckinState createState() => _ListPesertaCheckinState();
+  _ListApprovalState createState() => _ListApprovalState();
 }
 
-class _ListPesertaCheckinState extends State<ListPesertaCheckin> 
-  with SingleTickerProviderStateMixin {
-  
+class _ListApprovalState extends State<ListApproval>{
+    // with SingleTickerProviderStateMixin {
   AnimationController _controller;
   BuildContext context;
 
-   getData() async {
-     print("this Id"+widget.id);
+
+  getData() async {
     listPeserta = [];
     dynamic response =
-        await RequestGet(name: "checkin/getdata/participant/", customrequest: "${widget.id}/${widget.eventid}")
+        await RequestGet(name: "event/getdata/participant/", customrequest: "")
             .getdata();
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
@@ -48,11 +32,12 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     }
     setState(() {});
   }
+  
   @override
   void initState() {
     getData();
     super.initState();
-    _scaffoldKeyListCheckin = GlobalKey<ScaffoldState>();
+    // _controller = AnimationController(vsync: this);
   }
 
   @override
@@ -63,10 +48,9 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
+     this.context = context;
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyListCheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
@@ -114,7 +98,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     );
   }
 
-  Widget _builderListView() {
+Widget _builderListView() {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
@@ -157,4 +141,5 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
       ],
     );
   }
+
 }

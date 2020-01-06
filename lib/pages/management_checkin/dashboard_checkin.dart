@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
 import 'create_participant.dart';
+import 'list_approval.dart';
 import 'list_peserta_checkin.dart';
 // import 'listprovinsi.dart';
 // import 'listkabupaten.dart';
@@ -190,7 +191,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
           actions: <Widget>[
-            new IconButton( icon: new Icon(Icons.notifications_none),  tooltip: 'Air it', onPressed: () {}, ),
+            new IconButton( icon: new Icon(Icons.notifications_none),  tooltip: 'Air it', onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder:(context) => ListApproval() ));
+
+            }, ),
           ],
           bottom: TabBar(
             controller: _tabController,
