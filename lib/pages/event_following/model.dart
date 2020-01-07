@@ -7,6 +7,7 @@ class ListFollowingEvent {
    String fullday;  
    String alamat;
    String wishlist;
+   String idcreator;
    String statusdaftar;
 
   ListFollowingEvent(
@@ -18,6 +19,7 @@ class ListFollowingEvent {
       this.alamat,
       this.fullday,
       this.wishlist,
+      this.idcreator,
       this.statusdaftar});
 }
 

@@ -1,3 +1,4 @@
+import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'pages/events_all/detail_event.dart';
@@ -8,7 +9,14 @@ import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:core';
+
+
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
+String jumlahnotifX;
 enum PageEnum {
   kelolaRegisterPage,
 }
@@ -36,6 +44,11 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    getvaluenotif();
+    dataProfile();
+    emailprofile = 'Email Anda';
+    usernameprofile = 'Username';
+    jumlahnotifX = '0';
     wishlisttwo = true;
     wishlistthree = true;
     wishlistfive = true;
@@ -102,6 +115,45 @@ class _DashboardState extends State<Dashboard> {
       _searchQuery.clear();
     });
   }
+  Future<void> getvaluenotif() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    try {
+      final response = await http.post(url('api/check_notification'),
+          headers: requestHeaders,);
+
+      if (response.statusCode == 200) {
+        var notifJson = json.decode(response.body);
+        String notifvalue = notifJson['jumlahnotif'].toString();
+        
+        setState(() {
+          jumlahnotifX = notifvalue;  
+        });
+      } else if (response.statusCode == 401) {
+      } else {
+        print(response.body);
+        return null;
+      }
+    } catch (e) {
+      print('Error : $e');
+    }
+  }
+  String usernameprofile, emailprofile;
+  Future<void> dataProfile() async{
+    var storage = new DataStore();
+
+    usernameprofile = await storage.getDataString("name");
+    emailprofile = await storage.getDataString('email');
+
+  }
 
   String _username;
   Future<Null> removeSharedPrefs() async {
@@ -140,8 +192,8 @@ class _DashboardState extends State<Dashboard> {
                 // Profil Drawer Here
                 UserAccountsDrawerHeader(
                   // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
-                  accountName: Text('Administrator'),
-                  accountEmail: Text("bakhrulrpl@gmail.com"),
+                  accountName: Text(usernameprofile),
+                  accountEmail: Text(emailprofile),
                   decoration: BoxDecoration(
                     color: Color.fromRGBO(41, 30, 47, 1),
                   ),
@@ -1570,7 +1622,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 constraints: BoxConstraints(),
                 child: Text(
-                  '100',
+                  jumlahnotifX == null || jumlahnotifX =='' ? '0' : jumlahnotifX,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 8,

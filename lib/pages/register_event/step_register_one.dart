@@ -72,6 +72,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.white
                               )),
                               onPressed: (){
+                                print('wmwmwmwm ${widget.creatorId}');
                                   Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

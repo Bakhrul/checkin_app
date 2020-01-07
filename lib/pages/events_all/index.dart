@@ -2,11 +2,13 @@ import 'package:checkin_app/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'detail_event.dart';
+import 'dart:async';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/model/search_event.dart';
 import '../register_event/step_register_three.dart';
 import '../register_event/step_register_six.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import "dart:convert";
 
@@ -51,10 +53,15 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   void initState() {
     getHeaderHTTP();
     _getCategory();
-    _getAll(0);
+    _getAll(0,_searchQuery.text);
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
-    _searchQuery.addListener(_search);
+    _searchQuery.addListener((){
+      setState((){
+        _isLoading = true;
+      });
+      _getAll(categoryNow,_searchQuery.text);
+    });
     pageScroll.addListener((){
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
          _getPage();
@@ -67,56 +74,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     pageScroll.dispose();
     _searchQuery.dispose();
     super.dispose();
-  }
-
-  Future<List<SearchEvent>> _search() async {
-       
-       setState((){
-         _isLoading = true;
-         page = manyPage;
-       });
-
-      var storage = new DataStore();
-      var tokenTypeStorage = await storage.getDataString('token_type');
-      var accessTokenStorage = await storage.getDataString('access_token');
-
-      tokenType = tokenTypeStorage;
-      accessToken = accessTokenStorage;
-      requestHeaders['Accept'] = 'application/json';
-      requestHeaders['Authorization'] = '$tokenType $accessToken';
-
-      Map<String, dynamic> body = {'search':_searchQuery.text.toString()};
-
-    try{
-
-      final ongoingevent = await http.post(
-        url('api/search'),
-        headers: requestHeaders,
-        body:body
-      );
-
-      if (ongoingevent.statusCode == 200) {
-        Map rawData = json.decode(ongoingevent.body);     
-        if(mounted){
-            setState((){
-            _event.clear();
-            for(var x in rawData['data']){
-              _event.add(SearchEvent.fromJson(x));
-            }
-
-            _isLoading = false;
-
-          });
-        } 
-      }
-
-    }catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-
-      return _event;
   }
 
   Future<void> getHeaderHTTP() async {
@@ -133,7 +90,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     print(requestHeaders);
   }
 
-  Future<List> _getAll(int type) async {
+  Future<List> _getAll(int type,String query) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -143,14 +100,15 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'category_id':type.toString()};
+    Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
-     final ongoingevent = await http.post(
+    try{
+      final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
         body:body
       );
-
+      print(ongoingevent.body);
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
@@ -167,8 +125,27 @@ class _ManajemenEventState extends State<ManajemenEvent> {
             _isLoading = false;
           });
         } 
+      } else if (ongoingevent.statusCode == 401) {
+        setState(() {
+          _isLoading = false;
+        });
+      } else {
+          setState(() {
+            _isLoading = false;
+          });
+          return null;
       }
-      return _event;
+    } on TimeoutException catch (_) {
+      setState(() {
+        _isLoading = false;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('$e');
+    }
   }
 
   Future _getPage() async {
@@ -221,22 +198,44 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
+  
+    try{
 
-    final ongoingevent = await http.get(
-        url('api/listkategorievent'),
-        headers: requestHeaders,
-    );
+      final ongoingevent = await http.get(
+          url('api/listkategorievent'),
+          headers: requestHeaders,
+      );
 
- 
-    if (ongoingevent.statusCode == 200) {
-      var dataRaw = json.decode(ongoingevent.body);
-      setState((){
+  
+      if (ongoingevent.statusCode == 200) {
+        var dataRaw = json.decode(ongoingevent.body);
         for(var x in dataRaw['kategori']){
-          listCategory.add(x);
+            listCategory.add(x);
         }
+        setState((){
           _isLoadingCategory = false;
+        });
+      } else if (ongoingevent.statusCode == 401){
+        setState((){
+          _isLoadingCategory = false;
+        });
+      } else {
+        setState((){
+          _isLoadingCategory = false;
+        });
+      }
+    } on TimeoutException catch(_) {
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+      setState((){
+        _isLoadingCategory = false;
       });
+    } catch(e) {
+      setState((){
+        _isLoadingCategory = false;
+      });
+      print(e);
     }
+   
 
   }
 
@@ -253,18 +252,27 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     int newWish = wish == '1'? 0:1;
     Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
 
-    final ongoingevent = await http.post(
+    try{
+
+      final ongoingevent = await http.post(
         url('api/wish'),
         headers: requestHeaders,
         body:body
       );
 
-    if (ongoingevent.statusCode == 200) {
+      if (ongoingevent.statusCode == 200) {
 
-      setState((){
-        _event[index].wish = newWish.toString();
-      });
-    }
+        setState((){
+          _event[index].wish = newWish.toString();
+        });
+
+      }
+
+    } on TimeoutException catch(_) {
+       Fluttertoast.showToast(msg : "Time out , please try again later");
+    } catch(e) {
+       print(e);
+    }   
 
   }
 
@@ -286,7 +294,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       _searchQuery.clear();
       _isLoading = true;
       page = 1;
-      _getAll(0);
+      _getAll(0,_searchQuery.text);
     });
   }
 
@@ -366,7 +374,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                setState((){
                                   _isLoading = true;
                                   categoryNow = 0;
-                                  _getAll(0);
+                                  _getAll(0,_searchQuery.text);
                                });
                             },
                             child: Text(
@@ -399,7 +407,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                setState((){
                                  _isLoading = true;
                                   categoryNow = x['c_id'];
-                                  _getAll(x['c_id']);
+                                  _getAll(x['c_id'],_searchQuery.text);
                                });
                             },
                             child: Text(
@@ -596,11 +604,18 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                               MaterialPageRoute(
                                 builder: (context) {
                                   switch(_event[index].statusRegistered){
-                                  case 'sudah terdaftar':
+                                  case 'Sudah Terdaftar':
                                        return SuccesRegisteredEvent();
                                        break;
-                                  case 'proses':
+                                  case 'Proses Daftar':
                                        return WaitingEvent();
+                                       break;
+                                  case 'Pendaftaran Ditolak':
+                                       return RegisterEvents(
+                                         id:_event[index].id,
+                                         creatorId:_event[index].userEvent,
+                                         selfEvent: true
+                                         );
                                        break;
                                   default:
                                        return RegisterEvents(

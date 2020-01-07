@@ -268,8 +268,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                               ),
                                             ),
                                           )),
-                                      title:
-                                       Text(
+                                      title: Text(
                                           listpesertaevent[index].nama ==
                                                       null ||
                                                   listpesertaevent[index]
@@ -490,7 +489,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         'success') {
                                                                       setState(
                                                                           () {
-                                                                        listpesertaevent.remove(listpesertaevent[index]);
+                                                                        listpesertaevent
+                                                                            .remove(listpesertaevent[index]);
                                                                       });
                                                                     } else if (hapuswishlistJson[
                                                                             'status'] ==

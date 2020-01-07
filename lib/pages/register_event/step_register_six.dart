@@ -6,7 +6,10 @@ import '../event_following/count_down.dart';
 
 class SuccesRegisteredEvent extends StatefulWidget {
   final int checkin;
-  SuccesRegisteredEvent({Key key,this.checkin = 0}) : super(key: key);
+  final int id;
+  final String creatorId;
+  final bool selfEvent;
+  SuccesRegisteredEvent({Key key,this.checkin = 0, this.id, this.creatorId, this.selfEvent}) : super(key: key);
 
   State<StatefulWidget> createState() {
     return _SuccesRegisteredEvent();

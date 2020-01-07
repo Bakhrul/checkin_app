@@ -30,6 +30,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
   }
 
   Future _registerSelf() async {
+    print('widget ${widget.creatorId}');
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -39,7 +40,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'event_id':widget.id.toString(),'creator_id':widget.creatorId,'position':'3','status':'P'};
+    Map<String, dynamic> body = {'event_id':widget.id.toString(),'creator_id':widget.creatorId.toString(),'position':'3','status':'P'};
 
     final ongoingevent = await http.post(
         url('api/event/register'),
@@ -47,8 +48,8 @@ class _ConfirmEvent extends State<ConfirmEvent> {
         body:body
       );
       
-print(ongoingevent.body);
-      if (ongoingevent.statusCode == 200) {
+
+    if (ongoingevent.statusCode == 200) {
      return Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

@@ -1,4 +1,5 @@
 import 'package:checkin_app/pages/event_following/detail.dart';
+import 'package:checkin_app/pages/events_personal/create_category.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
@@ -25,6 +26,7 @@ List<ListFollowingEvent> listItemFollowing = [];
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isFilter;
 String filterX;
+String categoryNow;
 void showInSnackBar(String value) {
   _scaffoldKeyEventAll.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -81,19 +83,20 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         // return nota;
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['eventfollow'];
-
+        print(followevents);
         listItemFollowing = [];
         for (var i in followevents) {
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
+            idcreator: i['ev_create_user'].toString(),
             image: i['ev_image'],
             title: i['ev_title'],
             waktuawal: i['ev_time_start'],
             waktuakhir: i['ev_time_end'],
-            fullday: i['ev_allday'],
+            fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_event'].toString(),
-            statusdaftar: i['ep_status'].toString(),
+            statusdaftar: i['ep_status'],
           );
           listItemFollowing.add(followX);
         }
@@ -110,6 +113,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           isError = true;
         });
       } else {
+        print(followevent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -357,31 +361,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                 minWidth: 0.0,
                                 height: 0,
                                 child: RaisedButton(
-                                  color: listkategoriEvent[index].color == true
+                                  color: categoryNow == listkategoriEvent[index].id
                                       ? Color.fromRGBO(41, 30, 47, 1)
                                       : Colors.white,
                                   elevation: 0.0,
                                   highlightColor: Colors.transparent,
                                   highlightElevation: 0.0,
                                   onPressed: () {
-                                    if (listkategoriEvent[index].color ==
-                                        true) {
+                                    
                                       setState(() {
                                         filterX = 'all';
-                                        ListKategoriEvent(
-                                          color: false,
-                                        );
-                                        // listkategoriEvent[index].color = false;
+                                        categoryNow = listkategoriEvent[index].id;
                                       });
-                                    } else {
-                                      setState(() {
-                                        filterX = listkategoriEvent[index].id;
-                                        ListKategoriEvent(
-                                          color: false,
-                                        );
-                                        // listkategoriEvent[index].color = true;
-                                      });
-                                    }
                                     listFilterFollowingEvent();
                                   },
                                   padding: EdgeInsets.only(
@@ -394,8 +385,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         ? 'Unknown Kategori'
                                         : listkategoriEvent[index].nama,
                                     style: TextStyle(
-                                        color: listkategoriEvent[index].color ==
-                                                true
+                                        color: categoryNow == listkategoriEvent[index].id
                                             ? Colors.white
                                             : Color.fromRGBO(41, 30, 47, 1),
                                         fontWeight: FontWeight.w500),
@@ -430,10 +420,10 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                   DateTime waktuakhir = DateTime.parse(
                                       listItemFollowing[index].waktuakhir);
                                   String timestart =
-                                      DateFormat('dd-MM-y HH:mm:ss')
+                                      DateFormat('dd-MM-y')
                                           .format(waktuawal);
                                   String timeend =
-                                      DateFormat('dd-MM-y HH:mm:ss')
+                                      DateFormat('dd-MM-y')
                                           .format(waktuakhir);
                                   return InkWell(
                                       child: Container(
@@ -575,46 +565,48 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: <Widget>[
-                                                          Container(),
-                                                          // Container(
-                                                          //     decoration:
-                                                          //         new BoxDecoration(
-                                                          //       color:
-                                                          //           Colors.blue,
-                                                          //       borderRadius: new BorderRadius
-                                                          //               .only(
-                                                          //           topLeft:
-                                                          //               const Radius.circular(
-                                                          //                   5.0),
-                                                          //           topRight:
-                                                          //               const Radius.circular(
-                                                          //                   5.0),
-                                                          //           bottomLeft:
-                                                          //               const Radius.circular(
-                                                          //                   5.0),
-                                                          //           bottomRight:
-                                                          //               const Radius.circular(
-                                                          //                   5.0)),
-                                                          //     ),
-                                                          //     padding:
-                                                          //         EdgeInsets
-                                                          //             .all(5.0),
-                                                          //     width: 120.0,
-                                                          //     child: Text(
-                                                          //       'Proses Daftar',
-                                                          //       style:
-                                                          //           TextStyle(
-                                                          //         color: Colors
-                                                          //             .white,
-                                                          //         fontSize: 12,
-                                                          //         fontWeight:
-                                                          //             FontWeight
-                                                          //                 .w500,
-                                                          //       ),
-                                                          //       textAlign:
-                                                          //           TextAlign
-                                                          //               .center,
-                                                          //     )),
+                                                          Container(
+                                                              decoration:
+                                                                  new BoxDecoration(
+                                                                color:
+                                                                listItemFollowing[index].statusdaftar == null ?
+                                                                Colors.grey : listItemFollowing[index].statusdaftar == 'P' ? Colors.orange :listItemFollowing[index].statusdaftar == 'C' ? Colors.red : listItemFollowing[index].statusdaftar == 'A' ? Colors.green : Colors.blue
+                                                                    ,
+                                                                borderRadius: new BorderRadius
+                                                                        .only(
+                                                                    topLeft:
+                                                                        const Radius.circular(
+                                                                            5.0),
+                                                                    topRight:
+                                                                        const Radius.circular(
+                                                                            5.0),
+                                                                    bottomLeft:
+                                                                        const Radius.circular(
+                                                                            5.0),
+                                                                    bottomRight:
+                                                                        const Radius.circular(
+                                                                            5.0)),
+                                                              ),
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(5.0),
+                                                              width: 120.0,
+                                                              child: Text(
+                                                                listItemFollowing[index].statusdaftar == null ?
+                                                                'Belum Terdaftar' : listItemFollowing[index].statusdaftar == 'P' ? 'Proses Daftar' :listItemFollowing[index].statusdaftar == 'C' ? 'Pendaftaran Ditolak' : listItemFollowing[index].statusdaftar == 'A' ? 'Sudah Terdaftar' : 'Status Tidak Diketahui',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -720,12 +712,61 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             ],
                                           )),
                                       onTap: () async {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //       builder: (context) =>
-                                        //           WaitingEvent(),
-                                        //     ));
+                                        listItemFollowing[index].statusdaftar == null ?
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RegisterEvents(
+                                                    id: int.parse(listItemFollowing[index].id),
+                                                    selfEvent: false,
+                                                    creatorId: listItemFollowing[index].idcreator,
+                                                  ),
+                                            )):
+                                        listItemFollowing[index].statusdaftar == 'P' ?
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  WaitingEvent(
+                                                    id: int.parse(listItemFollowing[index].id),
+                                                    selfEvent: true,
+                                                    creatorId: listItemFollowing[index].idcreator,
+                                                  ),
+                                            )):
+                                        listItemFollowing[index].statusdaftar == 'A' ?
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SuccesRegisteredEvent(
+                                                    id: int.parse(listItemFollowing[index].id),
+                                                    selfEvent: true,
+                                                    creatorId: listItemFollowing[index].idcreator,
+                                                  ),
+                                            )):
+
+                                        listItemFollowing[index].statusdaftar == 'C' ?
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RegisterEvents(
+                                                    id: int.parse(listItemFollowing[index].id),
+                                                    selfEvent: true,
+                                                    creatorId: listItemFollowing[index].idcreator,
+                                                  ),
+                                            )):
+                                            Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RegisterEvents(
+                                                    id: int.parse(listItemFollowing[index].id),
+                                                    selfEvent: false,
+                                                    creatorId: listItemFollowing[index].idcreator,
+                                                  ),
+                                            ));
                                       });
                                 },
                               ),
