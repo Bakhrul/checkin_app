@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'dashboard_checkin.dart';
+
 class DirectCheckin extends StatefulWidget {
+  final idevent;
+  DirectCheckin({Key key,this.idevent});
+
   @override
   _DirectCheckinState createState() => _DirectCheckinState();
 }
@@ -12,20 +17,32 @@ class DirectCheckin extends StatefulWidget {
 class _DirectCheckinState extends State<DirectCheckin>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+
   // GlobalKey globalKey = new GlobalKey();
 String _dataString;
   String _inputErrorText;
 final TextEditingController _controllerGenerate = TextEditingController();
+
+ getDataChekinId() async {
+    dynamic response =
+        await RequestGet(name: "checkin/getdata/getcodeqr/", customrequest: "${widget.idevent.toString()}")
+            .getdata();
+            _dataString = response.toString();
+            print(_dataString);
+  }
+
 postDataCheckin() async {
     dynamic body = {
-      "event_id": "1",
-      "checkin_keyword": _controllerGenerate.text.toString()
+      "event_id": widget.idevent.toString(),
+      "checkin_keyword": _controllerGenerate.text.toString(),
+      "types": "D",
+      "chekin_id": _dataString,
     };
-    print(body);
 
     dynamic response =
-        await RequestPost(name: "checkin/postdata/checkindirect", body: body)
+        await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
             .sendrequest();
+    print(response);
     if (response == "success") {
       Fluttertoast.showToast(
           msg: "Success",
@@ -35,7 +52,8 @@ postDataCheckin() async {
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-      Navigator.pop(context);
+      Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
     }
   }
   
@@ -88,7 +106,8 @@ postDataCheckin() async {
                   color: Color.fromRGBO(220, 237, 193, 99),
                   onPressed: () {
                     setState(() {
-                      _dataString = _controllerGenerate.text;
+                      getDataChekinId();
+                      // _dataString = _controllerGenerate.text;
                       _inputErrorText = null;
                     });
                   },

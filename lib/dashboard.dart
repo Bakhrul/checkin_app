@@ -560,7 +560,7 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DashboardCheckin(),
+                      builder: (context) => DashboardCheckin(idevent: 2),
                     ));
               },
             ),

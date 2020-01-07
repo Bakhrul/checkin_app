@@ -30,11 +30,11 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
   BuildContext context;
 
    getData() async {
-     print("this Id"+widget.id);
     listPeserta = [];
     dynamic response =
         await RequestGet(name: "checkin/getdata/participant/", customrequest: "${widget.id}/${widget.eventid}")
             .getdata();
+
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
        name: response[i]["name"],
@@ -105,7 +105,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
             ),
 
             SafeArea(
-              child: _builderListView(),
+              child: listPeserta.length > 0 ? _builderListView() :  Text("Tidak Ada Data"),
            
             )
           ],

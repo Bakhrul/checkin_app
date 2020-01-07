@@ -167,13 +167,13 @@ class RequestGet{
       dynamic acc = await session.getString('token_type');
       dynamic auth = await  session.getString('access_token');
       String token = "$acc $auth" ;
-      
       final data = await http.get(urls + name + customrequest,
         headers : {
           'Accept' : 'application/json',
           'Authorization' : token,
         },
       );
+      print(data);
       dynamic dataresponse = json.decode(data.body);
       if(data.statusCode == 200){
       return dataresponse;
@@ -212,7 +212,7 @@ class RequestPost{
       dynamic acc = await session.getString('token_type');
       dynamic auth = await  session.getString('access_token');
       String token = "$acc $auth" ;
-
+    print(urls+name);
       final data = await http.post(urls+name,
         body : body,
         headers : {

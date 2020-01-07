@@ -24,8 +24,9 @@ List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
 
 class DashboardCheckin extends StatefulWidget {
-  DashboardCheckin({Key key, this.title}) : super(key: key);
+  DashboardCheckin({Key key, this.title, this.idevent}) : super(key: key);
   final String title;
+  final idevent;
   @override
   State<StatefulWidget> createState() {
     return _DashboardCheckinState();
@@ -427,7 +428,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ManajemeCreateCheckin(),
+                        builder: (context) => ManajemeCreateCheckin(idevent: widget.idevent),
                       ));
                 },
                 backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -442,7 +443,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateParticipant(),
+                        builder: (context) => CreateParticipant(idevent: widget.idevent),
                       ));
                 },
                 backgroundColor: Color.fromRGBO(41, 30, 47, 1),
