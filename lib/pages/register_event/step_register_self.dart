@@ -9,8 +9,9 @@ Map<String, String> requestHeaders = Map();
 
 class ConfirmEvent extends StatefulWidget{
   final int id;
+  final String creatorId;
   
-  ConfirmEvent({Key key,this.id}) : super(key:key);
+  ConfirmEvent({Key key,this.id,this.creatorId}) : super(key:key);
 
   State<StatefulWidget> createState(){
     return _ConfirmEvent();
@@ -38,7 +39,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'event_id':widget.id.toString(),'position':'3','status':'P'};
+    Map<String, dynamic> body = {'event_id':widget.id.toString(),'creator_id':widget.creatorId,'position':'3','status':'P'};
 
     final ongoingevent = await http.post(
         url('api/event/register'),

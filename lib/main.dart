@@ -14,6 +14,7 @@ import 'pages/check_in/count_down.dart';
 import 'splash_screen.dart';
 import 'pages/check_in/tes.dart';
 import 'pages/event_following/index.dart';
+import 'notifications/list_notification.dart';
 
 Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/dashboard": (BuildContext context) => Dashboard(),
@@ -26,6 +27,7 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/login" : (BuildContext context) => LoginPage(),
   "/register" : (BuildContext context) => Register(),
   "/follow_event" : (BuildContext context) => ManajemenEventFollowing(),
+  "/notifications" : (BuildContext context) => ManajemenNotifications(),
 };
 void main() => runApp(MyApp());
 

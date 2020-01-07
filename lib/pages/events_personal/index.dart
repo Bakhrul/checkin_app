@@ -80,6 +80,55 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     });
   }
 
+  void konfirmasidelete(idevent) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Peringatan!'),
+        content:
+            Text('Apakah Anda Ingin Menghapus Event Ini Secara Permanen? '),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Tidak'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          FlatButton(
+            textColor: Colors.green,
+            child: Text('Ya'),
+            onPressed: () async {
+              try {
+                Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+                final hapuswishlist = await http.post(url('api/deleteevent'),
+                    headers: requestHeaders,
+                    body: {
+                      'event': idevent,
+                    });
+
+                if (hapuswishlist.statusCode == 200) {
+                  var hapuswishlistJson = json.decode(hapuswishlist.body);
+                  if (hapuswishlistJson['status'] == 'success') {
+                    Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
+                  }
+                } else {
+                  print(hapuswishlist.body);
+                  Fluttertoast.showToast(
+                      msg:
+                          "Request failed with status: ${hapuswishlist.statusCode}");
+                }
+              } on TimeoutException catch (_) {
+                Fluttertoast.showToast(msg: "Timed out, Try again");
+              } catch (e) {
+                print(e);
+              }
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   void pastEvent() {
     setState(() {
       if (pastheight == 0.0) {
@@ -327,84 +376,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     }
     return null;
   }
-  void modalKonfirmasiAcc(idX, idevent) {
-    
-  }
-
-  void modalKonfirmasiDeciline(idX, idevent) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text('Peringatan!'),
-        content: Text('Apakah Anda Ingin Menolak Pendaftaran Event'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Tidak'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          FlatButton(
-            textColor: Colors.green,
-            child: Text('Ya'),
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                final hapuswishlist = await http.post(
-                    url('api/accpeserta_event'),
-                    headers: requestHeaders,
-                    body: {'idpeserta': idX,'idevent' : idevent });
-
-                if (hapuswishlist.statusCode == 200) {
-                  var hapuswishlistJson = json.decode(hapuswishlist.body);
-                  if (hapuswishlistJson['status'] == 'success') {
-                    setState(() {
-                      getHeaderHTTP();
-                    });
-                  } else if (hapuswishlistJson['status'] == 'Error') {
-                    Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                  }
-                } else {
-                  Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                }
-              } on TimeoutException catch (_) {
-                Fluttertoast.showToast(msg: "Timed out, Try again");
-              } catch (e) {
-                print(e);
-              }
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.kelolaPesertaPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => ManagePeserta()));
-        break;
-      case PageEnum.kelolaWaktuCheckinPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => ManageCheckin()));
-        break;
-      case PageEnum.kelolaAbsenPesertaPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => ManageAbsenPeserta()));
-        break;
-      case PageEnum.kelolaCheckinPesertaPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => ListMultiCheckin()));
-        break;
-      case PageEnum.kelolaHasilAKhirPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => PointEvents()));
-        break;
-      default:
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -545,110 +516,115 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              trailing: PopupMenuButton<PageEnum>(
-                                            onSelected: (PageEnum value) {
-                                              switch (value) {
-                                                case PageEnum.kelolaadminPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAdmin(event: item.id)));
-                                                  break;
-                                                case PageEnum.kelolaPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManagePeserta(event: item.id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaWaktuCheckinPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageCheckin(event: item.id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaAbsenPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAbsenPeserta()));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaCheckinPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ListMultiCheckin()));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaHasilAKhirPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              PointEvents()));
-                                                  break;
-                                                  case PageEnum
-                                                    .deleteEvent:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              PointEvents()));
-                                                  break;
-                                                default:
-                                                  break;
-                                              }
-                                            },
-                                            icon: Icon(Icons.more_vert),
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaadminPage,
-                                                child: Text("Kelola Admin / Co - Host"),
+                                              trailing:
+                                                  PopupMenuButton<PageEnum>(
+                                                onSelected: (PageEnum value) {
+                                                  switch (value) {
+                                                    case PageEnum
+                                                        .kelolaadminPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAdmin(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManagePeserta(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaWaktuCheckinPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageCheckin(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaAbsenPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAbsenPeserta()));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaCheckinPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin()));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaHasilAKhirPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  PointEvents()));
+                                                      break;
+                                                    case PageEnum.deleteEvent:
+                                                      konfirmasidelete(item.id);
+                                                      break;
+                                                    default:
+                                                      break;
+                                                  }
+                                                },
+                                                icon: Icon(Icons.more_vert),
+                                                itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaadminPage,
+                                                    child: Text(
+                                                        "Kelola Admin / Co - Host"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaPesertaPage,
+                                                    child:
+                                                        Text("Kelola Peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaWaktuCheckinPage,
+                                                    child: Text(
+                                                        "Kelola waktu checkin"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaAbsenPesertaPage,
+                                                    child: Text(
+                                                        "Kelola absen peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaCheckinPesertaPage,
+                                                    child: Text(
+                                                        "Kelola checkin peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaHasilAKhirPage,
+                                                    child: Text(
+                                                        "Hasil akhir checkin peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum.deleteEvent,
+                                                    child: Text("Hapus Event"),
+                                                  ),
+                                                ],
                                               ),
-                                              PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaPesertaPage,
-                                                child: Text("Kelola Peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaWaktuCheckinPage,
-                                                child: Text(
-                                                    "Kelola waktu checkin"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaAbsenPesertaPage,
-                                                child: Text(
-                                                    "Kelola absen peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaCheckinPesertaPage,
-                                                child: Text(
-                                                    "Kelola checkin peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaHasilAKhirPage,
-                                                child: Text(
-                                                    "Hasil akhir checkin peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .deleteEvent,
-                                                child: Text("Hapus Event"),
-                                              ),
-                                            ],
-                                          ),
                                             ),
                                           ),
                                         ))
@@ -757,14 +733,18 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                       CupertinoPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              ManageAdmin(event: item.id)));
+                                                              ManageAdmin(
+                                                                  event: item
+                                                                      .id)));
                                                   break;
                                                 case PageEnum.kelolaPesertaPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              ManagePeserta(event: item.id)));
+                                                              ManagePeserta(
+                                                                  event: item
+                                                                      .id)));
                                                   break;
                                                 case PageEnum
                                                     .kelolaWaktuCheckinPage:
@@ -772,7 +752,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                       CupertinoPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              ManageCheckin(event: item.id)));
+                                                              ManageCheckin(
+                                                                  event: item
+                                                                      .id)));
                                                   break;
                                                 case PageEnum
                                                     .kelolaAbsenPesertaPage:
@@ -798,6 +780,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   context) =>
                                                               PointEvents()));
                                                   break;
+                                                case PageEnum.deleteEvent:
+                                                  konfirmasidelete(item.id);
+                                                  break;
                                                 default:
                                                   break;
                                               }
@@ -805,9 +790,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
                                               PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaadminPage,
-                                                child: Text("Kelola Admin / Co - Host"),
+                                                value: PageEnum.kelolaadminPage,
+                                                child: Text(
+                                                    "Kelola Admin / Co - Host"),
                                               ),
                                               PopupMenuItem(
                                                 value:
@@ -839,6 +824,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     "Hasil akhir checkin peserta"),
                                               ),
                                               PopupMenuItem(
+                                                value: PageEnum.deleteEvent,
                                                 child: Text("Hapus Event"),
                                               ),
                                             ],
@@ -944,100 +930,115 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              trailing: PopupMenuButton<PageEnum>(
-                                            onSelected: (PageEnum value) {
-                                              switch (value) {
-                                                case PageEnum.kelolaadminPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAdmin(event: item.id)));
-                                                  break;
-                                                case PageEnum.kelolaPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManagePeserta(event:item.id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaWaktuCheckinPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageCheckin(event : item.id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaAbsenPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAbsenPeserta()));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaCheckinPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ListMultiCheckin()));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaHasilAKhirPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              PointEvents()));
-                                                  break;
-                                                default:
-                                                  break;
-                                              }
-                                            },
-                                            icon: Icon(Icons.more_vert),
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaadminPage,
-                                                child: Text("Kelola Admin / Co - Host"),
+                                              trailing:
+                                                  PopupMenuButton<PageEnum>(
+                                                onSelected: (PageEnum value) {
+                                                  switch (value) {
+                                                    case PageEnum
+                                                        .kelolaadminPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAdmin(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManagePeserta(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaWaktuCheckinPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageCheckin(
+                                                                      event: item
+                                                                          .id)));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaAbsenPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAbsenPeserta()));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaCheckinPesertaPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin()));
+                                                      break;
+                                                    case PageEnum
+                                                        .kelolaHasilAKhirPage:
+                                                      Navigator.of(context).push(
+                                                          CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  PointEvents()));
+                                                      break;
+                                                    case PageEnum.deleteEvent:
+                                                    konfirmasidelete(item.id);
+                                                      break;
+                                                    default:
+                                                      break;
+                                                  }
+                                                },
+                                                icon: Icon(Icons.more_vert),
+                                                itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaadminPage,
+                                                    child: Text(
+                                                        "Kelola Admin / Co - Host"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaPesertaPage,
+                                                    child:
+                                                        Text("Kelola Peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaWaktuCheckinPage,
+                                                    child: Text(
+                                                        "Kelola waktu checkin"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaAbsenPesertaPage,
+                                                    child: Text(
+                                                        "Kelola absen peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaCheckinPesertaPage,
+                                                    child: Text(
+                                                        "Kelola checkin peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaHasilAKhirPage,
+                                                    child: Text(
+                                                        "Hasil akhir checkin peserta"),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: PageEnum.deleteEvent,
+                                                    child: Text("Hapus Event"),
+                                                  ),
+                                                ],
                                               ),
-                                              PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaPesertaPage,
-                                                child: Text("Kelola Peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaWaktuCheckinPage,
-                                                child: Text(
-                                                    "Kelola waktu checkin"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaAbsenPesertaPage,
-                                                child: Text(
-                                                    "Kelola absen peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaCheckinPesertaPage,
-                                                child: Text(
-                                                    "Kelola checkin peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaHasilAKhirPage,
-                                                child: Text(
-                                                    "Hasil akhir checkin peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Hapus Event"),
-                                              ),
-                                            ],
-                                          ),
                                             ),
                                           ),
                                         ))

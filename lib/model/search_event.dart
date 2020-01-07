@@ -11,12 +11,14 @@ class SearchEvent{
     String allday;
     String start;
     String end;
-    int user;
+    int userWish;
     String hour;
     String wish;
     int wishId;
     String statusRegistered;
     Color color;
+    String userEvent;
+    String image;
 
   SearchEvent({
       this.id,
@@ -27,11 +29,13 @@ class SearchEvent{
       this.start,
       this.end,
       this.hour,
-      this.user,
+      this.userWish,
       this.wish,
       this.wishId,
       this.statusRegistered,
-      this.color
+      this.color,
+      this.userEvent,
+      this.image,
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
@@ -44,19 +48,19 @@ class SearchEvent{
 
       switch(map['ep_status']){
         case 'C':
-             status = 'belum terdaftar';
+             status = 'Belum Terdaftar';
              color = Colors.grey;
              break;
         case 'P':
-             status = 'proses';
+             status = 'Proses Daftar';
              color = Colors.orange;
              break;
         case 'A':
-             status = 'sudah terdaftar';
+             status = 'Sudah Terdaftar';
              color = Colors.green;
              break;
         default:
-             status = 'belum terdaftar';
+             status = 'Belum Terdaftar';
              color = Colors.grey;
              break;
       }
@@ -67,13 +71,15 @@ class SearchEvent{
         location:map['ev_location'],
         detail:map['ev_detail'],
         allday:map['ev_allday'],
+        image:map['ev_image'],
         start:dateStart,
         end:dateEnd,
         hour:hours,
         statusRegistered:status,
         color:color,
         wish:map['ew_wish'],
-        user:map['ew_user_id']
+        userWish:map['ew_user_id'],
+        userEvent:map['ev_create_user']
       );
   }
 

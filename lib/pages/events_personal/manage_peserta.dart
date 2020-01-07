@@ -112,7 +112,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      print('eror');
       setState(() {
         isLoading = false;
         isError = true;
