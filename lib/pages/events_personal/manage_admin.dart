@@ -324,7 +324,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          listadminevent[index].status == 'P'
+                                          listadminevent[index].status == 'P' || listadminevent[index].status == 'C'
                                               ? Container()
                                               : ButtonTheme(
                                                   minWidth: 0.0,
@@ -372,7 +372,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                 try {
                                                                   final hapuswishlist = await http.post(
                                                                       url(
-                                                                          'api/deletepeserta_event'),
+                                                                          'api/deleteadmin_event'),
                                                                       headers:
                                                                           requestHeaders,
                                                                       body: {
