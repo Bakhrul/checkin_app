@@ -11,6 +11,7 @@
 
   //  String host = 'http://192.168.43.115/myocin/public/';
    
+
    String clientSecret = '0zxvmtgG2PkVw0NfQ0HwxjKYHVbhoaFBZyDlmJEp';
 
 

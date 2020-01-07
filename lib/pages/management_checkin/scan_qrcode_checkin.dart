@@ -8,24 +8,28 @@ import 'package:qrcode/qrcode.dart';
 import 'checkin_manual.dart';
 
 class ScanQrcode extends StatefulWidget {
+   final id;
+  ScanQrcode({Key key, @required this.id});
   @override
   _ScanQrcodeState createState() => _ScanQrcodeState();
 }
 
 class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
+ 
   QRCaptureController _captureController = QRCaptureController();
   Animation<Alignment> _animation;
   AnimationController _animationController;
   bool _isTorchOn = false;
   String _isTorchOnText = 'off';
   String _captureText = 'Arahkan ke Kode Qr';
-  postDataCheckin()  async{
+
+  postDataCheckin(data)  async{
     var _timeCheckin = DateTime.now().toString();
     dynamic body = {
-      "event_id": "2",
-      "user_id": "1",
-      "time_checkin": _timeCheckin,
-      "checkin_type": "BS"
+      "event_id": widget.id,
+      "checkin_id": data.toString(),
+      "checkin_type": "BS",
+      "time_checkin": _timeCheckin
     };
 
     dynamic response =
@@ -63,7 +67,7 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
     _captureController.onCapture((data) {
       
       print('onCapture----$data');
-      postDataCheckin();
+      postDataCheckin(data);
 
       setState(() {
         _captureText = data;

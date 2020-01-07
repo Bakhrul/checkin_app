@@ -7,8 +7,11 @@ class Checkin {
   String startTime;
   String endTime;
   String checkinDate;
-
-  Checkin({this.id = 0,this.eventId = 0, this.checkinKey, this.startTime,this.endTime, this.checkinDate});
+  String sessionName;
+  String titleEvent;
+  String locationEvent;
+  
+  Checkin({this.id = 0,this.eventId = 0,this.titleEvent,this.locationEvent, this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName});
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {
   //   return Checkin(
