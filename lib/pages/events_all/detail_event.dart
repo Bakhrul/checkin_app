@@ -14,8 +14,10 @@ Map<String, String> requestHeaders = Map();
 
 class RegisterEvents extends StatefulWidget {
   final int id;
+  final bool selfEvent;
+  final String creatorId;
 
-  RegisterEvents({Key key, this.id}) : super(key: key);
+  RegisterEvents({Key key, this.id, this.creatorId, this.selfEvent}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -51,7 +53,7 @@ class _RegisterEvent extends State<RegisterEvents> {
         url('api/event/${id}'),
         headers: requestHeaders,
       );
-print(ongoingevent.body);
+
       if (ongoingevent.statusCode == 200) {
         Map rawData = json.decode(ongoingevent.body);
         setState((){
@@ -171,6 +173,7 @@ print(ongoingevent.body);
                             )),
                       ],
                     ),
+                    if(!widget.selfEvent)
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: SizedBox(
@@ -186,7 +189,7 @@ print(ongoingevent.body);
                             Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterEventMethod(id:dataEvent.id),
+                          builder: (context) => RegisterEventMethod(id:dataEvent.id,creatorId:widget.creatorId),
                         ));
                           },
                           child: Text(

@@ -38,15 +38,20 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   SearchEvent searchEvent = new SearchEvent();
   int page = 1;
   bool _isLoading = true;
+  bool _isLoadingCategory = true;
   bool _isLoadingPagination = false;
   ScrollController pageScroll = new ScrollController();
   int manyPage;
   TextEditingController _searchQuery = new TextEditingController();
+  String userId;
+  List listCategory = [];
+  int categoryNow = 0;
 
   @override
   void initState() {
     getHeaderHTTP();
-    _getAll();
+    _getCategory();
+    _getAll(0);
     _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
     _searchQuery.addListener(_search);
@@ -82,16 +87,16 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
       Map<String, dynamic> body = {'search':_searchQuery.text.toString()};
 
-    final ongoingevent = await http.post(
+    try{
+
+      final ongoingevent = await http.post(
         url('api/search'),
         headers: requestHeaders,
         body:body
       );
-print(ongoingevent.body);
-      if (ongoingevent.statusCode == 200) {
 
-        Map rawData = json.decode(ongoingevent.body);
-        
+      if (ongoingevent.statusCode == 200) {
+        Map rawData = json.decode(ongoingevent.body);     
         if(mounted){
             setState((){
             _event.clear();
@@ -104,6 +109,12 @@ print(ongoingevent.body);
           });
         } 
       }
+
+    }catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
 
       return _event;
   }
@@ -122,7 +133,7 @@ print(ongoingevent.body);
     print(requestHeaders);
   }
 
-  Future<List> _getAll() async {
+  Future<List> _getAll(int type) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -132,29 +143,31 @@ print(ongoingevent.body);
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    final ongoingevent = await http.get(
+    Map<String, dynamic> body = {'category_id':type.toString()};
+
+     final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
+        body:body
       );
-print(ongoingevent.body);
+
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
          
         if(mounted){
             setState((){
+            userId = rawData['user_id'];
             manyPage = rawData['num_page'];
+            
             _event.clear();
-
             for(var x in rawData['data']){
               _event.add(SearchEvent.fromJson(x));
             }
-
             _isLoading = false;
           });
         } 
       }
-
       return _event;
   }
 
@@ -181,7 +194,7 @@ print(ongoingevent.body);
         url('api/event/page/$page'),
         headers: requestHeaders,
       );
-print(ongoingevent.body);
+
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
@@ -196,8 +209,35 @@ print(ongoingevent.body);
           });
         } 
       }
-
       return _event;
+  }
+
+  _getCategory() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    final ongoingevent = await http.get(
+        url('api/listkategorievent'),
+        headers: requestHeaders,
+    );
+
+ 
+    if (ongoingevent.statusCode == 200) {
+      var dataRaw = json.decode(ongoingevent.body);
+      setState((){
+        for(var x in dataRaw['kategori']){
+          listCategory.add(x);
+        }
+          _isLoadingCategory = false;
+      });
+    }
+
   }
 
   Future<dynamic> _wish(String wish,int eventId,int index) async {
@@ -218,7 +258,7 @@ print(ongoingevent.body);
         headers: requestHeaders,
         body:body
       );
-print(ongoingevent.body);
+
     if (ongoingevent.statusCode == 200) {
 
       setState((){
@@ -246,7 +286,7 @@ print(ongoingevent.body);
       _searchQuery.clear();
       _isLoading = true;
       page = 1;
-      _getAll();
+      _getAll(0);
     });
   }
 
@@ -275,194 +315,109 @@ print(ongoingevent.body);
       backgroundColor: Colors.white,
       key: _scaffoldKeyEventAll,
       appBar: buildBar(context),
-      body: Padding(
+      body: _isLoadingCategory ? 
+        Center(
+          child:CircularProgressIndicator()
+        ):
+      Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // Container(
-              //   width: double.infinity,
-              //   child: Padding(
-              //     padding:
-              //         const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.start,
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: <Widget>[
-              //         Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
-              //             style: TextStyle(
-              //               fontSize: 16,
-              //               fontWeight: FontWeight.w500,
-              //             )),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // Container(
-              //   margin: EdgeInsets.only(left: 10.0, bottom: 0),
-              //   child: SingleChildScrollView(
-              //     scrollDirection: Axis.horizontal,
-              //     child: Row(children: <Widget>[
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Color.fromRGBO(41, 30, 47, 1),
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Semua',
-              //                 style: TextStyle(
-              //                     color: Colors.white,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Colors.transparent,
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Teknologi',
-              //                 style: TextStyle(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Colors.transparent,
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Kesehatan',
-              //                 style: TextStyle(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Colors.transparent,
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Financial',
-              //                 style: TextStyle(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Colors.transparent,
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Keuangan',
-              //                 style: TextStyle(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //       Container(
-              //           margin: EdgeInsets.only(right: 10.0),
-              //           child: ButtonTheme(
-              //             minWidth: 0.0,
-              //             height: 0,
-              //             child: RaisedButton(
-              //               color: Colors.transparent,
-              //               elevation: 0.0,
-              //               highlightColor: Colors.transparent,
-              //               highlightElevation: 0.0,
-              //               padding: EdgeInsets.only(
-              //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-              //               onPressed: () {},
-              //               child: Text(
-              //                 'Pertambangan',
-              //                 style: TextStyle(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //               shape: RoundedRectangleBorder(
-              //                   borderRadius: new BorderRadius.circular(18.0),
-              //                   side: BorderSide(
-              //                     color: Color.fromRGBO(41, 30, 47, 1),
-              //                   )),
-              //             ),
-              //           )),
-              //     ]),
-              //   ),
-              // ),
+              Container(
+                width: double.infinity,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10.0, bottom: 0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(right: 10.0),
+                        child: ButtonTheme(
+                          minWidth: 0.0,
+                          height: 0,
+                          child: RaisedButton(
+                            color: categoryNow == 0 ? Color.fromRGBO(41, 30, 47, 1):Colors.transparent,
+                            elevation: 0.0,
+                            highlightColor: Colors.transparent,
+                            highlightElevation: 0.0,
+                            padding: EdgeInsets.only(
+                                top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                            onPressed: () {
+                               setState((){
+                                  _isLoading = true;
+                                  categoryNow = 0;
+                                  _getAll(0);
+                               });
+                            },
+                            child: Text(
+                              "Semua",
+                              style: TextStyle(
+                                  color: categoryNow == 0 ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color.fromRGBO(41, 30, 47, 1),
+                                )),
+                          ),
+                        )),
+                    for(var x in listCategory)
+                      Container(
+                        margin: EdgeInsets.only(right: 10.0),
+                        child: ButtonTheme(
+                          minWidth: 0.0,
+                          height: 0,
+                          child: RaisedButton(
+                            color: categoryNow == x['c_id'] ? Color.fromRGBO(41, 30, 47, 1):Colors.transparent,
+                            elevation: 0.0,
+                            highlightColor: Colors.transparent,
+                            highlightElevation: 0.0,
+                            padding: EdgeInsets.only(
+                                top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                            onPressed: () {
+                               setState((){
+                                 _isLoading = true;
+                                  categoryNow = x['c_id'];
+                                  _getAll(x['c_id']);
+                               });
+                            },
+                            child: Text(
+                              x['c_name'],
+                              style: TextStyle(
+                                  color: categoryNow == x['c_id'] ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color.fromRGBO(41, 30, 47, 1),
+                                )),
+                          ),
+                        )),
+                  ]),
+                ),
+              ),
               Expanded(
                     child:
                       _isLoading ? 
@@ -560,7 +515,9 @@ print(ongoingevent.body);
                                           ],
                                         ),
                                       ),
-                                      Container(
+                                      userId == _event[index].userEvent ? Container(child:Text(''),height:0):
+                                      Column(
+                                        children:<Widget>[Container(
                                           padding: EdgeInsets.only(
                                               left: 10.0, right: 10.0),
                                           child: Divider()),
@@ -627,6 +584,7 @@ print(ongoingevent.body);
                                           ],
                                         ),
                                       ),
+                                        ])
                                     ],
                                   ),
                                 ),
@@ -645,7 +603,11 @@ print(ongoingevent.body);
                                        return WaitingEvent();
                                        break;
                                   default:
-                                       return RegisterEvents(id:_event[index].id);
+                                       return RegisterEvents(
+                                         id:_event[index].id,
+                                         creatorId:_event[index].userEvent,
+                                         selfEvent: userId == _event[index].userEvent ? true:false
+                                         );
                                        break;
                                 }
                                 }
