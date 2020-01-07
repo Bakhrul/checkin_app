@@ -9,15 +9,13 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
+import 'dashboard_checkin.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
+
 var datepicker;
-void showInSnackBar(String value) {
-  _scaffoldKeycreatecheckin.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
-
 class CreateParticipant extends StatefulWidget {
+  final idevent;
+  CreateParticipant({Key key, this.idevent});
   @override
   _CreateParticipantState createState() => _CreateParticipantState();
 }
@@ -73,7 +71,7 @@ Future<void> getHeaderHTTP() async {
 
  postDataParticipant() async {
     dynamic body = {
-      "event_id": "1",
+      "event_id": widget.idevent.toString(),
       "position": _currentType,
       "user_id": _currentSearch,
       "status": "a"
@@ -92,7 +90,7 @@ Future<void> getHeaderHTTP() async {
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-      Navigator.pop(context);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent)));
     }else if(response == 1000){
       Fluttertoast.showToast(
           msg: "Peserta Telah Terdaftar",
@@ -134,7 +132,6 @@ Future<void> getHeaderHTTP() async {
         MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(

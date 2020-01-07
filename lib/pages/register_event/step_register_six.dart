@@ -81,7 +81,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            ScanQrcode(),
+                                            ScanQrcode(id: "2"),
                                       ));
                                   }else{
                                     Navigator.push(

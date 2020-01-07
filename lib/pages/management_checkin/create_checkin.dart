@@ -1,6 +1,7 @@
 import 'package:checkin_app/api/checkin_service.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
+import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
 import 'package:flutter/material.dart';
 
@@ -8,14 +9,18 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 
 var datepicker;
-
 
 class ManajemeCreateCheckin extends StatefulWidget {
   Checkin checkin;
   final String title;
-  ManajemeCreateCheckin({Key key, this.title, this.checkin}) : super(key: key);
+  final idevent;
+
+  ManajemeCreateCheckin({Key key, this.title, this.checkin, this.idevent})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -36,21 +41,33 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   bool _isFieldTimeStartlValid;
   bool _isFieldTimeEndValid;
   final TextEditingController _controllerGenerate = TextEditingController();
+  final format = DateFormat("yyyy-MM-dd HH:mm:ss");
   TextEditingController _controllerDate = TextEditingController();
   TextEditingController _controllerTimeStart = TextEditingController();
   TextEditingController _controllerTimeEnd = TextEditingController();
   TextEditingController _controllerSessionname = TextEditingController();
 
+   getDataChekinId() async {
+    listPeserta = [];
+    dynamic response =
+        await RequestGet(name: "checkin/getdata/getcodeqr/", customrequest: "${widget.idevent.toString()}")
+            .getdata();
+            _dataString = response.toString();
+
+            print(_dataString);
+  }
+
   postDataCheckin() async {
     dynamic body = {
-      "event_id": "1",
+      "event_id": widget.idevent.toString(),
       "checkin_keyword": _controllerGenerate.text.toString(),
+      "chekin_id": _dataString,
       "start_time": _controllerTimeStart.text.toString(),
       "end_time": _controllerTimeEnd.text.toString(),
-      "checkin_date": _controllerDate.text.toString(),
-      "session_name": _controllerSessionname.text.toString()
+      "session_name": _controllerSessionname.text.toString(),
+      "types": "S"
     };
-    
+
     dynamic response =
         await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
             .sendrequest();
@@ -64,7 +81,8 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-      Navigator.pop(context);
+      Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
     }
   }
 
@@ -123,13 +141,13 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
-              Card(
-                  child: ListTile(
-                      leading: Icon(
-                        Icons.date_range,
-                        color: Color.fromRGBO(41, 30, 47, 1),
-                      ),
-                      title: _buildTextFieldDateCheckin())),
+              // Card(
+              //     child: ListTile(
+              //         leading: Icon(
+              //           Icons.date_range,
+              //           color: Color.fromRGBO(41, 30, 47, 1),
+              //         ),
+              //         title: _buildTextFieldDateCheckin())),
               Card(
                   child: ListTile(
                       leading: Icon(
@@ -156,7 +174,11 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   color: Color.fromRGBO(220, 237, 193, 99),
                   onPressed: () {
                     setState(() {
-                      _dataString = _controllerGenerate.text;
+                      var uuid = new Uuid();
+                      // _dataString =
+                          // uuid.v4(options: {'rng': UuidUtil.cryptoRNG});
+                      getDataChekinId();
+                      print(_dataString);
                       _inputErrorText = null;
                     });
                   },
@@ -200,17 +222,26 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   Widget _buildTextFieldTimeEnd() {
     return DateTimeField(
       controller: _controllerTimeEnd,
-      format: DateFormat("HH:mm:ss"),
+      format: format,
       decoration: InputDecoration(
-        hintText: 'Jam Berakhirnya CheckIn',
+        hintText: 'Tanggal Berakhirnya CheckIn',
         hintStyle: TextStyle(fontSize: 13, color: Colors.black),
       ),
       onShowPicker: (context, currentValue) async {
-        final time = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-        );
-        return DateTimeField.convert(time);
+         final date = await showDatePicker(
+            context: context,
+            firstDate: DateTime.now(),
+            initialDate: currentValue ?? DateTime.now(),
+            lastDate: DateTime(2100));
+        if (date != null) {
+          final time = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+          );
+          return DateTimeField.combine(date, time);
+        } else {
+          return currentValue;
+        }
       },
     );
   }
@@ -218,59 +249,28 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   Widget _buildTextFieldTimeStart() {
     return DateTimeField(
       controller: _controllerTimeStart,
-      format: DateFormat("HH:mm:ss"),
+      format: format,
       decoration: InputDecoration(
-        hintText: 'Jam Berlangsungnya CheckIn',
+        hintText: 'Tanggal Berlangsungnya CheckIn',
         hintStyle: TextStyle(fontSize: 13, color: Colors.black),
       ),
       onShowPicker: (context, currentValue) async {
-        final time = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-        );
-        return DateTimeField.convert(time);
+        final date = await showDatePicker(
+            context: context,
+            firstDate: DateTime.now(),
+            initialDate: currentValue ?? DateTime.now(),
+            lastDate: DateTime(2100));
+        if (date != null) {
+          final time = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+          );
+          return DateTimeField.combine(date, time);
+        } else {
+          return currentValue;
+        }
       },
     );
-  }
-
-  Widget _buildTextFieldNameSession() {
-    // return TextField(
-    //   controller: _controllerSessionname,
-    //   decoration: InputDecoration(
-    //       hintText: 'Nama Sesi',
-    //       errorText: _inputErrorText,
-    //       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-    // );
-  }
-
-  Widget _buildTextFieldDateCheckin() {
-    return DateTimeField(
-        controller: _controllerDate,
-        readOnly: true,
-        format: DateFormat('dd-MM-yyy'),
-        focusNode: datepicker,
-        decoration: InputDecoration(
-          hintText: 'Tanggal Berlangsungnya Checkin',
-          hintStyle: TextStyle(fontSize: 13, color: Colors.black),
-          errorText: _isFieldDateValid == null || _isFieldDateValid
-              ? null
-              : "Date is required",
-        ),
-        onShowPicker: (context, currentValue) {
-          return showDatePicker(
-              firstDate: DateTime.now(),
-              context: context,
-              initialDate: DateTime.now(),
-              lastDate: DateTime(2100));
-        },
-        onChanged: (value) {
-          bool isFieldValid = value.toString().trim().isNotEmpty;
-          if (isFieldValid != _isFieldDateValid) {
-            setState(() => _isFieldDateValid = isFieldValid);
-          }
-        }
-        // onChanged: (ini) {},
-        );
   }
 
   Widget _builderGenerate(bodyHeight) {
@@ -302,7 +302,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 padding: EdgeInsets.all(8.0),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DirectCheckin()));
+                      MaterialPageRoute(builder: (context) => DirectCheckin(idevent: widget.idevent)));
                 },
                 child: Text("Direct Checkin"),
               ))
