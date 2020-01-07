@@ -4,8 +4,11 @@ import 'package:flutter/rendering.dart';
 import '../events_all/index.dart';
 
 class WaitingEvent extends StatefulWidget {
-   WaitingEvent({Key key}) : super(key:key);
-
+  
+   WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent}) : super(key:key);
+  final int id;
+  final String creatorId;
+  final bool selfEvent;
    State<StatefulWidget> createState(){
      return _WaitingEvent();
    }
