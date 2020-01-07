@@ -47,8 +47,8 @@ class _ConfirmEvent extends State<ConfirmEvent> {
         body:body
       );
       
-print(ongoingevent.body);
-      if (ongoingevent.statusCode == 200) {
+
+    if (ongoingevent.statusCode == 200) {
      return Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
