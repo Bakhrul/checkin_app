@@ -83,16 +83,17 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     setState(() {});
   }
 
-  deleteCheckin() async {
+  deleteCheckin(id,eventId) async {
     dynamic body = {
-      "event_id": "1",
-      "checkin_id": "7",
+      "event_id": id.toString(),
+      "checkin_id": eventId.toString(),
     };
     dynamic response =
         await RequestPost(name: "checkin/deletedata/checkinreguler", body: body)
             .sendrequest();
     if (response == "success") {
       setState(() {});
+      
       Fluttertoast.showToast(
           msg: "Data Berhasil Terhapus",
           toastLength: Toast.LENGTH_SHORT,
@@ -101,6 +102,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
+          getDataCheckin();
     } else {
       Fluttertoast.showToast(
           msg: "Terjadi Kesalahan",
@@ -380,7 +382,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                               child:
                                                                   Text("Yes"),
                                                               onPressed: () {
-                                                                deleteCheckin();
+                                                                deleteCheckin(data.id,data.eventId);
 
                                                                 Navigator.pop(
                                                                     context);
