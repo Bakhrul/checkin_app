@@ -10,8 +10,9 @@ Map<String, String> requestHeaders = Map();
 class ConfirmEvent extends StatefulWidget{
   final int id;
   final String creatorId;
+  final Map dataUser;
   
-  ConfirmEvent({Key key,this.id,this.creatorId}) : super(key:key);
+  ConfirmEvent({Key key,this.id,this.creatorId, this.dataUser}) : super(key:key);
 
   State<StatefulWidget> createState(){
     return _ConfirmEvent();
@@ -26,6 +27,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
 
   @override
   void initState(){
+    print(widget.dataUser);
     super.initState();
   }
 
@@ -53,7 +55,11 @@ class _ConfirmEvent extends State<ConfirmEvent> {
      return Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WaitingEvent(),
+                          builder: (context) => WaitingEvent(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            selfEvent: false
+                          ),
                         ));
     }else{
       return print(ongoingevent.body);
@@ -93,7 +99,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
-                          child:Text("Nama Depan",style:TextStyle(
+                          child:Text("Nama",style:TextStyle(
                             fontSize: 17,
                           ))
                         ),
@@ -102,11 +108,11 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                           margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
                           child:TextFormField(
                             enabled: false,
-                            initialValue: 'mohammad',
+                            initialValue: widget.dataUser['us_name'],
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
                               border: OutlineInputBorder(),
-                              hintText: 'nama depan',
+                              hintText: 'nama',
                             ),
                           )
                         )
@@ -114,36 +120,63 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     )
                   )
                 ),
-                Expanded(
-                  child:Container(
-                    padding:EdgeInsets.only(top:5,bottom:5),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top:5,bottom:5,left:15,right:7),
-                          child:Text("Nama Belakang",style:TextStyle(
-                            fontSize: 17,
-                          ))
-                        ),
-                        Container(
-                          color: Color.fromRGBO(241,241,241,1),
-                          margin: EdgeInsets.only(top:5,bottom:5,left:7,right:15),
-                          child:TextFormField(
-                            initialValue: "zakaria",
-                            enabled: false,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
-                              border: OutlineInputBorder(),
-                              hintText: 'Password',
-                            ),
-                          )
-                        )
-                      ],
+                // Expanded(
+                //   child:Container(
+                //     padding:EdgeInsets.only(top:5,bottom:5),
+                //     child:Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: <Widget>[
+                //         Container(
+                //           margin: EdgeInsets.only(top:5,bottom:5,left:15,right:7),
+                //           child:Text("Nama Belakang",style:TextStyle(
+                //             fontSize: 17,
+                //           ))
+                //         ),
+                //         Container(
+                //           color: Color.fromRGBO(241,241,241,1),
+                //           margin: EdgeInsets.only(top:5,bottom:5,left:7,right:15),
+                //           child:TextFormField(
+                //             initialValue: "zakaria",
+                //             enabled: false,
+                //             decoration: InputDecoration(
+                //               contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
+                //               border: OutlineInputBorder(),
+                //               hintText: 'Password',
+                //             ),
+                //           )
+                //         )
+                //       ],
+                //     )
+                //   )
+                // )
+              ],
+            ),
+            Container(
+              padding:EdgeInsets.only(top:5,bottom:5),
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
+                    child:Text("Email",style:TextStyle(
+                      fontSize: 17,
+                    ))
+                  ),
+                  Container(
+                    color: Color.fromRGBO(241,241,241,1),
+                    margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
+                    child:TextFormField(
+                      initialValue: widget.dataUser['us_email'],
+                      enabled: false,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
+                        border: OutlineInputBorder(),
+                        hintText: 'Email',
+                      ),
                     )
                   )
-                )
-              ],
+                ],
+              )
             ),
             Container(
               padding:EdgeInsets.only(top:5,bottom:5),
@@ -165,7 +198,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
                         border: OutlineInputBorder(),
-                        hintText: 'Password',
+                        hintText: 'Alamat',
                       ),
                     )
                   )
@@ -204,61 +237,61 @@ class _ConfirmEvent extends State<ConfirmEvent> {
               child:Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
-                    child:Text("Kategory",style:TextStyle(
-                      fontSize: 17,
-                    ))
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
-                    padding: EdgeInsets.only(left:10,right:10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color:Color.fromRGBO(195,195,195,1),width:1),
-                      borderRadius:BorderRadius.circular(5.0)
-                    ),
-                    child:DropdownButtonHideUnderline(
-                      child:DropdownButton(
-                        value:_valueCombo,
-                        isExpanded: true,
-                        items:_comboBox.map((val){
-                          return new DropdownMenuItem(
-                            value: val['value'],
-                            child: new Text(val['name'])
-                          );
-                        }).toList(),
-                        onChanged:(value){
-                            setState((){
-                              _valueCombo = value;
-                            });
-                        }
-                      )
-                    )
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
-                    child:InkWell(
-                      onTap: () {
-                        setState((){
-                          _check = !_check;
-                        });
-                      },
-                      child: Row(
-                          children: <Widget>[
-                            Checkbox(
-                              value: _check,
-                              onChanged: (bool value) {
-                                setState((){
-                                  _check = !_check;
-                                });
-                              },
-                            ),
-                            Expanded(child: Text("Saya Menyetujui ketentuan & Syarat yang berlaku"))
-                          ],
-                        ),
-                    )
-                  ),
+                  // Container(
+                  //   margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
+                  //   child:Text("Kategory",style:TextStyle(
+                  //     fontSize: 17,
+                  //   ))
+                  // ),
+                  // Container(
+                  //   margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
+                  //   padding: EdgeInsets.only(left:10,right:10),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     border: Border.all(color:Color.fromRGBO(195,195,195,1),width:1),
+                  //     borderRadius:BorderRadius.circular(5.0)
+                  //   ),
+                  //   child:DropdownButtonHideUnderline(
+                  //     child:DropdownButton(
+                  //       value:_valueCombo,
+                  //       isExpanded: true,
+                  //       items:_comboBox.map((val){
+                  //         return new DropdownMenuItem(
+                  //           value: val['value'],
+                  //           child: new Text(val['name'])
+                  //         );
+                  //       }).toList(),
+                  //       onChanged:(value){
+                  //           setState((){
+                  //             _valueCombo = value;
+                  //           });
+                  //       }
+                  //     )
+                  //   )
+                  // ),
+                  // Container(
+                  //   margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
+                  //   child:InkWell(
+                  //     onTap: () {
+                  //       setState((){
+                  //         _check = !_check;
+                  //       });
+                  //     },
+                  //     child: Row(
+                  //         children: <Widget>[
+                  //           Checkbox(
+                  //             value: _check,
+                  //             onChanged: (bool value) {
+                  //               setState((){
+                  //                 _check = !_check;
+                  //               });
+                  //             },
+                  //           ),
+                  //           Expanded(child: Text("Saya Menyetujui ketentuan & Syarat yang berlaku"))
+                  //         ],
+                  //       ),
+                  //   )
+                  // ),
                   Container(
                     margin: EdgeInsets.only(top:20,bottom:20,left:15,right:15),
                     width: double.infinity,
