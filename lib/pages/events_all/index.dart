@@ -43,14 +43,16 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   bool _isLoadingCategory = true;
   bool _isLoadingPagination = false;
   ScrollController pageScroll = new ScrollController();
-  int manyPage;
+  int manyPage = 0;
   TextEditingController _searchQuery = new TextEditingController();
   String userId;
   List listCategory = [];
   int categoryNow = 0;
+  Map dataUser;
 
   @override
   void initState() {
+    _getUserData();
     getHeaderHTTP();
     _getCategory();
     _getAll(0,_searchQuery.text);
@@ -58,13 +60,14 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     super.initState();
     _searchQuery.addListener((){
       setState((){
+        page = 1;
         _isLoading = true;
       });
       _getAll(categoryNow,_searchQuery.text);
     });
     pageScroll.addListener((){
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
-         _getPage();
+         _getPage(categoryNow,_searchQuery.text);
        }
     });
   }
@@ -90,7 +93,38 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     print(requestHeaders);
   }
 
-  Future<List> _getAll(int type,String query) async {
+  _getUserData() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    final ongoingevent = await http.get(
+        url('api/user'),
+        headers: requestHeaders
+      );
+      print(ongoingevent.body);
+      if (ongoingevent.statusCode == 200) {
+
+        Map rawData = json.decode(ongoingevent.body);
+         
+        if(mounted){
+          setState((){
+            dataUser = rawData;
+          });
+          print(dataUser);
+        } 
+      }
+  }
+
+  _getAll(int type,String query) async {
+
+    print('_getAll()');
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -114,11 +148,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         Map rawData = json.decode(ongoingevent.body);
          
         if(mounted){
-            setState((){
+          setState((){
             userId = rawData['user_id'];
             manyPage = rawData['num_page'];
             
             _event.clear();
+
             for(var x in rawData['data']){
               _event.add(SearchEvent.fromJson(x));
             }
@@ -148,11 +183,22 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     }
   }
 
-  Future _getPage() async {
+  Future _getPage(int type, String query) async {
+
+    print('_getPage()');
+
+     await new Future.delayed(new Duration(milliseconds:10));
+
+    if(manyPage != 0){
       if(page == manyPage){
         return false;
+      }else{
+        setState((){
+        page = page + 1;
+          _isLoadingPagination = true;
+        });
       }
-
+    }
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -162,34 +208,41 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    setState((){
-          _isLoadingPagination = true;
-          page = page + 1; 
-      });
+    Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
-    final ongoingevent = await http.get(
+    final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
+        body:body
       );
 
-      if (ongoingevent.statusCode == 200) {
+    print(ongoingevent.body);
 
-        Map rawData = json.decode(ongoingevent.body);
+    if (ongoingevent.statusCode == 200) {
 
-        if(mounted){
-            setState((){
-            for(var x in rawData['data']){
-              _event.add(SearchEvent.fromJson(x));
-            }
-            _isLoadingPagination = false;
-            print(page);
-          });
-        } 
-      }
+      Map rawData = json.decode(ongoingevent.body);
+
+      if(mounted){
+        List<SearchEvent> temp = new List();
+        for(var x in rawData['data']){
+            temp.add(SearchEvent.fromJson(x));
+        }
+
+        _event.addAll(temp);
+
+        setState((){
+          print('false');
+          _isLoadingPagination = false;
+        });
+      } 
+    }
       return _event;
   }
 
   _getCategory() async {
+
+    print('_getCategory');
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -316,6 +369,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         break;
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -374,6 +428,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                setState((){
                                   _isLoading = true;
                                   categoryNow = 0;
+                                  page = 1;
                                   _getAll(0,_searchQuery.text);
                                });
                             },
@@ -406,8 +461,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                             onPressed: () {
                                setState((){
                                  _isLoading = true;
-                                  categoryNow = x['c_id'];
-                                  _getAll(x['c_id'],_searchQuery.text);
+                                 page = 1;
+                                 categoryNow = x['c_id'];
+                                 _getAll(x['c_id'],_searchQuery.text);
                                });
                             },
                             child: Text(
@@ -432,11 +488,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                       Center(
                         child:CircularProgressIndicator()
                       ):
-                      ListView.builder(
-                      itemCount:_event.length,
+                      ListView(
                       controller: pageScroll,
-                      itemBuilder:(BuildContext context, index){
-                      return new InkWell(
+                      children:<Widget>[
+                        for(var x = 0;x < _event.length; ++x)
+                       new InkWell(
                         child: Container(
                             margin: EdgeInsets.only(
                                 top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
@@ -488,7 +544,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       CrossAxisAlignment.start,
                                                   children: <Widget>[
                                                     Text(
-                                                      _event[index].start+' - '+_event[index].end,
+                                                      _event[x].start+' - '+_event[x].end,
                                                       style: TextStyle(
                                                           color: Colors.blue,
                                                           fontSize: 13,
@@ -499,7 +555,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       padding: const EdgeInsets.only(
                                                           top: 5.0),
                                                       child:
-                                                          Text(_event[index].title,
+                                                          Text(_event[x].title,
                                                               style: TextStyle(
                                                                 color: Colors.black,
                                                                 fontWeight:
@@ -511,7 +567,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       padding: const EdgeInsets.only(
                                                           top: 10.0),
                                                       child: Text(
-                                                        _event[index].location,
+                                                        _event[x].location,
                                                         style: TextStyle(
                                                             color: Colors.grey),
                                                       ),
@@ -523,7 +579,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           ],
                                         ),
                                       ),
-                                      userId == _event[index].userEvent ? Container(child:Text(''),height:0):
+                                      userId == _event[x].userEvent ? Container(child:Text(''),height:0):
                                       Column(
                                         children:<Widget>[Container(
                                           padding: EdgeInsets.only(
@@ -538,7 +594,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           children: <Widget>[
                                             Container(
                                                 decoration: new BoxDecoration(
-                                                  color: _event[index].color,
+                                                  color: _event[x].color,
                                                   borderRadius: new BorderRadius.only(
                                                       topLeft:
                                                           const Radius.circular(5.0),
@@ -552,7 +608,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                 padding: EdgeInsets.all(5.0),
                                                 width: 120.0,
                                                 child: Text(
-                                                  _event[index].statusRegistered,
+                                                  _event[x].statusRegistered,
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 12,
@@ -571,7 +627,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                     children: <Widget>[
                                                       Icon(
                                                         Icons.favorite,
-                                                        color: _event[index].wish == '1'
+                                                        color: _event[x].wish == '1'
                                                             ? Colors.pink
                                                             : Colors.grey,
                                                         size: 18,
@@ -584,7 +640,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                           .shrinkWrap,
                                                   padding: EdgeInsets.all(5.0),
                                                   onPressed:() async {
-                                                    _wish(_event[index].wish,_event[index].id,index);
+                                                    _wish(_event[x].wish,_event[x].id,x);
                                                   } 
                                                 ),
                                               ),
@@ -603,38 +659,65 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  switch(_event[index].statusRegistered){
+                                  switch(_event[x].statusRegistered){
                                   case 'Sudah Terdaftar':
-                                       return SuccesRegisteredEvent();
+                                       return SuccesRegisteredEvent(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         selfEvent: userId == _event[x].userEvent ? true:false
+                                       );
                                        break;
                                   case 'Proses Daftar':
-                                       return WaitingEvent();
+                                       return WaitingEvent(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         selfEvent: userId == _event[x].userEvent ? true:false,
+                                       );
                                        break;
-                                  case 'Pendaftaran Ditolak':
+                                  case 'Ditolak':
                                        return RegisterEvents(
-                                         id:_event[index].id,
-                                         creatorId:_event[index].userEvent,
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         selfEvent: true,
+                                         dataUser:dataUser
+                                         );
+                                       break;
+                                  case 'Ditolak Admin':
+                                       return RegisterEvents(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         dataUser:dataUser,
+                                         selfEvent: true
+                                         );
+                                       break;
+                                  case 'Sudah Terdaftar Admin':
+                                       return RegisterEvents(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         dataUser:dataUser,
                                          selfEvent: true
                                          );
                                        break;
                                   default:
                                        return RegisterEvents(
-                                         id:_event[index].id,
-                                         creatorId:_event[index].userEvent,
-                                         selfEvent: userId == _event[index].userEvent ? true:false
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         dataUser:dataUser,
+                                         selfEvent: userId == _event[x].userEvent ? true:false
                                          );
                                        break;
                                 }
                                 }
                               ));
-                        });
-                       } 
-                    )
-                  ),
-                  Container(
-                    height:_isLoadingPagination ? 50:0,
-                    child:Center(
-                      child:CircularProgressIndicator()
+                          }
+                        ),
+                        Container(
+                          height:_isLoadingPagination ? 50:0,
+                          child:Center(
+                            child:CircularProgressIndicator()
+                          )
+                        )
+                      ] 
                     )
                   )
             ],

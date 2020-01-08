@@ -16,8 +16,9 @@ class RegisterEvents extends StatefulWidget {
   final int id;
   final bool selfEvent;
   final String creatorId;
+  final Map dataUser;
 
-  RegisterEvents({Key key, this.id, this.creatorId, this.selfEvent}) : super(key: key);
+  RegisterEvents({Key key, this.id, this.creatorId, this.selfEvent, this.dataUser}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -30,6 +31,8 @@ class _RegisterEvent extends State<RegisterEvents> {
   SearchEvent searchEvent = new SearchEvent();
   SearchEvent dataEvent;
   bool _isLoading = true;
+  String creatorEmail;
+  String creatorName;
 
   @override
   void initState(){
@@ -59,6 +62,8 @@ class _RegisterEvent extends State<RegisterEvents> {
         setState((){
            dataEvent = SearchEvent.fromJson(rawData['data']);
            _isLoading = false;
+           creatorEmail = rawData['creator_email'];
+           creatorName = rawData['creator_name'];
         });
       }else{
         print('ok');
@@ -164,11 +169,11 @@ class _RegisterEvent extends State<RegisterEvents> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text('muhammad bahkrul',
+                                Text(creatorName,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16)),
-                                Text('089-123456789', textAlign: TextAlign.left)
+                                Text(creatorEmail, textAlign: TextAlign.left)
                               ],
                             )),
                       ],
@@ -189,7 +194,11 @@ class _RegisterEvent extends State<RegisterEvents> {
                             Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterEventMethod(id:dataEvent.id,creatorId:widget.creatorId),
+                          builder: (context) => RegisterEventMethod(
+                            id:dataEvent.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
                         ));
                           },
                           child: Text(

@@ -19,6 +19,8 @@ class SearchEvent{
     Color color;
     String userEvent;
     String image;
+    String email;
+    int position;
 
   SearchEvent({
       this.id,
@@ -36,6 +38,7 @@ class SearchEvent{
       this.color,
       this.userEvent,
       this.image,
+      this.position
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
@@ -45,22 +48,32 @@ class SearchEvent{
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
+      String positionUser;
+
+      switch(map['ep_position']){
+        case 2:
+           positionUser = 'Admin';
+           break;
+        default:
+           positionUser = '';
+           break;
+      }
 
       switch(map['ep_status']){
         case 'C':
-             status = 'Pendaftaran Ditolak';
+             status = 'Ditolak $positionUser';
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses Daftar';
+             status = 'Proses Daftar $positionUser';
              color = Colors.orange;
              break;
         case 'A':
-             status = 'Sudah Terdaftar';
+             status = 'Sudah Terdaftar $positionUser';
              color = Colors.green;
              break;
         default:
-             status = 'Belum Terdaftar';
+             status = 'Belum Terdaftar $positionUser';
              color = Colors.grey;
              break;
       }
@@ -79,7 +92,8 @@ class SearchEvent{
         color:color,
         wish:map['ew_wish'],
         userWish:map['ew_user_id'],
-        userEvent:map['ev_create_user']
+        userEvent:map['ev_create_user'],
+        position:map['ep_position']
       );
   }
 
