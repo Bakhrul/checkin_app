@@ -2,6 +2,7 @@ import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'edit_event.dart';
 import 'manage_admin.dart';
 import 'package:flutter/cupertino.dart';
 import 'create.dart';
@@ -25,6 +26,7 @@ List<ListOngoingEvent> listItemOngoing = [];
 List<ListWillComeEvent> listItemWillCome = [];
 List<ListDoneEvent> listItemDoneEvent = [];
 enum PageEnum {
+  kelolaeditEventPage,
   kelolaPesertaPage,
   kelolaWaktuCheckinPage,
   kelolaAbsenPesertaPage,
@@ -80,7 +82,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     });
   }
 
-  void konfirmasidelete(idevent) {
+  void konfirmasidelete(idevent, index, indexid) {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -109,6 +111,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                 if (hapuswishlist.statusCode == 200) {
                   var hapuswishlistJson = json.decode(hapuswishlist.body);
                   if (hapuswishlistJson['status'] == 'success') {
+                    Navigator.pop(context);
+                    listOngoingEvent();
                     Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
                   }
                 } else {
@@ -184,6 +188,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             title: i['ev_title'],
             waktuawal: i['ev_time_start'],
             waktuakhir: i['ev_time_end'],
+            deskripsi: i['ev_detail'],
+            lokasi: i['ev_location'],
             fullday: i['ev_allday'],
           );
           listItemOngoing.add(notax);
@@ -265,6 +271,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             title: i['ev_title'],
             waktuawal: i['ev_time_start'],
             waktuakhir: i['ev_time_end'],
+            deskripsi: i['ev_detail'],
+            lokasi: i['ev_location'],
             fullday: i['ev_allday'],
           );
           listItemWillCome.add(willcomex);
@@ -338,6 +346,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             title: i['ev_title'],
             waktuawal: i['ev_time_start'],
             waktuakhir: i['ev_time_end'],
+            deskripsi: i['ev_detail'],
+            lokasi: i['ev_location'],
             fullday: i['ev_allday'],
           );
           listItemDoneEvent.add(donex);
@@ -521,6 +531,24 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 onSelected: (PageEnum value) {
                                                   switch (value) {
                                                     case PageEnum
+                                                        .kelolaeditEventPage:
+                                                      Navigator.of(context).push(CupertinoPageRoute(
+                                                          builder: (BuildContext context) =>
+                                                              ManajemeEditEvent(
+                                                                  idevent:
+                                                                      item.id,
+                                                                  nama: item
+                                                                      .title,
+                                                                  lokasi: item
+                                                                      .lokasi,
+                                                                  waktuawal: item
+                                                                      .waktuawal,
+                                                                  waktuakhir: item
+                                                                      .waktuakhir,
+                                                                  deskripsi: item
+                                                                      .deskripsi)));
+                                                      break;
+                                                    case PageEnum
                                                         .kelolaadminPage:
                                                       Navigator.of(context).push(
                                                           CupertinoPageRoute(
@@ -551,14 +579,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           .id)));
                                                       break;
                                                     case PageEnum
-                                                        .kelolaAbsenPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageAbsenPeserta()));
-                                                      break;
-                                                    case PageEnum
                                                         .kelolaCheckinPesertaPage:
                                                       Navigator.of(context).push(
                                                           CupertinoPageRoute(
@@ -575,7 +595,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   PointEvents()));
                                                       break;
                                                     case PageEnum.deleteEvent:
-                                                      konfirmasidelete(item.id);
+                                                      konfirmasidelete(item.id, listItemOngoing, item);
                                                       break;
                                                     default:
                                                       break;
@@ -583,6 +603,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 },
                                                 icon: Icon(Icons.more_vert),
                                                 itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaeditEventPage,
+                                                    child:
+                                                        Text("Edit Data Event"),
+                                                  ),
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaadminPage,
@@ -600,12 +626,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         .kelolaWaktuCheckinPage,
                                                     child: Text(
                                                         "Kelola waktu checkin"),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaAbsenPesertaPage,
-                                                    child: Text(
-                                                        "Kelola absen peserta"),
                                                   ),
                                                   PopupMenuItem(
                                                     value: PageEnum
@@ -728,6 +748,27 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                           trailing: PopupMenuButton<PageEnum>(
                                             onSelected: (PageEnum value) {
                                               switch (value) {
+                                                case PageEnum
+                                                    .kelolaeditEventPage:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ManajemeEditEvent(
+                                                                idevent:
+                                                                    item.id,
+                                                                nama:
+                                                                    item.title,
+                                                                lokasi:
+                                                                    item.lokasi,
+                                                                waktuawal: item
+                                                                    .waktuawal,
+                                                                waktuakhir: item
+                                                                    .waktuakhir,
+                                                                deskripsi: item
+                                                                    .deskripsi,
+                                                              )));
+                                                  break;
                                                 case PageEnum.kelolaadminPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
@@ -757,14 +798,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       .id)));
                                                   break;
                                                 case PageEnum
-                                                    .kelolaAbsenPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAbsenPeserta()));
-                                                  break;
-                                                case PageEnum
                                                     .kelolaCheckinPesertaPage:
                                                   Navigator.of(context).push(
                                                       CupertinoPageRoute(
@@ -781,7 +814,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               PointEvents()));
                                                   break;
                                                 case PageEnum.deleteEvent:
-                                                  konfirmasidelete(item.id);
+                                                  konfirmasidelete(item.id, listItemWillCome, item);
                                                   break;
                                                 default:
                                                   break;
@@ -789,6 +822,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                             },
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value: PageEnum
+                                                    .kelolaeditEventPage,
+                                                child: Text("Edit Data Event"),
+                                              ),
                                               PopupMenuItem(
                                                 value: PageEnum.kelolaadminPage,
                                                 child: Text(
@@ -804,12 +842,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     .kelolaWaktuCheckinPage,
                                                 child: Text(
                                                     "Kelola waktu checkin"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaAbsenPesertaPage,
-                                                child: Text(
-                                                    "Kelola absen peserta"),
                                               ),
                                               PopupMenuItem(
                                                 value: PageEnum
@@ -935,6 +967,24 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 onSelected: (PageEnum value) {
                                                   switch (value) {
                                                     case PageEnum
+                                                        .kelolaeditEventPage:
+                                                      Navigator.of(context).push(CupertinoPageRoute(
+                                                          builder: (BuildContext context) =>
+                                                              ManajemeEditEvent(
+                                                                  idevent:
+                                                                      item.id,
+                                                                  nama: item
+                                                                      .title,
+                                                                  lokasi: item
+                                                                      .lokasi,
+                                                                  waktuawal: item
+                                                                      .waktuawal,
+                                                                  waktuakhir: item
+                                                                      .waktuakhir,
+                                                                  deskripsi: item
+                                                                      .deskripsi)));
+                                                      break;
+                                                    case PageEnum
                                                         .kelolaadminPage:
                                                       Navigator.of(context).push(
                                                           CupertinoPageRoute(
@@ -965,14 +1015,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           .id)));
                                                       break;
                                                     case PageEnum
-                                                        .kelolaAbsenPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageAbsenPeserta()));
-                                                      break;
-                                                    case PageEnum
                                                         .kelolaCheckinPesertaPage:
                                                       Navigator.of(context).push(
                                                           CupertinoPageRoute(
@@ -989,7 +1031,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   PointEvents()));
                                                       break;
                                                     case PageEnum.deleteEvent:
-                                                    konfirmasidelete(item.id);
+                                                      konfirmasidelete(item.id, listItemDoneEvent, item);
                                                       break;
                                                     default:
                                                       break;
@@ -997,6 +1039,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 },
                                                 icon: Icon(Icons.more_vert),
                                                 itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    value: PageEnum
+                                                        .kelolaeditEventPage,
+                                                    child:
+                                                        Text("Edit Data Event"),
+                                                  ),
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaadminPage,
@@ -1014,12 +1062,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         .kelolaWaktuCheckinPage,
                                                     child: Text(
                                                         "Kelola waktu checkin"),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaAbsenPesertaPage,
-                                                    child: Text(
-                                                        "Kelola absen peserta"),
                                                   ),
                                                   PopupMenuItem(
                                                     value: PageEnum

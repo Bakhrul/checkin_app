@@ -372,9 +372,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                       headers:
                                                                           requestHeaders,
                                                                       body: {
-                                                                        'idpeserta':
+                                                                        'peserta':
                                                                             listpesertaevent[index].idpeserta,
-                                                                        'idevent':
+                                                                        'event':
                                                                             listpesertaevent[index].idevent
                                                                       });
                                                                   print(
@@ -571,9 +571,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                       headers:
                                                                           requestHeaders,
                                                                       body: {
-                                                                        'idpeserta':
+                                                                        'peserta':
                                                                             listpesertaevent[index].idpeserta,
-                                                                        'idevent':
+                                                                        'event':
                                                                             listpesertaevent[index].idevent
                                                                       });
 

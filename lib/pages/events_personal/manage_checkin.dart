@@ -13,6 +13,7 @@ import 'tambah_checkin.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:core';
+import 'manage_absenpeserta.dart';
 
 bool isLoading, isError;
 String tokenType, accessToken;
@@ -21,6 +22,7 @@ Map<String, String> requestHeaders = Map();
 enum PageEnum {
   editCheckinPage,
   deleteCheckinPage,
+  listUsersCheckinPage,
 }
 
 class ManageCheckin extends StatefulWidget {
@@ -123,17 +125,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
       debugPrint('$e');
     }
     return null;
-  }
-
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.editCheckinPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => ManajemeEditCheckin()));
-        break;
-      default:
-        break;
-    }
   }
 
   void _handleSearchEnd() {
@@ -322,7 +313,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                 listcheckinevent[
                                                                         index]
                                                                     .timestart,
-                                                            typecheckin: listcheckinevent[index].typecheckin,
+                                                            typecheckin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .typecheckin,
                                                             timeend:
                                                                 listcheckinevent[
                                                                         index]
@@ -414,12 +408,32 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                               );
 
                                               break;
+                                            case PageEnum.listUsersCheckinPage:
+                                              Navigator.of(context).push(
+                                                  CupertinoPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          ManageAbsenPeserta(
+                                                              idevent:
+                                                                  listcheckinevent[
+                                                                          index]
+                                                                      .idevent,
+                                                              idcheckin:
+                                                                  listcheckinevent[
+                                                                          index]
+                                                                      .id)));
+                                              break;
                                             default:
                                               break;
                                           }
                                         },
                                         icon: Icon(Icons.more_vert),
                                         itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value:
+                                                PageEnum.listUsersCheckinPage,
+                                            child: Text("Lust Peserta Checkin"),
+                                          ),
                                           PopupMenuItem(
                                             value: PageEnum.editCheckinPage,
                                             child: Text("Edit"),
@@ -468,38 +482,38 @@ class _ManageCheckinState extends State<ManageCheckin> {
       title: appBarTitle,
       backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       actions: <Widget>[
-        IconButton(
-          icon: actionIcon,
-          onPressed: () {
-            setState(() {
-              if (this.actionIcon.icon == Icons.search) {
-                // ignore: new_with_non_type
-                this.actionIcon = new Icon(
-                  Icons.close,
-                  color: Colors.white,
-                );
-                this.appBarTitle = TextField(
-                  controller: _searchQuery,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      border: InputBorder.none,
-                      prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Kode Checkin Event",
-                      hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      )),
-                );
-              } else {
-                _handleSearchEnd();
-              }
-            });
-          },
-        ),
+        // IconButton(
+        //   icon: actionIcon,
+        //   onPressed: () {
+        //     setState(() {
+        //       if (this.actionIcon.icon == Icons.search) {
+        //         // ignore: new_with_non_type
+        //         this.actionIcon = new Icon(
+        //           Icons.close,
+        //           color: Colors.white,
+        //         );
+        //         this.appBarTitle = TextField(
+        //           controller: _searchQuery,
+        //           style: TextStyle(
+        //             color: Colors.white,
+        //           ),
+        //           decoration: InputDecoration(
+        //               contentPadding:
+        //                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        //               border: InputBorder.none,
+        //               prefixIcon: new Icon(Icons.search, color: Colors.white),
+        //               hintText: "Cari Kode Checkin Event",
+        //               hintStyle: TextStyle(
+        //                 color: Colors.white,
+        //                 fontSize: 14,
+        //               )),
+        //         );
+        //       } else {
+        //         _handleSearchEnd();
+        //       }
+        //     });
+        //   },
+        // ),
       ],
     );
   }

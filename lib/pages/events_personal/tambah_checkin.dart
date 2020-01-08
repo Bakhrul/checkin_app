@@ -11,6 +11,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'manage_checkin.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:flutter/services.dart';
+import 'dart:ui';
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
 
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
@@ -82,7 +88,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
       formSerialize['event'] = widget.event;
       formSerialize['namacheckin'] = _namacheckinController.text;
       formSerialize['keyword'] = _kodecheckinController.text;
-      formSerialize['typecheckin'] = 'T';
+      formSerialize['typecheckin'] = 'S';
       formSerialize['time_start'] = _tanggalawal == 'kosong'
           ? null
           : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal));
