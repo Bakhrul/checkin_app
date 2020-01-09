@@ -1,4 +1,5 @@
-import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/create_category.dart';
+import 'package:checkin_app/pages/events_personal/edit_event.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,6 +11,7 @@ import 'package:checkin_app/routes/env.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreatecategory;
 List<ListKategoriEvent> listkategoriEvent = [];
+Map<String, String> requestHeaders = Map();
 bool isLoading, isError, isSame;
 var datepicker;
 String tokenType, accessToken;
@@ -19,18 +21,19 @@ void showInSnackBar(String value) {
       .showSnackBar(new SnackBar(content: new Text(value)));
 }
 
-class ManajemenCreateCategory extends StatefulWidget {
-  ManajemenCreateCategory({Key key, this.title, this.listKategoriadd})
+class ManajemenEditCategoryEvent extends StatefulWidget {
+  ManajemenEditCategoryEvent({Key key, this.title, this.listkategoryedit})
       : super(key: key);
   final String title;
-  final listKategoriadd;
+  final listkategoryedit;
   @override
   State<StatefulWidget> createState() {
-    return _ManajemeCreateCategoryState();
+    return _ManajemenEditCategoryEventState();
   }
 }
 
-class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
+class _ManajemenEditCategoryEventState
+    extends State<ManajemenEditCategoryEvent> {
   @override
   void initState() {
     _scaffoldKeycreatecategory = GlobalKey<ScaffoldState>();
@@ -222,10 +225,10 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                                 ),
                                 onTap: () async {
                                   for (int i = 0;
-                                      i < listKategoriAdd.length;
+                                      i < listkategoriEventEdit.length;
                                       i++) {
                                     if (listkategoriEvent[index].id ==
-                                        listKategoriAdd[i].id) {
+                                        listkategoriEventEdit[i].id) {
                                       setState(() {
                                         isSame = true;
                                       });
@@ -240,12 +243,12 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                                     });
                                   } else {
                                     setState(() {
-                                      ListKategoriEventAdd notax =
-                                          ListKategoriEventAdd(
+                                      ListEditKategoriEvent notax =
+                                          ListEditKategoriEvent(
                                         id: listkategoriEvent[index].id,
                                         nama: listkategoriEvent[index].nama,
                                       );
-                                      listKategoriAdd.add(notax);
+                                      listkategoriEventEdit.add(notax);
                                     });
                                     Navigator.pop(context);
                                   }

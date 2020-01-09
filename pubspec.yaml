@@ -38,6 +38,8 @@ dependencies:
   onesignal_flutter: ^2.0.0
   font_awesome_flutter: 
   image_picker:
+  flutter_pagewise: ^1.2.3
+  paging:
   dio:
   http:
   shared_preferences:

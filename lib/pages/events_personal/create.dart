@@ -63,7 +63,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     _alamateventController.text = '';
     _deskripsieventController.text = '';
   }
-    Future<void> getHeaderHTTP() async {
+
+  Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
     var tokenTypeStorage = await storage.getDataString('token_type');
@@ -118,7 +119,29 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
               ),
               tooltip: 'Simpan Data Event',
               onPressed: () {
-                _tambahevent();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text('Peringatan!'),
+                    content: Text(
+                        'Apakah Anda Ingin Menyimpan Data Event Anda Sekarang? '),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Tidak'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      FlatButton(
+                        textColor: Colors.green,
+                        child: Text('Ya'),
+                        onPressed: () async {
+                          _tambahevent();
+                        },
+                      )
+                    ],
+                  ),
+                );
               },
             ),
           ],
@@ -162,7 +185,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             final date = await showDatePicker(
                                 context: context,
                                 firstDate: DateTime.now(),
-                                initialDate: currentValue ?? DateTime.now(),
+                                initialDate: DateTime.now(),
                                 lastDate: DateTime(2100));
                             if (date != null) {
                               final time = await showTimePicker(
@@ -201,7 +224,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             final date = await showDatePicker(
                                 context: context,
                                 firstDate: DateTime.now(),
-                                initialDate: currentValue ?? DateTime.now(),
+                                initialDate: DateTime.now(),
                                 lastDate: DateTime(2100));
                             if (date != null) {
                               final time = await showTimePicker(
@@ -500,7 +523,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ManajemenCreateCategory(),
+                  builder: (context) => ManajemenCreateCategory(
+                      listKategoriadd: ListKategoriEventAdd),
                 ));
           },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -515,7 +539,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ManajemeCreateAdmin(),
+                  builder: (context) =>
+                      ManajemeCreateAdmin(listUseradd: ListUserAdd),
                 ));
           },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -595,7 +620,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
         formSerialize['keyword'].add(listcheckinAdd[i].keyword);
         formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
         formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
-        formSerialize['typecheckin'].add('T');
+        formSerialize['typecheckin'].add('S');
       }
 
       print(formSerialize);
@@ -618,6 +643,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
             Fluttertoast.showToast(msg: "Berhasil Membuat Event");
+            Navigator.pop(context);
             Navigator.pop(context);
             Navigator.pushReplacement(
                 context,

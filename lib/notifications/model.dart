@@ -7,6 +7,7 @@ class ListNotifications {
    String message;
    String confirmation;
    String idcreator;
+   String updatepeserta;
   
   ListNotifications(
       {this.id,
@@ -17,5 +18,6 @@ class ListNotifications {
       this.message,
       this.confirmation,
       this.idcreator,
+      this.updatepeserta,
       });
 }

@@ -9,7 +9,10 @@
 
 
   //  String host = 'http://192.168.100.6/order/myocin/';
-
+  // String host = 'http://alamraya.club/';
+  //  String host = 'http://192.168.100.12/alamraya/myocin/';
+  //  String host = 'http://192.168.43.115/bisniskita_myocin/';
+  // String host = 'http://192.168.100.7/order/myocin/';
   //  String host = 'http://192.168.43.115/myocin/public/';
    
 

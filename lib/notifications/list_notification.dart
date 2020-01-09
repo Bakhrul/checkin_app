@@ -84,6 +84,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
             idcreator: i['nev_toperson'].toString(),
             idtoperson: i['nev_toperson'].toString(),
             idfromperson: i['nev_fromperson'].toString(),
+            updatepeserta: i['nev_updateperson'].toString(),
             idevent: i['nev_event'].toString(),
             title: i['n_title'],
             message: i['n_message'],
@@ -358,7 +359,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                       .idevent,
                                                                   'peserta': listnotifications[
                                                                           index]
-                                                                      .idtoperson,
+                                                                      .updatepeserta,
                                                                   'idnotif':
                                                                       listnotifications[
                                                                               index]
@@ -388,12 +389,14 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                               } else if (hapuswishlistJson[
                                                                       'status'] ==
                                                                   'Error') {
+                                                                    print(hapuswishlistJson.body);
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Request failed with status: ${accConfirmation.statusCode}");
                                                               }
                                                             } else {
+                                                              print(accConfirmation.body);
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
@@ -451,7 +454,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                       .idevent,
                                                                   'peserta': listnotifications[
                                                                           index]
-                                                                      .idtoperson,
+                                                                      .updatepeserta,
                                                                   'idnotif':
                                                                       listnotifications[
                                                                               index]

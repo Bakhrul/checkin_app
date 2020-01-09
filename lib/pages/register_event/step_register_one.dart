@@ -5,7 +5,8 @@ import 'step_register_someone.dart';
 class RegisterEventMethod extends StatefulWidget{
   final int id;
   final String creatorId;
-  RegisterEventMethod({Key key,this.id,this.creatorId}) : super(key : key);
+  final Map dataUser;
+  RegisterEventMethod({Key key,this.id,this.creatorId, this.dataUser}) : super(key : key);
 
   State<StatefulWidget> createState(){
     return _RegisterEventMethod();
@@ -13,6 +14,11 @@ class RegisterEventMethod extends StatefulWidget{
 }
 
 class _RegisterEventMethod extends State<RegisterEventMethod>{
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -72,11 +78,14 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.white
                               )),
                               onPressed: (){
-                                print('wmwmwmwm ${widget.creatorId}');
                                   Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ConfirmEvent(id:widget.id,creatorId:widget.creatorId),
+                          builder: (context) => ConfirmEvent(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
                         ));
                               }
                             )
