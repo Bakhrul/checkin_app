@@ -32,7 +32,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
    getData() async {
     listPeserta = [];
     dynamic response =
-        await RequestGet(name: "checkin/getdata/participant/", customrequest: "${widget.id}/${widget.eventid}")
+        await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id}/${widget.eventid}")
             .getdata();
 
     for (var i = 0; i < response.length; i++) {

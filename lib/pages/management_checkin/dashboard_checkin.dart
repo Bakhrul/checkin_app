@@ -24,8 +24,8 @@ List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
 
 class DashboardCheckin extends StatefulWidget {
-  DashboardCheckin({Key key, this.title, this.idevent}) : super(key: key);
-  final String title;
+  DashboardCheckin({Key key, this.idevent}) : super(key: key);
+  // final String title;
   final idevent;
   @override
   State<StatefulWidget> createState() {
@@ -51,15 +51,16 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     });
     listPeserta = [];
     try {
+
       dynamic response =
-          await RequestGet(name: "event/getdata/participant", customrequest: "")
+          await RequestGet(name: "event/getdata/participant/", customrequest: "${widget.idevent}")
               .getdata();
       for (var i = 0; i < response.length; i++) {
         UserParticipant peserta = UserParticipant(
           id: response[i]["id"],
           name: response[i]["name"],
           email: response[i]["email"],
-          position: response[i]["position"],
+          // position: response[i]["position"],
           picProfile: response[i]["pic_profile"],
           eventId: response[i]["event_id"],
         );
@@ -86,7 +87,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     try {
       listCheckin = [];
       dynamic response =
-          await RequestGet(name: "checkin/getdata/checkin", customrequest: "")
+          await RequestGet(name: "checkin/getdata/checkin/", customrequest: "${widget.idevent}")
               .getdata();
       for (var i = 0; i < response.length; i++) {
         Checkin checkin = Checkin(
@@ -98,7 +99,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           checkinDate: response[i]["checkin_date"],
         );
         listCheckin.add(checkin);
-        print(response);
       }
       setState(() {
         isLoading = false;
@@ -352,7 +352,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                 child: Text("Yes"),
                                                 onPressed: () {
                                                   deleteParticipant(
-                                                      f.id, f.eventId);
+                                                      f.id, f.eventId.toString());
 
                                                   Navigator.pop(context);
                                                 },

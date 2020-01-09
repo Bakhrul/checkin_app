@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 class Checkin {
-  int id;
-  int eventId;
+  String id;
+  String eventId;
   String checkinKey;
   String startTime;
   String endTime;
@@ -11,7 +11,7 @@ class Checkin {
   String titleEvent;
   String locationEvent;
   
-  Checkin({this.id = 0,this.eventId = 0,this.titleEvent,this.locationEvent, this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName});
+  Checkin({this.id,this.eventId ,this.titleEvent,this.locationEvent, this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName});
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {
   //   return Checkin(
