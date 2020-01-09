@@ -26,6 +26,20 @@ class ManajemeCreatePeserta extends StatefulWidget {
     return _ManajemeCreatePesertaState();
   }
 }
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
 
 class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
   @override
@@ -429,7 +443,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Mohon Tunggu Sebentar");
-                                                            final hapuswishlist =
+                                                            final addpeserta =
                                                                 await http.post(
                                                                     url(
                                                                         'api/addpeserta_event'),
@@ -444,16 +458,20 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                                           .id,
                                                                 });
 
-                                                            if (hapuswishlist
+                                                            if (addpeserta
                                                                     .statusCode ==
                                                                 200) {
-                                                              var hapuswishlistJson =
+                                                              var addpesertaJson =
                                                                   json.decode(
-                                                                      hapuswishlist
+                                                                      addpeserta
                                                                           .body);
-                                                              if (hapuswishlistJson[
+                                                              if (addpesertaJson[
                                                                       'status'] ==
                                                                   'success') {
+                                                                    Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "Berhasil");
                                                                 Navigator.pop(
                                                                     context);
                                                                 Navigator.pop(
@@ -464,34 +482,63 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                                         builder:
                                                                             (context) =>
                                                                                 ManagePeserta(event: widget.event)));
-                                                              } else if (hapuswishlistJson[
+                                                              } else if (addpesertaJson[
                                                                       'status'] ==
                                                                   'sudah ada') {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Member ini sudah terdaftar pada event anda");
-                                                              } else if (hapuswishlistJson[
+                                                                            Navigator.pop(
+                                                                    context);
+                                                              } else if (addpesertaJson[
                                                                       'status'] ==
-                                                                  'belumacc') {
+                                                                  'pending') {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Pendaftaran member ini menunggu persetujuan dari anda");
+                                                                            Navigator.pop(
+                                                                    context);
+                                                              }else if(addpesertaJson['status'] == 'sudahadmin'){
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "member ini sudah terdaftar menjadi admin event anda");
+                                                                            Navigator.pop(
+                                                                    context);
+                                                              }else if(addpesertaJson['status'] == 'adminpending'){
+                                                                 Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "Anda sudah memninta member ini untuk menjadi admin event dan saat ini menunggu persetujuan");
+                                                                            Navigator.pop(
+                                                                    context);
+                                                              }else{
+                                                                 Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "Status Tidak Diketahui");
+                                                                          Navigator.pop(
+                                                                    context);
                                                               }
                                                             } else {
                                                               print(
-                                                                  hapuswishlist
+                                                                  addpeserta
                                                                       .body);
+                                                                      Navigator.pop(
+                                                                    context);
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                          "Request failed with status: ${addpeserta.statusCode}");
                                                             }
                                                           } on TimeoutException catch (_) {
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Timed out, Try again");
+                                                                    Navigator.pop(
+                                                                    context);
                                                           } catch (e) {
                                                             print(e);
                                                           }
