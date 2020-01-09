@@ -35,6 +35,7 @@ dependencies:
   qrcode: ^1.0.4
   path_provider: ^0.4.1
   uuid: ^2.0.4
+  onesignal_flutter: ^2.0.0
   font_awesome_flutter: 
   image_picker:
   dio:
