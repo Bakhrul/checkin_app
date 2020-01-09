@@ -2,7 +2,6 @@ import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
-import 'package:checkin_app/pages/events_personal/create_checkin.dart';
 import 'edit_checkin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:checkin_app/storage/storage.dart';
@@ -79,6 +78,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
       if (checkinevent.statusCode == 200) {
         var listuserJson = json.decode(checkinevent.body);
         var listUsers = listuserJson['checkin'];
+        print(listuserJson);
         listcheckinevent = [];
         for (var i in listUsers) {
           ListCheckinEvent willcomex = ListCheckinEvent(
@@ -89,6 +89,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
             timestart: i['ec_time_start'],
             timeend: i['ec_time_end'],
             typecheckin: i['ec_type'],
+            checkin: i['uc_time'],
           );
           listcheckinevent.add(willcomex);
         }
@@ -126,26 +127,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
     }
     return null;
   }
-
-  void _handleSearchEnd() {
-    setState(() {
-      // ignore: new_with_non_type
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Kelola Waktu Checkin Event",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      );
-      _searchQuery.clear();
-    });
-  }
-
-  final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
     "Kelola Waktu Checkin Event",
@@ -432,16 +413,18 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                           PopupMenuItem(
                                             value:
                                                 PageEnum.listUsersCheckinPage,
-                                            child: Text("Lust Peserta Checkin"),
+                                            child: Text("List Peserta Checkin"),
                                           ),
+                                          listcheckinevent[index].checkin == null || listcheckinevent[index].checkin == '' ?
                                           PopupMenuItem(
                                             value: PageEnum.editCheckinPage,
                                             child: Text("Edit"),
-                                          ),
+                                          ): null,
+                                          listcheckinevent[index].checkin == null || listcheckinevent[index].checkin == '' ?
                                           PopupMenuItem(
                                             value: PageEnum.deleteCheckinPage,
                                             child: Text("Delete"),
-                                          ),
+                                          ): null,
                                         ],
                                       ),
                                       title: Text(

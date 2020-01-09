@@ -10,12 +10,11 @@ import 'pages/register_event/step_register_three.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
-
+import 'pages/management_checkin/create_checkin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
 bool isLoading, isError;
 String tokenType, accessToken;

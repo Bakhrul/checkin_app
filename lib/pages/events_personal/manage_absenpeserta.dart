@@ -138,26 +138,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
     return null;
   }
 
-  void _handleSearchEnd() {
-    setState(() {
-      // ignore: new_with_non_type
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Kelola Absen Peserta",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      );
-      _searchQuery.clear();
-    });
-  }
-
-  final TextEditingController _searchQuery = new TextEditingController();
-
   Widget appBarTitle = Text(
     "Kelola Absen Peserta",
     style: TextStyle(fontSize: 16),
@@ -173,96 +153,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyManageAbsenPeserta,
       appBar: buildBar(context),
-      // appBar: AppBar(
-      //   backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      //   title: Text(
-      //     "Kelola Absen Peserta",
-      //     style: TextStyle(
-      //       color: Colors.white,
-      //       fontSize: 14,
-      //     ),
-      //   ),
-      //   iconTheme: new IconThemeData(color: Colors.white),
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: const Icon(
-      //         Icons.search,
-      //         color: Colors.white,
-      //       ),
-      //       tooltip: 'Cari Peserta',
-      //       onPressed: () {},
-      //     ),
-      //   ],
-      // ),
-      // drawer: SafeArea(
-      //   child: Drawer(
-      //     child: Container(
-      //       color: Colors.blue,
-
-      //       child: Column(
-
-      //         children: <Widget>[
-      //           Padding(
-      //             padding: const EdgeInsets.only(top:50.0,bottom: 50.0),
-      //             child: Text('Indikator Absen Peserta Event',style: TextStyle(fontSize: 20,color: Colors.white,)),
-      //           ),
-      //           CircularPercentIndicator(
-      //             radius: 160.0,
-      //             lineWidth: 5.0,
-      //             percent: 0.8,
-      //             center: new Text(
-      //               "30 / 70%",
-      //               style:
-      //                   new TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: 14.0),
-      //             ),
-      //             backgroundColor: Colors.greenAccent,
-      //             progressColor: Color.fromRGBO(179, 0, 179, 1.0),
-      //             footer: new Column(
-      //               children: <Widget>[
-      //                 Row(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     Padding(
-      //                       padding: const EdgeInsets.only(top:30.0,),
-      //                       child: Text("12 ",
-      //                           style: new TextStyle(
-      //                                fontSize: 17.0,color: Colors.greenAccent)),
-      //                     ),
-      //                     Padding(
-      //                       padding: const EdgeInsets.only(top:30.0,),
-      //                       child: Text("/  478",
-      //                           style: new TextStyle(
-      //                                fontSize: 17.0,color: Colors.white)),
-      //                     ),
-      //                   ],
-      //                 ),
-      //                 Row(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: <Widget>[
-      //                     Padding(
-      //                       padding: const EdgeInsets.only(top:15.0,),
-      //                       child: Text("466 ",
-      //                           style: new TextStyle(
-      //                                fontSize: 17.0,color: Colors.purple)),
-      //                     ),
-      //                     Padding(
-      //                       padding: const EdgeInsets.only(top:15.0,),
-      //                       child: Text("/  478",
-      //                           style: new TextStyle(
-      //                                fontSize: 17.0,color: Colors.white)),
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //           // Profil Drawer Here
-      //           //  Menu Section Here
-      //         ],
-      //       ),
-      //     ),
-      //   ),
-      // ),
       body: isLoading == true
           ? Center(
               child: CircularProgressIndicator(),
@@ -544,38 +434,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
       title: appBarTitle,
       backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       actions: <Widget>[
-        IconButton(
-          icon: actionIcon,
-          onPressed: () {
-            setState(() {
-              if (this.actionIcon.icon == Icons.search) {
-                // ignore: new_with_non_type
-                this.actionIcon = new Icon(
-                  Icons.close,
-                  color: Colors.white,
-                );
-                this.appBarTitle = TextField(
-                  controller: _searchQuery,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      border: InputBorder.none,
-                      prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Berdasarkan Nama Peserta",
-                      hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      )),
-                );
-              } else {
-                _handleSearchEnd();
-              }
-            });
-          },
-        ),
       ],
     );
   }

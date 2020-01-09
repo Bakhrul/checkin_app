@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'create.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
-import 'manage_absenpeserta.dart';
 import 'package:http/http.dart' as http;
 import 'manage_checkin.dart';
 import 'list_multicheckin.dart';
@@ -53,7 +52,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
   @override
   void initState() {
     super.initState();
-    listOngoingEvent();
     getHeaderHTTP();
     isLoading = true;
     jumlahongoingX = null;
@@ -155,6 +153,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
+    return listOngoingEvent();
   }
 
   Future<List<List>> listOngoingEvent() async {
@@ -424,7 +423,62 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
+          :
+          isError == true
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => getHeaderHTTP(),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              getHeaderHTTP();
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                )
+                : Padding(
               padding: const EdgeInsets.only(top: 30.0),
               child: SingleChildScrollView(
                 child: Column(
