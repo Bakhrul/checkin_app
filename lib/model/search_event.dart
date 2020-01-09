@@ -52,7 +52,7 @@ class SearchEvent{
 
       switch(map['ep_position']){
         case 2:
-           positionUser = 'Admin';
+           positionUser = ' Admin';
            break;
         default:
            positionUser = '';
@@ -61,19 +61,19 @@ class SearchEvent{
 
       switch(map['ep_status']){
         case 'C':
-             status = 'Ditolak $positionUser';
+             status = 'Ditolak$positionUser';
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses Daftar $positionUser';
+             status = 'Proses Daftar$positionUser';
              color = Colors.orange;
              break;
         case 'A':
-             status = 'Sudah Terdaftar $positionUser';
+             status = 'Sudah Terdaftar$positionUser';
              color = Colors.green;
              break;
         default:
-             status = 'Belum Terdaftar $positionUser';
+             status = 'Belum Terdaftar$positionUser';
              color = Colors.grey;
              break;
       }

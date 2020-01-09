@@ -12,12 +12,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import "dart:convert";
 
-GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
-void showInSnackBar(String value) {
-  _scaffoldKeyEventAll.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
-
 enum PageEnum {
   kelolaRegisterPage,
 }
@@ -49,6 +43,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   List listCategory = [];
   int categoryNow = 0;
   Map dataUser;
+  bool delay = false;
 
   @override
   void initState() {
@@ -56,7 +51,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     getHeaderHTTP();
     _getCategory();
     _getAll(0,_searchQuery.text);
-    _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     super.initState();
     _searchQuery.addListener((){
       setState((){
@@ -65,7 +59,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       });
       _getAll(categoryNow,_searchQuery.text);
     });
-    pageScroll.addListener((){
+    pageScroll.addListener(() async {
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
          _getPage(categoryNow,_searchQuery.text);
        }
@@ -103,11 +97,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    final ongoingevent = await http.get(
+   try{
+      final ongoingevent = await http.get(
         url('api/user'),
         headers: requestHeaders
       );
-      print(ongoingevent.body);
+
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
@@ -116,9 +111,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           setState((){
             dataUser = rawData;
           });
-          print(dataUser);
         } 
+      
       }
+    } catch(e){
+      print(e);
+    }
   }
 
   _getAll(int type,String query) async {
@@ -187,7 +185,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     print('_getPage()');
 
-     await new Future.delayed(new Duration(milliseconds:10));
+      if(delay){
+        return false;
+      }else{
+        setState((){
+           delay = true;
+        });
+      }
 
     if(manyPage != 0){
       if(page == manyPage){
@@ -199,6 +203,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         });
       }
     }
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -214,7 +219,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         url('api/event/page/$page'),
         headers: requestHeaders,
         body:body
-      );
+    );
 
     print(ongoingevent.body);
 
@@ -232,6 +237,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
         setState((){
           print('false');
+          delay = false;
           _isLoadingPagination = false;
         });
       } 
@@ -262,6 +268,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   
       if (ongoingevent.statusCode == 200) {
         var dataRaw = json.decode(ongoingevent.body);
+        listCategory.add({'c_name':'Semua','c_id':0});
         for(var x in dataRaw['kategori']){
             listCategory.add(x);
         }
@@ -375,7 +382,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyEventAll,
       appBar: buildBar(context),
       body: _isLoadingCategory ? 
         Center(
@@ -412,39 +418,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(right: 10.0),
-                        child: ButtonTheme(
-                          minWidth: 0.0,
-                          height: 0,
-                          child: RaisedButton(
-                            color: categoryNow == 0 ? Color.fromRGBO(41, 30, 47, 1):Colors.transparent,
-                            elevation: 0.0,
-                            highlightColor: Colors.transparent,
-                            highlightElevation: 0.0,
-                            padding: EdgeInsets.only(
-                                top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-                            onPressed: () {
-                               setState((){
-                                  _isLoading = true;
-                                  categoryNow = 0;
-                                  page = 1;
-                                  _getAll(0,_searchQuery.text);
-                               });
-                            },
-                            child: Text(
-                              "Semua",
-                              style: TextStyle(
-                                  color: categoryNow == 0 ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(18.0),
-                                side: BorderSide(
-                                  color: Color.fromRGBO(41, 30, 47, 1),
-                                )),
-                          ),
-                        )),
                     for(var x in listCategory)
                       Container(
                         margin: EdgeInsets.only(right: 10.0),
@@ -462,6 +435,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                setState((){
                                  _isLoading = true;
                                  page = 1;
+                                 delay = false;
                                  categoryNow = x['c_id'];
                                  _getAll(x['c_id'],_searchQuery.text);
                                });
