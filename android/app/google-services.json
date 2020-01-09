@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "659759472381",
-    "firebase_url": "https://bisniskita-8662d.firebaseio.com",
-    "project_id": "bisniskita-8662d",
-    "storage_bucket": "bisniskita-8662d.appspot.com"
+    "project_number": "48384254138",
+    "firebase_url": "https://coba-1e3e5.firebaseio.com",
+    "project_id": "coba-1e3e5",
+    "storage_bucket": "coba-1e3e5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:659759472381:android:8442abf70ed63b89752894",
+        "mobilesdk_app_id": "1:48384254138:android:19025dfe483496f2572283",
         "android_client_info": {
           "package_name": "com.bisniskita.checkin_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "659759472381-qofeorh94qgshdrhf3tkp3b3tcigc2op.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.bisniskita.checkin_app",
-            "certificate_hash": "9a2e85c87acf85f18d2b7f8edfc8885ecebd1d94"
-          }
-        },
-        {
-          "client_id": "659759472381-l2g42lq21abnfed868cbf01ff1397ed9.apps.googleusercontent.com",
+          "client_id": "48384254138-co1m8sku5b2vsib1p5nvc911ffl9a6tm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCSU_GpFWyL3SvYihf_Qw1VXv5ZIpS_zB8"
+          "current_key": "AIzaSyDyj0kMwVm2ku8USn-81vBUc8WyDhchbmc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "659759472381-l2g42lq21abnfed868cbf01ff1397ed9.apps.googleusercontent.com",
+              "client_id": "48384254138-co1m8sku5b2vsib1p5nvc911ffl9a6tm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

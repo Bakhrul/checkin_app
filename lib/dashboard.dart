@@ -1,6 +1,8 @@
 import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:ui';
+import 'model/event.dart';
 import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/register_event/step_register_six.dart';
@@ -8,20 +10,23 @@ import 'pages/register_event/step_register_three.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
-
+import 'pages/management_checkin/create_checkin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-
-
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
+bool isLoading, isError;
+String tokenType, accessToken;
 String jumlahnotifX;
+List<Event> listEventSelf = [];
+List<Event> listEventUpComming = [];
+List<Event> listEventNow = [];
+
 enum PageEnum {
   kelolaRegisterPage,
 }
 
-String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 
 class Dashboard extends StatefulWidget {
@@ -48,6 +53,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    eventUpComing();
+    eventNow();
     getvaluenotif();
     dataProfile();
     print(user);
@@ -57,6 +64,8 @@ class _DashboardState extends State<Dashboard> {
     wishlisttwo = true;
     wishlistthree = true;
     wishlistfive = true;
+    isLoading = true;
+    isError = false;
   }
 
   void dispose() {
@@ -120,6 +129,155 @@ class _DashboardState extends State<Dashboard> {
       _searchQuery.clear();
     });
   }
+
+  Future<List<Event>> eventNow() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final nowevent = await http.get(
+        url('api/event/getdata/dashboard/eventsekarang'),
+        headers: requestHeaders,
+      );
+
+      if (nowevent.statusCode == 200) {
+        // return nota;
+        var noweventJson = json.decode(nowevent.body);
+        var nowevents = noweventJson;
+
+        listEventNow = [];
+        for (var i in nowevents) {
+          Event willcomex = Event(
+            id: i['id'],
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+
+          );
+          listEventNow.add(willcomex);
+        }
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+        // listDoneEvent();
+      } else if (nowevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        // print(nowevent.body);
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+    return null;
+  }
+
+ Future<List<Event>> eventUpComing() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final willcomeevent = await http.get(
+        url('api/event/getdata/dashboard/eventakandatang'),
+        headers: requestHeaders,
+      );
+
+      if (willcomeevent.statusCode == 200) {
+        // return nota;
+        var willcomeeventJson = json.decode(willcomeevent.body);
+        var willcomeEvents = willcomeeventJson;
+
+        // print('willcome $willcomeEvents');
+        listEventUpComming = [];
+        for (var i in willcomeEvents) {
+          Event willcomex = Event(
+            // id: '${i['ev_id']}',
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+          );
+          listEventUpComming.add(willcomex);
+        }
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+        // listDoneEvent();
+      } else if (willcomeevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        // print(willcomeevent.body);
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+    return null;
+  }
+
   Future<void> getvaluenotif() async {
     var storage = new DataStore();
 
@@ -132,32 +290,34 @@ class _DashboardState extends State<Dashboard> {
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
     try {
-      final response = await http.post(url('api/check_notification'),
-          headers: requestHeaders,);
+      final response = await http.post(
+        url('api/check_notification'),
+        headers: requestHeaders,
+      );
 
       if (response.statusCode == 200) {
         var notifJson = json.decode(response.body);
         String notifvalue = notifJson['jumlahnotif'].toString();
-        
+
         setState(() {
-          jumlahnotifX = notifvalue;  
+          jumlahnotifX = notifvalue;
         });
       } else if (response.statusCode == 401) {
       } else {
-        print(response.body);
+        // print(response.body);
         return null;
       }
     } catch (e) {
       print('Error : $e');
     }
   }
+
   String usernameprofile, emailprofile;
-  Future<void> dataProfile() async{
+  Future<void> dataProfile() async {
     var storage = new DataStore();
 
     usernameprofile = await storage.getDataString("name");
     emailprofile = await storage.getDataString('email');
-
   }
 
   String _username;
@@ -165,7 +325,6 @@ class _DashboardState extends State<Dashboard> {
     DataStore dataStore = new DataStore();
     dataStore.clearData();
     _username = await dataStore.getDataString("name");
-    print(_username);
   }
 
   final TextEditingController _searchQuery = new TextEditingController();
@@ -323,1249 +482,590 @@ class _DashboardState extends State<Dashboard> {
         ),
         body: SingleChildScrollView(
             child: Column(children: <Widget>[
-          // Container(
-          //   width: double.infinity,
-          //   child: Padding(
-          //     padding:
-          //         const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
-          //     child: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: <Widget>[
-          //         Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
-          //             style: TextStyle(
-          //               fontSize: 16,
-          //               fontWeight: FontWeight.w500,
-          //             )),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 10.0, bottom: 10.0),
-          //   child: SingleChildScrollView(
-          //     scrollDirection: Axis.horizontal,
-          //     child: Row(children: <Widget>[
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Color.fromRGBO(41, 30, 47, 1),
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Semua',
-          //                 style: TextStyle(
-          //                     color: Colors.white, fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Colors.transparent,
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Teknologi',
-          //                 style: TextStyle(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                     fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Colors.transparent,
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Kesehatan',
-          //                 style: TextStyle(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                     fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Colors.transparent,
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Financial',
-          //                 style: TextStyle(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                     fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Colors.transparent,
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Keuangan',
-          //                 style: TextStyle(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                     fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //       Container(
-          //           margin: EdgeInsets.only(right: 10.0),
-          //           child: ButtonTheme(
-          //             minWidth: 0.0,
-          //             height: 0,
-          //             child: RaisedButton(
-          //               color: Colors.transparent,
-          //               elevation: 0.0,
-          //               highlightColor: Colors.transparent,
-          //               highlightElevation: 0.0,
-          //               padding: EdgeInsets.only(
-          //                   top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-          //               onPressed: () {},
-          //               child: Text(
-          //                 'Pertambangan',
-          //                 style: TextStyle(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                     fontWeight: FontWeight.w500),
-          //               ),
-          //               shape: RoundedRectangleBorder(
-          //                   borderRadius: new BorderRadius.circular(18.0),
-          //                   side: BorderSide(
-          //                     color: Color.fromRGBO(41, 30, 47, 1),
-          //                   )),
-          //             ),
-          //           )),
-          //     ]),
-          //   ),
-          // ),
-          // Container(
-          //     child: Column(children: <Widget>[
-          //   InkWell(
-          //       onTap: currentmyEvent,
-          //       child: Container(
-          //         child: Padding(
-          //           padding:
-          //               const EdgeInsets.only(left: 10.0, right: 10.0, top: 0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Text(('Event Anda').toUpperCase(),
-          //                   style: TextStyle(
-          //                     fontSize: 16,
-          //                     fontWeight: FontWeight.w500,
-          //                   )),
-          //               Icon(heightmyevent == null
-          //                   ? Icons.arrow_drop_down
-          //                   : Icons.arrow_drop_up),
-          //             ],
-          //           ),
-          //         ),
-          //       )),
-          //   InkWell(
-          //     child: Container(
-          //         margin: EdgeInsets.only(
-          //             top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //         height: heightmyevent,
-          //         child: Column(
-          //           children: <Widget>[
-          //             Card(
-          //               elevation: 1,
-          //               child: Column(
-          //                 children: <Widget>[
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(10.0),
-          //                     child: Row(
-          //                       children: <Widget>[
-          //                         Expanded(
-          //                           flex: 5,
-          //                           child: Container(
-          //                               width: 80.0,
-          //                               height: 80.0,
-          //                               decoration: new BoxDecoration(
-          //                                 borderRadius: new BorderRadius.only(
-          //                                     topLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     topRight:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomRight:
-          //                                         const Radius.circular(5.0)),
-          //                                 image: new DecorationImage(
-          //                                   fit: BoxFit.fill,
-          //                                   image: AssetImage(
-          //                                     'images/bg-header.jpg',
-          //                                   ),
-          //                                 ),
-          //                               )),
-          //                         ),
-          //                         Expanded(
-          //                           flex: 7,
-          //                           child: Padding(
-          //                             padding: const EdgeInsets.only(
-          //                                 left: 15.0, right: 5.0),
-          //                             child: Column(
-          //                               mainAxisAlignment:
-          //                                   MainAxisAlignment.start,
-          //                               crossAxisAlignment:
-          //                                   CrossAxisAlignment.start,
-          //                               children: <Widget>[
-          //                                 Text(
-          //                                   '12 Agustus 2019',
-          //                                   style: TextStyle(
-          //                                       color: Colors.blue,
-          //                                       fontSize: 13,
-          //                                       fontWeight: FontWeight.bold),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding:
-          //                                       const EdgeInsets.only(top: 5.0),
-          //                                   child: Text('Komunitas Dev Junior',
-          //                                       style: TextStyle(
-          //                                         color: Colors.black,
-          //                                         fontWeight: FontWeight.w500,
-          //                                         fontSize: 16,
-          //                                       )),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding: const EdgeInsets.only(
-          //                                       top: 10.0),
-          //                                   child: Text(
-          //                                     'Lemahbang Sukorejo Pasuruan',
-          //                                     style:
-          //                                         TextStyle(color: Colors.grey),
-          //                                   ),
-          //                                 )
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ],
-          //         )),
-          //     onTap: () async {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => DashboardCheckin(idevent: 2),
-          //           ));
-          //     },
-          //   ),
-          // ])),
-          // Container(
-          //   padding: EdgeInsets.only(
-          //       left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
-          //   child: Divider(),
-          // ),
-          // Container(
-          //     child: Column(children: <Widget>[
-          //   InkWell(
-          //       onTap: currentEvent,
-          //       child: Container(
-          //         child: Padding(
-          //           padding:
-          //               const EdgeInsets.only(left: 10.0, right: 10.0, top: 0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Text(('Event Berlangsung').toUpperCase(),
-          //                   style: TextStyle(
-          //                     fontSize: 16,
-          //                     fontWeight: FontWeight.w500,
-          //                   )),
-          //               Icon(height == null
-          //                   ? Icons.arrow_drop_down
-          //                   : Icons.arrow_drop_up),
-          //             ],
-          //           ),
-          //         ),
-          //       )),
-          //   InkWell(
-          //     child: Container(
-          //       height: height,
-          //       child: Stack(
-          //         children: <Widget>[
-          //           Container(
-          //               margin: EdgeInsets.only(
-          //                   top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //               child: Column(
-          //                 children: <Widget>[
-          //                   Card(
-          //                     elevation: 1,
-          //                     child: Column(
-          //                       children: <Widget>[
-          //                         Padding(
-          //                           padding: const EdgeInsets.all(10.0),
-          //                           child: Row(
-          //                             children: <Widget>[
-          //                               Expanded(
-          //                                 flex: 5,
-          //                                 child: Container(
-          //                                     width: 80.0,
-          //                                     height: 80.0,
-          //                                     decoration: new BoxDecoration(
-          //                                       borderRadius: new BorderRadius
-          //                                               .only(
-          //                                           topLeft:
-          //                                               const Radius.circular(
-          //                                                   5.0),
-          //                                           topRight:
-          //                                               const Radius.circular(
-          //                                                   5.0),
-          //                                           bottomLeft:
-          //                                               const Radius.circular(
-          //                                                   5.0),
-          //                                           bottomRight:
-          //                                               const Radius.circular(
-          //                                                   5.0)),
-          //                                       image: new DecorationImage(
-          //                                         fit: BoxFit.fill,
-          //                                         image: AssetImage(
-          //                                           'images/bg-header.jpg',
-          //                                         ),
-          //                                       ),
-          //                                     )),
-          //                               ),
-          //                               Expanded(
-          //                                 flex: 7,
-          //                                 child: Padding(
-          //                                   padding: const EdgeInsets.only(
-          //                                       left: 15.0, right: 5.0),
-          //                                   child: Column(
-          //                                     mainAxisAlignment:
-          //                                         MainAxisAlignment.start,
-          //                                     crossAxisAlignment:
-          //                                         CrossAxisAlignment.start,
-          //                                     children: <Widget>[
-          //                                       Text(
-          //                                         '12 Agustus 2019',
-          //                                         style: TextStyle(
-          //                                             color: Colors.blue,
-          //                                             fontSize: 13,
-          //                                             fontWeight:
-          //                                                 FontWeight.bold),
-          //                                       ),
-          //                                       Padding(
-          //                                         padding:
-          //                                             const EdgeInsets.only(
-          //                                                 top: 5.0),
-          //                                         child: Text(
-          //                                             'Komunitas Dev Junior',
-          //                                             style: TextStyle(
-          //                                               color: Colors.black,
-          //                                               fontWeight:
-          //                                                   FontWeight.w500,
-          //                                               fontSize: 16,
-          //                                             )),
-          //                                       ),
-          //                                       Padding(
-          //                                         padding:
-          //                                             const EdgeInsets.only(
-          //                                                 top: 10.0),
-          //                                         child: Text(
-          //                                           'Lemahbang Sukorejo Pasuruan',
-          //                                           style: TextStyle(
-          //                                               color: Colors.grey),
-          //                                         ),
-          //                                       )
-          //                                     ],
-          //                                   ),
-          //                                 ),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                         ),
-          //                         Container(
-          //                             padding: EdgeInsets.only(
-          //                                 left: 10.0, right: 10.0),
-          //                             child: Divider()),
-          //                         Padding(
-          //                           padding: const EdgeInsets.only(
-          //                               left: 10.0, right: 10.0, bottom: 10.0),
-          //                           child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: <Widget>[
-          //                               Container(
-          //                                   decoration: new BoxDecoration(
-          //                                     color: Colors.green,
-          //                                     borderRadius:
-          //                                         new BorderRadius.only(
-          //                                             topLeft: const Radius
-          //                                                 .circular(5.0),
-          //                                             topRight:
-          //                                                 const Radius.circular(
-          //                                                     5.0),
-          //                                             bottomLeft:
-          //                                                 const Radius.circular(
-          //                                                     5.0),
-          //                                             bottomRight: const Radius
-          //                                                 .circular(5.0)),
-          //                                   ),
-          //                                   padding: EdgeInsets.all(5.0),
-          //                                   width: 120.0,
-          //                                   child: Text(
-          //                                     'Sudah Terdaftar',
-          //                                     style: TextStyle(
-          //                                       color: Colors.white,
-          //                                       fontSize: 12,
-          //                                       fontWeight: FontWeight.w500,
-          //                                     ),
-          //                                     textAlign: TextAlign.center,
-          //                                   )),
-          //                               Padding(
-          //                                 padding:
-          //                                     const EdgeInsets.only(right: 0),
-          //                                 child: ButtonTheme(
-          //                                   minWidth: 0, //wraps child's width
-          //                                   height: 0,
-          //                                   child: FlatButton(
-          //                                     child: Row(
-          //                                       children: <Widget>[
-          //                                         Icon(
-          //                                           Icons.favorite,
-          //                                           color: wishlistone == true
-          //                                               ? Colors.pink
-          //                                               : Colors.grey,
-          //                                           size: 18,
-          //                                         ),
-          //                                       ],
-          //                                     ),
-          //                                     color: Colors.white,
-          //                                     materialTapTargetSize:
-          //                                         MaterialTapTargetSize
-          //                                             .shrinkWrap,
-          //                                     padding: EdgeInsets.all(5.0),
-          //                                     onPressed: () async {
-          //                                       setState(() {
-          //                                         if (wishlistone == true) {
-          //                                           wishlistone = false;
-          //                                         } else {
-          //                                           wishlistone = true;
-          //                                         }
-          //                                       });
-          //                                     },
-          //                                   ),
-          //                                 ),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ],
-          //               )),
-          //           Positioned(
-          //               width: 30.0,
-          //               right: 10,
-          //               top: -7,
-          //               child: Container(
-          //                 decoration: new BoxDecoration(
-          //                   color: Colors.white,
-          //                   borderRadius: new BorderRadius.only(
-          //                       topLeft: const Radius.circular(5.0),
-          //                       topRight: const Radius.circular(5.0),
-          //                       bottomLeft: const Radius.circular(5.0),
-          //                       bottomRight: const Radius.circular(5.0)),
-          //                 ),
-          //                 padding: EdgeInsets.all(5.0),
-          //                 child: Icon(Icons.star_border,
-          //                     color: Colors.orangeAccent),
-          //               )),
-          //         ],
-          //       ),
-          //     ),
-          //     onTap: () async {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => SuccesRegisteredEvent(),
-          //           ));
-          //     },
-          //   ),
-          // ])),
-          // Container(
-          //   padding: EdgeInsets.only(
-          //       left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
-          //   child: Divider(),
-          // ),
-          // Column(children: <Widget>[
-          //   InkWell(
-          //       onTap: futureEvent,
-          //       child: Container(
-          //         width: double.infinity,
-          //         child: Padding(
-          //           padding: const EdgeInsets.only(
-          //               left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Text(('Event yang akan datang').toUpperCase(),
-          //                   style: TextStyle(
-          //                     fontSize: 16,
-          //                     fontWeight: FontWeight.w500,
-          //                   )),
-          //               Icon(futureheight == null
-          //                   ? Icons.arrow_drop_down
-          //                   : Icons.arrow_drop_up),
-          //             ],
-          //           ),
-          //         ),
-          //       )),
-          //   InkWell(
-          //     child: Container(
-          //         margin: EdgeInsets.only(
-          //             top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //         height: futureheight,
-          //         child: Column(
-          //           children: <Widget>[
-          //             Card(
-          //               elevation: 1,
-          //               child: Column(
-          //                 children: <Widget>[
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(10.0),
-          //                     child: Row(
-          //                       children: <Widget>[
-          //                         Expanded(
-          //                           flex: 5,
-          //                           child: Container(
-          //                               width: 80.0,
-          //                               height: 80.0,
-          //                               decoration: new BoxDecoration(
-          //                                 borderRadius: new BorderRadius.only(
-          //                                     topLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     topRight:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomRight:
-          //                                         const Radius.circular(5.0)),
-          //                                 image: new DecorationImage(
-          //                                   fit: BoxFit.fill,
-          //                                   image: AssetImage(
-          //                                     'images/bg-header.jpg',
-          //                                   ),
-          //                                 ),
-          //                               )),
-          //                         ),
-          //                         Expanded(
-          //                           flex: 7,
-          //                           child: Padding(
-          //                             padding: const EdgeInsets.only(
-          //                                 left: 15.0, right: 5.0),
-          //                             child: Column(
-          //                               mainAxisAlignment:
-          //                                   MainAxisAlignment.start,
-          //                               crossAxisAlignment:
-          //                                   CrossAxisAlignment.start,
-          //                               children: <Widget>[
-          //                                 Text(
-          //                                   '12 Agustus 2019',
-          //                                   style: TextStyle(
-          //                                       color: Colors.blue,
-          //                                       fontSize: 13,
-          //                                       fontWeight: FontWeight.bold),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding:
-          //                                       const EdgeInsets.only(top: 5.0),
-          //                                   child: Text('Komunitas Dev Junior',
-          //                                       style: TextStyle(
-          //                                         color: Colors.black,
-          //                                         fontWeight: FontWeight.w500,
-          //                                         fontSize: 16,
-          //                                       )),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding: const EdgeInsets.only(
-          //                                       top: 10.0),
-          //                                   child: Text(
-          //                                     'Lemahbang Sukorejo Pasuruan',
-          //                                     style:
-          //                                         TextStyle(color: Colors.grey),
-          //                                   ),
-          //                                 )
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                   Container(
-          //                       padding:
-          //                           EdgeInsets.only(left: 10.0, right: 10.0),
-          //                       child: Divider()),
-          //                   Padding(
-          //                     padding: const EdgeInsets.only(
-          //                         left: 10.0, right: 10.0, bottom: 10.0),
-          //                     child: Row(
-          //                       mainAxisAlignment:
-          //                           MainAxisAlignment.spaceBetween,
-          //                       children: <Widget>[
-          //                         Container(
-          //                             decoration: new BoxDecoration(
-          //                               color: Colors.blue,
-          //                               borderRadius: new BorderRadius.only(
-          //                                   topLeft: const Radius.circular(5.0),
-          //                                   topRight:
-          //                                       const Radius.circular(5.0),
-          //                                   bottomLeft:
-          //                                       const Radius.circular(5.0),
-          //                                   bottomRight:
-          //                                       const Radius.circular(5.0)),
-          //                             ),
-          //                             padding: EdgeInsets.all(5.0),
-          //                             width: 120.0,
-          //                             child: Text(
-          //                               'Proses Daftar',
-          //                               style: TextStyle(
-          //                                 color: Colors.white,
-          //                                 fontSize: 12,
-          //                                 fontWeight: FontWeight.w500,
-          //                               ),
-          //                               textAlign: TextAlign.center,
-          //                             )),
-          //                         Padding(
-          //                           padding: const EdgeInsets.only(right: 0),
-          //                           child: ButtonTheme(
-          //                             minWidth: 0, //wraps child's width
-          //                             height: 0,
-          //                             child: FlatButton(
-          //                               child: Row(
-          //                                 children: <Widget>[
-          //                                   Icon(
-          //                                     Icons.favorite,
-          //                                     color: wishlisttwo == true
-          //                                         ? Colors.pink
-          //                                         : Colors.grey,
-          //                                     size: 18,
-          //                                   ),
-          //                                 ],
-          //                               ),
-          //                               color: Colors.white,
-          //                               materialTapTargetSize:
-          //                                   MaterialTapTargetSize.shrinkWrap,
-          //                               padding: EdgeInsets.all(5.0),
-          //                               onPressed: () async {
-          //                                 setState(() {
-          //                                   if (wishlisttwo == true) {
-          //                                     wishlisttwo = false;
-          //                                   } else {
-          //                                     wishlisttwo = true;
-          //                                   }
-          //                                 });
-          //                               },
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ],
-          //         )),
-          //     onTap: () async {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => WaitingEvent(),
-          //           ));
-          //     },
-          //   ),
-          //   InkWell(
-          //     child: Container(
-          //         margin: EdgeInsets.only(
-          //             top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //         height: futureheight,
-          //         child: Column(
-          //           children: <Widget>[
-          //             Card(
-          //               elevation: 1,
-          //               child: Column(
-          //                 children: <Widget>[
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(10.0),
-          //                     child: Row(
-          //                       children: <Widget>[
-          //                         Expanded(
-          //                           flex: 5,
-          //                           child: Container(
-          //                               width: 80.0,
-          //                               height: 80.0,
-          //                               decoration: new BoxDecoration(
-          //                                 borderRadius: new BorderRadius.only(
-          //                                     topLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     topRight:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomRight:
-          //                                         const Radius.circular(5.0)),
-          //                                 image: new DecorationImage(
-          //                                   fit: BoxFit.fill,
-          //                                   image: AssetImage(
-          //                                     'images/bg-header.jpg',
-          //                                   ),
-          //                                 ),
-          //                               )),
-          //                         ),
-          //                         Expanded(
-          //                           flex: 7,
-          //                           child: Padding(
-          //                             padding: const EdgeInsets.only(
-          //                                 left: 15.0, right: 5.0),
-          //                             child: Column(
-          //                               mainAxisAlignment:
-          //                                   MainAxisAlignment.start,
-          //                               crossAxisAlignment:
-          //                                   CrossAxisAlignment.start,
-          //                               children: <Widget>[
-          //                                 Text(
-          //                                   '12 Agustus 2019',
-          //                                   style: TextStyle(
-          //                                       color: Colors.blue,
-          //                                       fontSize: 13,
-          //                                       fontWeight: FontWeight.bold),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding:
-          //                                       const EdgeInsets.only(top: 5.0),
-          //                                   child: Text('Komunitas Dev Junior',
-          //                                       style: TextStyle(
-          //                                         color: Colors.black,
-          //                                         fontWeight: FontWeight.w500,
-          //                                         fontSize: 16,
-          //                                       )),
-          //                                 ),
-          //                                 Padding(
-          //                                   padding: const EdgeInsets.only(
-          //                                       top: 10.0),
-          //                                   child: Text(
-          //                                     'Lemahbang Sukorejo Pasuruan',
-          //                                     style:
-          //                                         TextStyle(color: Colors.grey),
-          //                                   ),
-          //                                 )
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                   Container(
-          //                       padding:
-          //                           EdgeInsets.only(left: 10.0, right: 10.0),
-          //                       child: Divider()),
-          //                   Padding(
-          //                     padding: const EdgeInsets.only(
-          //                         left: 10.0, right: 10.0, bottom: 10.0),
-          //                     child: Row(
-          //                       mainAxisAlignment:
-          //                           MainAxisAlignment.spaceBetween,
-          //                       children: <Widget>[
-          //                         Container(
-          //                             decoration: new BoxDecoration(
-          //                               color: Colors.grey,
-          //                               borderRadius: new BorderRadius.only(
-          //                                   topLeft: const Radius.circular(5.0),
-          //                                   topRight:
-          //                                       const Radius.circular(5.0),
-          //                                   bottomLeft:
-          //                                       const Radius.circular(5.0),
-          //                                   bottomRight:
-          //                                       const Radius.circular(5.0)),
-          //                             ),
-          //                             padding: EdgeInsets.all(5.0),
-          //                             width: 120.0,
-          //                             child: Text(
-          //                               'Belum Terdaftar',
-          //                               style: TextStyle(
-          //                                 fontSize: 12,
-          //                                 color: Colors.white,
-          //                                 fontWeight: FontWeight.w500,
-          //                               ),
-          //                               textAlign: TextAlign.center,
-          //                             )),
-          //                         Padding(
-          //                           padding: const EdgeInsets.only(right: 0),
-          //                           child: ButtonTheme(
-          //                             minWidth: 0, //wraps child's width
-          //                             height: 0,
-          //                             child: FlatButton(
-          //                               child: Row(
-          //                                 children: <Widget>[
-          //                                   Icon(
-          //                                     Icons.favorite,
-          //                                     color: wishlistthree == true
-          //                                         ? Colors.pink
-          //                                         : Colors.grey,
-          //                                     size: 18,
-          //                                   ),
-          //                                 ],
-          //                               ),
-          //                               color: Colors.white,
-          //                               materialTapTargetSize:
-          //                                   MaterialTapTargetSize.shrinkWrap,
-          //                               padding: EdgeInsets.all(5.0),
-          //                               onPressed: () async {
-          //                                 setState(() {
-          //                                   if (wishlistthree == true) {
-          //                                     wishlistthree = false;
-          //                                   } else {
-          //                                     wishlistthree = true;
-          //                                   }
-          //                                 });
-          //                               },
-          //                             ),
-          //                           ),
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ],
-          //         )),
-          //     onTap: () async {
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => RegisterEvents(),
-          //           ));
-          //     },
-          //   ),
-          // ]),
-          // Container(
-          //   padding: EdgeInsets.only(
-          //       left: 10.0, right: 10.0, top: 10.0, bottom: 5.0),
-          //   child: Divider(),
-          // ),
-          // Column(children: <Widget>[
-          //   InkWell(
-          //       onTap: pastEvent,
-          //       child: Container(
-          //         child: Padding(
-          //           padding: const EdgeInsets.only(
-          //               left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-          //           child: Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Text(('Event Selesai').toUpperCase(),
-          //                   style: TextStyle(
-          //                     fontSize: 16,
-          //                     fontWeight: FontWeight.w500,
-          //                   )),
-          //               Icon(pastheight == null
-          //                   ? Icons.arrow_drop_down
-          //                   : Icons.arrow_drop_up),
-          //             ],
-          //           ),
-          //         ),
-          //       )),
-          //   InkWell(
-          //       child: Container(
-          //           margin: EdgeInsets.only(
-          //               top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //           height: pastheight,
-          //           child: Column(
-          //             children: <Widget>[
-          //               Card(
-          //                 elevation: 1,
-          //                 child: Column(
-          //                   children: <Widget>[
-          //                     Padding(
-          //                       padding: const EdgeInsets.all(10.0),
-          //                       child: Row(
-          //                         children: <Widget>[
-          //                           Expanded(
-          //                             flex: 5,
-          //                             child: Container(
-          //                                 width: 80.0,
-          //                                 height: 80.0,
-          //                                 decoration: new BoxDecoration(
-          //                                   borderRadius: new BorderRadius.only(
-          //                                       topLeft:
-          //                                           const Radius.circular(5.0),
-          //                                       topRight:
-          //                                           const Radius.circular(5.0),
-          //                                       bottomLeft:
-          //                                           const Radius.circular(5.0),
-          //                                       bottomRight:
-          //                                           const Radius.circular(5.0)),
-          //                                   image: new DecorationImage(
-          //                                     fit: BoxFit.fill,
-          //                                     image: AssetImage(
-          //                                       'images/bg-header.jpg',
-          //                                     ),
-          //                                   ),
-          //                                 )),
-          //                           ),
-          //                           Expanded(
-          //                             flex: 7,
-          //                             child: Padding(
-          //                               padding: const EdgeInsets.only(
-          //                                   left: 15.0, right: 5.0),
-          //                               child: Column(
-          //                                 mainAxisAlignment:
-          //                                     MainAxisAlignment.start,
-          //                                 crossAxisAlignment:
-          //                                     CrossAxisAlignment.start,
-          //                                 children: <Widget>[
-          //                                   Text(
-          //                                     '12 Agustus 2019',
-          //                                     style: TextStyle(
-          //                                         color: Colors.blue,
-          //                                         fontSize: 13,
-          //                                         fontWeight: FontWeight.bold),
-          //                                   ),
-          //                                   Padding(
-          //                                     padding: const EdgeInsets.only(
-          //                                         top: 5.0),
-          //                                     child: Text(
-          //                                         'Komunitas Dev Junior',
-          //                                         style: TextStyle(
-          //                                           color: Colors.black,
-          //                                           fontWeight: FontWeight.w500,
-          //                                           fontSize: 16,
-          //                                         )),
-          //                                   ),
-          //                                   Padding(
-          //                                     padding: const EdgeInsets.only(
-          //                                         top: 10.0),
-          //                                     child: Text(
-          //                                       'Lemahbang Sukorejo Pasuruan',
-          //                                       style: TextStyle(
-          //                                           color: Colors.grey),
-          //                                     ),
-          //                                   )
-          //                                 ],
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                     Container(
-          //                         padding:
-          //                             EdgeInsets.only(left: 10.0, right: 10.0),
-          //                         child: Divider()),
-          //                     Padding(
-          //                       padding: const EdgeInsets.only(
-          //                           left: 10.0, right: 10.0, bottom: 10.0),
-          //                       child: Row(
-          //                         mainAxisAlignment:
-          //                             MainAxisAlignment.spaceBetween,
-          //                         children: <Widget>[
-          //                           Container(
-          //                               decoration: new BoxDecoration(
-          //                                 color: Colors.grey,
-          //                                 borderRadius: new BorderRadius.only(
-          //                                     topLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     topRight:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomRight:
-          //                                         const Radius.circular(5.0)),
-          //                               ),
-          //                               padding: EdgeInsets.all(5.0),
-          //                               width: 120.0,
-          //                               child: Text(
-          //                                 'Event Batal',
-          //                                 style: TextStyle(
-          //                                   color: Colors.white,
-          //                                   fontSize: 12,
-          //                                   fontWeight: FontWeight.w500,
-          //                                 ),
-          //                                 textAlign: TextAlign.center,
-          //                               )),
-          //                           Padding(
-          //                             padding: const EdgeInsets.only(right: 0),
-          //                             child: ButtonTheme(
-          //                               minWidth: 0, //wraps child's width
-          //                               height: 0,
-          //                               child: FlatButton(
-          //                                 child: Row(
-          //                                   children: <Widget>[
-          //                                     Icon(
-          //                                       Icons.favorite,
-          //                                       color: wishlistfour == true
-          //                                           ? Colors.pink
-          //                                           : Colors.grey,
-          //                                       size: 18,
-          //                                     ),
-          //                                   ],
-          //                                 ),
-          //                                 color: Colors.white,
-          //                                 materialTapTargetSize:
-          //                                     MaterialTapTargetSize.shrinkWrap,
-          //                                 padding: EdgeInsets.all(5.0),
-          //                                 onPressed: () async {
-          //                                   setState(() {
-          //                                     if (wishlistfour == true) {
-          //                                       wishlistfour = false;
-          //                                     } else {
-          //                                       wishlistfour = true;
-          //                                     }
-          //                                   });
-          //                                 },
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           )),
-          //       onTap: () async {
-          //         Navigator.push(
-          //             context,
-          //             MaterialPageRoute(
-          //               builder: (context) => AfterRegisterEvents(),
-          //             ));
-          //       }),
-          //   InkWell(
-          //       child: Container(
-          //           margin: EdgeInsets.only(
-          //               top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-          //           height: pastheight,
-          //           child: Column(
-          //             children: <Widget>[
-          //               Card(
-          //                 elevation: 1,
-          //                 child: Column(
-          //                   children: <Widget>[
-          //                     Padding(
-          //                       padding: const EdgeInsets.all(10.0),
-          //                       child: Row(
-          //                         children: <Widget>[
-          //                           Expanded(
-          //                             flex: 5,
-          //                             child: Container(
-          //                                 width: 80.0,
-          //                                 height: 80.0,
-          //                                 decoration: new BoxDecoration(
-          //                                   borderRadius: new BorderRadius.only(
-          //                                       topLeft:
-          //                                           const Radius.circular(5.0),
-          //                                       topRight:
-          //                                           const Radius.circular(5.0),
-          //                                       bottomLeft:
-          //                                           const Radius.circular(5.0),
-          //                                       bottomRight:
-          //                                           const Radius.circular(5.0)),
-          //                                   image: new DecorationImage(
-          //                                     fit: BoxFit.fill,
-          //                                     image: AssetImage(
-          //                                       'images/bg-header.jpg',
-          //                                     ),
-          //                                   ),
-          //                                 )),
-          //                           ),
-          //                           Expanded(
-          //                             flex: 7,
-          //                             child: Padding(
-          //                               padding: const EdgeInsets.only(
-          //                                   left: 15.0, right: 5.0),
-          //                               child: Column(
-          //                                 mainAxisAlignment:
-          //                                     MainAxisAlignment.start,
-          //                                 crossAxisAlignment:
-          //                                     CrossAxisAlignment.start,
-          //                                 children: <Widget>[
-          //                                   Text(
-          //                                     '12 Agustus 2019',
-          //                                     style: TextStyle(
-          //                                         color: Colors.blue,
-          //                                         fontSize: 13,
-          //                                         fontWeight: FontWeight.bold),
-          //                                   ),
-          //                                   Padding(
-          //                                     padding: const EdgeInsets.only(
-          //                                         top: 5.0),
-          //                                     child: Text(
-          //                                         'Komunitas Dev Junior',
-          //                                         style: TextStyle(
-          //                                           color: Colors.black,
-          //                                           fontWeight: FontWeight.w500,
-          //                                           fontSize: 16,
-          //                                         )),
-          //                                   ),
-          //                                   Padding(
-          //                                     padding: const EdgeInsets.only(
-          //                                         top: 10.0),
-          //                                     child: Text(
-          //                                       'Lemahbang Sukorejo Pasuruan',
-          //                                       style: TextStyle(
-          //                                           color: Colors.grey),
-          //                                     ),
-          //                                   )
-          //                                 ],
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                     Container(
-          //                         padding:
-          //                             EdgeInsets.only(left: 10.0, right: 10.0),
-          //                         child: Divider()),
-          //                     Padding(
-          //                       padding: const EdgeInsets.only(
-          //                           left: 10.0, right: 10.0, bottom: 10.0),
-          //                       child: Row(
-          //                         mainAxisAlignment:
-          //                             MainAxisAlignment.spaceBetween,
-          //                         children: <Widget>[
-          //                           Container(
-          //                               decoration: new BoxDecoration(
-          //                                 color: Colors.grey,
-          //                                 borderRadius: new BorderRadius.only(
-          //                                     topLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     topRight:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomLeft:
-          //                                         const Radius.circular(5.0),
-          //                                     bottomRight:
-          //                                         const Radius.circular(5.0)),
-          //                               ),
-          //                               padding: EdgeInsets.all(5.0),
-          //                               width: 120.0,
-          //                               child: Text(
-          //                                 'Event Selesai',
-          //                                 style: TextStyle(
-          //                                   color: Colors.white,
-          //                                   fontSize: 12,
-          //                                   fontWeight: FontWeight.w500,
-          //                                 ),
-          //                                 textAlign: TextAlign.center,
-          //                               )),
-          //                           Padding(
-          //                             padding: const EdgeInsets.only(right: 0),
-          //                             child: ButtonTheme(
-          //                               minWidth: 0, //wraps child's width
-          //                               height: 0,
-          //                               child: FlatButton(
-          //                                 child: Row(
-          //                                   children: <Widget>[
-          //                                     Icon(
-          //                                       Icons.favorite,
-          //                                       color: wishlistfive == true
-          //                                           ? Colors.pink
-          //                                           : Colors.grey,
-          //                                       size: 18,
-          //                                     ),
-          //                                   ],
-          //                                 ),
-          //                                 color: Colors.white,
-          //                                 materialTapTargetSize:
-          //                                     MaterialTapTargetSize.shrinkWrap,
-          //                                 padding: EdgeInsets.all(5.0),
-          //                                 onPressed: () async {},
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           )),
-          //       onTap: () async {
-          //         Navigator.push(
-          //             context,
-          //             MaterialPageRoute(
-          //               builder: (context) => SuccesRegisteredEvent(),
-          //             ));
-          //       }),
-          // ]),
+          Container(
+            width: double.infinity,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 10.0, bottom: 10.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: <Widget>[
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Color.fromRGBO(41, 30, 47, 1),
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Semua',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Teknologi',
+                          style: TextStyle(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                              fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Kesehatan',
+                          style: TextStyle(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                              fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Financial',
+                          style: TextStyle(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                              fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Keuangan',
+                          style: TextStyle(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                              fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+                Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0,
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        elevation: 0.0,
+                        highlightColor: Colors.transparent,
+                        highlightElevation: 0.0,
+                        padding: EdgeInsets.only(
+                            top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                        onPressed: () {},
+                        child: Text(
+                          'Pertambangan',
+                          style: TextStyle(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                              fontWeight: FontWeight.w500),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                            side: BorderSide(
+                              color: Color.fromRGBO(41, 30, 47, 1),
+                            )),
+                      ),
+                    )),
+              ]),
+            ),
+          ),
+          
+          Container(
+            padding: EdgeInsets.only(
+                left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
+            child: Divider(),
+          ),
+          Container(
+              child: Column(children: <Widget>[
+            InkWell(
+                onTap: currentEvent,
+                child: Container(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10.0, right: 10.0, top: 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(('Event Berlangsung').toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                        Icon(height == null
+                            ? Icons.arrow_drop_down
+                            : Icons.arrow_drop_up),
+                      ],
+                    ),
+                  ),
+                )),
+            Column(children: listEventNow.map((Event f) => Container(
+              child: InkWell(
+              child: Container(
+                height: height,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(
+                            top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              elevation: 1,
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 5,
+                                          child: Container(
+                                              width: 80.0,
+                                              height: 80.0,
+                                              decoration: new BoxDecoration(
+                                                borderRadius: new BorderRadius
+                                                        .only(
+                                                    topLeft:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    topRight:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    bottomLeft:
+                                                        const Radius.circular(
+                                                            5.0),
+                                                    bottomRight:
+                                                        const Radius.circular(
+                                                            5.0)),
+                                                image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: AssetImage(
+                                                    'images/bg-header.jpg',
+                                                  ),
+                                                ),
+                                              )),
+                                        ),
+                                        Expanded(
+                                          flex: 7,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15.0, right: 5.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  f.dateEvent,
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5.0),
+                                                  child: Text(
+                                                      f.title,
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16,
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0),
+                                                  child: Text(
+                                                    f.location,
+                                                    style: TextStyle(
+                                                        color: Colors.grey),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.only(
+                                          left: 10.0, right: 10.0),
+                                      child: Divider()),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0, bottom: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.all(2.0),
+                                            child: _buildTextStatus(f.userStatus.toString()),
+                                          ),
+                                            
+                                            f.userStatus != null ? 
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 0),
+                                          child: ButtonTheme(
+                                            minWidth: 0, //wraps child's width
+                                            height: 0,
+                                            child: FlatButton(
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.favorite,
+                                                    color: wishlistone == true
+                                                        ? Colors.pink
+                                                        : Colors.grey,
+                                                    size: 18,
+                                                  ),
+                                                ],
+                                              ),
+                                              color: Colors.white,
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              padding: EdgeInsets.all(5.0),
+                                              onPressed: () async {
+                                                setState(() {
+                                                  if(f.userStatus != null){
+                                                     if (wishlistone == true) {
+                                                    wishlistone = false;
+                                                  } else {
+                                                    wishlistone = true;
+                                                  }
+
+                                                  }
+                                                 
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                        : Text(""),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                    Positioned(
+                        width: 30.0,
+                        right: 10,
+                        top: -7,
+                        child: Container(
+                          decoration: new BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: new BorderRadius.only(
+                                topLeft: const Radius.circular(5.0),
+                                topRight: const Radius.circular(5.0),
+                                bottomLeft: const Radius.circular(5.0),
+                                bottomRight: const Radius.circular(5.0)),
+                          ),
+                          padding: EdgeInsets.all(5.0),
+                          child: Icon(Icons.star_border,
+                              color: Colors.orangeAccent),
+                        )),
+                  ],
+                ),
+              ),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => f.userStatus == "P" ? WaitingEvent() : f.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: f.id.toString()),
+                    ));
+              },
+            ),
+            )).toList(),)
+          ])),
+          Container(
+            padding: EdgeInsets.only(
+                left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
+            child: Divider(),
+          ),
+          Column(children: <Widget>[
+            InkWell(
+                onTap: futureEvent,
+                child: Container(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(('Event yang akan datang').toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                        Icon(futureheight == null
+                            ? Icons.arrow_drop_down
+                            : Icons.arrow_drop_up),
+                      ],
+                    ),
+                  ),
+                )),
+                Column(children: listEventUpComming.map((Event item) => Container(
+
+            child: InkWell(
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                  height: futureheight,
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Card(
+                        elevation: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                        width: 80.0,
+                                        height: 80.0,
+                                        decoration: new BoxDecoration(
+                                          borderRadius: new BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(5.0),
+                                              topRight:
+                                                  const Radius.circular(5.0),
+                                              bottomLeft:
+                                                  const Radius.circular(5.0),
+                                              bottomRight:
+                                                  const Radius.circular(5.0)),
+                                          image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                              'images/bg-header.jpg',
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 7,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 5.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            item.dateEvent,
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Text(item.title,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16,
+                                                )),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0),
+                                            child: Text(
+                                              item.location,
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                                padding:
+                                    EdgeInsets.only(left: 10.0, right: 10.0),
+                                child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  
+                                  Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: _buildTextStatus(item.userStatus),),
+                                item.userStatus != null ?
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 0),
+                                    child: ButtonTheme(
+                                      minWidth: 0, //wraps child's width
+                                      height: 0,
+                                      child: FlatButton(
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.favorite,
+                                              color: wishlisttwo == true
+                                                  ? Colors.pink
+                                                  : Colors.grey,
+                                              size: 18,
+                                            ),
+                                          ],
+                                        ),
+                                        color: Colors.white,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: EdgeInsets.all(5.0),
+                                        onPressed: () async {
+                                          setState(() {
+                                            if (wishlisttwo == true) {
+                                              wishlisttwo = false;
+                                            } else {
+                                              wishlisttwo = true;
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ) : Text(""),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                    ],
+                  )),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => item.userStatus == "P" ? WaitingEvent() : item.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: item.id.toString()),
+                    ));
+              },
+            ),
+                                    )).toList()),
+            
+          ]),
+          
+          
         ])));
   }
 
@@ -1627,7 +1127,9 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 constraints: BoxConstraints(),
                 child: Text(
-                  jumlahnotifX == null || jumlahnotifX =='' ? '0' : jumlahnotifX,
+                  jumlahnotifX == null || jumlahnotifX == ''
+                      ? '0'
+                      : jumlahnotifX,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 8,
@@ -1640,5 +1142,69 @@ class _DashboardState extends State<Dashboard> {
         ),
       ],
     );
+  }
+
+  _buildTextStatus(status) {
+    if (status == "A") {
+    return   Container(
+                                      decoration: new BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(5.0),
+                                            topRight:
+                                                const Radius.circular(5.0),
+                                            bottomLeft:
+                                                const Radius.circular(5.0),
+                                            bottomRight:
+                                                const Radius.circular(5.0)),
+                                      ),
+                                      padding: EdgeInsets.all(5.0),
+                                      width: 120.0,
+                                      child: 
+                                    
+                                      
+                                      Text(
+                                      'Sudah Terdaftar',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                     );
+                                              
+    }else if(status == "P"){
+        return Container(
+                                      decoration: new BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(5.0),
+                                            topRight:
+                                                const Radius.circular(5.0),
+                                            bottomLeft:
+                                                const Radius.circular(5.0),
+                                            bottomRight:
+                                                const Radius.circular(5.0)),
+                                      ),
+                                      padding: EdgeInsets.all(5.0),
+                                      width: 120.0,
+                                      child: 
+                                    
+                                      
+                                      Text(
+                                      'Proses Pendaftaran ',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                     );
+    }
+    else{
+      return null;
+    }
   }
 }

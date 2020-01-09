@@ -1,6 +1,7 @@
 import 'package:checkin_app/auth/register.dart';
 import 'package:checkin_app/pages/events_all/index.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 //pages
 import 'api/api_service.dart';
@@ -33,6 +34,8 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  // Platform messages are asynchronous, so we initialize in an async method.
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

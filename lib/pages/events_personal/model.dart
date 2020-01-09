@@ -121,6 +121,7 @@ class ListCheckinEvent {
    String timestart;
    String timeend;
    String typecheckin;
+   String checkin;
    
   
   ListCheckinEvent(
@@ -131,6 +132,7 @@ class ListCheckinEvent {
       this.timestart,
       this.timeend,
       this.typecheckin,
+      this.checkin,
       });
 }
 class ListPesertaEvent {

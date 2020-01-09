@@ -25,7 +25,7 @@ class _CreateParticipantState extends State<CreateParticipant>
   User user = new User();
   TextEditingController _searchNameController = new TextEditingController();
   AnimationController _controller;
-  List _types = ["Peserta", "Admin/Co-Host"];
+  List _types = ["Peserta", "Co-Host","Admin"];
 
 
   List<DropdownMenuItem<String>> _dropDownTypes;

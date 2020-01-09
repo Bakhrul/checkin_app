@@ -2,7 +2,6 @@ import 'package:checkin_app/model/search_event.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/pages/register_event/step_register_one.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';

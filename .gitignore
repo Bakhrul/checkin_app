@@ -22,3 +22,4 @@ lib/routes/env.dart
 *.js_
 *.js.deps
 *.js.map
+lib/core/env.dart

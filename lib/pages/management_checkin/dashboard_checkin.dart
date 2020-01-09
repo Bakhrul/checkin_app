@@ -24,8 +24,8 @@ List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
 
 class DashboardCheckin extends StatefulWidget {
-  DashboardCheckin({Key key, this.title, this.idevent}) : super(key: key);
-  final String title;
+  DashboardCheckin({Key key, this.idevent}) : super(key: key);
+  // final String title;
   final idevent;
   @override
   State<StatefulWidget> createState() {
@@ -36,6 +36,8 @@ class DashboardCheckin extends StatefulWidget {
 class _DashboardCheckinState extends State<DashboardCheckin>
     with SingleTickerProviderStateMixin {
   BuildContext context;
+  bool isLoading, isError;
+  String tokenType, accessToken;
   TabController _tabController;
   static const List<IconData> icons = const [
     Icons.sms,
@@ -44,46 +46,115 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   ];
 
   getDataMember() async {
+    setState(() {
+      isLoading = true;
+    });
     listPeserta = [];
-    dynamic response =
-        await RequestGet(name: "event/getdata/participant", customrequest: "")
-            .getdata();
-    for (var i = 0; i < response.length; i++) {
-      UserParticipant peserta = UserParticipant(
-        name: response[i]["name"],
-        email: response[i]["email"],
-        position: response[i]["position"],
-        picProfile: response[i]["pic_profile"],
-        eventId: response[i]["event_id"],
-      );
+    try {
 
-      listPeserta.add(peserta);
+      dynamic response =
+          await RequestGet(name: "event/getdata/participant/", customrequest: "${widget.idevent}")
+              .getdata();
+      for (var i = 0; i < response.length; i++) {
+        UserParticipant peserta = UserParticipant(
+          id: response[i]["id"],
+          name: response[i]["name"],
+          email: response[i]["email"],
+          // position: response[i]["position"],
+          picProfile: response[i]["pic_profile"],
+          eventId: response[i]["event_id"],
+        );
+
+        listPeserta.add(peserta);
+      }
+      setState(() {
+        isLoading = false;
+        isError = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
     }
-    setState(() {});
   }
 
   getDataCheckin() async {
-    listCheckin = [];
-    dynamic response =
-        await RequestGet(name: "checkin/getdata/checkin", customrequest: "")
-            .getdata();
-    for (var i = 0; i < response.length; i++) {
-      Checkin checkin = Checkin(
-        id: response[i]["id"],
-        eventId: response[i]["event_id"],
-        checkinKey: response[i]["checkin_keyword"],
-        startTime: response[i]["start_time"],
-        endTime: response[i]["end_time"],
-        checkinDate: response[i]["checkin_date"],
-      );
-
-      listCheckin.add(checkin);
-      print(response);
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      listCheckin = [];
+      dynamic response =
+          await RequestGet(name: "checkin/getdata/checkin/", customrequest: "${widget.idevent}")
+              .getdata();
+      for (var i = 0; i < response.length; i++) {
+        Checkin checkin = Checkin(
+          id: response[i]["id"],
+          eventId: response[i]["event_id"],
+          checkinKey: response[i]["checkin_keyword"],
+          startTime: response[i]["start_time"],
+          endTime: response[i]["end_time"],
+          checkinDate: response[i]["checkin_date"],
+        );
+        listCheckin.add(checkin);
+      }
+      setState(() {
+        isLoading = false;
+        isError = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
     }
-    setState(() {});
   }
+  deleteParticipant(id,eventId) async{
+    setState(() {
+      isLoading = true;
+    });
+    try {
+    dynamic body = {
+      "peserta": id.toString(),
+      "event": eventId.toString(),
+    };
+    dynamic response =
+        await RequestPost(name: "deletepeserta_event", body: body)
+            .sendrequest();
+    if (response == "success") {
+      setState(() {});
 
-  deleteCheckin(id,eventId) async {
+      Fluttertoast.showToast(
+          msg: "Data Berhasil Terhapus",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      getDataCheckin();
+    } else {
+      Fluttertoast.showToast(
+          msg: "Terjadi Kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    }catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+  }
+  deleteCheckin(id, eventId) async {
     dynamic body = {
       "event_id": id.toString(),
       "checkin_id": eventId.toString(),
@@ -93,7 +164,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
             .sendrequest();
     if (response == "success") {
       setState(() {});
-      
+
       Fluttertoast.showToast(
           msg: "Data Berhasil Terhapus",
           toastLength: Toast.LENGTH_SHORT,
@@ -102,7 +173,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-          getDataCheckin();
+      getDataCheckin();
     } else {
       Fluttertoast.showToast(
           msg: "Terjadi Kesalahan",
@@ -142,8 +213,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   bool monVal3 = false;
   bool monVal4 = false;
   int currentIndex = 0;
-  
- Widget appBarTitle = Text(
+
+  Widget appBarTitle = Text(
     "Dashboard",
     style: TextStyle(fontSize: 16),
   );
@@ -156,36 +227,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   Widget build(BuildContext context) {
     this.context = context;
     String jumlahPeserta = listPeserta.length.toString();
-    var childButtons = List<UnicornButton>();
-    childButtons.add(UnicornButton(
-        hasLabel: true,
-        labelText: "Choo choo",
-        currentButton: FloatingActionButton(
-          heroTag: "train",
-          backgroundColor: Colors.redAccent,
-          mini: true,
-          child: Icon(Icons.train),
-          onPressed: () {},
-        )));
-
-    childButtons.add(UnicornButton(
-        currentButton: FloatingActionButton(
-      heroTag: "airplane",
-      backgroundColor: Colors.greenAccent,
-      mini: true,
-      child: Icon(Icons.airplanemode_active),
-      onPressed: () {},
-    )));
-
-    childButtons.add(UnicornButton(
-        currentButton: FloatingActionButton(
-      heroTag: "directions",
-      backgroundColor: Colors.blueAccent,
-      mini: true,
-      child: Icon(Icons.directions_car),
-      onPressed: () {},
-    )));
-
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -194,10 +235,14 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
           actions: <Widget>[
-            new IconButton( icon: new Icon(Icons.notifications_none),  tooltip: 'Air it', onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder:(context) => ListApproval() ));
-
-            }, ),
+            new IconButton(
+              icon: new Icon(Icons.notifications_none),
+              tooltip: 'Air it',
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ListApproval()));
+              },
+            ),
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -237,7 +282,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                         )),
                   ),
                   SingleChildScrollView(
-                    child: _buildListViewMember(),
+                    child: isLoading == true
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : _buildListViewMember(),
                   )
                 ],
               ),
@@ -249,7 +298,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                 left: 5.0,
               ),
               child: SafeArea(
-                child: _builderlistViewCheckin(),
+                child: isLoading == true
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _builderlistViewCheckin(),
               ),
             )
           ],
@@ -267,32 +320,62 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         Container(
           child: Expanded(
             child: SizedBox(
-                height: 400,
                 child: SingleChildScrollView(
-                  child: Column(
-                      children: listPeserta
-                          .map((UserParticipant f) => Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Card(
-                                  child: ListTile(
-                                    leading: Container(
-                                      width: 40.0,
-                                      height: 40.0,
-                                      decoration: new BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: new DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: new NetworkImage(
-                                                  f.picProfile))),
-                                    ),
-                                    title: Text(f.name),
-                                    onTap: () {},
-                                    subtitle: Text(f.email.toString()),
-                                  ),
+              child: Column(
+                  children: listPeserta
+                      .map((UserParticipant f) => Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: Container(
+                                  width: 40.0,
+                                  height: 40.0,
+                                  decoration: new BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: new DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image:
+                                              new NetworkImage(f.picProfile))),
                                 ),
-                              ))
-                          .toList()),
-                )),
+                                trailing: FlatButton(
+                                  child: Icon(Icons.exit_to_app),
+                                  onPressed: () async {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text("Warning"),
+                                            content: Text(
+                                                "Apa anda yakin untuk mengeluarkan ${f.name}?"),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                child: Text("Yes"),
+                                                onPressed: () {
+                                                  deleteParticipant(
+                                                      f.id, f.eventId.toString());
+
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              FlatButton(
+                                                child: Text("No"),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  },
+                                ),
+                                title: Text(f.name),
+                                onTap: () {},
+                                subtitle: Text(f.email.toString()),
+                              ),
+                            ),
+                          ))
+                      .toList()),
+            )),
           ),
         ),
       ],
@@ -353,7 +436,12 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        ListPesertaCheckin( id: data.id.toString(),eventid: data.eventId.toString()  )));
+                                                        ListPesertaCheckin(
+                                                            id: data.id
+                                                                .toString(),
+                                                            eventid: data
+                                                                .eventId
+                                                                .toString())));
                                           },
                                           trailing: ButtonTheme(
                                               minWidth: 0.0,
@@ -382,7 +470,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                               child:
                                                                   Text("Yes"),
                                                               onPressed: () {
-                                                                deleteCheckin(data.id,data.eventId);
+                                                                deleteCheckin(
+                                                                    data.id,
+                                                                    data.eventId);
 
                                                                 Navigator.pop(
                                                                     context);
@@ -430,7 +520,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ManajemeCreateCheckin(idevent: widget.idevent),
+                        builder: (context) =>
+                            ManajemeCreateCheckin(idevent: widget.idevent),
                       ));
                 },
                 backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -445,7 +536,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateParticipant(idevent: widget.idevent),
+                        builder: (context) =>
+                            CreateParticipant(idevent: widget.idevent),
                       ));
                 },
                 backgroundColor: Color.fromRGBO(41, 30, 47, 1),

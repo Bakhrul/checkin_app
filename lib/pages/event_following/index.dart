@@ -1,10 +1,8 @@
 import 'package:checkin_app/pages/event_following/detail.dart';
-import 'package:checkin_app/pages/events_personal/create_category.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
 import 'package:checkin_app/routes/env.dart';
-import 'count_down.dart';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -12,29 +10,38 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:ui';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
 import '../events_all/detail_event.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:checkin_app/pages/register_event/detail_event_afterregist.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeyEventAll;
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 List<ListFollowingEvent> listItemFollowing = [];
+final _debouncer = Debouncer(milliseconds: 500);
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isFilter;
 String filterX;
 String categoryNow;
-void showInSnackBar(String value) {
-  _scaffoldKeyEventAll.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 enum PageEnum {
   kelolaCheckinPage,
   kelolaHistoryPage,
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
 }
 
 class ManajemenEventFollowing extends StatefulWidget {
@@ -49,9 +56,10 @@ class ManajemenEventFollowing extends StatefulWidget {
 class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
   @override
   void initState() {
-    _scaffoldKeyEventAll = GlobalKey<ScaffoldState>();
     isLoading = true;
     filterX = 'all';
+    _searchQuery.text = '';
+    categoryNow = 'all';
     isError = false;
     isFilter = false;
     listDoneEvent();
@@ -95,7 +103,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             waktuakhir: i['ev_time_end'],
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
-            wishlist: i['ew_event'].toString(),
+            wishlist: i['ew_wish'].toString(),
             statusdaftar: i['ep_status'],
           );
           listItemFollowing.add(followX);
@@ -151,7 +159,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     try {
       final followevent = await http.post(
         url('api/getfollowingevent'),
-        body: {'filter': filterX},
+        body: {'filter': categoryNow, 'search_query': _searchQuery.text},
         headers: requestHeaders,
       );
 
@@ -169,7 +177,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             waktuakhir: i['ev_time_end'],
             fullday: i['ev_allday'],
             alamat: i['ev_address'],
-            wishlist: i['ew_event'],
+            wishlist: i['ew_wish'].toString(),
             statusdaftar: i['ep_status'],
           );
           listItemFollowing.add(followX);
@@ -210,7 +218,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
   }
 
   Future<List<ListKategoriEvent>> listKategoriEvent() async {
-    print('cek');
     setState(() {
       isLoading = true;
     });
@@ -226,6 +233,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         var kategorievents = kategorieventJson['kategori'];
 
         listkategoriEvent = [];
+        ListKategoriEvent donex = ListKategoriEvent(
+          id: 'all',
+          nama: 'semua',
+          color: false,
+        );
+        listkategoriEvent.add(donex);
+
         for (var i in kategorievents) {
           ListKategoriEvent donex = ListKategoriEvent(
             id: '${i['c_id']}',
@@ -278,6 +292,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         ),
       );
       _searchQuery.clear();
+      _debouncer.run(() {
+        listFilterFollowingEvent();
+      });
     });
   }
 
@@ -292,27 +309,10 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     color: Colors.white,
   );
 
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.kelolaCheckinPage:
-        Navigator.of(context).push(
-            CupertinoPageRoute(builder: (BuildContext context) => CountDown()));
-        break;
-      case PageEnum.kelolaHistoryPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) =>
-                ManajemenEventDetailFollowing()));
-        break;
-      default:
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyEventAll,
       appBar: buildBar(context),
       body: isLoading == true
           ? Center(
@@ -361,18 +361,17 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                 minWidth: 0.0,
                                 height: 0,
                                 child: RaisedButton(
-                                  color: categoryNow == listkategoriEvent[index].id
-                                      ? Color.fromRGBO(41, 30, 47, 1)
-                                      : Colors.white,
+                                  color:
+                                      categoryNow == listkategoriEvent[index].id
+                                          ? Color.fromRGBO(41, 30, 47, 1)
+                                          : Colors.white,
                                   elevation: 0.0,
                                   highlightColor: Colors.transparent,
                                   highlightElevation: 0.0,
                                   onPressed: () {
-                                    
-                                      setState(() {
-                                        filterX = 'all';
-                                        categoryNow = listkategoriEvent[index].id;
-                                      });
+                                    setState(() {
+                                      categoryNow = listkategoriEvent[index].id;
+                                    });
                                     listFilterFollowingEvent();
                                   },
                                   padding: EdgeInsets.only(
@@ -385,7 +384,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         ? 'Unknown Kategori'
                                         : listkategoriEvent[index].nama,
                                     style: TextStyle(
-                                        color: categoryNow == listkategoriEvent[index].id
+                                        color: categoryNow ==
+                                                listkategoriEvent[index].id
                                             ? Colors.white
                                             : Color.fromRGBO(41, 30, 47, 1),
                                         fontWeight: FontWeight.w500),
@@ -420,11 +420,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                   DateTime waktuakhir = DateTime.parse(
                                       listItemFollowing[index].waktuakhir);
                                   String timestart =
-                                      DateFormat('dd-MM-y')
-                                          .format(waktuawal);
+                                      DateFormat('dd-mm-y').format(waktuawal);
                                   String timeend =
-                                      DateFormat('dd-MM-y')
-                                          .format(waktuakhir);
+                                      DateFormat('dd-mm-y').format(waktuakhir);
                                   return InkWell(
                                       child: Container(
                                           margin: EdgeInsets.only(
@@ -495,7 +493,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                 children: <
                                                                     Widget>[
                                                                   Text(
-                                                                    '${timestart} - ${timeend}',
+                                                                    '$timestart - $timeend',
                                                                     style: TextStyle(
                                                                         color: Colors
                                                                             .blue,
@@ -568,10 +566,22 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                           Container(
                                                               decoration:
                                                                   new BoxDecoration(
-                                                                color:
-                                                                listItemFollowing[index].statusdaftar == null ?
-                                                                Colors.grey : listItemFollowing[index].statusdaftar == 'P' ? Colors.orange :listItemFollowing[index].statusdaftar == 'C' ? Colors.red : listItemFollowing[index].statusdaftar == 'A' ? Colors.green : Colors.blue
-                                                                    ,
+                                                                color: listItemFollowing[index]
+                                                                            .statusdaftar ==
+                                                                        null
+                                                                    ? Colors
+                                                                        .grey
+                                                                    : listItemFollowing[index].statusdaftar ==
+                                                                            'P'
+                                                                        ? Colors
+                                                                            .orange
+                                                                        : listItemFollowing[index].statusdaftar ==
+                                                                                'C'
+                                                                            ? Colors
+                                                                                .red
+                                                                            : listItemFollowing[index].statusdaftar == 'A'
+                                                                                ? Colors.green
+                                                                                : Colors.blue,
                                                                 borderRadius: new BorderRadius
                                                                         .only(
                                                                     topLeft:
@@ -592,8 +602,19 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                       .all(5.0),
                                                               width: 120.0,
                                                               child: Text(
-                                                                listItemFollowing[index].statusdaftar == null ?
-                                                                'Belum Terdaftar' : listItemFollowing[index].statusdaftar == 'P' ? 'Proses Daftar' :listItemFollowing[index].statusdaftar == 'C' ? 'Pendaftaran Ditolak' : listItemFollowing[index].statusdaftar == 'A' ? 'Sudah Terdaftar' : 'Status Tidak Diketahui',
+                                                                listItemFollowing[index]
+                                                                            .statusdaftar ==
+                                                                        null
+                                                                    ? 'Belum Terdaftar'
+                                                                    : listItemFollowing[index].statusdaftar ==
+                                                                            'P'
+                                                                        ? 'Proses Daftar'
+                                                                        : listItemFollowing[index].statusdaftar ==
+                                                                                'C'
+                                                                            ? 'Pendaftaran Ditolak'
+                                                                            : listItemFollowing[index].statusdaftar == 'A'
+                                                                                ? 'Sudah Terdaftar'
+                                                                                : 'Status Tidak Diketahui',
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -623,8 +644,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                     Icon(
                                                                       Icons
                                                                           .favorite,
-                                                                      color: listItemFollowing[index].wishlist ==
-                                                                              null
+                                                                      color: listItemFollowing[index].wishlist == null ||
+                                                                              listItemFollowing[index].wishlist ==
+                                                                                  'null' ||
+                                                                              listItemFollowing[index].wishlist ==
+                                                                                  '0'
                                                                           ? Colors
                                                                               .grey
                                                                           : Colors
@@ -647,10 +671,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                 onPressed:
                                                                     () async {
                                                                   try {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Mohon Tunggu Sebentar");
                                                                     final hapuswishlist = await http.post(
                                                                         url(
                                                                             'api/actionwishlist'),
@@ -712,61 +732,96 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             ],
                                           )),
                                       onTap: () async {
-                                        listItemFollowing[index].statusdaftar == null ?
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegisterEvents(
-                                                    id: int.parse(listItemFollowing[index].id),
+                                        listItemFollowing[index].statusdaftar ==
+                                                null
+                                            ? Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RegisterEvents(
+                                                    id: int.parse(
+                                                        listItemFollowing[index]
+                                                            .id),
                                                     selfEvent: false,
-                                                    creatorId: listItemFollowing[index].idcreator,
+                                                    creatorId:
+                                                        listItemFollowing[index]
+                                                            .idcreator,
                                                   ),
-                                            )):
-                                        listItemFollowing[index].statusdaftar == 'P' ?
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WaitingEvent(
-                                                    id: int.parse(listItemFollowing[index].id),
-                                                    selfEvent: true,
-                                                    creatorId: listItemFollowing[index].idcreator,
-                                                  ),
-                                            )):
-                                        listItemFollowing[index].statusdaftar == 'A' ?
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SuccesRegisteredEvent(
-                                                    id: int.parse(listItemFollowing[index].id),
-                                                    selfEvent: true,
-                                                    creatorId: listItemFollowing[index].idcreator,
-                                                  ),
-                                            )):
-
-                                        listItemFollowing[index].statusdaftar == 'C' ?
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegisterEvents(
-                                                    id: int.parse(listItemFollowing[index].id),
-                                                    selfEvent: true,
-                                                    creatorId: listItemFollowing[index].idcreator,
-                                                  ),
-                                            )):
-                                            Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegisterEvents(
-                                                    id: int.parse(listItemFollowing[index].id),
-                                                    selfEvent: false,
-                                                    creatorId: listItemFollowing[index].idcreator,
-                                                  ),
-                                            ));
+                                                ))
+                                            : listItemFollowing[index]
+                                                        .statusdaftar ==
+                                                    'P'
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WaitingEvent(
+                                                        id: int.parse(
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .id),
+                                                        selfEvent: true,
+                                                        creatorId:
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .idcreator,
+                                                      ),
+                                                    ))
+                                                : listItemFollowing[index]
+                                                            .statusdaftar ==
+                                                        'A'
+                                                    ? Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SuccesRegisteredEvent(
+                                                            id: int.parse(
+                                                                listItemFollowing[
+                                                                        index]
+                                                                    .id),
+                                                            selfEvent: true,
+                                                            creatorId:
+                                                                listItemFollowing[
+                                                                        index]
+                                                                    .idcreator,
+                                                          ),
+                                                        ))
+                                                    : listItemFollowing[index]
+                                                                .statusdaftar ==
+                                                            'C'
+                                                        ? Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  RegisterEvents(
+                                                                id: int.parse(
+                                                                    listItemFollowing[
+                                                                            index]
+                                                                        .id),
+                                                                selfEvent: true,
+                                                                creatorId:
+                                                                    listItemFollowing[
+                                                                            index]
+                                                                        .idcreator,
+                                                              ),
+                                                            ))
+                                                        : Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  RegisterEvents(
+                                                                id: int.parse(
+                                                                    listItemFollowing[
+                                                                            index]
+                                                                        .id),
+                                                                selfEvent:
+                                                                    false,
+                                                                creatorId:
+                                                                    listItemFollowing[
+                                                                            index]
+                                                                        .idcreator,
+                                                              ),
+                                                            ));
                                       });
                                 },
                               ),
@@ -797,6 +852,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                 );
                 this.appBarTitle = TextField(
                   controller: _searchQuery,
+                  onChanged: (string) {
+                    if (string != null || string != '') {
+                      _debouncer.run(() {
+                        listFilterFollowingEvent();
+                      });
+                    }
+                  },
                   style: TextStyle(
                     color: Colors.white,
                   ),

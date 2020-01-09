@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 class UserParticipant {
-  int id;
+  String id;
   String name;
   String email;
-  int position;
-  int eventId;
+  String position;
+  String eventId;
   String picProfile;
 
-  UserParticipant({this.id = 0, this.name, this.position = 0,this.email, this.eventId = 0,this.picProfile});
+  UserParticipant({this.id, this.name, this.position,this.email, this.eventId,this.picProfile});
 }
