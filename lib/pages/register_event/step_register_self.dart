@@ -3,6 +3,8 @@ import 'step_register_three.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
@@ -24,6 +26,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
   List<Map> _comboBox = [{"name":"Vip","value":1},{"name":"Regular","value":2},{"name":"Gold","value":3}];
   int _valueCombo = 1;
   bool _check = false;
+  bool _isLoading = false;
 
   @override
   void initState(){
@@ -32,7 +35,11 @@ class _ConfirmEvent extends State<ConfirmEvent> {
   }
 
   Future _registerSelf() async {
-    print('widget ${widget.creatorId}');
+
+    setState((){
+      _isLoading = true;
+    });
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -44,6 +51,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
 
     Map<String, dynamic> body = {'event_id':widget.id.toString(),'creator_id':widget.creatorId.toString(),'position':'3','status':'P'};
 
+  try{
     final ongoingevent = await http.post(
         url('api/event/register'),
         headers: requestHeaders,
@@ -51,7 +59,10 @@ class _ConfirmEvent extends State<ConfirmEvent> {
       );
       
 
-    if (ongoingevent.statusCode == 200) {
+     if (ongoingevent.statusCode == 200) {
+     setState((){
+        _isLoading = false;
+     });
      return Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -61,9 +72,28 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                             selfEvent: false
                           ),
                         ));
-    }else{
-      return print(ongoingevent.body);
+    }else if(ongoingevent.statusCode == 401){
+      Fluttertoast.showToast(msg: 'Gagal mendaftar');
+      setState((){
+        _isLoading = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: 'Gagal mendaftar');
+      setState((){
+        _isLoading = false;
+      });
     }
+  } on TimeoutException catch(_){
+     Fluttertoast.showToast(msg: 'Time out, silahkan coba lagi nanti');
+      setState((){
+        _isLoading = false;
+      });
+  } catch(e){
+    Fluttertoast.showToast(msg: '$e');
+      setState((){
+        _isLoading = false;
+      });
+  }
   }
 
   @override
@@ -298,7 +328,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     child:RaisedButton(
                       color: Colors.black,
                       padding: EdgeInsets.all(15.0),
-                      child:Text('Selanjutnya',style:TextStyle(
+                      child:Text(_isLoading ? 'Mengirim Data....':'Selanjutnya',style:TextStyle(
                         color:Colors.white
                       )),
                       onPressed:(){

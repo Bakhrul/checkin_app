@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/rendering.dart';
-import '../events_all/index.dart';
+import 'package:checkin_app/storage/storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/pages/events_all/index.dart';
+
+String tokenType, accessToken;
+Map<String, String> requestHeaders = Map();
 
 class WaitingEvent extends StatefulWidget {
   
@@ -15,6 +23,56 @@ class WaitingEvent extends StatefulWidget {
 }
 
 class _WaitingEvent extends State<WaitingEvent> {
+
+  bool _isLoading = false;
+
+  Future _cancelRegisterEvent() async {
+    setState((){
+      _isLoading = true;
+    });
+
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    Map body = {'event_id':widget.id.toString()};
+
+    try{
+      final ongoingevent = await http.post(
+        url('api/event/cancelregisterevent'),
+        headers: requestHeaders,
+        body:body
+      );
+
+      if(ongoingevent.statusCode == 200){
+        Fluttertoast.showToast(msg:"Anda Membatalkan Pendaftaran Anda");
+        await new Future.delayed(new Duration(seconds:1));
+        
+        return Navigator.pop(context);
+      } else if (ongoingevent.statusCode == 401){
+        Fluttertoast.showToast(msg:"Gagal Membatalkan Event");
+        setState((){
+          _isLoading = false;
+        });
+      }
+
+    } on TimeoutException catch(_) {
+        Fluttertoast.showToast(msg:"Time out, silahkan coba lagi nanti");
+        setState((){
+          _isLoading = false;
+        });
+    } catch(e) {
+        Fluttertoast.showToast(msg:"$e");
+        setState((){
+          _isLoading = false;
+        });
+    }
+  }
 
   @override
   Widget build(BuildContext context){
@@ -96,11 +154,11 @@ class _WaitingEvent extends State<WaitingEvent> {
                             width: double.infinity,
                             child:RaisedButton(
                                   color:Colors.white,
-                                  child:Text("Batalkan",style:TextStyle(
+                                  child:Text(_isLoading ? "mengirim Data....":"Batalkan",style:TextStyle(
                                     color:Colors.black
                                   )),
                                   onPressed: (){
-                                    Fluttertoast.showToast(msg:"Anda Membatalkan Pendaftaran Anda");
+                                    _cancelRegisterEvent();
                                   }
                                 )
                           )
