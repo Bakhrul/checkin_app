@@ -134,20 +134,21 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
-    try{
-      final ongoingevent = await http.post(
+    final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
         body:body
       );
       print(ongoingevent.body);
+
+    // try{
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
          
         if(mounted){
           setState((){
-            userId = rawData['user_id'];
+            userId = rawData['user_id'].toString();
             manyPage = rawData['num_page'];
             
             _event.clear();
@@ -168,17 +169,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           });
           return null;
       }
-    } on TimeoutException catch (_) {
-      setState(() {
-        _isLoading = false;
-      });
-      Fluttertoast.showToast(msg: "Timed out, Try again");
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      debugPrint('$e');
-    }
+    // } on TimeoutException catch (_) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   Fluttertoast.showToast(msg: "Timed out, Try again");
+    // } catch (e) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   debugPrint('$e');
+    // }
   }
 
   Future _getPage(int type, String query) async {
