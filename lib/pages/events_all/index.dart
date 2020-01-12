@@ -129,7 +129,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
-    try{
+    // try{
 
       final ongoingevent = await http.post(
         url('api/event/page/$page'),
@@ -149,7 +149,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
             _event.clear();
 
             for(var x in rawData['data']){
-              _event.add(x);
+              _event.add(SearchEvent.fromJson(x));
             }
             _isLoading = false;
           });
@@ -164,23 +164,23 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           });
           return null;
       }
-    } on TimeoutException catch (_) {
-      setState(() {
-        _isLoading = false;
-      });
-      Fluttertoast.showToast(msg: "Timed out, Try again");
-    } on SocketException catch(_){
-      setState(() {
-        _isLoading = false;
-        _isDisconnect = true;
-      });
-      Fluttertoast.showToast(msg: "No Internet Connection");
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      print('$e');
-    }
+    // } on TimeoutException catch (_) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   Fluttertoast.showToast(msg: "Timed out, Try again");
+    // } on SocketException catch(_){
+    //   setState(() {
+    //     _isLoading = false;
+    //     _isDisconnect = true;
+    //   });
+    //   Fluttertoast.showToast(msg: "No Internet Connection");
+    // } catch (e) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    //   print('$e');
+    // }
   }
 
   Future _getPage(int type, String query) async {
