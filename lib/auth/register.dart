@@ -13,7 +13,8 @@ Map<String, String> requestHeaders = Map();
 TextEditingController namalengkap = TextEditingController();
 TextEditingController email = TextEditingController();
 TextEditingController password = TextEditingController();
-bool isLoading;
+bool isLoading, isRegister;
+
 class Register extends StatefulWidget {
   @override
   _Register createState() => _Register();
@@ -23,6 +24,7 @@ class _Register extends State<Register> {
   void initState() {
     super.initState();
     isLoading = true;
+    isRegister = false;
     namalengkap.text = '';
     email.text = '';
     password.text = '';
@@ -31,7 +33,11 @@ class _Register extends State<Register> {
   void dispose() {
     super.dispose();
   }
+
   void register() async {
+    setState(() {
+      isRegister = true;
+    });
     formSerialize = Map<String, dynamic>();
     formSerialize['namakelengkap'] = null;
     formSerialize['email'] = null;
@@ -60,21 +66,39 @@ class _Register extends State<Register> {
         dynamic responseJson = jsonDecode(response.body);
         if (responseJson['status'] == 'success') {
           Fluttertoast.showToast(msg: "Berhasil Mendaftarkan Akun");
+          setState(() {
+            isRegister = false;
+          });
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
-        }else if(responseJson['status'] == 'emailnotavailable'){
-          Fluttertoast.showToast(msg: "Email telah digunakan, mohon gunakan email lainnya");
+        } else if (responseJson['status'] == 'emailnotavailable') {
+          Fluttertoast.showToast(
+              msg: "Email telah digunakan, mohon gunakan email lainnya");
+          setState(() {
+            isRegister = false;
+          });
         }
         print('response decoded $responseJson');
       } else {
         print('${response.body}');
         Fluttertoast.showToast(
             msg: "Gagal Mendaftarkan Akun Silahkan Coba Kembali");
+        setState(() {
+          isRegister = false;
+        });
       }
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(
-            msg: "Gagal Menambahkan Akun, Silahkan Coba Kembali");
+          msg: "Gagal Mendaftarkan Akun, Silahkan Coba Kembali");
+      setState(() {
+        isRegister = false;
+      });
     } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Gagal Mendaftarkan Akun, Silahkan Coba Kembali");
+      setState(() {
+        isRegister = false;
+      });
       print(e);
     }
   }
@@ -165,31 +189,31 @@ class _Register extends State<Register> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
+        onPressed: isRegister == true ? null : () async {
           setState(() {
             isLoading = true;
           });
-          if(namalengkap.text == null || namalengkap.text == ''){
+          if (namalengkap.text == null || namalengkap.text == '') {
             setState(() {
-            isLoading = false;
-          });
+              isLoading = false;
+            });
             Fluttertoast.showToast(msg: "Nama Lengkap Tidak Boleh Kosong");
-          }else if(email.text == null || email.text == ''){
+          } else if (email.text == null || email.text == '') {
             setState(() {
-            isLoading = false;
-          });
+              isLoading = false;
+            });
             Fluttertoast.showToast(msg: "Email Tidak Boleh Kosong");
-          }else if(password.text == null || password.text == ''){
+          } else if (password.text == null || password.text == '') {
             setState(() {
-            isLoading = false;
-          });
+              isLoading = false;
+            });
             Fluttertoast.showToast(msg: "Password Tidak Boleh Kosong");
-          }else{
+          } else {
             register();
           }
         },
         child: Text(
-          "Daftar",
+          isRegister == true ? "Mohon Tunggu Sebentar" :"Daftar Sekarang",
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -284,7 +308,7 @@ class _Register extends State<Register> {
                   height: 15.0,
                 ),
                 Padding(
-                  padding:EdgeInsets.all(0),
+                  padding: EdgeInsets.all(0),
                   child: SizedBox(
                     width: double.infinity,
                     child: RaisedButton(
