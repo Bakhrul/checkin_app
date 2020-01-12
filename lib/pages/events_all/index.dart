@@ -149,7 +149,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
             _event.clear();
 
             for(var x in rawData['data']){
-              _event.add(SearchEvent.fromJson(x));
+              _event.add(x);
             }
             _isLoading = false;
           });
