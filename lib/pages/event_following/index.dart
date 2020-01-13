@@ -55,14 +55,16 @@ class ManajemenEventFollowing extends StatefulWidget {
 }
 
 class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
+
+    bool isLoading = true;
+    String filterX = 'all';
+    String categoryNow = 'all';
+    bool isError = false;
+    bool isFilter = false;
+
   @override
   void initState() {
-    isLoading = true;
-    filterX = 'all';
     _searchQuery.text = '';
-    categoryNow = 'all';
-    isError = false;
-    isFilter = false;
     listDoneEvent();
     super.initState();
   }

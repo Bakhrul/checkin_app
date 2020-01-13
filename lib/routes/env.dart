@@ -2,7 +2,7 @@
 // Regard Previous Programmer
 // Online
 
-  //  String host = 'http://alamraya.club/';
+   String host = 'http://alamraya.club/';
   //  String host = 'http://192.168.100.12/alamraya/myocin/';
 
    String host = 'http://192.168.100.3/bisniskita_myocin/';
