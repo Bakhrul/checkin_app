@@ -17,10 +17,10 @@ import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 String tokenType, accessToken;
+bool isCreate;
 Map<String, String> requestHeaders = Map();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 
@@ -39,6 +39,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
   void initState() {
     firstdate = FocusNode();
     lastdate = FocusNode();
+    isCreate = false;
     _namacheckinController.text = '';
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
@@ -77,6 +78,10 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     } else if (_tanggalakhir == 'kosong') {
       Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
     } else {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      setState(() {
+        isCreate = true;
+      });
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
       formSerialize['namacheckin'] = null;
@@ -124,13 +129,22 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           }
           print('response decoded $responseJson');
         } else {
+          setState(() {
+            isCreate = false;
+          });
           print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
+        setState(() {
+          isCreate = false;
+        });
         Fluttertoast.showToast(msg: "Timed out, Try again");
       } catch (e) {
+        setState(() {
+          isCreate = false;
+        });
         print(e);
       }
     }
@@ -189,13 +203,13 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                     final date = await showDatePicker(
                         context: context,
                         firstDate: DateTime.now(),
-                        initialDate: currentValue ?? DateTime.now(),
+                        initialDate: DateTime.now(),
                         lastDate: DateTime(2100));
                     if (date != null) {
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(
-                            currentValue ?? DateTime.now()),
+                             DateTime.now()),
                       );
                       return DateTimeField.combine(date, time);
                     } else {
@@ -228,13 +242,13 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                           final date = await showDatePicker(
                               context: context,
                               firstDate: DateTime.now(),
-                              initialDate: currentValue ?? DateTime.now(),
+                              initialDate: DateTime.now(),
                               lastDate: DateTime(2100));
                           if (date != null) {
                             final time = await showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.fromDateTime(
-                                  currentValue ?? DateTime.now()),
+                                   DateTime.now()),
                             );
                             return DateTimeField.combine(date, time);
                           } else {
@@ -266,23 +280,27 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (_namacheckinController.text == null ||
-              _namacheckinController.text == '') {
-            Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
-          } else if (_kodecheckinController.text == null ||
-              _kodecheckinController.text == '') {
-            Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
-          } else if (_tanggalawal == 'kosong') {
-            Fluttertoast.showToast(
-                msg: "Waktu Awal Checkin Tidak Boleh Kosong");
-          } else if (_tanggalakhir == 'kosong') {
-            Fluttertoast.showToast(
-                msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
-          } else {
-            _tambahcheckin();
-          }
-        },
+        onPressed: isCreate == true
+            ? null
+            : () async {
+                if (_namacheckinController.text == null ||
+                    _namacheckinController.text == '') {
+                  Fluttertoast.showToast(
+                      msg: "Nama Checkin Tidak Boleh Kosong");
+                } else if (_kodecheckinController.text == null ||
+                    _kodecheckinController.text == '') {
+                  Fluttertoast.showToast(
+                      msg: "Kode Unik Checkin Tidak Boleh Kosong");
+                } else if (_tanggalawal == 'kosong') {
+                  Fluttertoast.showToast(
+                      msg: "Waktu Awal Checkin Tidak Boleh Kosong");
+                } else if (_tanggalakhir == 'kosong') {
+                  Fluttertoast.showToast(
+                      msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
+                } else {
+                  _tambahcheckin();
+                }
+              },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),

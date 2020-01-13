@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'checkin_success.dart';
 import 'dart:async';
+import 'scan_qrcode_checkin.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
 
@@ -193,7 +194,26 @@ class _CheckinManualState extends State<CheckinManual>
                                 TextStyle(color: Colors.black45, fontSize: 14),
                           ),
                         ),
-                      )
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(0),
+                        child: FlatButton(
+                          child: Text(
+                            "Atau Ingin Menggunakan QRCode ?",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScanQrcode(id: widget.idevent)));
+                          },
+                        ),
+                      ),
                     ]),
               ),
             ],

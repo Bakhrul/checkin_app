@@ -650,7 +650,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  PointEvents()));
+                                                                  PointEvents(idevent: item.id)));
                                                       break;
                                                     case PageEnum.deleteEvent:
                                                       konfirmasidelete(item.id, listItemOngoing, item);
@@ -872,7 +872,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                       CupertinoPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              PointEvents()));
+                                                              PointEvents(idevent: item.id)));
                                                   break;
                                                 case PageEnum.deleteEvent:
                                                   konfirmasidelete(item.id, listItemWillCome, item);
@@ -1092,7 +1092,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  PointEvents()));
+                                                                  PointEvents(idevent : item.id)));
                                                       break;
                                                     case PageEnum.deleteEvent:
                                                       konfirmasidelete(item.id, listItemDoneEvent, item);

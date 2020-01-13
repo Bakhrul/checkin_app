@@ -26,6 +26,7 @@ dependencies:
   datetime_picker_formfield: ^0.4.3
   intl: ^0.15.0  
   percent_indicator: "^2.1.1"
+  image_gallery_saver: '^1.2.2'
   draggable_fab: ^0.1.1
   unicorndial: "^1.1.5"
   material_design_icons_flutter: "2.7.94"
@@ -99,6 +100,7 @@ flutter:
     - images/system-eror.png
     - images/clubs.json
     - images/checkin_flat.png
+    - images/logo.png
   # fonts:
   #   - family: Schyler
   #     fonts:

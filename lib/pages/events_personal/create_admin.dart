@@ -288,7 +288,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Column(
                     children: <Widget>[
                       Container(
