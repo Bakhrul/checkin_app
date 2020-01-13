@@ -688,7 +688,11 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-            Column(children: listEventNow.map((Event f) => Container(
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child:
+                 
+                Column(children: listEventNow.map((Event f) => Container(
               child: InkWell(
               child: Container(
                 height: height,
@@ -878,6 +882,8 @@ class _DashboardState extends State<Dashboard> {
               },
             ),
             )).toList(),)
+                ,)
+            
           ])),
           Container(
             padding: EdgeInsets.only(
