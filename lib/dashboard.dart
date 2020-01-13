@@ -27,6 +27,8 @@ enum PageEnum {
   kelolaRegisterPage,
 }
 
+Map<String, String> requestHeaders = Map();
+
 class Dashboard extends StatefulWidget {
   // final IkiIndex _indexIki;
 
@@ -46,6 +48,7 @@ class _DashboardState extends State<Dashboard> {
   var height;
   var futureheight;
   var pastheight, heightmyevent;
+  DataStore user;
 
   @override
   void initState() {
@@ -54,7 +57,7 @@ class _DashboardState extends State<Dashboard> {
     eventNow();
     getvaluenotif();
     dataProfile();
-    // eventSelf();
+    print(user);
     emailprofile = 'Email Anda';
     usernameprofile = 'Username';
     jumlahnotifX = '0';
