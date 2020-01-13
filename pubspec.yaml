@@ -98,6 +98,7 @@ flutter:
     - images/empty-white-box.png
     - images/system-eror.png
     - images/clubs.json
+    - images/checkin_flat.png
   # fonts:
   #   - family: Schyler
   #     fonts:

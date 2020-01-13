@@ -143,7 +143,7 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
             child: FlatButton(child: Text("Tidak dapat menggunakan kamera?",style: TextStyle(color: Colors.blue ,fontSize: 14,decoration: TextDecoration.underline,)
             
             ,), onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinManual()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinManual(idevent: widget.id)));
             },),
           ),
           // Align(

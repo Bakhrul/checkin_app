@@ -22,7 +22,7 @@ TextEditingController _namaeventController = new TextEditingController();
 TextEditingController _alamateventController = new TextEditingController();
 TextEditingController _deskripsieventController = new TextEditingController();
 var firstdate, lastdate, _tanggalawalevent, _tanggalakhirevent;
-bool isLoading, isError;
+bool isLoading, isError, isEdit;
 
 class ManajemeEditEvent extends StatefulWidget {
   ManajemeEditEvent(
@@ -50,12 +50,21 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
   void initState() {
     super.initState();
     getHeaderHTTP();
+    isEdit = false;
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
     firstdate = FocusNode();
     lastdate = FocusNode();
-    _tanggalawalevent = widget.waktuawal == null || widget.waktuawal == '' || widget.waktuawal == 'kosong' ? null : widget.waktuawal;
-    _tanggalakhirevent = widget.waktuakhir == null || widget.waktuakhir == '' || widget.waktuakhir == 'kosong' ? null : widget.waktuakhir;
+    _tanggalawalevent = widget.waktuawal == null ||
+            widget.waktuawal == '' ||
+            widget.waktuawal == 'kosong'
+        ? null
+        : widget.waktuawal;
+    _tanggalakhirevent = widget.waktuakhir == null ||
+            widget.waktuakhir == '' ||
+            widget.waktuakhir == 'kosong'
+        ? null
+        : widget.waktuakhir;
     listkategoriEventEdit = [];
     _namaeventController.text = widget.nama;
     _alamateventController.text = widget.lokasi;
@@ -198,8 +207,8 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                       ),
                       FlatButton(
                         textColor: Colors.green,
-                        child: Text('Ya'),
-                        onPressed: () async {
+                        child: Text(isEdit == true ? 'Tunggu Sebentar' :'Ya'),
+                        onPressed: isEdit == true ? null : () async {
                           _updateEvent();
                         },
                       )
@@ -245,10 +254,10 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                           readOnly: true,
                           format: format,
                           initialValue: widget.waktuawal == 'kosong' ||
-                          widget.waktuawal == '' ||
-                          widget.waktuawal == null
-                      ? null
-                      : DateTime.parse(widget.waktuawal),
+                                  widget.waktuawal == '' ||
+                                  widget.waktuawal == null
+                              ? null
+                              : DateTime.parse(widget.waktuawal),
                           focusNode: firstdate,
                           onShowPicker: (context, currentValue) async {
                             final date = await showDatePicker(
@@ -259,7 +268,8 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                             if (date != null) {
                               final time = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+                                initialTime:
+                                    TimeOfDay.fromDateTime(DateTime.now()),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
@@ -289,20 +299,21 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                           format: format,
                           focusNode: lastdate,
                           initialValue: widget.waktuakhir == 'kosong' ||
-                          widget.waktuakhir == '' ||
-                          widget.waktuakhir == null
-                      ? null
-                      : DateTime.parse(widget.waktuakhir),
+                                  widget.waktuakhir == '' ||
+                                  widget.waktuakhir == null
+                              ? null
+                              : DateTime.parse(widget.waktuakhir),
                           onShowPicker: (context, currentValue) async {
                             final date = await showDatePicker(
                                 context: context,
                                 firstDate: DateTime.now(),
-                                initialDate:DateTime.now(),
+                                initialDate: DateTime.now(),
                                 lastDate: DateTime(2100));
                             if (date != null) {
                               final time = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+                                initialTime:
+                                    TimeOfDay.fromDateTime(DateTime.now()),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
@@ -443,7 +454,8 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ManajemenEditCategoryEvent(listkategoryedit : ListEditKategoriEvent),
+                  builder: (context) => ManajemenEditCategoryEvent(
+                      listkategoryedit: ListEditKategoriEvent),
                 ));
           },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -494,11 +506,19 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     } else if (_alamateventController.text == '' ||
         _alamateventController.text == '') {
       Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
-    } else if (_tanggalawalevent == null || _tanggalawalevent == 'kosong' || _tanggalawalevent == '') {
+    } else if (_tanggalawalevent == null ||
+        _tanggalawalevent == 'kosong' ||
+        _tanggalawalevent == '') {
       Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
-    } else if (_tanggalakhirevent == null || _tanggalakhirevent == 'kosong' || _tanggalakhirevent == '') {
+    } else if (_tanggalakhirevent == null ||
+        _tanggalakhirevent == 'kosong' ||
+        _tanggalakhirevent == '') {
       Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
     } else {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar!");
+      setState(() {
+        isEdit = true;
+      });
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
       formSerialize['title'] = null;
@@ -512,13 +532,17 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
       formSerialize['title'] = _namaeventController.text;
       formSerialize['deskripsi'] = _deskripsieventController.text;
       formSerialize['lokasi'] = _alamateventController.text;
-      formSerialize['tanggalawalevent'] = _tanggalawalevent == null || _tanggalawalevent == 'kosong' || _tanggalawalevent == ''
+      formSerialize['tanggalawalevent'] = _tanggalawalevent == null ||
+              _tanggalawalevent == 'kosong' ||
+              _tanggalawalevent == ''
           ? null
           : DateFormat('dd-MM-y HH:mm:ss')
               .format(DateTime.parse(_tanggalawalevent));
-      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null || _tanggalakhirevent ==  'kosong' || _tanggalakhirevent == ''
+      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null ||
+              _tanggalakhirevent == 'kosong' ||
+              _tanggalakhirevent == ''
           ? null
-          :  DateFormat('dd-MM-y HH:mm:ss')
+          : DateFormat('dd-MM-y HH:mm:ss')
               .format(DateTime.parse(_tanggalakhirevent));
 
       for (int i = 0; i < listkategoriEventEdit.length; i++) {
@@ -543,6 +567,9 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         if (response.statusCode == 200) {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
+            setState(() {
+              isEdit = false;
+            });
             Fluttertoast.showToast(msg: "Berhasil Update Data Event");
             Navigator.pop(context);
             Navigator.pop(context);
@@ -553,13 +580,23 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
           }
           print('response decoded $responseJson');
         } else {
+          setState(() {
+            isEdit = false;
+          });
           print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Update Event, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
         Fluttertoast.showToast(msg: 'Timed out, Try again');
+        setState(() {
+          isEdit = false;
+        });
       } catch (e) {
+        Fluttertoast.showToast(msg: 'Timed out, Try again');
+        setState(() {
+          isEdit = false;
+        });
         print(e);
       }
     }

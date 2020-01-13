@@ -482,6 +482,15 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                                         builder:
                                                                             (context) =>
                                                                                 ManagePeserta(event: widget.event)));
+                                                              }else if (addpesertaJson[
+                                                                      'status'] ==
+                                                                  'creator') {
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "Member ini merupakan pembuat event");
+                                                                            Navigator.pop(
+                                                                    context);
                                                               } else if (addpesertaJson[
                                                                       'status'] ==
                                                                   'sudah ada') {

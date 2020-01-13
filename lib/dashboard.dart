@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
 bool isLoading, isError;
 String tokenType, accessToken;
@@ -164,7 +165,6 @@ class _DashboardState extends State<Dashboard> {
             location: i['location'],
             image: i['image'],
             userStatus: i['user_status'],
-
           );
           listEventNow.add(willcomex);
         }
@@ -204,7 +204,7 @@ class _DashboardState extends State<Dashboard> {
     return null;
   }
 
- Future<List<Event>> eventUpComing() async {
+  Future<List<Event>> eventUpComing() async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -662,7 +662,6 @@ class _DashboardState extends State<Dashboard> {
               ]),
             ),
           ),
-          
           Container(
             padding: EdgeInsets.only(
                 left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
@@ -691,196 +690,253 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-            Column(children: listEventNow.map((Event f) => Container(
-              child: InkWell(
-              child: Container(
-                height: height,
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                        margin: EdgeInsets.only(
-                            top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                        child: Column(
-                          children: <Widget>[
-                            Card(
-                              elevation: 1,
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
+            Column(
+              children: listEventNow
+                  .map((Event f) => Container(
+                        child: InkWell(
+                          child: Container(
+                            height: height,
+                            child: Stack(
+                              children: <Widget>[
+                                Container(
+                                    margin: EdgeInsets.only(
+                                        top: 5.0,
+                                        bottom: 5.0,
+                                        left: 5.0,
+                                        right: 5.0),
+                                    child: Column(
                                       children: <Widget>[
-                                        Expanded(
-                                          flex: 5,
-                                          child: Container(
-                                              width: 80.0,
-                                              height: 80.0,
-                                              decoration: new BoxDecoration(
-                                                borderRadius: new BorderRadius
-                                                        .only(
-                                                    topLeft:
-                                                        const Radius.circular(
-                                                            5.0),
-                                                    topRight:
-                                                        const Radius.circular(
-                                                            5.0),
-                                                    bottomLeft:
-                                                        const Radius.circular(
-                                                            5.0),
-                                                    bottomRight:
-                                                        const Radius.circular(
-                                                            5.0)),
-                                                image: new DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: AssetImage(
-                                                    'images/bg-header.jpg',
-                                                  ),
+                                        Card(
+                                          elevation: 1,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      flex: 5,
+                                                      child: Container(
+                                                          width: 80.0,
+                                                          height: 80.0,
+                                                          decoration:
+                                                              new BoxDecoration(
+                                                            borderRadius: new BorderRadius
+                                                                    .only(
+                                                                topLeft:
+                                                                    const Radius
+                                                                            .circular(
+                                                                        5.0),
+                                                                topRight:
+                                                                    const Radius
+                                                                            .circular(
+                                                                        5.0),
+                                                                bottomLeft:
+                                                                    const Radius
+                                                                            .circular(
+                                                                        5.0),
+                                                                bottomRight:
+                                                                    const Radius
+                                                                            .circular(
+                                                                        5.0)),
+                                                            image:
+                                                                new DecorationImage(
+                                                              fit: BoxFit.fill,
+                                                              image: AssetImage(
+                                                                'images/bg-header.jpg',
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 7,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 15.0,
+                                                                right: 5.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              f.dateEvent,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 5.0),
+                                                              child: Text(
+                                                                  f.title,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        16,
+                                                                  )),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top:
+                                                                          10.0),
+                                                              child: Text(
+                                                                f.location,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              )),
-                                        ),
-                                        Expanded(
-                                          flex: 7,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 15.0, right: 5.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  f.dateEvent,
-                                                  style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5.0),
-                                                  child: Text(
-                                                      f.title,
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 16,
-                                                      )),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10.0),
-                                                  child: Text(
-                                                    f.location,
-                                                    style: TextStyle(
-                                                        color: Colors.grey),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                      padding: EdgeInsets.only(
-                                          left: 10.0, right: 10.0),
-                                      child: Divider()),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, right: 10.0, bottom: 10.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: _buildTextStatus(f.userStatus.toString()),
-                                          ),
-                                            
-                                            f.userStatus != null ? 
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 0),
-                                          child: ButtonTheme(
-                                            minWidth: 0, //wraps child's width
-                                            height: 0,
-                                            child: FlatButton(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Icon(
-                                                    Icons.favorite,
-                                                    color: wishlistone == true
-                                                        ? Colors.pink
-                                                        : Colors.grey,
-                                                    size: 18,
-                                                  ),
-                                                ],
                                               ),
-                                              color: Colors.white,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              padding: EdgeInsets.all(5.0),
-                                              onPressed: () async {
-                                                setState(() {
-                                                  if(f.userStatus != null){
-                                                     if (wishlistone == true) {
-                                                    wishlistone = false;
-                                                  } else {
-                                                    wishlistone = true;
-                                                  }
-
-                                                  }
-                                                 
-                                                });
-                                              },
-                                            ),
+                                              Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10.0, right: 10.0),
+                                                  child: Divider()),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10.0,
+                                                    right: 10.0,
+                                                    bottom: 10.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.all(2.0),
+                                                      child: _buildTextStatus(f
+                                                          .userStatus
+                                                          .toString()),
+                                                    ),
+                                                    f.userStatus != null
+                                                        ? Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 0),
+                                                            child: ButtonTheme(
+                                                              minWidth:
+                                                                  0, //wraps child's width
+                                                              height: 0,
+                                                              child: FlatButton(
+                                                                child: Row(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Icon(
+                                                                      Icons
+                                                                          .favorite,
+                                                                      color: wishlistone ==
+                                                                              true
+                                                                          ? Colors
+                                                                              .pink
+                                                                          : Colors
+                                                                              .grey,
+                                                                      size: 18,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                color: Colors
+                                                                    .white,
+                                                                materialTapTargetSize:
+                                                                    MaterialTapTargetSize
+                                                                        .shrinkWrap,
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            5.0),
+                                                                onPressed:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    if (f.userStatus !=
+                                                                        null) {
+                                                                      if (wishlistone ==
+                                                                          true) {
+                                                                        wishlistone =
+                                                                            false;
+                                                                      } else {
+                                                                        wishlistone =
+                                                                            true;
+                                                                      }
+                                                                    }
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Text(""),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        )
-                                        : Text(""),
+                                        ),
                                       ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                    )),
+                                Positioned(
+                                    width: 30.0,
+                                    right: 10,
+                                    top: -7,
+                                    child: Container(
+                                      decoration: new BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(5.0),
+                                            topRight:
+                                                const Radius.circular(5.0),
+                                            bottomLeft:
+                                                const Radius.circular(5.0),
+                                            bottomRight:
+                                                const Radius.circular(5.0)),
+                                      ),
+                                      padding: EdgeInsets.all(5.0),
+                                      child: Icon(Icons.star_border,
+                                          color: Colors.orangeAccent),
+                                    )),
+                              ],
                             ),
-                          ],
-                        )),
-                    Positioned(
-                        width: 30.0,
-                        right: 10,
-                        top: -7,
-                        child: Container(
-                          decoration: new BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: new BorderRadius.only(
-                                topLeft: const Radius.circular(5.0),
-                                topRight: const Radius.circular(5.0),
-                                bottomLeft: const Radius.circular(5.0),
-                                bottomRight: const Radius.circular(5.0)),
                           ),
-                          padding: EdgeInsets.all(5.0),
-                          child: Icon(Icons.star_border,
-                              color: Colors.orangeAccent),
-                        )),
-                  ],
-                ),
-              ),
-              onTap: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => f.userStatus == "P" ? WaitingEvent() : f.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: f.id.toString()),
-                    ));
-              },
-            ),
-            )).toList(),)
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => f.userStatus == "P"
+                                      ? WaitingEvent()
+                                      : f.userStatus == "A"
+                                          ? SuccesRegisteredEvent()
+                                          : DashboardCheckin(
+                                              idevent: f.id.toString()),
+                                ));
+                          },
+                        ),
+                      ))
+                  .toList(),
+            )
           ])),
           Container(
             padding: EdgeInsets.only(
@@ -910,162 +966,210 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 )),
-                Column(children: listEventUpComming.map((Event item) => Container(
-
-            child: InkWell(
-              child: Container(
-                  margin: EdgeInsets.only(
-                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                  height: futureheight,
-                  child: Column(
-                    children: <Widget>[
-                      
-                      Card(
-                        elevation: 1,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                        width: 80.0,
-                                        height: 80.0,
-                                        decoration: new BoxDecoration(
-                                          borderRadius: new BorderRadius.only(
-                                              topLeft:
-                                                  const Radius.circular(5.0),
-                                              topRight:
-                                                  const Radius.circular(5.0),
-                                              bottomLeft:
-                                                  const Radius.circular(5.0),
-                                              bottomRight:
-                                                  const Radius.circular(5.0)),
-                                          image: new DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: AssetImage(
-                                              'images/bg-header.jpg',
+            Column(
+                children: listEventUpComming
+                    .map((Event item) => Container(
+                          child: InkWell(
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    top: 5.0,
+                                    bottom: 5.0,
+                                    left: 5.0,
+                                    right: 5.0),
+                                height: futureheight,
+                                child: Column(
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: 1,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  flex: 5,
+                                                  child: Container(
+                                                      width: 80.0,
+                                                      height: 80.0,
+                                                      decoration:
+                                                          new BoxDecoration(
+                                                        borderRadius: new BorderRadius
+                                                                .only(
+                                                            topLeft: const Radius
+                                                                .circular(5.0),
+                                                            topRight: const Radius
+                                                                .circular(5.0),
+                                                            bottomLeft:
+                                                                const Radius
+                                                                        .circular(
+                                                                    5.0),
+                                                            bottomRight:
+                                                                const Radius
+                                                                        .circular(
+                                                                    5.0)),
+                                                        image:
+                                                            new DecorationImage(
+                                                          fit: BoxFit.fill,
+                                                          image: AssetImage(
+                                                            'images/bg-header.jpg',
+                                                          ),
+                                                        ),
+                                                      )),
+                                                ),
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 15.0,
+                                                            right: 5.0),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          item.dateEvent,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.blue,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 5.0),
+                                                          child: Text(
+                                                              item.title,
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 16,
+                                                              )),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10.0),
+                                                          child: Text(
+                                                            item.location,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        )),
-                                  ),
-                                  Expanded(
-                                    flex: 7,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15.0, right: 5.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            item.dateEvent,
-                                            style: TextStyle(
-                                                color: Colors.blue,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 5.0),
-                                            child: Text(item.title,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16,
-                                                )),
-                                          ),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 10.0, right: 10.0),
+                                              child: Divider()),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 10.0),
-                                            child: Text(
-                                              item.location,
-                                              style:
-                                                  TextStyle(color: Colors.grey),
+                                                left: 10.0,
+                                                right: 10.0,
+                                                bottom: 10.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: EdgeInsets.all(2),
+                                                  child: _buildTextStatus(
+                                                      item.userStatus),
+                                                ),
+                                                item.userStatus != null
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(right: 0),
+                                                        child: ButtonTheme(
+                                                          minWidth:
+                                                              0, //wraps child's width
+                                                          height: 0,
+                                                          child: FlatButton(
+                                                            child: Row(
+                                                              children: <
+                                                                  Widget>[
+                                                                Icon(
+                                                                  Icons
+                                                                      .favorite,
+                                                                  color: wishlisttwo ==
+                                                                          true
+                                                                      ? Colors
+                                                                          .pink
+                                                                      : Colors
+                                                                          .grey,
+                                                                  size: 18,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            color: Colors.white,
+                                                            materialTapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    5.0),
+                                                            onPressed:
+                                                                () async {
+                                                              setState(() {
+                                                                if (wishlisttwo ==
+                                                                    true) {
+                                                                  wishlisttwo =
+                                                                      false;
+                                                                } else {
+                                                                  wishlisttwo =
+                                                                      true;
+                                                                }
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Text(""),
+                                              ],
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                                padding:
-                                    EdgeInsets.only(left: 10.0, right: 10.0),
-                                child: Divider()),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0, bottom: 10.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  
-                                  Padding(
-                                    padding: EdgeInsets.all(2),
-                                    child: _buildTextStatus(item.userStatus),),
-                                item.userStatus != null ?
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 0),
-                                    child: ButtonTheme(
-                                      minWidth: 0, //wraps child's width
-                                      height: 0,
-                                      child: FlatButton(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.favorite,
-                                              color: wishlisttwo == true
-                                                  ? Colors.pink
-                                                  : Colors.grey,
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                        color: Colors.white,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        padding: EdgeInsets.all(5.0),
-                                        onPressed: () async {
-                                          setState(() {
-                                            if (wishlisttwo == true) {
-                                              wishlisttwo = false;
-                                            } else {
-                                              wishlisttwo = true;
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ) : Text(""),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                    ],
-                  )),
-              onTap: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => item.userStatus == "P" ? WaitingEvent() : item.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: item.id.toString()),
-                    ));
-              },
-            ),
-                                    )).toList()),
-            
+                                  ],
+                                )),
+                            onTap: () async {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => item.userStatus == "P"
+                                        ? WaitingEvent()
+                                        : item.userStatus == "A"
+                                            ? SuccesRegisteredEvent()
+                                            : DashboardCheckin(
+                                                idevent: item.id.toString()),
+                                  ));
+                            },
+                          ),
+                        ))
+                    .toList()),
           ]),
-          
-          
         ])));
   }
 
@@ -1146,64 +1250,48 @@ class _DashboardState extends State<Dashboard> {
 
   _buildTextStatus(status) {
     if (status == "A") {
-    return   Container(
-                                      decoration: new BoxDecoration(
-                                        color: Colors.blue,
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                      ),
-                                      padding: EdgeInsets.all(5.0),
-                                      width: 120.0,
-                                      child: 
-                                    
-                                      
-                                      Text(
-                                      'Sudah Terdaftar',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                     );
-                                              
-    }else if(status == "P"){
-        return Container(
-                                      decoration: new BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(5.0),
-                                            topRight:
-                                                const Radius.circular(5.0),
-                                            bottomLeft:
-                                                const Radius.circular(5.0),
-                                            bottomRight:
-                                                const Radius.circular(5.0)),
-                                      ),
-                                      padding: EdgeInsets.all(5.0),
-                                      width: 120.0,
-                                      child: 
-                                    
-                                      
-                                      Text(
-                                      'Proses Pendaftaran ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    )
-                                     );
-    }
-    else{
+      return Container(
+          decoration: new BoxDecoration(
+            color: Colors.blue,
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(5.0),
+                topRight: const Radius.circular(5.0),
+                bottomLeft: const Radius.circular(5.0),
+                bottomRight: const Radius.circular(5.0)),
+          ),
+          padding: EdgeInsets.all(5.0),
+          width: 120.0,
+          child: Text(
+            'Sudah Terdaftar',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ));
+    } else if (status == "P") {
+      return Container(
+          decoration: new BoxDecoration(
+            color: Colors.green,
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(5.0),
+                topRight: const Radius.circular(5.0),
+                bottomLeft: const Radius.circular(5.0),
+                bottomRight: const Radius.circular(5.0)),
+          ),
+          padding: EdgeInsets.all(5.0),
+          width: 120.0,
+          child: Text(
+            'Proses Pendaftaran ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ));
+    } else {
       return null;
     }
   }
