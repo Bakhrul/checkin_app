@@ -52,7 +52,7 @@ class SearchEvent{
 
       switch(map['ep_position']){
         case 2:
-           positionUser = ' Admin';
+           positionUser = ' Sebagai Admin';
            break;
         default:
            positionUser = '';

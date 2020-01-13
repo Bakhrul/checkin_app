@@ -1,4 +1,3 @@
-import 'package:checkin_app/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'detail_event.dart';
@@ -10,7 +9,9 @@ import '../register_event/step_register_six.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import "dart:convert";
+import "dart:io";
 
 enum PageEnum {
   kelolaRegisterPage,
@@ -36,9 +37,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   bool _isLoading = true;
   bool _isLoadingCategory = true;
   bool _isLoadingPagination = false;
+  bool _isDisconnect = false;
   ScrollController pageScroll = new ScrollController();
   int manyPage = 0;
-  TextEditingController _searchQuery = new TextEditingController();
+  Timer _debouncer;
+  String _searchQuery = '';
   String userId;
   List listCategory = [];
   int categoryNow = 0;
@@ -50,18 +53,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     _getUserData();
     getHeaderHTTP();
     _getCategory();
-    _getAll(0,_searchQuery.text);
+    _getAll(0,_searchQuery);
     super.initState();
-    _searchQuery.addListener((){
-      setState((){
-        page = 1;
-        _isLoading = true;
-      });
-      _getAll(categoryNow,_searchQuery.text);
-    });
+
     pageScroll.addListener(() async {
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
-         _getPage(categoryNow,_searchQuery.text);
+         _getPage(categoryNow,_searchQuery);
        }
     });
   }
@@ -69,7 +66,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   @override
   void dispose() {
     pageScroll.dispose();
-    _searchQuery.dispose();
     super.dispose();
   }
 
@@ -84,7 +80,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   _getUserData() async {
@@ -114,7 +109,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         } 
       
       }
-    } catch(e){
+    } catch(e) {
       print(e);
     }
   }
@@ -135,19 +130,20 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
     try{
+
       final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
         body:body
       );
-      print(ongoingevent.body);
+
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
-         
+         print(rawData);
         if(mounted){
           setState((){
-            userId = rawData['user_id'];
+            userId = rawData['user_id'].toString();
             manyPage = rawData['num_page'];
             
             _event.clear();
@@ -173,11 +169,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         _isLoading = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
+    } on SocketException catch(_){
+      setState(() {
+        _isLoading = false;
+        _isDisconnect = true;
+      });
+      Fluttertoast.showToast(msg: "No Internet Connection");
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      debugPrint('$e');
+      print('$e');
     }
   }
 
@@ -215,13 +217,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
+  try{
     final ongoingevent = await http.post(
         url('api/event/page/$page'),
         headers: requestHeaders,
         body:body
     );
-
-    print(ongoingevent.body);
 
     if (ongoingevent.statusCode == 200) {
 
@@ -236,13 +237,25 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         _event.addAll(temp);
 
         setState((){
-          print('false');
           delay = false;
           _isLoadingPagination = false;
         });
+
       } 
     }
-      return _event;
+      
+  } on SocketException catch(_){
+      setState(() {
+        _isLoading = false;
+        _isDisconnect = true;
+      });
+      Fluttertoast.showToast(msg: "No Internet Connection");
+  } catch(e) {
+    print(e);
+  }
+
+
+    return _event;
   }
 
   _getCategory() async {
@@ -289,6 +302,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       setState((){
         _isLoadingCategory = false;
       });
+    } on SocketException catch(_){
+      setState(() {
+        _isLoadingCategory = false;
+        _isDisconnect = true;
+      });
+      Fluttertoast.showToast(msg: "No Internet Connection");
     } catch(e) {
       setState((){
         _isLoadingCategory = false;
@@ -330,9 +349,38 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     } on TimeoutException catch(_) {
        Fluttertoast.showToast(msg : "Time out , please try again later");
-    } catch(e) {
+    } on SocketException catch(_){ 
+      Fluttertoast.showToast(msg: "No Internet Connection");
+    }catch(e) {
        print(e);
     }   
+
+  }
+
+  _reload(){
+
+      setState((){
+
+          _isLoading = true;
+          _isLoadingCategory = true;
+          _isDisconnect = false;
+
+      });
+      
+      _getUserData();
+      _getCategory();
+      _getAll(0,_searchQuery);
+  
+  }
+
+  _changeSearch(value) async {
+             
+            setState((){
+            page = 1;
+            _isLoading = true;
+            _searchQuery = value;
+            });
+            _getAll(categoryNow,_searchQuery);
 
   }
 
@@ -351,10 +399,10 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         ),
       );
       
-      _searchQuery.clear();
+      _searchQuery = '';
       _isLoading = true;
       page = 1;
-      _getAll(0,_searchQuery.text);
+      _getAll(0,_searchQuery);
     });
   }
 
@@ -383,11 +431,49 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: buildBar(context),
-      body: _isLoadingCategory ? 
+      body:
+       _isLoadingCategory ? 
         Center(
           child:CircularProgressIndicator()
         ):
-      Padding(
+        _isDisconnect ? 
+        Center(
+          child:GestureDetector(
+            onTap:_reload,
+            child:Container(
+              padding: EdgeInsets.all(5.0),
+              child:Icon(
+              Icons.refresh,
+              color: Colors.blueAccent,
+              size: 25
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:BorderRadius.only(
+                  topLeft : Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft : Radius.circular(20.0),
+                  bottomRight : Radius.circular(20.0)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ]
+              )
+            ) 
+          )
+        ):
+      RefreshIndicator(
+        onRefresh: () async {
+         await  _getUserData();
+         await _getCategory();
+         await _getAll(0,_searchQuery);
+        },
+        child:Padding(
         padding: const EdgeInsets.only(
             top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
         child: Column(
@@ -437,7 +523,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                  page = 1;
                                  delay = false;
                                  categoryNow = x['c_id'];
-                                 _getAll(x['c_id'],_searchQuery.text);
+                                 _getAll(x['c_id'],_searchQuery);
                                });
                             },
                             child: Text(
@@ -648,15 +734,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                          selfEvent: userId == _event[x].userEvent ? true:false,
                                        );
                                        break;
-                                  case 'Ditolak':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         selfEvent: true,
-                                         dataUser:dataUser
-                                         );
-                                       break;
-                                  case 'Ditolak Admin':
+                                  case 'Proses Daftar Sebagai Admin':
                                        return RegisterEvents(
                                          id:_event[x].id,
                                          creatorId:_event[x].userEvent,
@@ -664,7 +742,31 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                          selfEvent: true
                                          );
                                        break;
-                                  case 'Sudah Terdaftar Admin':
+                                  case 'Ditolak':
+                                       return RegisterEvents(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         selfEvent: userId == _event[x].userEvent ? true:false,
+                                         dataUser:dataUser
+                                         );
+                                       break;
+                                  case 'Ditolak Sebagai Admin':
+                                       return RegisterEvents(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         dataUser:dataUser,
+                                         selfEvent: userId == _event[x].userEvent ? true:false
+                                         );
+                                       break;
+                                  case 'Ditolak':
+                                       return RegisterEvents(
+                                         id:_event[x].id,
+                                         creatorId:_event[x].userEvent,
+                                         dataUser:dataUser,
+                                         selfEvent: userId == _event[x].userEvent ? true:false
+                                         );
+                                       break;
+                                  case 'Sudah Terdaftar Sebagai Admin':
                                        return RegisterEvents(
                                          id:_event[x].id,
                                          creatorId:_event[x].userEvent,
@@ -696,7 +798,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   )
             ],
           ),
-        ),
+        )
+      ),
       );
   }
 
@@ -717,7 +820,17 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                   color: Colors.white,
                 );
                 this.appBarTitle = TextField(
-                  controller: _searchQuery,
+                  onChanged:(value){
+
+                    if(_debouncer != null){
+                      _debouncer.cancel();
+                    }
+
+                    _debouncer = new Timer(new Duration(milliseconds: 500),(){
+                      _changeSearch(value);
+                    });
+                    
+                  },
                   style: TextStyle(
                     color: Colors.white,
                   ),
