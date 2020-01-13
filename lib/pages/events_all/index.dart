@@ -47,6 +47,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   int categoryNow = 0;
   Map dataUser;
   bool delay = false;
+  bool _isPageDisconnect = false;
 
   @override
   void initState() {
@@ -65,7 +66,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
   @override
   void dispose() {
-    pageScroll.dispose();
+    pageScroll?.dispose();
     super.dispose();
   }
 
@@ -130,6 +131,10 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
     try{
+
+      setState((){
+        page = 1;
+      });
 
       final ongoingevent = await http.post(
         url('api/event/page/$page'),
@@ -201,10 +206,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       }else{
         setState((){
         page = page + 1;
-          _isLoadingPagination = true;
+        _isLoadingPagination = true;
+          _isPageDisconnect = false;
         });
       }
     }
+    
+    print(query);
 
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
@@ -227,7 +235,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     if (ongoingevent.statusCode == 200) {
 
       Map rawData = json.decode(ongoingevent.body);
-
+      print(rawData);
+      print(page);
       if(mounted){
         List<SearchEvent> temp = new List();
         for(var x in rawData['data']){
@@ -246,8 +255,10 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       
   } on SocketException catch(_){
       setState(() {
-        _isLoading = false;
-        _isDisconnect = true;
+        _isLoadingPagination = false;
+        _isPageDisconnect = true;
+        page -= 1;
+        delay = false;
       });
       Fluttertoast.showToast(msg: "No Internet Connection");
   } catch(e) {
@@ -789,6 +800,42 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                               ));
                           }
                         ),
+                        _isPageDisconnect ?
+                        Container(
+                          height: 50,
+                          child:Center(
+          child:GestureDetector(
+            onTap:(){
+              _getPage(categoryNow,_searchQuery);
+            },
+            child:Container(
+              padding: EdgeInsets.all(5.0),
+              child:Icon(
+              Icons.refresh,
+              color: Colors.blueAccent,
+              size: 25
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:BorderRadius.only(
+                  topLeft : Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft : Radius.circular(20.0),
+                  bottomRight : Radius.circular(20.0)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ]
+              )
+            ) 
+          )
+        )
+                        ):
                         Container(
                           height:_isLoadingPagination ? 50:0,
                           child:Center(
