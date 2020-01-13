@@ -129,7 +129,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
-    // try{
+    try{
 
       final ongoingevent = await http.post(
         url('api/event/page/$page'),
@@ -164,23 +164,23 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           });
           return null;
       }
-    // } on TimeoutException catch (_) {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    //   Fluttertoast.showToast(msg: "Timed out, Try again");
-    // } on SocketException catch(_){
-    //   setState(() {
-    //     _isLoading = false;
-    //     _isDisconnect = true;
-    //   });
-    //   Fluttertoast.showToast(msg: "No Internet Connection");
-    // } catch (e) {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    //   print('$e');
-    // }
+    } on TimeoutException catch (_) {
+      setState(() {
+        _isLoading = false;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } on SocketException catch(_){
+      setState(() {
+        _isLoading = false;
+        _isDisconnect = true;
+      });
+      Fluttertoast.showToast(msg: "No Internet Connection");
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('$e');
+    }
   }
 
   Future _getPage(int type, String query) async {
@@ -280,6 +280,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
   
       if (ongoingevent.statusCode == 200) {
+        listCategory.clear();
         var dataRaw = json.decode(ongoingevent.body);
         listCategory.add({'c_name':'Semua','c_id':0});
         for(var x in dataRaw['kategori']){
@@ -364,6 +365,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           _isLoading = true;
           _isLoadingCategory = true;
           _isDisconnect = false;
+          categoryNow = 0;
 
       });
       
