@@ -18,8 +18,11 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
   String _captureText = 'Arahkan ke Kode Qr';
 
   postDataCheckin(data) async {
-    Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => CheckinQRCode(idevent: widget.id, idcheckin: data.toString())));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                CheckinQRCode(idevent: widget.id, idcheckin: data.toString())));
     print('testing' + data.toString());
 
     // var _timeCheckin = DateTime.now().toString();
@@ -132,39 +135,21 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
               ),
             ),
           ),
-          // Align(
-          //   heightFactor: 20.0,
-          //   alignment: Alignment.topCenter,
-          //   child: _buildEventCapture()
-          // ),
           Align(
             alignment: Alignment.bottomCenter,
             child: _buildToolBar(),
           ),
-          // Container(
-
-          //   child: _captureText != '' ?  Navigator.push(context, MaterialPageRoute(builder: => SuccesRegisteredEvent() )): Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event"),
-          // )
         ],
       ),
     );
   }
 
   Widget _buildEventCapture() {
-    if (_captureText != null &&
-        _captureText != "" &&
+    if (_captureText != null ||
+        _captureText != "" ||
         _captureText != "Arahkan ke Kode Qr") {
       _captureController.pause();
-      return FutureBuilder<dynamic>(
-          
-          future: postDataCheckin(_captureText),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data);
-        }
-
-        return Container(child: CircularProgressIndicator());
-      });
+      postDataCheckin(_captureText);
     } else {
       return Text(_captureText != '' ? _captureText : "Coba Lagi");
     }

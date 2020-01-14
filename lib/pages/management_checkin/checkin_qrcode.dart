@@ -105,7 +105,7 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
           setState(() {
             isCheckin = false;
           });
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => SuccesRegisteredCheckin(),
@@ -136,14 +136,14 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
         });
       }
     } on TimeoutException catch (_) {
-      Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+      Fluttertoast.showToast(msg: "Timeout!!, Gagal Melakukan Checkin");
       setState(() {
         isCheckin = false;
         gagalCheckin = true;
       });
     } catch (e) {
       Fluttertoast.showToast(
-          msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+          msg: "Gagal Melakukan Checkin, Silahkan Coba kembali");
       setState(() {
         isCheckin = false;
         gagalCheckin = true;
