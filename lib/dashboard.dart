@@ -26,8 +26,10 @@ List<Event> listEventUpComming = [];
 List<Event> listEventNow = [];
  var listFilter = [
     {'index': "1", 'name': "Hari ini" }, 
-    {'index': "2", 'name': "3 Hari" }, 
-    {'index': "3", 'name': "7 Hari" }
+    {'index': "2", 'name': "Minggu ini" },
+    {'index': "3", 'name': "3 Hari" }, 
+    {'index': "4", 'name': "7 Hari" },
+    {'index': "5", 'name': "1 Bulan" }
     ];
 
 enum PageEnum {
@@ -47,7 +49,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
-      GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   new GlobalKey<RefreshIndicatorState>();
 
@@ -66,7 +68,7 @@ class _DashboardState extends State<Dashboard> {
     eventNow(1);
     getvaluenotif();
     dataProfile();
-    print(user);
+    getHeaderHTTP();
     emailprofile = 'Email Anda';
     usernameprofile = 'Username';
     jumlahnotifX = '0';
@@ -141,6 +143,21 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+ Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+    return eventNow(1);
+  }
+
   Future<List<Event>> eventNow(type) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
@@ -182,6 +199,7 @@ class _DashboardState extends State<Dashboard> {
           isLoading = false;
           isError = false;
         });
+        eventUpComing(type);
         // listDoneEvent();
       } else if (nowevent.statusCode == 401) {
         Fluttertoast.showToast(
@@ -576,15 +594,68 @@ Widget _builderBody(){
               ),
             ),
             SafeArea(
-              child: isLoading == true ? Align(                
-                  alignment: Alignment.bottomCenter,
-                  
-                      child: SpinKitCircle(
-                    color: Colors.red,
-                    size: 50.0,
-
-                  )
-                          ) : Column(
+              child: isLoading == true
+          ? Center(
+              child: SpinKitFadingCircle(
+          color: Colors.orange,
+          // size: 50.0,
+        )
+            )
+          :
+          isError == true
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => getHeaderHTTP(),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              getHeaderHTTP();
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ) : Column(
                 children: <Widget>[
             Container(
               padding: EdgeInsets.only(
@@ -1095,7 +1166,7 @@ Widget _builderBody(){
     if (status == "A") {
       return Container(
           decoration: new BoxDecoration(
-            color: Colors.blue,
+            color: Colors.green,
             borderRadius: new BorderRadius.only(
                 topLeft: const Radius.circular(5.0),
                 topRight: const Radius.circular(5.0),
@@ -1116,7 +1187,7 @@ Widget _builderBody(){
     } else if (status == "P") {
       return Container(
           decoration: new BoxDecoration(
-            color: Colors.green,
+            color: Colors.orange,
             borderRadius: new BorderRadius.only(
                 topLeft: const Radius.circular(5.0),
                 topRight: const Radius.circular(5.0),
@@ -1126,7 +1197,7 @@ Widget _builderBody(){
           padding: EdgeInsets.all(5.0),
           width: 120.0,
           child: Text(
-            'Proses Pendaftaran ',
+            'Proses Daftar ',
             style: TextStyle(
               color: Colors.white,
               fontSize: 12,
