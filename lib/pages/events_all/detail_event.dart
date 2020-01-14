@@ -302,6 +302,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                       ),
                                     ),
                                     if (!widget.selfEvent)
+                                       if(expired == false)
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(top: 20.0),
