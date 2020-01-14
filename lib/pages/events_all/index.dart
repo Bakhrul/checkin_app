@@ -48,6 +48,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   Map dataUser;
   bool delay = false;
   bool _isPageDisconnect = false;
+  bool _isGetAllDisconnect = false;
 
   @override
   void initState() {
@@ -119,6 +120,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
 
     print('_getAll()');
 
+    setState((){
+        page = 1;
+        _isGetAllDisconnect = false;
+      });
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -131,10 +137,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
     try{
-
-      setState((){
-        page = 1;
-      });
 
       final ongoingevent = await http.post(
         url('api/event/page/$page'),
@@ -175,12 +177,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     } on TimeoutException catch (_) {
       setState(() {
         _isLoading = false;
+        _isDisconnect = true;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } on SocketException catch(_){
       setState(() {
         _isLoading = false;
-        _isDisconnect = true;
+        _isGetAllDisconnect = true;
       });
       Fluttertoast.showToast(msg: "No Internet Connection");
     } catch (e) {
@@ -256,6 +259,14 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       } 
     }
       
+  } on TimeoutException catch(_){
+    setState(() {
+        _isLoadingPagination = false;
+        _isPageDisconnect = true;
+        page -= 1;
+        delay = false;
+      });
+      Fluttertoast.showToast(msg: "Time out");
   } on SocketException catch(_){
       setState(() {
         _isLoadingPagination = false;
@@ -316,6 +327,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       Fluttertoast.showToast(msg: "Timed out, Try again");
       setState((){
         _isLoadingCategory = false;
+        _isDisconnect = true;
       });
     } on SocketException catch(_){
       setState(() {
@@ -385,7 +397,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       
       _getUserData();
       _getCategory();
-      _getAll(0,_searchQuery);
+      _getAll(categoryNow,_searchQuery);
   
   }
 
@@ -418,7 +430,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       _searchQuery = '';
       _isLoading = true;
       page = 1;
-      _getAll(0,_searchQuery);
+      _getAll(categoryNow,_searchQuery);
     });
   }
 
@@ -487,7 +499,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         onRefresh: () async {
          await  _getUserData();
          await _getCategory();
-         await _getAll(0,_searchQuery);
+         await _getAll(categoryNow,_searchQuery);
         },
         child:Padding(
         padding: const EdgeInsets.only(
@@ -560,293 +572,335 @@ class _ManajemenEventState extends State<ManajemenEvent> {
               ),
               Expanded(
                     child:
+                    _isGetAllDisconnect ?
+                        Container(
+                          height: 50,
+                          child:Center(
+                              child:GestureDetector(
+                                onTap:(){
+                                  setState((){
+                                    _isLoading = true;
+                                  });
+                                  _getAll(categoryNow,_searchQuery);
+                                },
+                                child:Container(
+                                  padding: EdgeInsets.all(5.0),
+                                  child:Icon(
+                                  Icons.refresh,
+                                  color: Colors.blueAccent,
+                                  size: 25
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:BorderRadius.only(
+                                      topLeft : Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0),
+                                      bottomLeft : Radius.circular(20.0),
+                                      bottomRight : Radius.circular(20.0)
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 1,
+                                        blurRadius: 1,
+                                        offset: Offset(0, 1), // changes position of shadow
+                                      ),
+                                    ]
+                                  )
+                                ) 
+                              )
+                            )
+                        ):
                       _isLoading ? 
                       Center(
                         child:CircularProgressIndicator()
                       ):
-                      ListView(
-                      controller: pageScroll,
+                      SingleChildScrollView(
+                        controller: pageScroll,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child:Column(
                       children:<Widget>[
                         for(var x = 0;x < _event.length; ++x)
                        new InkWell(
-                        child: Container(
-                            margin: EdgeInsets.only(
-                                top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                            child: Column(
-                              children: <Widget>[
-                                Card(
-                                  elevation: 1,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              flex: 5,
-                                              child: Container(
-                                                  width: 80.0,
-                                                  height: 80.0,
-                                                  decoration: new BoxDecoration(
-                                                    borderRadius:
-                                                        new BorderRadius.only(
-                                                            topLeft: const Radius
-                                                                .circular(5.0),
-                                                            topRight:
-                                                                const Radius.circular(
-                                                                    5.0),
-                                                            bottomLeft:
-                                                                const Radius.circular(
-                                                                    5.0),
-                                                            bottomRight: const Radius
-                                                                .circular(5.0)),
-                                                    image: new DecorationImage(
-                                                      fit: BoxFit.fill,
-                                                      image: AssetImage(
-                                                        'images/bg-header.jpg',
-                                                      ),
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: 1,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  flex: 5,
+                                                  child: Container(
+                                                      width: 80.0,
+                                                      height: 80.0,
+                                                      decoration: new BoxDecoration(
+                                                        borderRadius:
+                                                            new BorderRadius.only(
+                                                                topLeft: const Radius
+                                                                    .circular(5.0),
+                                                                topRight:
+                                                                    const Radius.circular(
+                                                                        5.0),
+                                                                bottomLeft:
+                                                                    const Radius.circular(
+                                                                        5.0),
+                                                                bottomRight: const Radius
+                                                                    .circular(5.0)),
+                                                        image: new DecorationImage(
+                                                          fit: BoxFit.fill,
+                                                          image: AssetImage(
+                                                            'images/bg-header.jpg',
+                                                          ),
+                                                        ),
+                                                      )),
+                                                ),
+                                                Expanded(
+                                                  flex: 7,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 15.0, right: 5.0),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          _event[x].start+' - '+_event[x].end,
+                                                          style: TextStyle(
+                                                              color: Colors.blue,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight.bold),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(
+                                                              top: 5.0),
+                                                          child:
+                                                              Text(_event[x].title,
+                                                                  style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontWeight:
+                                                                        FontWeight.w500,
+                                                                    fontSize: 16,
+                                                                  )),
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(
+                                                              top: 10.0),
+                                                          child: Text(
+                                                            _event[x].location,
+                                                            style: TextStyle(
+                                                                color: Colors.grey),
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
-                                                  )),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Expanded(
-                                              flex: 7,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 15.0, right: 5.0),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      _event[x].start+' - '+_event[x].end,
+                                          ),
+                                          userId == _event[x].userEvent ? Container(child:Text(''),height:0):
+                                          Column(
+                                            children:<Widget>[Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 10.0, right: 10.0),
+                                              child: Divider()),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0, right: 10.0, bottom: 10.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Container(
+                                                    decoration: new BoxDecoration(
+                                                      color: _event[x].color,
+                                                      borderRadius: new BorderRadius.only(
+                                                          topLeft:
+                                                              const Radius.circular(5.0),
+                                                          topRight:
+                                                              const Radius.circular(5.0),
+                                                          bottomLeft:
+                                                              const Radius.circular(5.0),
+                                                          bottomRight:
+                                                              const Radius.circular(5.0)),
+                                                    ),
+                                                    padding: EdgeInsets.all(5.0),
+                                                    width: 120.0,
+                                                    child: Text(
+                                                      _event[x].statusRegistered,
                                                       style: TextStyle(
-                                                          color: Colors.blue,
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(
-                                                          top: 5.0),
-                                                      child:
-                                                          Text(_event[x].title,
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontWeight:
-                                                                    FontWeight.w500,
-                                                                fontSize: 16,
-                                                              )),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(
-                                                          top: 10.0),
-                                                      child: Text(
-                                                        _event[x].location,
-                                                        style: TextStyle(
-                                                            color: Colors.grey),
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w500,
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      userId == _event[x].userEvent ? Container(child:Text(''),height:0):
-                                      Column(
-                                        children:<Widget>[Container(
-                                          padding: EdgeInsets.only(
-                                              left: 10.0, right: 10.0),
-                                          child: Divider()),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10.0, right: 10.0, bottom: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                                decoration: new BoxDecoration(
-                                                  color: _event[x].color,
-                                                  borderRadius: new BorderRadius.only(
-                                                      topLeft:
-                                                          const Radius.circular(5.0),
-                                                      topRight:
-                                                          const Radius.circular(5.0),
-                                                      bottomLeft:
-                                                          const Radius.circular(5.0),
-                                                      bottomRight:
-                                                          const Radius.circular(5.0)),
-                                                ),
-                                                padding: EdgeInsets.all(5.0),
-                                                width: 120.0,
-                                                child: Text(
-                                                  _event[x].statusRegistered,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                )),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(right: 0),
-                                              child: ButtonTheme(
-                                                minWidth: 0, //wraps child's width
-                                                height: 0,
-                                                child: FlatButton(
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.favorite,
-                                                        color: _event[x].wish == '1'
-                                                            ? Colors.pink
-                                                            : Colors.grey,
-                                                        size: 18,
+                                                      textAlign: TextAlign.center,
+                                                    )),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(right: 0),
+                                                  child: ButtonTheme(
+                                                    minWidth: 0, //wraps child's width
+                                                    height: 0,
+                                                    child: FlatButton(
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.favorite,
+                                                            color: _event[x].wish == '1'
+                                                                ? Colors.pink
+                                                                : Colors.grey,
+                                                            size: 18,
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ],
+                                                      color: Colors.white,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      padding: EdgeInsets.all(5.0),
+                                                      onPressed:() async {
+                                                        _wish(_event[x].wish,_event[x].id,x);
+                                                      } 
+                                                    ),
                                                   ),
-                                                  color: Colors.white,
-                                                  materialTapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                  padding: EdgeInsets.all(5.0),
-                                                  onPressed:() async {
-                                                    _wish(_event[x].wish,_event[x].id,x);
-                                                  } 
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                            ])
+                                        ],
                                       ),
-                                        ])
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )),
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  switch(_event[x].statusRegistered){
-                                  case 'Sudah Terdaftar':
-                                       return SuccesRegisteredEvent(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         selfEvent: userId == _event[x].userEvent ? true:false
-                                       );
-                                       break;
-                                  case 'Proses Daftar':
-                                       return WaitingEvent(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         selfEvent: userId == _event[x].userEvent ? true:false,
-                                       );
-                                       break;
-                                  case 'Proses Daftar Sebagai Admin':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         dataUser:dataUser,
-                                         selfEvent: true
-                                         );
-                                       break;
-                                  case 'Ditolak':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         selfEvent: userId == _event[x].userEvent ? true:false,
-                                         dataUser:dataUser
-                                         );
-                                       break;
-                                  case 'Ditolak Sebagai Admin':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         dataUser:dataUser,
-                                         selfEvent: userId == _event[x].userEvent ? true:false
-                                         );
-                                       break;
-                                  case 'Ditolak':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         dataUser:dataUser,
-                                         selfEvent: userId == _event[x].userEvent ? true:false
-                                         );
-                                       break;
-                                  case 'Sudah Terdaftar Sebagai Admin':
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         dataUser:dataUser,
-                                         selfEvent: true
-                                         );
-                                       break;
-                                  default:
-                                       return RegisterEvents(
-                                         id:_event[x].id,
-                                         creatorId:_event[x].userEvent,
-                                         dataUser:dataUser,
-                                         selfEvent: userId == _event[x].userEvent ? true:false
-                                         );
-                                       break;
-                                }
-                                }
-                              ));
-                          }
-                        ),
-                        _isPageDisconnect ?
-                        Container(
-                          height: 50,
-                          child:Center(
-          child:GestureDetector(
-            onTap:(){
-              _getPage(categoryNow,_searchQuery);
-            },
-            child:Container(
-              padding: EdgeInsets.all(5.0),
-              child:Icon(
-              Icons.refresh,
-              color: Colors.blueAccent,
-              size: 25
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:BorderRadius.only(
-                  topLeft : Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomLeft : Radius.circular(20.0),
-                  bottomRight : Radius.circular(20.0)
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
-                  ),
-                ]
-              )
-            ) 
-          )
-        )
-                        ):
-                        Container(
-                          height:_isLoadingPagination ? 50:0,
-                          child:Center(
-                            child:CircularProgressIndicator()
-                          )
+                                    ),
+                                  ],
+                                )),
+                            onTap: () async {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      switch(_event[x].statusRegistered){
+                                      case 'Sudah Terdaftar':
+                                          return SuccesRegisteredEvent(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            selfEvent: userId == _event[x].userEvent ? true:false
+                                          );
+                                          break;
+                                      case 'Proses Daftar':
+                                          return WaitingEvent(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            selfEvent: userId == _event[x].userEvent ? true:false,
+                                          );
+                                          break;
+                                      case 'Proses Daftar Sebagai Admin':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            dataUser:dataUser,
+                                            selfEvent: true
+                                            );
+                                          break;
+                                      case 'Ditolak':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            selfEvent: userId == _event[x].userEvent ? true:false,
+                                            dataUser:dataUser
+                                            );
+                                          break;
+                                      case 'Ditolak Sebagai Admin':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            dataUser:dataUser,
+                                            selfEvent: userId == _event[x].userEvent ? true:false
+                                            );
+                                          break;
+                                      case 'Ditolak':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            dataUser:dataUser,
+                                            selfEvent: userId == _event[x].userEvent ? true:false
+                                            );
+                                          break;
+                                      case 'Sudah Terdaftar Sebagai Admin':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            dataUser:dataUser,
+                                            selfEvent: true
+                                            );
+                                          break;
+                                      default:
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            dataUser:dataUser,
+                                            selfEvent: userId == _event[x].userEvent ? true:false
+                                            );
+                                          break;
+                                    }
+                                    }
+                                  ));
+                              }
+                            ),
+                            _isPageDisconnect ?
+                            Container(
+                              height: 50,
+                              child:Center(
+                                child:GestureDetector(
+                                  onTap:(){
+                                    _getPage(categoryNow,_searchQuery);
+                                  },
+                                  child:Container(
+                                    padding: EdgeInsets.all(5.0),
+                                    child:Icon(
+                                    Icons.refresh,
+                                    color: Colors.blueAccent,
+                                    size: 25
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:BorderRadius.only(
+                                        topLeft : Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
+                                        bottomLeft : Radius.circular(20.0),
+                                        bottomRight : Radius.circular(20.0)
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 1,
+                                          blurRadius: 1,
+                                          offset: Offset(0, 1), // changes position of shadow
+                                        ),
+                                      ]
+                                    )
+                                  ) 
+                                )
+                              )
+                            ):
+                            Container(
+                              height:_isLoadingPagination ? 50:0,
+                              child:Center(
+                                child:CircularProgressIndicator()
+                              )
+                            )
+                          ] 
                         )
-                      ] 
-                    )
+                      )
                   )
             ],
           ),
