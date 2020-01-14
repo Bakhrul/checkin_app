@@ -214,7 +214,7 @@ class _DashboardState extends State<Dashboard> {
     return null;
   }
 
- Future<List<Event>> eventUpComing(type ) async {
+ Future<List<Event>> eventUpComing(type ) async {  
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -500,24 +500,19 @@ class _DashboardState extends State<Dashboard> {
             eventNow(1);
             eventUpComing(1);
           },
-          child: isLoading == true ? Center(
-                            child: SpinKitRotatingCircle(
-  color: Colors.red,
-  size: 50.0,
-)
-                          ) : _builderBody(),
+          child:  _builderBody(),
         )
           
         // ), 
         );
   }
 
-
-
 Widget _builderBody(){
   return SafeArea(
     child: SingleChildScrollView(
-              child: Column(children: <Widget>[
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
             Container(
               width: double.infinity,
               child: Padding(
@@ -580,7 +575,17 @@ Widget _builderBody(){
                 ]),
               ),
             ),
-            
+            SafeArea(
+              child: isLoading == true ? Align(                
+                  alignment: Alignment.bottomCenter,
+                  
+                      child: SpinKitRotatingCircle(
+                    color: Colors.red,
+                    size: 50.0,
+
+                  )
+                          ) : Column(
+                children: <Widget>[
             Container(
               padding: EdgeInsets.only(
                   left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
@@ -612,7 +617,12 @@ Widget _builderBody(){
                   SafeArea(
                     child: SingleChildScrollView(
                       // scrollDirection: Axis.horizontal,
-                      child:Column(children: listEventNow.map((Event f) => Padding(
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // ,
+                        children: 
+                      
+                      listEventNow.map((Event f) => Padding(
                         padding: EdgeInsets.all(2),
                 child: InkWell(
                 child: Container(
@@ -990,6 +1000,10 @@ Widget _builderBody(){
                                       )).toList()),
               
             ]),
+              ],),
+            )
+
+            
             
             
           ])
@@ -1002,12 +1016,12 @@ Widget _builderBody(){
       title: appBarTitle,
       backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       actions: <Widget>[
-         new IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshIndicatorKey.currentState.show();
-              }),
+        //  new IconButton(
+        //       icon: const Icon(Icons.refresh),
+        //       tooltip: 'Refresh',
+        //       onPressed: () {
+        //         _refreshIndicatorKey.currentState.show();
+        //       }),
         // IconButton(
         //   icon: actionIcon,
         //   onPressed: () {
