@@ -579,7 +579,7 @@ Widget _builderBody(){
               child: isLoading == true ? Align(                
                   alignment: Alignment.bottomCenter,
                   
-                      child: SpinKitRotatingCircle(
+                      child: SpinKitCircle(
                     color: Colors.red,
                     size: 50.0,
 
