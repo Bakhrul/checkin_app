@@ -66,6 +66,7 @@ class _PointEventsState extends State<PointEvents> {
   }
 
   Future<List<List>> listUser() async {
+    print(widget.idevent);
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -79,7 +80,7 @@ class _PointEventsState extends State<PointEvents> {
       isLoading = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final hasilakhirevent = await http.post(
         url('api/checkin/getdata/countcheckin/users'),
         body: {
           'idevent': widget.idevent,
@@ -87,8 +88,8 @@ class _PointEventsState extends State<PointEvents> {
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (hasilakhirevent.statusCode == 200) {
+        var listuserJson = json.decode(hasilakhirevent.body);
         print(listuserJson);
         listpointcheckin = [];
         for (var i in listuserJson) {
@@ -104,7 +105,7 @@ class _PointEventsState extends State<PointEvents> {
           isLoading = false;
           isError = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (hasilakhirevent.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -112,7 +113,7 @@ class _PointEventsState extends State<PointEvents> {
           isError = true;
         });
       } else {
-        print(willcomeevent.body);
+        print(hasilakhirevent.body);
         setState(() {
           isLoading = false;
           isError = true;

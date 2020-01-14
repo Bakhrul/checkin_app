@@ -517,7 +517,8 @@ class _DashboardState extends State<Dashboard> {
 Widget _builderBody(){
   return SafeArea(
     child: SingleChildScrollView(
-              child: Column(children: <Widget>[
+              child: Column(
+                children: <Widget>[
             Container(
               width: double.infinity,
               child: Padding(
