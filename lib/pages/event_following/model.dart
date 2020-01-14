@@ -9,6 +9,7 @@ class ListFollowingEvent {
    String wishlist;
    String idcreator;
    String statusdaftar;
+   String posisi;
 
   ListFollowingEvent(
       {this.id,
@@ -20,7 +21,8 @@ class ListFollowingEvent {
       this.fullday,
       this.wishlist,
       this.idcreator,
-      this.statusdaftar});
+      this.statusdaftar,
+      this.posisi});
 }
 
 class ListKategoriEvent {

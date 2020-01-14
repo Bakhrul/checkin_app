@@ -1,101 +1,141 @@
-import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../../dashboard.dart';
+import 'package:http/http.dart' as http;
+import 'package:checkin_app/routes/env.dart';
+import 'checkin_success.dart';
+import 'dart:async';
+import 'scan_qrcode_checkin.dart';
+import 'dart:convert';
+import 'package:checkin_app/storage/storage.dart';
 
 List<Checkin> listCheckin;
+bool isCheckin;
+String tokenType, accessToken;
+Map<String, dynamic> formSerialize;
+
+Map<String, String> requestHeaders = Map();
 
 class CheckinManual extends StatefulWidget {
+  CheckinManual({Key key, this.title, this.idevent}) : super(key: key);
+  final String title, idevent;
   @override
-  _CheckinManualState createState() => _CheckinManualState();
+  State<StatefulWidget> createState() {
+    return _CheckinManualState();
+  }
 }
 
 class _CheckinManualState extends State<CheckinManual>
     with SingleTickerProviderStateMixin {
   TextEditingController _controllerCheckin = TextEditingController();
-  TextEditingController _inputErrorText = TextEditingController();
-  AnimationController _controller;
-  var _isLoading = false;
-  var _listBuild = false;
-
-  _searchCodeCheckin() async {
-    _isLoading = true;
-    _listBuild = true;
-    String checkinCode = _controllerCheckin.text.trim().toString();
-    listCheckin = [];
-    dynamic response = await RequestGet(
-            name: "checkin/getdata/searchcode/",
-            customrequest: "${checkinCode}")
-        .getdata();
-    print(response.length);
-    if (response == "gagal") {
-      _isLoading = false;
-      Fluttertoast.showToast(
-          msg: "Data Tidak Ditemukan",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      for (var i = 0; i < response.length; i++) {
-        Checkin codeCheckin = Checkin(
-            id: response[i]["id"],
-            eventId: response[i]["event_id"],
-            checkinKey: response[i]["keyword"],
-            startTime: response[i]["start_time"],
-            endTime: response[i]["end_time"],
-            sessionName: response[i]["session_name"],
-            titleEvent: response[i]["title"],
-            locationEvent: response[i]["location"]);
-
-        listCheckin.add(codeCheckin);
-        _isLoading = false;
-      }
-    }
-    setState(() {});
-  }
-
-  _postCheckin(_eventId, _checkin) async {
-    var _timeCheckin = DateTime.now().toString();
-    dynamic body = {
-      "event_id": _eventId.toString(),
-      "checkin_id": _checkin.toString(),
-      "checkin_type": "IC",
-      "time_checkin": _timeCheckin
-    };
-    dynamic response =
-        await RequestPost(name: "checkin/postdata/usercheckin", body: body)
-            .sendrequest();
-
-    if (response == "success") {
-      Fluttertoast.showToast(
-          msg: "Success",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
-      // Navigator.pop(context);
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    getHeaderHTTP();
+    _controllerCheckin.text = '';
+    isCheckin = false;
+  }
+
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
+  void checkinsekarang() async {
+    setState(() {
+      isCheckin = true;
+    });
+    if (_controllerCheckin.text == null || _controllerCheckin.text == '') {
+      Fluttertoast.showToast(msg: "Masukkan Kode Checkin Anda");
+      setState(() {
+        isCheckin = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      formSerialize = Map<String, dynamic>();
+      formSerialize['event'] = null;
+      formSerialize['keyword'] = null;
+      formSerialize['event'] = widget.idevent;
+      formSerialize['keyword'] = _controllerCheckin.text;
+
+      print(formSerialize);
+
+      Map<String, dynamic> requestHeadersX = requestHeaders;
+
+      requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+      try {
+        final response = await http.post(
+          url('api/usercheckinevent'),
+          headers: requestHeadersX,
+          body: {
+            'type_platform': 'android',
+            'data': jsonEncode(formSerialize),
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+
+        if (response.statusCode == 200) {
+          dynamic responseJson = jsonDecode(response.body);
+          if (responseJson['status'] == 'success') {
+            setState(() {
+              isCheckin = false;
+            });
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SuccesRegisteredCheckin(),
+                ));
+            Fluttertoast.showToast(msg: "Berhasil Checkin");
+          } else if (responseJson['status'] == 'checkinnotavailable') {
+            setState(() {
+              isCheckin = false;
+            });
+            Fluttertoast.showToast(
+                msg: "Checkin tidak ditemukan atau telah kadaluwarsa");
+          } else if (responseJson['status'] == 'sudahcheckin') {
+            setState(() {
+              isCheckin = false;
+            });
+            Fluttertoast.showToast(
+                msg: "Anda Sudah melakukan checkin pada sesi checkin tersebut");
+          }
+          print('response decoded $responseJson');
+        } else {
+          print('${response.body}');
+          Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+          setState(() {
+            isCheckin = false;
+          });
+        }
+      } on TimeoutException catch (_) {
+        Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+        setState(() {
+          isCheckin = false;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+        setState(() {
+          isCheckin = false;
+        });
+        print(e);
+      }
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
   }
 
   @override
@@ -104,91 +144,109 @@ class _CheckinManualState extends State<CheckinManual>
       backgroundColor: Colors.white,
       // key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        elevation: 0,
+        backgroundColor: Colors.white,
         iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Checkin",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+          color: Colors.black,
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+        padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Card(
-                  child: ListTile(
-                leading: Icon(
-                  Icons.brightness_1,
-                  color: Color.fromRGBO(41, 30, 47, 1),
-                ),
-                title: TextField(
-                  controller: _controllerCheckin,
-                  decoration: InputDecoration(
-                      hintText: 'Kode Checkin',
-                      // errorText: _inputErrorText,
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                ),
-              )),
-              Card(
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: FlatButton(
-                      child: Text("Cari"),
-                      onPressed: () async {
-                        _searchCodeCheckin();
-                      })),
               Padding(
-                padding: EdgeInsets.only(top: 20.0),
-                child: Card(
-                    child: _listBuild != false
-                        ? _builderListView()
-                        : Align(
-                            alignment: Alignment.center,
-                            child: Text("Tidak Ada Data"),
-                          )),
-              )
+                padding: const EdgeInsets.only(top: 0.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/checkin_flat.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 10.0, right: 10.0),
+                        child: Text('Punya Kode Checkin ????',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10.0, left: 10.0, right: 10.0),
+                        child: Text('Masukkan Kode Checkin Anda disini',
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w400)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 5.0, left: 15.0, right: 15.0),
+                        child: TextField(
+                          maxLines: 1,
+                          controller: _controllerCheckin,
+                          decoration: InputDecoration(
+                            hintText: 'Example : Checkin01',
+                            hintStyle:
+                                TextStyle(color: Colors.black45, fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(0),
+                        child: FlatButton(
+                          child: Text(
+                            "Atau Ingin Menggunakan QRCode ?",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ScanQrcode(id: widget.idevent)));
+                          },
+                        ),
+                      ),
+                    ]),
+              ),
             ],
           ),
         ),
       ),
-      
-    );
-  }
-
-  Widget _builderListView() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Container(
-          child: Expanded(
-            child: SizedBox(
-                child: _isLoading == true
-                    ? CircularProgressIndicator()
-                    : SingleChildScrollView(
-                        child: Column(
-                            children: listCheckin
-                                .map((Checkin f) => Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Card(
-                                        child: ListTile(
-                                          title: Text(f.sessionName),
-                                          onTap: () async {
-                                            _postCheckin(f.eventId, f.id);
-                                          },
-                                          subtitle: Text("${f.locationEvent}"),
-                                        ),
-                                      ),
-                                    ))
-                                .toList()),
-                      )),
+      bottomNavigationBar: BottomAppBar(
+        child: SizedBox(
+          width: double.infinity,
+          child: RaisedButton(
+            color: Colors.green,
+            textColor: Colors.white,
+            disabledColor: Colors.green[400],
+            disabledTextColor: Colors.white,
+            padding: EdgeInsets.all(15.0),
+            splashColor: Colors.blueAccent,
+            onPressed: () async {
+              checkinsekarang();
+            },
+            child: isCheckin == true
+                ? Container(
+                    height: 25.0,
+                    width: 25.0,
+                    child: CircularProgressIndicator(
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.white)))
+                : Text(
+                    'Checkin Sekarang',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

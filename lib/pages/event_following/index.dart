@@ -23,6 +23,7 @@ List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isFilter;
 String filterX;
 String categoryNow;
+Map dataUser;
 
 enum PageEnum {
   kelolaCheckinPage,
@@ -54,16 +55,74 @@ class ManajemenEventFollowing extends StatefulWidget {
 }
 
 class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
+
+    bool isLoading = true;
+    String filterX = 'all';
+    String categoryNow = 'all';
+    bool isError = false;
+    bool isFilter = false;
+
   @override
   void initState() {
-    isLoading = true;
-    filterX = 'all';
     _searchQuery.text = '';
-    categoryNow = 'all';
-    isError = false;
-    isFilter = false;
     listDoneEvent();
     super.initState();
+  }
+
+  _getUserData() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final ongoingevent =
+          await http.get(url('api/user'), headers: requestHeaders);
+
+      if (ongoingevent.statusCode == 200) {
+        Map rawData = json.decode(ongoingevent.body);
+
+        if (mounted) {
+          setState(() {
+            dataUser = rawData;
+          });
+        }
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+      } else if (ongoingevent.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
   }
 
   Future<List<ListFollowingEvent>> listDoneEvent() async {
@@ -105,6 +164,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
             statusdaftar: i['ep_status'],
+            posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
         }
@@ -179,6 +239,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             alamat: i['ev_address'],
             wishlist: i['ew_wish'].toString(),
             statusdaftar: i['ep_status'],
+            posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
         }
@@ -252,6 +313,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           isLoading = false;
           isError = false;
         });
+        _getUserData();
       } else {
         print(kategorievent.body);
         print(kategorievent.statusCode);
@@ -607,14 +669,15 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                         null
                                                                     ? 'Belum Terdaftar'
                                                                     : listItemFollowing[index].statusdaftar ==
-                                                                            'P'
+                                                                                'P' &&
+                                                                            listItemFollowing[index].posisi ==
+                                                                                '3'
                                                                         ? 'Proses Daftar'
-                                                                        : listItemFollowing[index].statusdaftar ==
-                                                                                'C'
+                                                                        : listItemFollowing[index].statusdaftar == 'C' && listItemFollowing[index].posisi == '3'
                                                                             ? 'Pendaftaran Ditolak'
-                                                                            : listItemFollowing[index].statusdaftar == 'A'
+                                                                            : listItemFollowing[index].statusdaftar == 'A' && listItemFollowing[index].posisi == '3'
                                                                                 ? 'Sudah Terdaftar'
-                                                                                : 'Status Tidak Diketahui',
+                                                                                : listItemFollowing[index].statusdaftar == 'P' && listItemFollowing[index].posisi == '2' ? 'Proses Daftar Admin' : listItemFollowing[index].statusdaftar == 'C' && listItemFollowing[index].posisi == '2' ? 'Tolak Pendaftaran Admin' : listItemFollowing[index].statusdaftar == 'A' && listItemFollowing[index].posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -732,9 +795,137 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             ],
                                           )),
                                       onTap: () async {
-                                        listItemFollowing[index].statusdaftar ==
-                                                null
-                                            ? Navigator.push(
+                                        switch (listItemFollowing[index]
+                                            .statusdaftar) {
+                                          case 'P':
+                                            if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '2') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '3') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WaitingEvent(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else {}
+                                            break;
+                                          case 'C':
+                                            if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '2') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: false,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '3') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: false,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else {}
+                                            break;
+                                          case 'A':
+                                            if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '2') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else if (listItemFollowing[index]
+                                                    .posisi ==
+                                                '3') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SuccesRegisteredEvent(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    ),
+                                                  ));
+                                            } else {}
+                                            break;
+                                          default:
+                                            Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
@@ -743,85 +934,14 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                         listItemFollowing[index]
                                                             .id),
                                                     selfEvent: false,
+                                                    dataUser: dataUser,
                                                     creatorId:
                                                         listItemFollowing[index]
                                                             .idcreator,
                                                   ),
-                                                ))
-                                            : listItemFollowing[index]
-                                                        .statusdaftar ==
-                                                    'P'
-                                                ? Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WaitingEvent(
-                                                        id: int.parse(
-                                                            listItemFollowing[
-                                                                    index]
-                                                                .id),
-                                                        selfEvent: true,
-                                                        creatorId:
-                                                            listItemFollowing[
-                                                                    index]
-                                                                .idcreator,
-                                                      ),
-                                                    ))
-                                                : listItemFollowing[index]
-                                                            .statusdaftar ==
-                                                        'A'
-                                                    ? Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              SuccesRegisteredEvent(
-                                                            id: int.parse(
-                                                                listItemFollowing[
-                                                                        index]
-                                                                    .id),
-                                                            selfEvent: true,
-                                                            creatorId:
-                                                                listItemFollowing[
-                                                                        index]
-                                                                    .idcreator,
-                                                          ),
-                                                        ))
-                                                    : listItemFollowing[index]
-                                                                .statusdaftar ==
-                                                            'C'
-                                                        ? Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  RegisterEvents(
-                                                                id: int.parse(
-                                                                    listItemFollowing[
-                                                                            index]
-                                                                        .id),
-                                                                selfEvent: true,
-                                                                creatorId:
-                                                                    listItemFollowing[
-                                                                            index]
-                                                                        .idcreator,
-                                                              ),
-                                                            ))
-                                                        : Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  RegisterEvents(
-                                                                id: int.parse(
-                                                                    listItemFollowing[
-                                                                            index]
-                                                                        .id),
-                                                                selfEvent:
-                                                                    false,
-                                                                creatorId:
-                                                                    listItemFollowing[
-                                                                            index]
-                                                                        .idcreator,
-                                                              ),
-                                                            ));
+                                                ));
+                                            break;
+                                        }
                                       });
                                 },
                               ),

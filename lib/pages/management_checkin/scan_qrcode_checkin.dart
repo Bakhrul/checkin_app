@@ -1,21 +1,15 @@
-import 'package:checkin_app/core/api.dart';
-import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:qrcode/qrcode.dart';
-
-import 'checkin_manual.dart';
+import 'checkin_qrcode.dart';
 
 class ScanQrcode extends StatefulWidget {
-   final id;
+  final id;
   ScanQrcode({Key key, @required this.id});
   @override
   _ScanQrcodeState createState() => _ScanQrcodeState();
 }
 
 class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
- 
   QRCaptureController _captureController = QRCaptureController();
   Animation<Alignment> _animation;
   AnimationController _animationController;
@@ -23,39 +17,42 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
   String _isTorchOnText = 'off';
   String _captureText = 'Arahkan ke Kode Qr';
 
-  postDataCheckin(data)  async{
-    var _timeCheckin = DateTime.now().toString();
-    dynamic body = {
-      "event_id": widget.id,
-      "checkin_id": data.toString(),
-      "checkin_type": "BS",
-      "time_checkin": _timeCheckin
-    };
+  postDataCheckin(data) async {
+    Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => CheckinQRCode(idevent: widget.id, idcheckin: data.toString())));
+    print('testing' + data.toString());
 
-    dynamic response =
-         await RequestPost(name: "checkin/postdata/usercheckin", body: body)
-            .sendrequest();
-    if (response == "success") {
-      Fluttertoast.showToast(
-          msg: "Success",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      Navigator.pop(context);
+    // var _timeCheckin = DateTime.now().toString();
+    // dynamic body = {
+    //   "event_id": widget.id,
+    //   "checkin_id": data.toString(),
+    //   "checkin_type": "BS",
+    //   "time_checkin": _timeCheckin
+    // };
 
-    }else{
-      Fluttertoast.showToast(
-          msg: "Terjadi Kesalahan Server Mohon Coba Lagi",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    // dynamic response =
+    //     await RequestPost(name: "checkin/postdata/usercheckin", body: body)
+    //         .sendrequest();
+    // if (response == "success") {
+    //   Fluttertoast.showToast(
+    //       msg: "Success",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIos: 1,
+    //       backgroundColor: Colors.green,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    //   Navigator.pop(context);
+    // } else {
+    //   Fluttertoast.showToast(
+    //       msg: "Terjadi Kesalahan Server Mohon Coba Lagi",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIos: 1,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    // }
 
     // setState(() {});
   }
@@ -65,13 +62,11 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
     super.initState();
 
     _captureController.onCapture((data) {
-      
       print('onCapture----$data');
       postDataCheckin(data);
-
+      _captureText = '';
       setState(() {
         _captureText = data;
-
       });
     });
 
@@ -118,8 +113,8 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
         alignment: Alignment.center,
         children: <Widget>[
           Container(
-            width: 250,
-            height: 250,
+            width: double.infinity,
+            height: double.infinity,
             child: QRCaptureView(
               controller: _captureController,
             ),
@@ -136,15 +131,6 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
                 ],
               ),
             ),
-          ),
-          Align(
-            heightFactor: 20.0,
-            alignment: Alignment.topCenter,
-            child: FlatButton(child: Text("Tidak dapat menggunakan kamera?",style: TextStyle(color: Colors.blue ,fontSize: 14,decoration: TextDecoration.underline,)
-            
-            ,), onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CheckinManual()));
-            },),
           ),
           // Align(
           //   heightFactor: 20.0,
@@ -165,59 +151,50 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
   }
 
   Widget _buildEventCapture() {
+    if (_captureText != null &&
+        _captureText != "" &&
+        _captureText != "Arahkan ke Kode Qr") {
+      _captureController.pause();
+      return FutureBuilder<dynamic>(
+          
+          future: postDataCheckin(_captureText),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data);
+        }
 
-        if(_captureText != null && _captureText != "" && _captureText != "Arahkan ke Kode Qr"){
-          _captureController.pause();
-      // return FutureBuilder<dynamic>(
-        
-      //   future: postDataCheckin(),
-      //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-      //     if (snapshot.hasData){
-      //     return Text(snapshot.data);
-            
-      //     } 
-
-      //     return Container(child: CircularProgressIndicator());
-      //   });
-    }else{
-    return Text(_captureText != '' ? _captureText : "Coba Lagi");
+        return Container(child: CircularProgressIndicator());
+      });
+    } else {
+      return Text(_captureText != '' ? _captureText : "Coba Lagi");
     }
-    
   }
 
   Widget _buildToolBar() {
-    return Row(
-
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        
-        FlatButton(
-          onPressed: () {
-            _captureController.pause();
-          },
-          child: Text('pause'),
-        ),
-        FlatButton(
-          onPressed: () {
-            if (_isTorchOn) {
-              _isTorchOnText = 'Off';
-              _captureController.torchMode = CaptureTorchMode.off;
-            } else {
-              _isTorchOnText = 'On';
-              _captureController.torchMode = CaptureTorchMode.on;
-            }
-            _isTorchOn = !_isTorchOn;
-          },
-          child: Text('Flash : $_isTorchOnText'),
-        ),
-        FlatButton(
-          onPressed: () {
-            _captureController.resume();
-          },
-          child: Text('resume'),
-        ),
-      ],
+    return Container(
+      color: Color.fromRGBO(41, 30, 47, 1),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FlatButton(
+            onPressed: () {
+              if (_isTorchOn) {
+                _isTorchOnText = 'Off';
+                _captureController.torchMode = CaptureTorchMode.off;
+              } else {
+                _isTorchOnText = 'On';
+                _captureController.torchMode = CaptureTorchMode.on;
+              }
+              _isTorchOn = !_isTorchOn;
+            },
+            child: Text(
+              'Flash : $_isTorchOnText',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

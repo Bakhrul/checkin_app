@@ -488,6 +488,13 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                                                     .showToast(
                                                                         msg:
                                                                             "Member ini sudah terdaftar menjadi admin event anda");
+                                                              }else if (addadmineventJson[
+                                                                      'status'] ==
+                                                                  'creator') {
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                        msg:
+                                                                            "Member ini merupakan pembuat event");
                                                               } else if (addadmineventJson[
                                                                       'status'] ==
                                                                   'pending') {

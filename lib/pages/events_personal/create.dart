@@ -18,6 +18,7 @@ GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String tokenType, accessToken;
 Map<String, dynamic> formSerialize;
 List<ListUserAdd> listUseradd = [];
+bool isCreate;
 List<ListCheckinAdd> listcheckinAdd = [];
 List<ListKategoriEventAdd> listKategoriAdd = [];
 Map<String, String> requestHeaders = Map();
@@ -56,6 +57,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     lastdate = FocusNode();
     _tanggalawalevent = null;
     _tanggalakhirevent = null;
+    isCreate = false;
     listcheckinAdd = [];
     listUseradd = [];
     listKategoriAdd = [];
@@ -88,11 +90,132 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
   void _handleTabIndex() {
     setState(() {});
   }
+  void _tambahevent() async {
+    if (_namaeventController.text == null || _namaeventController.text == '') {
+      Fluttertoast.showToast(msg: "Nama Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_deskripsieventController.text == null ||
+        _deskripsieventController.text == '') {
+      Fluttertoast.showToast(msg: "Deskripsi Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_alamateventController.text == '' ||
+        _alamateventController.text == '') {
+      Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_tanggalawalevent == null) {
+      Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_tanggalakhirevent == null) {
+      Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      formSerialize = Map<String, dynamic>();
+      formSerialize['title'] = null;
+      formSerialize['deskripsi'] = null;
+      formSerialize['lokasi'] = null;
+      formSerialize['time_start'] = null;
+      formSerialize['time_end'] = null;
+      formSerialize['kategori'] = List();
+      formSerialize['admin'] = List();
+      formSerialize['checkin'] = List();
+      formSerialize['keyword'] = List();
+      formSerialize['timeendcheckin'] = List();
+      formSerialize['timestartcheckin'] = List();
+      formSerialize['typecheckin'] = List();
 
-  bool monVal = false;
-  bool monVal2 = false;
-  bool monVal3 = false;
-  bool monVal4 = false;
+      formSerialize['title'] = _namaeventController.text;
+      formSerialize['deskripsi'] = _deskripsieventController.text;
+      formSerialize['lokasi'] = _alamateventController.text;
+      formSerialize['tanggalawalevent'] = _tanggalawalevent == null
+          ? null
+          : DateFormat('dd-MM-y HH:mm:ss')
+              .format(DateTime.parse(_tanggalawalevent));
+      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null
+          ? null
+          : DateFormat('dd-MM-y HH:mm:ss')
+              .format(DateTime.parse(_tanggalakhirevent));
+
+      for (int i = 0; i < listKategoriAdd.length; i++) {
+        formSerialize['kategori'].add(listKategoriAdd[i].id);
+      }
+
+      for (int i = 0; i < listUseradd.length; i++) {
+        formSerialize['admin'].add(listUseradd[i].id);
+      }
+
+      for (int i = 0; i < listcheckinAdd.length; i++) {
+        formSerialize['checkin'].add(listcheckinAdd[i].nama);
+        formSerialize['keyword'].add(listcheckinAdd[i].keyword);
+        formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
+        formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
+        formSerialize['typecheckin'].add('S');
+      }
+
+      print(formSerialize);
+
+      Map<String, dynamic> requestHeadersX = requestHeaders;
+
+      requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+      try {
+        final response = await http.post(
+          url('api/createcheckin'),
+          headers: requestHeadersX,
+          body: {
+            'type_platform': 'android',
+            'data': jsonEncode(formSerialize),
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+
+        if (response.statusCode == 200) {
+          dynamic responseJson = jsonDecode(response.body);
+          if (responseJson['status'] == 'success') {
+            setState(() {
+              isCreate = false;
+            });
+            Fluttertoast.showToast(msg: "Berhasil Membuat Event");
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManajemenEventPersonal()));
+          }
+          print('response decoded $responseJson');
+        } else {
+          print('${response.body}');
+          Fluttertoast.showToast(
+              msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+          setState(() {
+            isCreate = false;
+          });
+        }
+      } on TimeoutException catch (_) {
+        showInSnackBar('Timed out, Try again');
+        setState(() {
+          isCreate = false;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+        setState(() {
+          isCreate = false;
+        });
+        print(e);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,10 +257,16 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                       ),
                       FlatButton(
                         textColor: Colors.green,
-                        child: Text('Ya'),
-                        onPressed: () async {
-                          _tambahevent();
-                        },
+                        child:
+                            Text(isCreate == true ? 'Tunggu Sebentar' : 'Ya'),
+                        onPressed: isCreate == true
+                            ? null
+                            : () async {
+                                setState(() {
+                                  isCreate = true;
+                                });
+                                _tambahevent();
+                              },
                       )
                     ],
                   ),
@@ -291,7 +420,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),
@@ -361,7 +490,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),
@@ -438,7 +567,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),
@@ -567,100 +696,5 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     return null;
   }
 
-  void _tambahevent() async {
-    if (_namaeventController.text == null || _namaeventController.text == '') {
-      Fluttertoast.showToast(msg: "Nama Event Tidak Boleh Kosong");
-    } else if (_deskripsieventController.text == null ||
-        _deskripsieventController.text == '') {
-      Fluttertoast.showToast(msg: "Deskripsi Event Tidak Boleh Kosong");
-    } else if (_alamateventController.text == '' ||
-        _alamateventController.text == '') {
-      Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
-    } else if (_tanggalawalevent == null) {
-      Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
-    } else if (_tanggalakhirevent == null) {
-      Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
-    } else {
-      formSerialize = Map<String, dynamic>();
-      formSerialize['title'] = null;
-      formSerialize['deskripsi'] = null;
-      formSerialize['lokasi'] = null;
-      formSerialize['time_start'] = null;
-      formSerialize['time_end'] = null;
-      formSerialize['kategori'] = List();
-      formSerialize['admin'] = List();
-      formSerialize['checkin'] = List();
-      formSerialize['keyword'] = List();
-      formSerialize['timeendcheckin'] = List();
-      formSerialize['timestartcheckin'] = List();
-      formSerialize['typecheckin'] = List();
-
-      formSerialize['title'] = _namaeventController.text;
-      formSerialize['deskripsi'] = _deskripsieventController.text;
-      formSerialize['lokasi'] = _alamateventController.text;
-      formSerialize['tanggalawalevent'] = _tanggalawalevent == null
-          ? null
-          : DateFormat('dd-MM-y HH:mm:ss')
-              .format(DateTime.parse(_tanggalawalevent));
-      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null
-          ? null
-          : DateFormat('dd-MM-y HH:mm:ss')
-              .format(DateTime.parse(_tanggalakhirevent));
-
-      for (int i = 0; i < listKategoriAdd.length; i++) {
-        formSerialize['kategori'].add(listKategoriAdd[i].id);
-      }
-
-      for (int i = 0; i < listUseradd.length; i++) {
-        formSerialize['admin'].add(listUseradd[i].id);
-      }
-
-      for (int i = 0; i < listcheckinAdd.length; i++) {
-        formSerialize['checkin'].add(listcheckinAdd[i].nama);
-        formSerialize['keyword'].add(listcheckinAdd[i].keyword);
-        formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
-        formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
-        formSerialize['typecheckin'].add('S');
-      }
-
-      print(formSerialize);
-
-      Map<String, dynamic> requestHeadersX = requestHeaders;
-
-      requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
-      try {
-        final response = await http.post(
-          url('api/createcheckin'),
-          headers: requestHeadersX,
-          body: {
-            'type_platform': 'android',
-            'data': jsonEncode(formSerialize),
-          },
-          encoding: Encoding.getByName("utf-8"),
-        );
-
-        if (response.statusCode == 200) {
-          dynamic responseJson = jsonDecode(response.body);
-          if (responseJson['status'] == 'success') {
-            Fluttertoast.showToast(msg: "Berhasil Membuat Event");
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ManajemenEventPersonal()));
-          }
-          print('response decoded $responseJson');
-        } else {
-          print('${response.body}');
-          Fluttertoast.showToast(
-              msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
-        }
-      } on TimeoutException catch (_) {
-        showInSnackBar('Timed out, Try again');
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
+  
 }

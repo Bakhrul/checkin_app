@@ -190,6 +190,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             deskripsi: i['ev_detail'],
             lokasi: i['ev_location'],
             fullday: i['ev_allday'],
+            status: i['status'],
           );
           listItemOngoing.add(notax);
         }
@@ -260,6 +261,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         // return nota;
         var willcomeeventJson = json.decode(willcomeevent.body);
         var willcomeEvents = willcomeeventJson['eventakandatang'];
+        print(willcomeEvents);
         String jumlahwillcome =
             willcomeeventJson['jumlahakandatang'].toString();
         print('willcome $jumlahwillcome');
@@ -273,6 +275,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             deskripsi: i['ev_detail'],
             lokasi: i['ev_location'],
             fullday: i['ev_allday'],
+            status: i['status'],
           );
           listItemWillCome.add(willcomex);
         }
@@ -348,6 +351,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             deskripsi: i['ev_detail'],
             lokasi: i['ev_location'],
             fullday: i['ev_allday'],
+            status: i['status'],
           );
           listItemDoneEvent.add(donex);
         }
@@ -646,7 +650,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  PointEvents()));
+                                                                  PointEvents(idevent: item.id)));
                                                       break;
                                                     case PageEnum.deleteEvent:
                                                       konfirmasidelete(item.id, listItemOngoing, item);
@@ -657,18 +661,20 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 },
                                                 icon: Icon(Icons.more_vert),
                                                 itemBuilder: (context) => [
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaeditEventPage,
                                                     child:
                                                         Text("Edit Data Event"),
-                                                  ),
+                                                  ) :null,
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaadminPage,
                                                     child: Text(
                                                         "Kelola Admin / Co - Host"),
-                                                  ),
+                                                  ): null,
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaPesertaPage,
@@ -693,10 +699,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     child: Text(
                                                         "Hasil akhir checkin peserta"),
                                                   ),
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum.deleteEvent,
                                                     child: Text("Hapus Event"),
-                                                  ),
+                                                  ): null,
                                                 ],
                                               ),
                                             ),
@@ -865,7 +872,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                       CupertinoPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              PointEvents()));
+                                                              PointEvents(idevent: item.id)));
                                                   break;
                                                 case PageEnum.deleteEvent:
                                                   konfirmasidelete(item.id, listItemWillCome, item);
@@ -876,16 +883,18 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                             },
                                             icon: Icon(Icons.more_vert),
                                             itemBuilder: (context) => [
+                                              item.status == 'creator' ?
                                               PopupMenuItem(
                                                 value: PageEnum
                                                     .kelolaeditEventPage,
                                                 child: Text("Edit Data Event"),
-                                              ),
+                                              ): null,
+                                              item.status == 'creator' ?
                                               PopupMenuItem(
                                                 value: PageEnum.kelolaadminPage,
                                                 child: Text(
                                                     "Kelola Admin / Co - Host"),
-                                              ),
+                                              ) : null,
                                               PopupMenuItem(
                                                 value:
                                                     PageEnum.kelolaPesertaPage,
@@ -909,10 +918,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 child: Text(
                                                     "Hasil akhir checkin peserta"),
                                               ),
+                                              item.status == 'creator' ?
                                               PopupMenuItem(
                                                 value: PageEnum.deleteEvent,
                                                 child: Text("Hapus Event"),
-                                              ),
+                                              ) : null,
                                             ],
                                           ),
                                         ))))
@@ -1082,7 +1092,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  PointEvents()));
+                                                                  PointEvents(idevent : item.id)));
                                                       break;
                                                     case PageEnum.deleteEvent:
                                                       konfirmasidelete(item.id, listItemDoneEvent, item);
@@ -1093,18 +1103,20 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 },
                                                 icon: Icon(Icons.more_vert),
                                                 itemBuilder: (context) => [
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaeditEventPage,
                                                     child:
                                                         Text("Edit Data Event"),
-                                                  ),
+                                                  ) :null,
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaadminPage,
                                                     child: Text(
                                                         "Kelola Admin / Co - Host"),
-                                                  ),
+                                                  ) : null,
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaPesertaPage,
@@ -1129,10 +1141,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     child: Text(
                                                         "Hasil akhir checkin peserta"),
                                                   ),
+                                                  item.status == 'creator' ?
                                                   PopupMenuItem(
                                                     value: PageEnum.deleteEvent,
                                                     child: Text("Hapus Event"),
-                                                  ),
+                                                  ): null,
                                                 ],
                                               ),
                                             ),

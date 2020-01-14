@@ -1,4 +1,5 @@
 import 'package:checkin_app/pages/management_checkin/scan_qrcode_checkin.dart';
+import 'package:checkin_app/pages/management_checkin/checkin_manual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'detail_event_afterregist.dart';
@@ -84,7 +85,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            ScanQrcode(id: "2"),
+                                            CheckinManual(idevent: widget.id.toString()),
                                       ));
                                   }else{
                                     Navigator.push(

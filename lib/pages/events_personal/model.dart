@@ -6,6 +6,7 @@ class ListOngoingEvent {
    String fullday;  
    String deskripsi;
    String lokasi;
+   String status;
   ListOngoingEvent(
       {this.id,
       this.title,
@@ -13,7 +14,8 @@ class ListOngoingEvent {
       this.waktuakhir,
       this.deskripsi,
       this.lokasi,
-      this.fullday});
+      this.fullday,
+      this.status});
 }
 
 class ListWillComeEvent {
@@ -24,6 +26,7 @@ class ListWillComeEvent {
    String fullday;  
    String deskripsi;
    String lokasi;
+   String status;
   
   ListWillComeEvent(
       {this.id,
@@ -32,7 +35,8 @@ class ListWillComeEvent {
       this.waktuakhir,
       this.deskripsi,
       this.lokasi,
-      this.fullday});
+      this.fullday,
+      this.status});
 }
 
 class ListDoneEvent {
@@ -43,6 +47,7 @@ class ListDoneEvent {
    String fullday;  
    String deskripsi;
    String lokasi;
+   String status;
   
   ListDoneEvent(
       {this.id,
@@ -51,7 +56,8 @@ class ListDoneEvent {
       this.waktuakhir,
       this.deskripsi,
       this.lokasi,
-      this.fullday});
+      this.fullday,
+      this.status});
 }
 class ListUser {
    String id;
@@ -198,6 +204,20 @@ class ListEditKategoriEvent {
   ListEditKategoriEvent(
       {this.id,
       this.nama,
+      });
+}
+
+class ListPointCheckin {
+   String namapeserta;
+   String jumlahcheckinevent;
+   String jumlahcheckinpeserta;
+   String persencheckin;
+   
+  ListPointCheckin(
+      {this.namapeserta,
+      this.jumlahcheckinevent,
+      this.jumlahcheckinpeserta,
+      this.persencheckin,
       });
 }
 
