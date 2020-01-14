@@ -73,6 +73,7 @@ class Auth{
 
   getuser() async {
     dynamic getresponse = await RequestGet(name: name,customrequest: '').getdata();
+    // print(getresponse);
     // print(getresponse['cm_name']);
     if(getresponse.length > 0 ){
       
@@ -174,6 +175,7 @@ class RequestGet{
           'Authorization' : token,
         },
       );
+      print(url + name + customrequest);
       dynamic dataresponse = json.decode(data.body);
       if(data.statusCode == 200){
       return dataresponse;
@@ -218,7 +220,7 @@ class RequestPost{
           'Authorization' : token,
         },
       );
-      // print(data.body);
+      print(data.body);
       dynamic dataresponse = json.decode(data.body);
       if(data.statusCode == 200){
         if(msg != null){

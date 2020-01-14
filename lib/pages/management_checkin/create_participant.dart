@@ -45,7 +45,6 @@ Future<void> getHeaderHTTP() async {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   Future<String> getDataMember() async {
@@ -65,7 +64,7 @@ Future<void> getHeaderHTTP() async {
         url(
             "api/event/getdata/listusers"),headers: requestHeaders,
         );
-        print(resp.body);
+        // print("resp"+resp.body);
     return resp.body;
   }
 
@@ -79,7 +78,7 @@ Future<void> getHeaderHTTP() async {
     dynamic response =
         await RequestPost(name: "event/postdata/addparticipant", body: body)
             .sendrequest();
-    print(response);
+    // print(response);
 
     if (response == "success") {
       Fluttertoast.showToast(
@@ -231,7 +230,7 @@ Future<void> getHeaderHTTP() async {
           this.user = user;
         });
         _searchNameController.text = user.name;
-        _currentSearch = user.id;
+        _currentSearch = user.id.toString();
       },
       noItemsFoundBuilder: (BuildContext context) {
         return ListTile(
@@ -256,7 +255,7 @@ Future<void> getHeaderHTTP() async {
   void changedDropDownType(String selectedType) {
     setState(() {
       _currentType = selectedType;
-      print(_currentSearch);
+      // print(_currentSearch);
 
     });
   }
