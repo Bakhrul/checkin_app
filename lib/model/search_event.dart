@@ -44,11 +44,13 @@ class SearchEvent{
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
-
-      String dateStart = DateFormat("dd MMM").format(DateTime.parse(map['ev_time_start']));
-      String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));
+      
       Duration dif = DateTime.parse(map['ev_time_end']).difference(DateTime.now());
-      String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
+      DateTime yearStart = DateTime.parse(map['ev_time_start']);
+      DateTime yearEnd = DateTime.parse(map['ev_time_end']);
+      String format = yearStart.year == yearEnd.year ? "dd MMM":"dd MMM yyyy";
+      String dateStart = DateFormat(format).format(DateTime.parse(map['ev_time_start']));
+      String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
       String positionUser;
