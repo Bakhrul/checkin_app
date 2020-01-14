@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:ui';
+import 'dart:io';
 import 'dart:convert';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
@@ -61,12 +62,135 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     String categoryNow = 'all';
     bool isError = false;
     bool isFilter = false;
+    int page = 1;
+    ScrollController pageScroll = new ScrollController();
+    bool delay = false;
+    int manyPage;
+    bool _isLoadingPagination = false;
+    bool _isPageDisconnect = false;
 
   @override
   void initState() {
     _searchQuery.text = '';
     listDoneEvent();
+    pageScroll.addListener((){
+      if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
+          _getPage(categoryNow,_searchQuery.text);
+        }
+    }
+    );
     super.initState();
+  }
+
+    _getPage(String type, String query) async {
+
+    print('_getPage()');
+
+      if(delay){
+        return false;
+      }else{
+        setState((){
+           delay = true;
+        });
+      }
+      
+      
+    if(manyPage != 0){
+      if(page == manyPage){
+        return false;
+      }else{
+        setState((){
+        page = page + 1;
+        _isPageDisconnect = false;
+        _isLoadingPagination = true;
+        });
+      }
+    }
+    
+    print(query);
+
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
+
+  try{
+   final followevent = await http.post(
+        url('api/getfollowingevent/$page'),
+        body: {'filter': filterX},
+        headers: requestHeaders,
+      );
+
+    if (followevent.statusCode == 200) {
+
+      Map rawData = json.decode(followevent.body);
+      print(rawData);
+      print(page);
+
+
+      if(mounted){
+
+        for (var i in rawData['eventfollow']) {
+          
+          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
+          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
+          String timestart = DateFormat('dd-mm-y').format(waktuawal);
+          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+
+          ListFollowingEvent followX = ListFollowingEvent(
+            id: '${i['ev_id']}',
+            idcreator: i['ev_create_user'].toString(),
+            image: i['ev_image'],
+            title: i['ev_title'],
+            waktuawal: timestart,
+            waktuakhir: timeend,
+            fullday: i['ev_allday'].toString(),
+            alamat: i['ev_location'],
+            wishlist: i['ew_wish'].toString(),
+            statusdaftar: i['ep_status'],
+            posisi: i['ep_position'].toString(),
+          );
+
+          listItemFollowing.add(followX);
+        }
+
+        }
+
+        setState((){
+          delay = false;
+          _isLoadingPagination = false;
+        });
+
+    }
+      
+  } on TimeoutException catch(_){
+
+    setState(() {
+        _isPageDisconnect = true;
+        _isLoadingPagination = false;
+        page -= 1;
+        delay = false;
+      });
+      Fluttertoast.showToast(msg: "Time out");
+
+  } on SocketException catch(_){
+      setState(() {
+        _isPageDisconnect = true;
+        _isLoadingPagination = false;
+        page -= 1;
+        delay = false;
+      });
+      Fluttertoast.showToast(msg: "No Internet Connection");
+  } catch(e) {
+    print(e);
+  }
+
   }
 
   _getUserData() async {
@@ -138,11 +262,12 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     setState(() {
       isLoading = true;
       filterX = 'all';
+      page = 1;
     });
     try {
       final followevent = await http.post(
-        url('api/getfollowingevent'),
-        body: {'filter': filterX},
+        url('api/getfollowingevent/$page'),
+        body: {'filter': categoryNow, 'search_query': _searchQuery.text},
         headers: requestHeaders,
       );
 
@@ -150,16 +275,24 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         // return nota;
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['eventfollow'];
+        manyPage = eventfollowingJson['num_page'];
         print(followevents);
+
         listItemFollowing = [];
         for (var i in followevents) {
+          
+          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
+          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
+          String timestart = DateFormat('dd-mm-y').format(waktuawal);
+          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
+            waktuawal: timestart,
+            waktuakhir: timeend,
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -215,10 +348,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     setState(() {
       isFilter = true;
+      page = 1;
     });
     try {
       final followevent = await http.post(
-        url('api/getfollowingevent'),
+        url('api/getfollowingevent/$page'),
         body: {'filter': categoryNow, 'search_query': _searchQuery.text},
         headers: requestHeaders,
       );
@@ -229,12 +363,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
         listItemFollowing = [];
         for (var i in followevents) {
+
+          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
+          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
+          String timestart = DateFormat('dd-mm-y').format(waktuawal);
+          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
+            waktuawal: timestart.toString(),
+            waktuakhir: timeend.toString(),
             fullday: i['ev_allday'],
             alamat: i['ev_address'],
             wishlist: i['ew_wish'].toString(),
@@ -473,19 +613,15 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                           )
                         : Expanded(
                             child: Scrollbar(
-                              child: ListView.builder(
+                              child: ListView(
+                                controller: pageScroll,
+                                children : <Widget>[
+                                //    ListView.builder(
                                 // scrollDirection: Axis.horizontal,
-                                itemCount: listItemFollowing.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  DateTime waktuawal = DateTime.parse(
-                                      listItemFollowing[index].waktuawal);
-                                  DateTime waktuakhir = DateTime.parse(
-                                      listItemFollowing[index].waktuakhir);
-                                  String timestart =
-                                      DateFormat('dd-mm-y').format(waktuawal);
-                                  String timeend =
-                                      DateFormat('dd-mm-y').format(waktuakhir);
-                                  return InkWell(
+                                // itemCount: listItemFollowing.length,
+                                // itemBuilder: (BuildContext context, int index) {
+                                for(var index = 0; index < listItemFollowing.length; index++)
+                                  InkWell(
                                       child: Container(
                                           margin: EdgeInsets.only(
                                             top: 5.0,
@@ -555,7 +691,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                 children: <
                                                                     Widget>[
                                                                   Text(
-                                                                    '$timestart - $timeend',
+                                                                    listItemFollowing[index].waktuawal+' - '+listItemFollowing[index].waktuakhir,
                                                                     style: TextStyle(
                                                                         color: Colors
                                                                             .blue,
@@ -942,9 +1078,54 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                 ));
                                             break;
                                         }
-                                      });
-                                },
-                              ),
+                                      }),
+                              //   },
+                              // ),
+                              _isPageDisconnect ?
+                        Container(
+                          height: 50,
+                          child:Center(
+          child:GestureDetector(
+            onTap:(){
+              _getPage(categoryNow,_searchQuery.text);
+            },
+            child:Container(
+              padding: EdgeInsets.all(5.0),
+              child:Icon(
+              Icons.refresh,
+              color: Colors.blueAccent,
+              size: 25
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:BorderRadius.only(
+                  topLeft : Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft : Radius.circular(20.0),
+                  bottomRight : Radius.circular(20.0)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ]
+              )
+            ) 
+          )
+        )
+                        ):
+                              Container(
+                                height:_isLoadingPagination ? 50:0,
+                                child:Center(
+                                  child:CircularProgressIndicator()
+                                )
+                              )
+                                ]
+                              )
+                              
                             ),
                           ),
                   ],

@@ -40,6 +40,7 @@ class _RegisterEvent extends State<RegisterEvents> {
   bool _isDisconnect = false;
   ScrollController scrollPage = new ScrollController();
   double offset = 0; //12.5
+  bool expired;
 
   @override
   void initState() {
@@ -89,11 +90,12 @@ class _RegisterEvent extends State<RegisterEvents> {
 
       if (ongoingevent.statusCode == 200) {
         Map rawData = json.decode(ongoingevent.body);
-        setState(() {
-          dataEvent = SearchEvent.fromJson(rawData['data']);
-          _isLoading = false;
-          creatorEmail = rawData['creator_email'];
-          creatorName = rawData['creator_name'];
+        setState((){
+           dataEvent = SearchEvent.fromJson(rawData['data']);
+           _isLoading = false;
+           expired = dataEvent.expired;
+           creatorEmail = rawData['creator_email'];
+           creatorName = rawData['creator_name'];
         });
       } else {
         print('ok');
