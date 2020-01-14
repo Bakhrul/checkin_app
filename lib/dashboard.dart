@@ -1,5 +1,6 @@
 import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:ui';
 import 'model/event.dart';
@@ -500,7 +501,10 @@ class _DashboardState extends State<Dashboard> {
             eventUpComing(1);
           },
           child: isLoading == true ? Center(
-                            child: CircularProgressIndicator()
+                            child: SpinKitRotatingCircle(
+  color: Colors.red,
+  size: 50.0,
+)
                           ) : _builderBody(),
         )
           
