@@ -31,17 +31,17 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
 
    getData() async {
     listPeserta = [];
-    dynamic response =
-        await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id}/${widget.eventid}")
-            .getdata();
 
+    dynamic response =
+        await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id.toString() }/${widget.eventid.toString() }")
+            .getdata();
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
        name: response[i]["name"],
         email: response[i]["email"],
-        position: response[i]["position"],
-        picProfile: response[i]["pic_profile"],
-        eventId: response[i]["event_id"],
+        // position: response[i]["position"].toString(),
+        // picProfile: response[i]["pic_profile"],
+        // eventId: response[i]["event_id"],
       );
 
       listPeserta.add(peserta);

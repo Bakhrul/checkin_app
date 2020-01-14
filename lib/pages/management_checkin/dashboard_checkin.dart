@@ -57,12 +57,12 @@ class _DashboardCheckinState extends State<DashboardCheckin>
               .getdata();
       for (var i = 0; i < response.length; i++) {
         UserParticipant peserta = UserParticipant(
-          id: response[i]["id"],
+          id: response[i]["id"].toString(),
           name: response[i]["name"],
           email: response[i]["email"],
           // position: response[i]["position"],
           picProfile: response[i]["pic_profile"],
-          eventId: response[i]["event_id"],
+          eventId: response[i]["event_id"].toString(),
         );
 
         listPeserta.add(peserta);
@@ -89,10 +89,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       dynamic response =
           await RequestGet(name: "checkin/getdata/checkin/", customrequest: "${widget.idevent}")
               .getdata();
+              print(response);
       for (var i = 0; i < response.length; i++) {
         Checkin checkin = Checkin(
-          id: response[i]["id"],
-          eventId: response[i]["event_id"],
+          id: response[i]["id"].toString(),
+          eventId: response[i]["event_id"].toString(),
           checkinKey: response[i]["checkin_keyword"],
           startTime: response[i]["start_time"],
           endTime: response[i]["end_time"],
@@ -124,7 +125,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     dynamic response =
         await RequestPost(name: "deletepeserta_event", body: body)
             .sendrequest();
-    if (response == "success") {
+            print(response['status']);
+    if (response['status'] == "success") {
       setState(() {});
 
       Fluttertoast.showToast(
@@ -135,7 +137,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-      getDataCheckin();
+        isLoading = false;
+
+      // getDataCheckin();
     } else {
       Fluttertoast.showToast(
           msg: "Terjadi Kesalahan",
@@ -145,6 +149,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+        isLoading = false;
+
     }
     }catch (e) {
       setState(() {
@@ -156,12 +162,14 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   }
   deleteCheckin(id, eventId) async {
     dynamic body = {
-      "event_id": id.toString(),
-      "checkin_id": eventId.toString(),
+      "event_id": eventId.toString(),
+      "checkin_id": id.toString(),
     };
     dynamic response =
         await RequestPost(name: "checkin/deletedata/checkinreguler", body: body)
             .sendrequest();
+
+            print(response);
     if (response == "success") {
       setState(() {});
 
@@ -353,8 +361,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                 onPressed: () {
                                                   deleteParticipant(
                                                       f.id, f.eventId.toString());
+                                                      listPeserta.remove(f);
+                                                      Navigator.pop(context);
 
-                                                  Navigator.pop(context);
                                                 },
                                               ),
                                               FlatButton(
@@ -474,8 +483,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                                     data.id,
                                                                     data.eventId);
 
-                                                                Navigator.pop(
-                                                                    context);
+                                                               listCheckin.remove(data);
+                                                               Navigator.pop(context);
                                                               },
                                                             ),
                                                             FlatButton(
