@@ -142,10 +142,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         body:body
       );
 
+      
+
       if (ongoingevent.statusCode == 200) {
 
         Map rawData = json.decode(ongoingevent.body);
-         print(rawData);
+        print(rawData);
+        
         if(mounted){
           setState((){
             userId = rawData['user_id'].toString();
