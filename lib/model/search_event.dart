@@ -21,6 +21,7 @@ class SearchEvent{
     String image;
     String email;
     int position;
+    bool expired;
 
   SearchEvent({
       this.id,
@@ -38,13 +39,15 @@ class SearchEvent{
       this.color,
       this.userEvent,
       this.image,
-      this.position
+      this.position,
+      this.expired
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
 
       String dateStart = DateFormat("dd MMM").format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));
+      Duration dif = DateTime.parse(map['ev_time_end']).difference(DateTime.now());
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
@@ -90,6 +93,7 @@ class SearchEvent{
         hour:hours,
         statusRegistered:status,
         color:color,
+        expired: dif.inSeconds <= 0 ? true:false,
         wish:map['ew_wish'],
         userWish:map['ew_user_id'],
         userEvent:map['ev_create_user'],

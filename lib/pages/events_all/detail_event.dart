@@ -39,6 +39,7 @@ class _RegisterEvent extends State<RegisterEvents> {
   bool _isDisconnect = false;
   ScrollController scrollPage = new ScrollController();
   double offset = 0; //12.5
+  bool expired;
 
   @override
   void initState(){
@@ -92,6 +93,7 @@ class _RegisterEvent extends State<RegisterEvents> {
         setState((){
            dataEvent = SearchEvent.fromJson(rawData['data']);
            _isLoading = false;
+           expired = dataEvent.expired;
            creatorEmail = rawData['creator_email'];
            creatorName = rawData['creator_name'];
         });
@@ -282,6 +284,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                       ],
                     ),
                     if(!widget.selfEvent)
+                      if(expired == false)
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0),
                       child: SizedBox(
