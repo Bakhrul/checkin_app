@@ -299,7 +299,7 @@ class _PointEventsState extends State<PointEvents> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -326,7 +326,7 @@ class _PointEventsState extends State<PointEvents> {
                                 Icons.search,
                                 color: Color.fromRGBO(41, 30, 47, 1),
                               ),
-                              hintText: "Cari Berdasarkan Nama atau Email",
+                              hintText: "Cari Berdasarkan Nama Lengkap",
                               border: InputBorder.none,
                             )),
                       ),

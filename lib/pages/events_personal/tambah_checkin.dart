@@ -97,9 +97,9 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
       formSerialize['time_start'] = _tanggalawal == 'kosong'
           ? null
           : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal));
-      formSerialize['time_end'] = _tanggalawal == 'kosong'
+      formSerialize['time_end'] = _tanggalakhir == 'kosong'
           ? null
-          : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal));
+          : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalakhir));
 
       print(formSerialize);
 

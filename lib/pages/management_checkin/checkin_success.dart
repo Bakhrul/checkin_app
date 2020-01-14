@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:checkin_app/dashboard.dart';
 
 class SuccesRegisteredCheckin extends StatefulWidget {
   SuccesRegisteredCheckin({Key key}) : super(key: key);
@@ -51,7 +52,7 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 30.0),
                     child: Text(
-                        "Pastikan anda tetap konsister checkin pada tiap sesi event dan dapatkan hadiah menarik dari creator untuk anda",
+                        "Pastikan anda tetap konsisten checkin pada tiap sesi event dan dapatkan hadiah menarik dari creator untuk anda",
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.5, fontSize: 14))),
                 Container(
@@ -65,8 +66,15 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                                 padding: EdgeInsets.all(15.0),
                                 color: Colors.indigo,
                                 child: Text("Kembali Ke Beranda",
-                                    style: TextStyle(color: Colors.white)),
-                                onPressed: () async {})),
+                                    style: TextStyle(color: Colors.white,fontSize: 14)),
+                                onPressed: () async {
+                                  Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Dashboard(),
+                                                  ));
+                                })),
                       ],
                     ))
               ],

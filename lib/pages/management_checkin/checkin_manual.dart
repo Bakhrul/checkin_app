@@ -118,13 +118,13 @@ class _CheckinManualState extends State<CheckinManual>
           });
         }
       } on TimeoutException catch (_) {
-        Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+        Fluttertoast.showToast(msg: "Timeout!!, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;
         });
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+            msg: "Gagal Melakukan Event, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;
         });
