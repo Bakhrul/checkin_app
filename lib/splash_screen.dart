@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'storage/storage.dart';
 import 'dart:async';
-
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,9 +8,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-
-
   Future<Null> getSharedPrefs() async {
     String _status;
     DataStore dataStore = new DataStore();
@@ -44,26 +39,55 @@ class _SplashScreenState extends State<SplashScreen> {
             decoration: BoxDecoration(color: Colors.white),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      "MYOCIN",
-                      style: TextStyle(
-                          color: Color.fromRGBO(41, 30, 47, 1),
-                          fontFamily: 'TitilliumWeb',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30.0),
-                    ),
+              Container(
+                width: 200.0,
+                height: 80.0,
+                child: Image.asset("images/logo.png"),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 0.0),
+                child: Text(
+                  'Kelola Event Anda Sekarang Juga',
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
                   ),
                 ),
               ),
+              // Expanded(
+              //   flex: 2,
+              //   child: Container(
+              //     child: Center(
+              //       child: Text(
+              //         "MYOCIN",
+              //         style: TextStyle(
+              //             color: Color.fromRGBO(41, 30, 47, 1),
+              //             fontFamily: 'TitilliumWeb',
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 30.0),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           )
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        child: SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text('Version : 1.0',style: TextStyle(color:Colors.black54),),
+                ),
+              ],
+            )),
       ),
     );
   }

@@ -207,4 +207,18 @@ class ListEditKategoriEvent {
       });
 }
 
+class ListPointCheckin {
+   String namapeserta;
+   String jumlahcheckinevent;
+   String jumlahcheckinpeserta;
+   String persencheckin;
+   
+  ListPointCheckin(
+      {this.namapeserta,
+      this.jumlahcheckinevent,
+      this.jumlahcheckinpeserta,
+      this.persencheckin,
+      });
+}
+
 

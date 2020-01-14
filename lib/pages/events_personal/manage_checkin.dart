@@ -6,6 +6,7 @@ import 'edit_checkin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'detail_qrcodecheckin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'tambah_checkin.dart';
@@ -21,6 +22,7 @@ Map<String, String> requestHeaders = Map();
 enum PageEnum {
   editCheckinPage,
   deleteCheckinPage,
+  detailQrCodePage,
   listUsersCheckinPage,
 }
 
@@ -304,6 +306,22 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                     .timeend,
                                                           )));
                                               break;
+                                              case PageEnum.detailQrCodePage:
+                                              Navigator.of(context).push(
+                                                  CupertinoPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          DetailQrCheckin(
+                                                            event:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .idevent,
+                                                            checkin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .id,
+                                                          )));
+                                              break;
                                             case PageEnum.deleteCheckinPage:
                                               showDialog(
                                                 context: context,
@@ -415,6 +433,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                 PageEnum.listUsersCheckinPage,
                                             child: Text("List Peserta Checkin"),
                                           ),
+                                          PopupMenuItem(
+                                            value: PageEnum.detailQrCodePage,
+                                            child: Text('Download QRImage'),
+                                          ),
                                           listcheckinevent[index].checkin == null || listcheckinevent[index].checkin == '' ?
                                           PopupMenuItem(
                                             value: PageEnum.editCheckinPage,
@@ -435,7 +457,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                         ),
                                       ),
                                       subtitle:
-                                          Text('${timestart} - ${timeend}'),
+                                          Text('$timestart - $timeend'),
                                     ),
                                   );
                                 },

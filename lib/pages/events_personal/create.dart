@@ -420,7 +420,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),
@@ -490,7 +490,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),
@@ -567,7 +567,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                top: 30.0,
+                                top: 20.0,
                                 left: 15.0,
                                 right: 15.0,
                               ),

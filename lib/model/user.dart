@@ -14,15 +14,15 @@ class DataUsers {
 }
 
 class User {
-  String id;
+  String  id;
   String name;
   String email;
   String password;
 
-  User({this.id, this.name, this.email,this.password});
+  User({this.id , this.name, this.email,this.password});
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'].toString();
     name = json['name'];
     email = json['email'];
     password = json['password'];

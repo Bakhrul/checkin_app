@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:checkin_app/api/checkin_service.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
@@ -6,6 +11,8 @@ import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
 import 'package:flutter/material.dart';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -35,6 +42,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   static const double _topSectionBottomPadding = 20.0;
   static const double _topSectionHeight = 50.0;
   GlobalKey globalKey = new GlobalKey();
+  var ui;
   String _dataString;
   String _inputErrorText;
   bool _isFieldDateValid;
@@ -275,7 +283,9 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   Widget _builderGenerate(bodyHeight) {
     if (_dataString != null) {
-      return RepaintBoundary(
+      return Column(
+        children: <Widget>[
+RepaintBoundary(
         key: globalKey,
         child: QrImage(
           data: _dataString,
@@ -287,7 +297,17 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           //   });
           // },
         ),
+
+      ),
+      RaisedButton(
+        child: Text("shared"),
+        onPressed: () {
+          toQrImageData("hj");
+        },
+      )
+        ],
       );
+      
     } else {
       return RepaintBoundary(
           child: Row(
@@ -310,6 +330,23 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       ));
     }
   }
+
+Future<Uint8List> toQrImageData(String text) async {
+  try {
+    final image = await QrPainter(
+      data: text,
+      version: QrVersions.auto,
+      gapless: false,
+      color: Colors.cyan,
+      emptyColor: Colors.green,
+    ).toImage(300);
+    final a = await image.toByteData(format: ImageByteFormat.png);
+    return a.buffer.asUint8List();
+  } catch (e) {
+    throw e;
+  }
 }
 
+
+}
 // =========================================================================
