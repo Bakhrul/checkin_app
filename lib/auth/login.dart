@@ -1,3 +1,4 @@
+import 'package:checkin_app/pages/tes.dart';
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import 'register.dart';
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
       print('getToken ' + getToken.body);
 
       var getTokenDecode = json.decode(getToken.body);
-
+  print(getToken.statusCode);
       if (getToken.statusCode == 200) {
         if (getTokenDecode['error'] == 'invalid_credentials') {
           Fluttertoast.showToast(msg: getTokenDecode['message']);
@@ -142,6 +143,11 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isLoading = false;
         });
+        }else if(getToken.statusCode == 404){
+        Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
+        setState(() {
+          _isLoading = false;
+        });
       } else {
         Fluttertoast.showToast(msg: "Request failed with status: ${getToken.statusCode}");
         setState(() {
@@ -157,8 +163,8 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       setState(() {
         _isLoading = false;
-      });
-      print(e);
+      });      
+      Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
     }
   }
 
@@ -260,6 +266,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: _isLoading == true ? null : () async {
           //login();
           _login();
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => CobaApps()));
         },
         child: Text(
           _isLoading == true ? "Tunggu Sebentar" :"Masuk" ,
