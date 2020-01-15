@@ -4,13 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'detail_event_afterregist.dart';
 import '../event_following/count_down.dart';
+import 'package:checkin_app/pages/events_all/detail_event.dart';
 
 class SuccesRegisteredEvent extends StatefulWidget {
   final int checkin;
   final int id;
   final String creatorId;
   final bool selfEvent;
-  SuccesRegisteredEvent({Key key,this.checkin = 0, this.id, this.creatorId, this.selfEvent}) : super(key: key);
+  final Map dataUser;
+  SuccesRegisteredEvent(
+      {Key key,
+      this.checkin = 0,
+      this.id,
+      this.dataUser,
+      this.creatorId,
+      this.selfEvent})
+      : super(key: key);
 
   State<StatefulWidget> createState() {
     return _SuccesRegisteredEvent();
@@ -80,25 +89,21 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                 child: Text("Checkin",
                                     style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  if(widget.checkin == 0){
+                                  if (widget.checkin == 0) {
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CheckinManual(idevent: widget.id.toString()),
-                                      ));
-                                  }else{
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CheckinManual(
+                                              idevent: widget.id.toString()),
+                                        ));
+                                  } else {
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CountDown(),
-                                      ));
-                                  } 
-                                }
-                                )
-                              ),
-
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CountDown(),
+                                        ));
+                                  }
+                                })),
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
@@ -109,9 +114,11 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            AfterRegisterEvents(),
-                                      ));
+                                          builder: (context) => RegisterEvents(
+                                              id: widget.id,
+                                              creatorId: widget.creatorId,
+                                              dataUser: widget.dataUser,
+                                              selfEvent: true)));
                                 }))
                       ],
                     ))

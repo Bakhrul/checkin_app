@@ -309,6 +309,13 @@ class _ManagePesertaState extends State<ManagePeserta> {
                   padding: const EdgeInsets.only(top: 0.0),
                   child: Column(
                     children: <Widget>[
+                       isFilter == true ?
+                               Center(
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 20.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ):
                       listpesertaevent.length == 0
                           ? Padding(
                               padding: const EdgeInsets.only(top: 20.0),
@@ -339,13 +346,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                 ),
                               ]),
                             )
-                          : isFilter == true
-                              ? Center(
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 20.0),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
+                          
                               : listpesertaevent.length == 0
                                   ? Padding(
                                       padding: const EdgeInsets.only(top: 20.0),

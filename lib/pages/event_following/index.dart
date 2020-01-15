@@ -140,8 +140,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           
           DateTime waktuawal = DateTime.parse(i['ev_time_start']);
           DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd-mm-y').format(waktuawal);
-          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
+          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
@@ -283,8 +283,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           
           DateTime waktuawal = DateTime.parse(i['ev_time_start']);
           DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd-mm-y').format(waktuawal);
-          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
+          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
