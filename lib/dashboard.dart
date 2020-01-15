@@ -8,6 +8,7 @@ import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/register_event/step_register_six.dart';
 import 'pages/register_event/step_register_three.dart';
+import 'pages/profile/profile_akun.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
@@ -380,136 +381,144 @@ class _DashboardState extends State<Dashboard> {
         appBar: buildBar(context),
         
         drawer: Drawer(
-          child: Container(
+          child: GestureDetector(
+            onTap:(){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder:(context) => ProfileUser())
+              );
+            },
+            child: Container(
             
-            child: Column(
-            
-              children: <Widget>[
-                // Profil Drawer Here
-                UserAccountsDrawerHeader(
-                  // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
-                  accountName: Text(usernameprofile),
-                  accountEmail: Text(emailprofile),
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(41, 30, 47, 1),
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Text(
-                      "A",
-                      style: TextStyle(
-                        fontSize: 40.0,
+                child: Column(
+                
+                  children: <Widget>[
+                    // Profil Drawer Here
+                    UserAccountsDrawerHeader(
+                      // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
+                      accountName: Text(usernameprofile),
+                      accountEmail: Text(emailprofile),
+                      decoration: BoxDecoration(
                         color: Color.fromRGBO(41, 30, 47, 1),
                       ),
-                    ),
-                  ),
-                ),
-                //  Menu Section Here
-                Expanded(
-                  child: Container(
-                    // color: Colors.red,
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
-                        ListTile(
-                          title: Text(
-                            'Cari Event',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          "A",
+                          style: TextStyle(
+                            fontSize: 40.0,
+                            color: Color.fromRGBO(41, 30, 47, 1),
                           ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/semua_event");
-                          },
                         ),
-                        ListTile(
-                          title: Text(
-                            'Event Anda',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/personal_event");
-                          },
-                        ),
-                        ListTile(
-                          title: Text(
-                            'Event Yang di Ikuti',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/follow_event");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        width: 0.5,
-                        color: Colors.black54,
                       ),
                     ),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      'Logout',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontFamily: 'Roboto',
-                        color: Color(0xff25282b),
-                      ),
-                    ),
-                    trailing: Icon(Icons.exit_to_app),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: Text('Peringatan!'),
-                          content: Text('Apa anda yakin ingin logout?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                'Tidak',
-                                style: TextStyle(color: Colors.black54),
+                    //  Menu Section Here
+                    Expanded(
+                      child: Container(
+                        // color: Colors.red,
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(
+                                'Cari Event',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
+                              onTap: () {
+                                Navigator.pushNamed(context, "/semua_event");
                               },
                             ),
-                            FlatButton(
-                              child: Text(
-                                'Ya',
-                                style: TextStyle(color: Colors.cyan),
+                            ListTile(
+                              title: Text(
+                                'Event Anda',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
                               ),
-                              onPressed: () {
-                                removeSharedPrefs();
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                                Navigator.pushReplacementNamed(
-                                    context, "/login");
+                              onTap: () {
+                                Navigator.pushNamed(context, "/personal_event");
                               },
-                            )
+                            ),
+                            ListTile(
+                              title: Text(
+                                'Event Yang di Ikuti',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, "/follow_event");
+                              },
+                            ),
                           ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            width: 0.5,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontFamily: 'Roboto',
+                            color: Color(0xff25282b),
+                          ),
+                        ),
+                        trailing: Icon(Icons.exit_to_app),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text('Peringatan!'),
+                              content: Text('Apa anda yakin ingin logout?'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text(
+                                    'Tidak',
+                                    style: TextStyle(color: Colors.black54),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text(
+                                    'Ya',
+                                    style: TextStyle(color: Colors.cyan),
+                                  ),
+                                  onPressed: () {
+                                    removeSharedPrefs();
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, "/login");
+                                  },
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              )
           ),
         ),
         body: RefreshIndicator(
