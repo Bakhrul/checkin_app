@@ -22,8 +22,11 @@ class SearchEvent{
     String email;
     int position;
     bool expired;
+    String creatorName;
+    String follow;
 
   SearchEvent({
+      this.follow,
       this.id,
       this.title,
       this.location,
@@ -40,7 +43,8 @@ class SearchEvent{
       this.userEvent,
       this.image,
       this.position,
-      this.expired
+      this.expired,
+      this.creatorName
   });
 
   factory SearchEvent.fromJson(Map<String, dynamic> map){
@@ -50,43 +54,64 @@ class SearchEvent{
       DateTime yearEnd = DateTime.parse(map['ev_time_end']);
       String format = yearStart.year == yearEnd.year ? "dd MMM":"dd MMM yyyy";
       String dateStart = DateFormat(format).format(DateTime.parse(map['ev_time_start']));
-      String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
+      String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      
+      String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
-      String positionUser;
 
-      switch(map['ep_position']){
-        case 2:
-           positionUser = ' Sebagai Admin';
-           break;
-        default:
-           positionUser = '';
-           break;
-      }
+      if(map['ep_position'] != 2 && dif.inSeconds >= 0){
 
-      switch(map['ep_status']){
+        switch(map['ep_status']){
         case 'C':
-             status = 'Ditolak$positionUser';
+             status = 'Ditolak';
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses Daftar$positionUser';
+             status = 'Proses';
              color = Colors.orange;
              break;
         case 'A':
-             status = 'Sudah Terdaftar$positionUser';
+             status = 'Sudah Terdaftar';
              color = Colors.green;
              break;
         default:
-             status = 'Belum Terdaftar$positionUser';
+             status = 'Belum Terdaftar';
              color = Colors.grey;
              break;
+        }
+
+      }else if(dif.inSeconds <= 0){
+
+           status = 'Event Selesai';
+           color = Colors.grey;
+
+      }else{
+
+        switch(map['ep_status']){
+        case 'C':
+             status = 'Belum Terdaftar';
+             color = Colors.grey;
+             break;
+        case 'P':
+             status = 'Proses';
+             color = Colors.orange;
+             break;
+        default:
+           status = 'Admin / Co-Host';
+           color = Colors.green;
+           break;
+
+        }
+
+        
+
       }
 
       return SearchEvent(
         id:map['ev_id'],
         title:map['ev_title'],
         location:map['ev_location'],
+        creatorName:map['us_name'],
         detail:map['ev_detail'],
         allday:map['ev_allday'],
         image:map['ev_image'],
@@ -98,6 +123,7 @@ class SearchEvent{
         expired: dif.inSeconds <= 0 ? true:false,
         wish:map['ew_wish'],
         userWish:map['ew_user_id'],
+        follow:map['fo_status'],
         userEvent:map['ev_create_user'],
         position:map['ep_position']
       );

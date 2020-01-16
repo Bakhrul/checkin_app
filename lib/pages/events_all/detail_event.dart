@@ -191,7 +191,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                     Container(
                                         padding: EdgeInsets.only(bottom: 10.0),
                                         width: double.infinity,
-                                        child: Text(dataEvent.title,
+                                        child: Text(dataEvent.title == null ? 'Memuat..':dataEvent.title ,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20))),
@@ -205,7 +205,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 size: 16,
                                                 color: Colors.grey[600]),
                                           ),
-                                          Text(dataEvent.location,
+                                          Text(dataEvent.location == null ? 'Memuat ...':dataEvent.location,
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
@@ -219,7 +219,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               child: Icon(Icons.date_range,
                                                   size: 16,
                                                   color: Colors.grey[600])),
-                                          Text(
+                                          Text(dataEvent.start == null ? "Memuat ...":
                                               dataEvent.start +
                                                   ' - ' +
                                                   dataEvent.end,
@@ -236,7 +236,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 size: 16,
                                                 color: Colors.grey[600]),
                                           ),
-                                          Text(dataEvent.hour,
+                                          Text(dataEvent.hour == null ? 'Memuat ...':dataEvent.hour,
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
