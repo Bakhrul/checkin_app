@@ -100,8 +100,6 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(kategorievent.body);
-        print(kategorievent.statusCode);
         setState(() {
           isLoading = false;
           isError = true;

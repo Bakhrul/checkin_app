@@ -10,6 +10,8 @@ class ListFollowingEvent {
    String idcreator;
    String statusdaftar;
    String posisi;
+   String follow;
+   String creatorName;
 
   ListFollowingEvent(
       {this.id,
@@ -22,6 +24,8 @@ class ListFollowingEvent {
       this.wishlist,
       this.idcreator,
       this.statusdaftar,
+      this.follow,
+      this.creatorName,
       this.posisi});
 }
 

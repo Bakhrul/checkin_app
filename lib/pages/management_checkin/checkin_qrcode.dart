@@ -180,7 +180,7 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Result : $resultX',
+                      'Result : **********',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,

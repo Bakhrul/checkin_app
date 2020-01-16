@@ -59,7 +59,12 @@ class SearchEvent{
       String status;
       Color color;
 
-      if(map['ep_position'] != 2 && dif.inSeconds >= 0){
+      if(dif.inSeconds <= 0){
+
+        status = 'Event Selesai';
+        color = Color.fromRGBO(255, 191, 128,1);
+
+      }else if(map['ep_position'] != 2){
 
         switch(map['ep_status']){
         case 'C':
@@ -79,11 +84,6 @@ class SearchEvent{
              color = Colors.grey;
              break;
         }
-
-      }else if(dif.inSeconds <= 0){
-
-           status = 'Event Selesai';
-           color = Colors.grey;
 
       }else{
 
@@ -106,7 +106,6 @@ class SearchEvent{
         
 
       }
-
       return SearchEvent(
         id:map['ev_id'],
         title:map['ev_title'],
@@ -123,7 +122,7 @@ class SearchEvent{
         expired: dif.inSeconds <= 0 ? true:false,
         wish:map['ew_wish'],
         userWish:map['ew_user_id'],
-        follow:map['fo_status'],
+        follow:map['fo_status'] == null ? "N":map['fo_status'],
         userEvent:map['ev_create_user'],
         position:map['ep_position']
       );

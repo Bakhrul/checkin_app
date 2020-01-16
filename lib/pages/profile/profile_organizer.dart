@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:checkin_app/model/search_event.dart';
 import 'package:checkin_app/pages/profile/model.dart';
 import '../events_all/detail_event.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
-
+import 'package:intl/intl.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
@@ -22,11 +20,11 @@ String tokenType,
     eventberlangsungX,
     eventakandatangX,
     eventselesaiX,
-    namaOrganizerX;
+    namaOrganizerX, userId;
 Map<String, String> requestHeaders = Map();
-String getNowfilter;
+String getNowfilter, cekfollowX;
 List<EventOrganizer> listItemFollowing = [];
-bool isLoading, isError, isFilter, isErrorfilter;
+bool isLoading, isError, isFilter, isErrorfilter, isLoadingfollow;
 Map dataUser;
 
 class ProfileOrganizer extends StatefulWidget {
@@ -52,7 +50,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
     super.initState();
     eventOrganizeGet();
     isFilter = false;
+    cekfollowX = '1';
     isErrorfilter = false;
+    isLoadingfollow = false;
     eventberlangsungX = '0';
     eventakandatangX = '0';
     namaOrganizerX = 'Loading...';
@@ -82,9 +82,12 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         if (mounted) {
           setState(() {
             dataUser = rawData;
+            userId = rawData['us_code'].toString();
+
           });
         }
         setState(() {
+          userId = rawData['us_code'].toString();
           isLoading = false;
           isError = false;
         });
@@ -129,6 +132,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
 
     setState(() {
       isLoading = true;
+      isLoadingfollow = true;
     });
     try {
       final followevent = await http.post(
@@ -140,6 +144,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
       if (followevent.statusCode == 200) {
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['event'];
+        print(followevents);
         String jumlaheventberlangsung =
             eventfollowingJson['jumlaheventberlangsung'].toString();
         String jumlaheventakandatang =
@@ -147,12 +152,15 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         print(jumlaheventakandatang);
         String jumlaheventselesai =
             eventfollowingJson['jumlaheventselesai'].toString();
+        String cekfollow = eventfollowingJson['cekfollow'].toString();
+        print('cek follow $cekfollow');
         String usersorganizer = eventfollowingJson['namaorganizer'];
         setState(() {
           eventberlangsungX = jumlaheventberlangsung;
           eventakandatangX = jumlaheventakandatang;
           eventselesaiX = jumlaheventselesai;
           namaOrganizerX = usersorganizer;
+          cekfollowX = cekfollow;
         });
         listItemFollowing = [];
         for (var i in followevents) {
@@ -161,8 +169,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             idcreator: i['ev_create_user'].toString(),
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
+            waktuawal: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -174,6 +182,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         setState(() {
           isLoading = false;
           isError = false;
+          isLoadingfollow = false;
         });
         _getUserData();
       } else if (followevent.statusCode == 401) {
@@ -182,12 +191,14 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         setState(() {
           isLoading = false;
           isError = true;
+          isLoadingfollow = false;
         });
       } else {
         print(followevent.body);
         setState(() {
           isLoading = false;
           isError = true;
+          isLoadingfollow = false;
         });
         return null;
       }
@@ -195,12 +206,14 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
       setState(() {
         isLoading = false;
         isError = true;
+        isLoadingfollow = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
         isError = true;
+        isLoadingfollow = false;
       });
       debugPrint('$e');
     }
@@ -239,11 +252,13 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         String jumlaheventselesai =
             eventfollowingJson['jumlaheventselesai'].toString();
         String usersorganizer = eventfollowingJson['namaorganizer'];
+        String cekfollow = eventfollowingJson['cekfollow'].toString();
         setState(() {
           eventberlangsungX = jumlaheventberlangsung;
           eventakandatangX = jumlaheventakandatang;
           eventselesaiX = jumlaheventselesai;
           namaOrganizerX = usersorganizer;
+          cekfollowX = cekfollow;
         });
         listItemFollowing = [];
         for (var i in followevents) {
@@ -252,8 +267,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             idcreator: i['ev_create_user'].toString(),
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
+            waktuawal: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -283,14 +298,14 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
       }
     } on TimeoutException catch (_) {
       setState(() {
-        isLoading = false;
-        isError = true;
+        isFilter = false;
+        isErrorfilter = true;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
-        isLoading = false;
-        isError = true;
+        isFilter = false;
+        isErrorfilter = true;
       });
       debugPrint('$e');
     }
@@ -305,12 +320,153 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         backgroundColor: Colors.white,
         appBar: new AppBar(
           elevation: 0,
+          actions: <Widget>[
+            widget.iduser == userId ? Container(): isError == true ? Container():
+          ButtonTheme(
+                          minWidth: 0, //wraps child's width
+                          height: 0,
+                          buttonColor: Colors.white,
+                          child: FlatButton(
+                            padding: EdgeInsets.only(right: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                isLoadingfollow == true?
+                                Container(
+                                  width: 25.0,
+                                  height: 25.0,
+                                  child: CircularProgressIndicator(
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.white)),
+                                ):
+                                Icon(
+                                  cekfollowX == '0' ?Icons.check : Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                isLoadingfollow == true ?  Container():
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Text(cekfollowX == '0' ? 'Ikuti Sekarang' : 'Batal Mengikuti',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            color: Colors.transparent,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            onPressed:
+                                                                   isLoadingfollow == true ? null : () async {
+                                                                  try {
+                                                                    setState(() {
+                                                                      isLoadingfollow = true;
+                                                                    });
+                                                                    final hapuswishlist = await http.post(
+                                                                        url(
+                                                                            'api/followorganizer'),
+                                                                        headers:
+                                                                            requestHeaders,
+                                                                        body: {
+                                                                          'organizer':
+                                                                              widget.iduser,
+                                                                        });
+
+                                                                    if (hapuswishlist
+                                                                            .statusCode ==
+                                                                        200) {
+                                                                      var hapuswishlistJson =
+                                                                          json.decode(
+                                                                              hapuswishlist.body);
+                                                                      if (hapuswishlistJson[
+                                                                              'status'] ==
+                                                                          'aktif') {
+                                                                        setState(() {
+                                                                      isLoadingfollow = false;
+                                                                      cekfollowX = '1';
+                                                                    });
+                                                                      } else if (hapuswishlistJson[
+                                                                              'status'] ==
+                                                                          'nonaktif') {
+                                                                        setState(() {
+                                                                      isLoadingfollow = false;
+                                                                      cekfollowX = '0';
+                                                                    });
+                                                                      }
+                                                                    } else {
+                                                                      print(hapuswishlist
+                                                                          .body);
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                              setState(() {
+                                                                      isLoadingfollow = false;
+                                                                    });
+                                                                    }
+                                                                  } on TimeoutException catch (_) {
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Timed out, Try again");
+                                                                                setState(() {
+                                                                      isLoadingfollow = false;
+                                                                    });
+                                                                  } catch (e) {
+                                                                    setState(() {
+                                                                      isLoadingfollow = false;
+                                                                    });
+                                                                    print(e);
+                                                                    
+                                                                  }
+                                                                },
+                          ),
+                      ),
+          ],
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         ),
-        body: SafeArea(
+        body:
+        isLoading == true ?
+        Center(
+          child: CircularProgressIndicator(),
+        )
+        : isError == true ?
+        Center(
+          child:GestureDetector(
+            onTap: () async{
+              eventOrganizeGet();
+            },
+            child:Container(
+              padding: EdgeInsets.all(5.0),
+              child:Icon(
+              Icons.refresh,
+              color: Colors.blueAccent,
+              size: 25
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:BorderRadius.only(
+                  topLeft : Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft : Radius.circular(20.0),
+                  bottomRight : Radius.circular(20.0)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ]
+              )
+            ) 
+          )
+        ):
+         SafeArea(
           child: Stack(
             children: <Widget>[
               RefreshIndicator(
@@ -324,7 +480,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                         Container(
                           height: 200.0,
                           padding: EdgeInsets.only(left: 40.0, right: 40.0),
-                          color: Colors.blue,
+                          color: Color.fromRGBO(41, 30, 47, 1),
                         ),
                         Center(
                           child: Padding(
@@ -333,6 +489,10 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                 width: 80.0,
                                 height: 80.0,
                                 decoration: new BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2.0,
+                                  ),
                                   shape: BoxShape.circle,
                                   image: new DecorationImage(
                                     fit: BoxFit.fill,
@@ -343,6 +503,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                 )),
                           ),
                         ),
+                        
                         Padding(
                           padding: const EdgeInsets.only(top: 100.0),
                           child: Center(
@@ -355,6 +516,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                             ),
                           ),
                         ),
+                        
                         Center(
                           child: Column(
                             children: <Widget>[
@@ -380,7 +542,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                           decoration: BoxDecoration(
                                               border: Border(
                                                   right: BorderSide(
-                                            color: Colors.lightBlue,
+                                            color: Color.fromRGBO(41, 30, 47, 1),
                                             width: 1.0,
                                           ))),
                                           child: Column(
@@ -406,7 +568,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                 child: Text(
                                                   eventberlangsungX,
                                                   style: TextStyle(
-                                                      color: Colors.blue,
+                                                      color: Color.fromRGBO(41, 30, 47, 1),
                                                       fontSize: 20),
                                                 ),
                                               ),
@@ -422,7 +584,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                           decoration: BoxDecoration(
                                               border: Border(
                                                   right: BorderSide(
-                                            color: Colors.lightBlue,
+                                            color: Color.fromRGBO(41, 30, 47, 1),
                                             width: 1.0,
                                           ))),
                                           child: Column(
@@ -448,7 +610,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                 child: Text(
                                                   eventakandatangX,
                                                   style: TextStyle(
-                                                      color: Colors.blue,
+                                                      color: Color.fromRGBO(41, 30, 47, 1),
                                                       fontSize: 20),
                                                 ),
                                               ),
@@ -482,7 +644,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                 child: Text(
                                                   eventselesaiX,
                                                   style: TextStyle(
-                                                      color: Colors.blue,
+                                                      color: Color.fromRGBO(41, 30, 47, 1),
                                                       fontSize: 20),
                                                 ),
                                               ),
@@ -525,7 +687,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                       border: Border(
                                           bottom: BorderSide(
                                     color: getNowfilter == 'berlangsung'
-                                        ? Colors.blue
+                                        ? Color.fromRGBO(41, 30, 47, 1)
                                         : Colors.transparent,
                                     width: 1.0,
                                   ))),
@@ -542,8 +704,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                           style: TextStyle(
                                               color:
                                                   getNowfilter == 'berlangsung'
-                                                      ? Colors.blue
-                                                      : Colors.grey),
+                                                      ? Color.fromRGBO(41, 30, 47, 1)
+                                                      : Colors.grey,
+                                                    fontWeight: getNowfilter == 'berlangsung'? FontWeight.w500 : FontWeight.w400),
                                         ),
                                       ),
                                     ],
@@ -565,7 +728,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                       border: Border(
                                           bottom: BorderSide(
                                     color: getNowfilter == 'akan datang'
-                                        ? Colors.blue
+                                        ? Color.fromRGBO(41, 30, 47, 1)
                                         : Colors.transparent,
                                     width: 1.0,
                                   ))),
@@ -582,8 +745,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                           style: TextStyle(
                                               color:
                                                   getNowfilter == 'akan datang'
-                                                      ? Colors.blue
-                                                      : Colors.grey),
+                                                      ? Color.fromRGBO(41, 30, 47, 1)
+                                                      : Colors.grey,
+                                                      fontWeight: getNowfilter == 'akan datang'? FontWeight.w500 : FontWeight.w400),
                                         ),
                                       ),
                                     ],
@@ -605,7 +769,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                       border: Border(
                                           bottom: BorderSide(
                                     color: getNowfilter == 'selesai'
-                                        ? Colors.blue
+                                        ? Color.fromRGBO(41, 30, 47, 1)
                                         : Colors.transparent,
                                     width: 1.0,
                                   ))),
@@ -621,8 +785,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                           'Sudah Selesai',
                                           style: TextStyle(
                                               color: getNowfilter == 'selesai'
-                                                  ? Colors.blue
-                                                  : Colors.grey),
+                                                  ? Color.fromRGBO(41, 30, 47, 1)
+                                                  : Colors.grey,
+                                              fontWeight: getNowfilter == 'selesai'? FontWeight.w500 : FontWeight.w400),
                                         ),
                                       ),
                                     ],
@@ -634,7 +799,40 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                     ),
                     isFilter == true
                         ? Center(child: CircularProgressIndicator())
-                        : Container(
+                        :
+                        isErrorfilter == true ?
+                        Center(
+          child:GestureDetector(
+            onTap: () async{
+              filtereventOrganizeGet();
+            },
+            child:Container(
+              padding: EdgeInsets.all(5.0),
+              child:Icon(
+              Icons.refresh,
+              color: Colors.blueAccent,
+              size: 25
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:BorderRadius.only(
+                  topLeft : Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                  bottomLeft : Radius.circular(20.0),
+                  bottomRight : Radius.circular(20.0)
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ]
+              )
+            ) 
+          )
+        ): Container(
                             margin: EdgeInsets.only(
                               top: 10.0,
                             ),
@@ -752,7 +950,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                               ],
                                             ),
                                           ),
+                                          item.idcreator == userId ? Container():
                                           Column(children: <Widget>[
+                                            
                                             Container(
                                                 padding: EdgeInsets.only(
                                                     left: 10.0, right: 10.0),
@@ -1058,7 +1258,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                     id: int.parse(
                                                         item
                                                             .id),
-                                                    selfEvent: false,
+                                                    
+                                                    selfEvent: widget.iduser == userId ? true : false,
                                                     dataUser: dataUser,
                                                     creatorId:
                                                         item

@@ -26,11 +26,11 @@ List<Event> listEventSelf = [];
 List<Event> listEventUpComming = [];
 List<Event> listEventNow = [];
  var listFilter = [
-    {'index': "1", 'name': "Hari ini" }, 
+//    {'index': "1", 'name': "Hari ini" },
     {'index': "2", 'name': "Minggu ini" },
     {'index': "3", 'name': "3 Hari" }, 
     {'index': "4", 'name': "7 Hari" },
-    {'index': "5", 'name': "1 Bulan" }
+    {'index': "5", 'name': "1 Bulan Lagi" }
     ];
 
 enum PageEnum {

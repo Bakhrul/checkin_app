@@ -124,7 +124,7 @@ class _CheckinManualState extends State<CheckinManual>
         });
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Gagal Melakukan Event, Silahkan Coba Kembali");
+            msg: "Gagal Melakukan Checkin, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;
         });
