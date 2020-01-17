@@ -7,10 +7,13 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 GlobalKey globalKey = new GlobalKey();
 String _dataString;
+
+
 
 class DetailQrCheckin extends StatefulWidget {
   DetailQrCheckin({Key key, this.title, this.event, this.checkin}) : super(key: key);
@@ -51,14 +54,26 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
 
   Future<void> _captureAndSharePng() async {
     try {
-      RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
-      var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.png').create();
-      await file.writeAsBytes(pngBytes);
+      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
+
+      if(permission != PermissionStatus.denied){
+         
+          Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      
+          RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
+          
+          var image = await boundary.toImage();
+          ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+          Uint8List pngBytes = byteData.buffer.asUint8List();
+
+          final tempDir = await getExternalStorageDirectory();
+          final file = await new File('${tempDir.path}/download/image.png').create();
+          await file.writeAsBytes(pngBytes);
+      }
+      
+      
+      
 
     } catch(e) {
       print(e.toString());
@@ -92,10 +107,15 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
             child:  Center(
               child: RepaintBoundary(
                 key: globalKey,
-                child: QrImage(
+                child: Container(
+                  width:  MediaQuery.of(context).size.width,
+                  height :  MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  child:QrImage(
                   data: _dataString,
                   size:  bodyHeight,
-                ),
+                 ),
+                )
               ),
             ),
           ),
