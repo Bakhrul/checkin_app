@@ -42,6 +42,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
     getHeaderHTTP();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 

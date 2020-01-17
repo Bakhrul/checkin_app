@@ -10,7 +10,7 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
-bool isLoading, isError, isFilter, isErrorfilter;
+bool isLoading, isError, isFilter, isErrorfilter, isCreate;
 TextEditingController _filtercontroller = new TextEditingController();
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
@@ -26,6 +26,7 @@ class ManajemeCreatePeserta extends StatefulWidget {
     return _ManajemeCreatePesertaState();
   }
 }
+
 class Debouncer {
   final int milliseconds;
   VoidCallback action;
@@ -50,6 +51,16 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
     getHeaderHTTP();
     isFilter = false;
     isErrorfilter = false;
+    isCreate = false;
+  }
+
+  void deactivate() {
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> getHeaderHTTP() async {
@@ -278,293 +289,285 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        ),
-                        child: TextField(
-                            controller: _filtercontroller,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Colors.black,
-                            ),
-                            onChanged: (string) {
-                              _debouncer.run(() {
-                                listUserfilter();
-                              });
-                            },
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                              ),
-                              hintText: "Cari Berdasarkan Nama Lengkap",
-                              border: InputBorder.none,
-                            )),
-                      ),
-                      isFilter == true
-                          ? Container(
-                              padding: EdgeInsets.only(top: 20.0),
-                              child: CircularProgressIndicator(),
-                            )
-                          : listUserItem.length == 0
-                              ? Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
-                                  child: Column(children: <Widget>[
-                                    new Container(
-                                      width: 100.0,
-                                      height: 100.0,
-                                      child: Image.asset(
-                                          "images/empty-white-box.png"),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 20.0,
-                                        left: 15.0,
-                                        right: 15.0,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "User Tidak ada / tidak ditemukan",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black45,
-                                            height: 1.5,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child: Column(
+                        children: <Widget>[
+                          isCreate == true
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 15.0,
+                                        margin: EdgeInsets.only(
+                                            top: 10.0, right: 15.0),
+                                        height: 15.0,
+                                        child: CircularProgressIndicator()),
+                                  ],
                                 )
-                              : isErrorfilter == true
+                              : Container(),
+                          Container(
+                            margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25.0)),
+                            ),
+                            child: TextField(
+                                controller: _filtercontroller,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (string) {
+                                  _debouncer.run(() {
+                                    listUserfilter();
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      20.0, 15.0, 20.0, 15.0),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Color.fromRGBO(41, 30, 47, 1),
+                                  ),
+                                  hintText: "Cari Berdasarkan Nama Lengkap",
+                                  border: InputBorder.none,
+                                )),
+                          ),
+                          isFilter == true
+                              ? Container(
+                                  padding: EdgeInsets.only(top: 20.0),
+                                  child: CircularProgressIndicator(),
+                                )
+                              : listUserItem.length == 0
                                   ? Padding(
                                       padding: const EdgeInsets.only(top: 20.0),
-                                      child: RefreshIndicator(
-                                        onRefresh: () => listUser(),
-                                        child: Column(children: <Widget>[
-                                          new Container(
-                                            width: 80.0,
-                                            height: 80.0,
-                                            child: Image.asset(
-                                                "images/system-eror.png"),
+                                      child: Column(children: <Widget>[
+                                        new Container(
+                                          width: 100.0,
+                                          height: 100.0,
+                                          child: Image.asset(
+                                              "images/empty-white-box.png"),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20.0,
+                                            left: 15.0,
+                                            right: 15.0,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 10.0,
-                                              left: 15.0,
-                                              right: 15.0,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                "Gagal Memuat Data, Silahkan Coba Kembali",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black54,
-                                                  height: 1.5,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                          child: Center(
+                                            child: Text(
+                                              "User Tidak ada / tidak ditemukan",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black45,
+                                                height: 1.5,
                                               ),
+                                              textAlign: TextAlign.center,
                                             ),
                                           ),
-                                        ]),
-                                      ),
+                                        ),
+                                      ]),
                                     )
-                                  : Expanded(
-                                      child: Scrollbar(
-                                        child: ListView.builder(
-                                          // scrollDirection: Axis.horizontal,
-                                          itemCount: listUserItem.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return InkWell(
-                                              child: Container(
-                                                child: Card(
-                                                    child: ListTile(
-                                                  leading: Container(
-                                                      width: 40.0,
-                                                      height: 40.0,
-                                                      decoration:
-                                                          new BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        image:
-                                                            new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: AssetImage(
-                                                            'images/imgavatar.png',
-                                                          ),
-                                                        ),
-                                                      )),
-                                                  title: Text(
-                                                      listUserItem[index]
+                                  : isErrorfilter == true
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20.0),
+                                          child: RefreshIndicator(
+                                            onRefresh: () => listUser(),
+                                            child: Column(children: <Widget>[
+                                              new Container(
+                                                width: 80.0,
+                                                height: 80.0,
+                                                child: Image.asset(
+                                                    "images/system-eror.png"),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 10.0,
+                                                  left: 15.0,
+                                                  right: 15.0,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "Gagal Memuat Data, Silahkan Coba Kembali",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black54,
+                                                      height: 1.5,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ]),
+                                          ),
+                                        )
+                                      : Expanded(
+                                          child: Scrollbar(
+                                            child: ListView.builder(
+                                              // scrollDirection: Axis.horizontal,
+                                              itemCount: listUserItem.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return InkWell(
+                                                  child: Container(
+                                                    child: Card(
+                                                        child: ListTile(
+                                                      leading: Container(
+                                                          width: 40.0,
+                                                          height: 40.0,
+                                                          decoration:
+                                                              new BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            image:
+                                                                new DecorationImage(
+                                                              fit: BoxFit.fill,
+                                                              image: AssetImage(
+                                                                'images/imgavatar.png',
+                                                              ),
+                                                            ),
+                                                          )),
+                                                      title: Text(listUserItem[
+                                                                      index]
                                                                   .nama ==
                                                               null
                                                           ? 'Unknown Nama'
                                                           : listUserItem[index]
                                                               .nama),
-                                                  subtitle: Text(
-                                                      listUserItem[index]
-                                                                  .email ==
-                                                              null
-                                                          ? 'Unknown Email'
-                                                          : listUserItem[index]
-                                                              .email),
-                                                )),
-                                              ),
-                                              onTap: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title: Text('Peringatan!'),
-                                                    content: Text(
-                                                        'Apakah Anda Ingin Menambahkan Peserta ini ke Event Anda? '),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        child: Text('Tidak'),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      ),
-                                                      FlatButton(
-                                                        textColor: Colors.green,
-                                                        child: Text('Ya'),
-                                                        onPressed: () async {
-                                                          try {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Mohon Tunggu Sebentar");
-                                                            final addpeserta =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/addpeserta_event'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'event': widget
-                                                                      .event,
-                                                                  'peserta':
-                                                                      listUserItem[
-                                                                              index]
-                                                                          .id,
-                                                                });
-
-                                                            if (addpeserta
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var addpesertaJson =
-                                                                  json.decode(
-                                                                      addpeserta
-                                                                          .body);
-                                                              if (addpesertaJson[
-                                                                      'status'] ==
-                                                                  'success') {
-                                                                    Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Berhasil");
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pushReplacement(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                ManagePeserta(event: widget.event)));
-                                                              }else if (addpesertaJson[
-                                                                      'status'] ==
-                                                                  'creator') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini merupakan pembuat event");
-                                                                            Navigator.pop(
-                                                                    context);
-                                                              } else if (addpesertaJson[
-                                                                      'status'] ==
-                                                                  'sudah ada') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini sudah terdaftar pada event anda");
-                                                                            Navigator.pop(
-                                                                    context);
-                                                              } else if (addpesertaJson[
-                                                                      'status'] ==
-                                                                  'pending') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Pendaftaran member ini menunggu persetujuan dari anda");
-                                                                            Navigator.pop(
-                                                                    context);
-                                                              }else if(addpesertaJson['status'] == 'sudahadmin'){
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "member ini sudah terdaftar menjadi admin event anda");
-                                                                            Navigator.pop(
-                                                                    context);
-                                                              }else if(addpesertaJson['status'] == 'adminpending'){
-                                                                 Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Anda sudah memninta member ini untuk menjadi admin event dan saat ini menunggu persetujuan");
-                                                                            Navigator.pop(
-                                                                    context);
-                                                              }else{
-                                                                 Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Status Tidak Diketahui");
-                                                                          Navigator.pop(
-                                                                    context);
-                                                              }
-                                                            } else {
-                                                              print(
-                                                                  addpeserta
-                                                                      .body);
-                                                                      Navigator.pop(
-                                                                    context);
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${addpeserta.statusCode}");
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                                    Navigator.pop(
-                                                                    context);
-                                                          } catch (e) {
-                                                            print(e);
-                                                          }
-                                                        },
-                                                      )
-                                                    ],
+                                                      subtitle: Text(
+                                                          listUserItem[index]
+                                                                      .email ==
+                                                                  null
+                                                              ? 'Unknown Email'
+                                                              : listUserItem[
+                                                                      index]
+                                                                  .email),
+                                                    )),
                                                   ),
+                                                  onTap: isCreate == true
+                                                      ? null
+                                                      : () async {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                 AlertDialog(
+                                                                        title: Text(
+                                                                            'Peringatan!'),
+                                                                        content:
+                                                                            Text('Apakah Anda Ingin Menambahkan Peserta ini ke Event Anda? '),
+                                                                        actions: <
+                                                                            Widget>[
+                                                                          FlatButton(
+                                                                            child:
+                                                                                Text('Tidak'),
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                          ),
+                                                                          FlatButton(
+                                                                            textColor:
+                                                                                Colors.green,
+                                                                            child:
+                                                                                Text('Ya'),
+                                                                            onPressed:
+                                                                                () async {
+                                                                              setState(() {
+                                                                                isCreate = true;
+                                                                              });
+                                                                              try {
+                                                                                
+                                                                                Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+                                                                                final addpeserta = await http.post(url('api/addpeserta_event'), headers: requestHeaders, body: {
+                                                                                  'event': widget.event,
+                                                                                  'peserta': listUserItem[index].id,
+                                                                                });
+
+                                                                                if (addpeserta.statusCode == 200) {
+                                                                                  var addpesertaJson = json.decode(addpeserta.body);
+                                                                                  if (addpesertaJson['status'] == 'success') {
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                    Fluttertoast.showToast(msg: "Berhasil");
+                                                                                    Navigator.pop(context);
+                                                                                    Navigator.pop(context);
+                                                                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ManagePeserta(event: widget.event)));
+                                                                                  } else if (addpesertaJson['status'] == 'creator') {
+                                                                                    Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  } else if (addpesertaJson['status'] == 'sudah ada') {
+                                                                                    Fluttertoast.showToast(msg: "Member ini sudah terdaftar pada event anda");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  } else if (addpesertaJson['status'] == 'pending') {
+                                                                                    Fluttertoast.showToast(msg: "Pendaftaran member ini menunggu persetujuan dari anda");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  } else if (addpesertaJson['status'] == 'sudahadmin') {
+                                                                                    Fluttertoast.showToast(msg: "member ini sudah terdaftar menjadi admin event anda");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  } else if (addpesertaJson['status'] == 'adminpending') {
+                                                                                    Fluttertoast.showToast(msg: "Anda sudah memninta member ini untuk menjadi admin event dan saat ini menunggu persetujuan");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  } else {
+                                                                                    Fluttertoast.showToast(msg: "Status Tidak Diketahui");
+                                                                                    Navigator.pop(context);
+                                                                                    setState(() {
+                                                                                      isCreate = false;
+                                                                                    });
+                                                                                  }
+                                                                                } else {
+                                                                                  print(addpeserta.body);
+                                                                                  Navigator.pop(context);
+                                                                                  Fluttertoast.showToast(msg: "Request failed with status: ${addpeserta.statusCode}");
+                                                                                  setState(() {
+                                                                                    isCreate = false;
+                                                                                  });
+                                                                                }
+                                                                              } on TimeoutException catch (_) {
+                                                                                Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              } catch (e) {
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                                print(e);
+                                                                              }
+                                                                            },
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                          );
+                                                        },
                                                 );
                                               },
-                                            );
-                                          },
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                    ],
-                  ),
-                ),
+                        ],
+                      ),
+                    ),
     );
   }
 }

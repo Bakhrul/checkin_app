@@ -434,7 +434,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             ListTile(
                               title: Text(
-                                'Event Anda',
+                                'Event Saya',
                                 style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: 'Roboto',

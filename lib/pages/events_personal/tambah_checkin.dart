@@ -1,21 +1,16 @@
 import 'package:checkin_app/pages/events_personal/create.dart';
-import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
-import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'manage_checkin.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:flutter/services.dart';
 import 'dart:ui';
-import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
@@ -70,18 +65,27 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     if (_namacheckinController.text == null ||
         _namacheckinController.text == '') {
       Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
       Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
     } else if (_tanggalawal == 'kosong') {
       Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
     } else if (_tanggalakhir == 'kosong') {
       Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
     } else {
       Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-      setState(() {
-        isCreate = true;
-      });
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
       formSerialize['namacheckin'] = null;
@@ -99,7 +103,8 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal));
       formSerialize['time_end'] = _tanggalakhir == 'kosong'
           ? null
-          : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalakhir));
+          : DateFormat('dd-MM-y HH:mm:ss')
+              .format(DateTime.parse(_tanggalakhir));
 
       print(formSerialize);
 
@@ -126,6 +131,11 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ManageCheckin(event: widget.event)));
+          }else if(responseJson['status'] == 'keywordsudahdigunakan'){
+            setState(() {
+          isCreate = false;
+        });
+            Fluttertoast.showToast(msg: "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
           }
           print('response decoded $responseJson');
         } else {
@@ -145,6 +155,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         setState(() {
           isCreate = false;
         });
+        Fluttertoast.showToast(msg: "Timed out, Try again");
         print(e);
       }
     }
@@ -172,6 +183,18 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              isCreate == true
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                              width: 20.0,
+                              margin: EdgeInsets.all(15.0),
+                              height: 20.0,
+                              child: CircularProgressIndicator()),
+                        ],
+                      )
+                    : Container(),
               Card(
                   child: ListTile(
                 leading: Icon(
@@ -208,8 +231,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                     if (date != null) {
                       final time = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                             DateTime.now()),
+                        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
                       );
                       return DateTimeField.combine(date, time);
                     } else {
@@ -247,8 +269,8 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                           if (date != null) {
                             final time = await showTimePicker(
                               context: context,
-                              initialTime: TimeOfDay.fromDateTime(
-                                   DateTime.now()),
+                              initialTime:
+                                  TimeOfDay.fromDateTime(DateTime.now()),
                             );
                             return DateTimeField.combine(date, time);
                           } else {
@@ -283,23 +305,10 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         onPressed: isCreate == true
             ? null
             : () async {
-                if (_namacheckinController.text == null ||
-                    _namacheckinController.text == '') {
-                  Fluttertoast.showToast(
-                      msg: "Nama Checkin Tidak Boleh Kosong");
-                } else if (_kodecheckinController.text == null ||
-                    _kodecheckinController.text == '') {
-                  Fluttertoast.showToast(
-                      msg: "Kode Unik Checkin Tidak Boleh Kosong");
-                } else if (_tanggalawal == 'kosong') {
-                  Fluttertoast.showToast(
-                      msg: "Waktu Awal Checkin Tidak Boleh Kosong");
-                } else if (_tanggalakhir == 'kosong') {
-                  Fluttertoast.showToast(
-                      msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
-                } else {
-                  _tambahcheckin();
-                }
+                setState(() {
+                  isCreate = true;
+                });
+                _tambahcheckin();
               },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),

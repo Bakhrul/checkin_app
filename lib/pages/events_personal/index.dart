@@ -59,6 +59,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     jumlahdoneeventX = null;
     isError = false;
   }
+  void dispose() {
+    super.dispose();
+  }
 
   void currentEvent() {
     setState(() {
@@ -400,7 +403,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           color: Colors.white,
         ),
         title: new Text(
-          "Event yang anda buat",
+          "Event Saya",
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,

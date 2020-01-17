@@ -13,7 +13,7 @@ import 'dart:core';
 
 String tokenType, accessToken;
 List<ListAdminEvent> listadminevent = [];
-bool isLoading, isError, isFilter, isErrorfilter;
+bool isLoading, isError, isFilter, isErrorfilter, isDelete;
 final _debouncer = Debouncer(milliseconds: 500);
 Map<String, String> requestHeaders = Map();
 
@@ -49,6 +49,7 @@ class _ManageAdminState extends State<ManageAdmin> {
     isError = false;
     isFilter = false;
     isErrorfilter = false;
+    isDelete = false;
     getHeaderHTTP();
     print(requestHeaders);
     listcheckin();
@@ -380,200 +381,207 @@ class _ManageAdminState extends State<ManageAdmin> {
                                         ),
                                       ]),
                                     )
-                                  : Expanded(
-                                      child: Scrollbar(
-                                        child: ListView.builder(
-                                          // scrollDirection: Axis.horizontal,
-                                          itemCount: listadminevent.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Card(
-                                                child: ListTile(
-                                              leading: Container(
-                                                  width: 40.0,
-                                                  height: 40.0,
-                                                  decoration: new BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    image: new DecorationImage(
-                                                      fit: BoxFit.fill,
-                                                      image: AssetImage(
-                                                        'images/imgavatar.png',
-                                                      ),
-                                                    ),
-                                                  )),
-                                              title: Text(
-                                                  listadminevent[index].nama ==
-                                                              null ||
-                                                          listadminevent[index]
-                                                                  .nama ==
-                                                              ''
-                                                      ? 'Nama Tidak Diketahui'
-                                                      : listadminevent[index]
-                                                          .nama,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500)),
-                                              subtitle: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 15.0),
-                                                child: Text(
-                                                  listadminevent[index]
-                                                              .status ==
-                                                          'P'
-                                                      ? 'Menunggu Konfirmasi'
-                                                      : listadminevent[index]
-                                                                  .status ==
-                                                              'C'
-                                                          ? 'Pendaftaran Ditolak'
-                                                          : listadminevent[
-                                                                          index]
-                                                                      .status ==
-                                                                  'A'
-                                                              ? 'Pendaftaran Diterima'
-                                                              : 'Status Tidak Diketahui',
-                                                  style: listadminevent[index]
-                                                              .status ==
-                                                          'P'
-                                                      ? TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500)
-                                                      : listadminevent[index]
-                                                                  .status ==
-                                                              'C'
-                                                          ? TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: Colors.red)
-                                                          : listadminevent[
-                                                                          index]
-                                                                      .status ==
-                                                                  'A'
-                                                              ? TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: Colors
-                                                                      .green)
-                                                              : TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
+                                  : isDelete == true
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: <Widget>[
+                                            Container(
+                                                width: 15.0,
+                                                margin: EdgeInsets.only(
+                                                    top: 10.0, right: 15.0),
+                                                height: 15.0,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          ],
+                                        )
+                                      : Container(),
+                              Expanded(
+                                child: Scrollbar(
+                                  child: ListView.builder(
+                                    // scrollDirection: Axis.horizontal,
+                                    itemCount: listadminevent.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Card(
+                                          child: ListTile(
+                                        leading: Container(
+                                            width: 40.0,
+                                            height: 40.0,
+                                            decoration: new BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              image: new DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                  'images/imgavatar.png',
                                                 ),
                                               ),
-                                              trailing: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  listadminevent[index]
-                                                                  .status ==
-                                                              'P' ||
-                                                          listadminevent[index]
-                                                                  .status ==
-                                                              'C'
-                                                      ? Container()
-                                                      : ButtonTheme(
-                                                          minWidth: 0.0,
-                                                          child: FlatButton(
-                                                            color: Colors.white,
-                                                            textColor:
-                                                                Colors.red,
-                                                            disabledColor:
-                                                                Colors
-                                                                    .green[400],
-                                                            disabledTextColor:
-                                                                Colors.white,
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    0.0),
-                                                            splashColor: Colors
-                                                                .blueAccent,
-                                                            child: Icon(
-                                                              Icons.delete,
-                                                            ),
-                                                            onPressed:
-                                                                () async {
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    AlertDialog(
-                                                                  title: Text(
-                                                                      'Peringatan!'),
-                                                                  content: Text(
-                                                                      'Apakah Anda Ingin Menghapus Admin Event?'),
-                                                                  actions: <
-                                                                      Widget>[
-                                                                    FlatButton(
-                                                                      child: Text(
-                                                                          'Tidak'),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                    ),
-                                                                    FlatButton(
-                                                                      textColor:
-                                                                          Colors
-                                                                              .green,
-                                                                      child: Text(
-                                                                          'Ya'),
-                                                                      onPressed:
-                                                                          () async {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        try {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Mohon Tunggu Sebentar");
-                                                                          final hapuswishlist = await http.post(
-                                                                              url('api/deleteadmin_event'),
-                                                                              headers: requestHeaders,
-                                                                              body: {
+                                            )),
+                                        title: Text(
+                                            listadminevent[index].nama ==
+                                                        null ||
+                                                    listadminevent[index]
+                                                            .nama ==
+                                                        ''
+                                                ? 'Nama Tidak Diketahui'
+                                                : listadminevent[index].nama,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)),
+                                        subtitle: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15.0),
+                                          child: Text(
+                                            listadminevent[index].status == 'P'
+                                                ? 'Menunggu Konfirmasi'
+                                                : listadminevent[index]
+                                                            .status ==
+                                                        'C'
+                                                    ? 'Pendaftaran Ditolak'
+                                                    : listadminevent[index]
+                                                                .status ==
+                                                            'A'
+                                                        ? 'Pendaftaran Diterima'
+                                                        : 'Status Tidak Diketahui',
+                                            style: listadminevent[index]
+                                                        .status ==
+                                                    'P'
+                                                ? TextStyle(
+                                                    fontWeight: FontWeight.w500)
+                                                : listadminevent[index]
+                                                            .status ==
+                                                        'C'
+                                                    ? TextStyle(
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Colors.red)
+                                                    : listadminevent[index]
+                                                                .status ==
+                                                            'A'
+                                                        ? TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Colors.green)
+                                                        : TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                          ),
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            listadminevent[index].status ==
+                                                        'P' ||
+                                                    listadminevent[index]
+                                                            .status ==
+                                                        'C'
+                                                ? Container()
+                                                : ButtonTheme(
+                                                    minWidth: 0.0,
+                                                    child: FlatButton(
+                                                      color: Colors.white,
+                                                      textColor: Colors.red,
+                                                      disabledColor:
+                                                          Colors.white,
+                                                      disabledTextColor:
+                                                          Colors.red[400],
+                                                      padding:
+                                                          EdgeInsets.all(0.0),
+                                                      splashColor:
+                                                          Colors.blueAccent,
+                                                      child: Icon(
+                                                        Icons.delete,
+                                                      ),
+                                                      onPressed:
+                                                          isDelete == true
+                                                              ? null
+                                                              : () async {
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder: (BuildContext
+                                                                            context) =>
+                                                                        AlertDialog(
+                                                                      title: Text(
+                                                                          'Peringatan!'),
+                                                                      content: Text(
+                                                                          'Apakah Anda Ingin Menghapus Admin Event?'),
+                                                                      actions: <
+                                                                          Widget>[
+                                                                        FlatButton(
+                                                                          child:
+                                                                              Text('Tidak'),
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                        ),
+                                                                        FlatButton(
+                                                                          textColor:
+                                                                              Colors.green,
+                                                                          child:
+                                                                              Text('Ya'),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            Navigator.pop(context);
+                                                                            setState(() {
+                                                                              isDelete = true;
+                                                                            });
+                                                                            try {
+                                                                              Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+                                                                              final hapuswishlist = await http.post(url('api/deleteadmin_event'), headers: requestHeaders, body: {
                                                                                 'peserta': listadminevent[index].idpeserta,
                                                                                 'event': listadminevent[index].idevent
                                                                               });
-                                                                          print(
-                                                                              hapuswishlist);
-                                                                          if (hapuswishlist.statusCode ==
-                                                                              200) {
-                                                                            var hapuswishlistJson =
-                                                                                json.decode(hapuswishlist.body);
-                                                                            if (hapuswishlistJson['status'] ==
-                                                                                'success') {
-                                                                              Fluttertoast.showToast(msg: "Berhasil");
+                                                                              print(hapuswishlist);
+                                                                              if (hapuswishlist.statusCode == 200) {
+                                                                                var hapuswishlistJson = json.decode(hapuswishlist.body);
+                                                                                if (hapuswishlistJson['status'] == 'success') {
+                                                                                  Fluttertoast.showToast(msg: "Berhasil");
+                                                                                  setState(() {
+                                                                                    isDelete = false;
+                                                                                  });
+                                                                                  setState(() {
+                                                                                    listadminevent.remove(listadminevent[index]);
+                                                                                  });
+                                                                                } else if (hapuswishlistJson['status'] == 'Error') {
+                                                                                  Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                  setState(() {
+                                                                                    isDelete = false;
+                                                                                  });
+                                                                                }
+                                                                              } else {
+                                                                                Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                setState(() {
+                                                                                  isDelete = false;
+                                                                                });
+                                                                              }
+                                                                            } on TimeoutException catch (_) {
+                                                                              Fluttertoast.showToast(msg: "Timed out, Try again");
                                                                               setState(() {
-                                                                                listadminevent.remove(listadminevent[index]);
+                                                                                isDelete = false;
                                                                               });
-                                                                            } else if (hapuswishlistJson['status'] ==
-                                                                                'Error') {
-                                                                              Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                            } catch (e) {
+                                                                              setState(() {
+                                                                                isDelete = false;
+                                                                              });
+                                                                              print(e);
                                                                             }
-                                                                          } else {
-                                                                            Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                          }
-                                                                        } on TimeoutException catch (_) {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Timed out, Try again");
-                                                                        } catch (e) {
-                                                                          print(
-                                                                              e);
-                                                                        }
-                                                                      },
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                          )),
-                                                ],
-                                              ),
-                                            ));
-                                          },
+                                                                          },
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  );
+                                                                },
+                                                    )),
+                                          ],
                                         ),
-                                      ),
-                                    ),
+                                      ));
+                                    },
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
