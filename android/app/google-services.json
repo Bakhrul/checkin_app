@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "48384254138",
-    "firebase_url": "https://coba-1e3e5.firebaseio.com",
-    "project_id": "coba-1e3e5",
-    "storage_bucket": "coba-1e3e5.appspot.com"
+    "project_number": "1089447344821",
+    "firebase_url": "https://fcm-test-32314.firebaseio.com",
+    "project_id": "fcm-test-32314",
+    "storage_bucket": "fcm-test-32314.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:48384254138:android:19025dfe483496f2572283",
+        "mobilesdk_app_id": "1:1089447344821:android:11ca335996f3d2e4469cfc",
         "android_client_info": {
           "package_name": "com.bisniskita.checkin_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "48384254138-co1m8sku5b2vsib1p5nvc911ffl9a6tm.apps.googleusercontent.com",
+          "client_id": "1089447344821-ega88pstjajmtc7855nk7ptkhvuv4buv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDyj0kMwVm2ku8USn-81vBUc8WyDhchbmc"
+          "current_key": "AIzaSyB6f4bdPbh8EQKoNOMzmE8sXz1Kj_l6cAE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "48384254138-co1m8sku5b2vsib1p5nvc911ffl9a6tm.apps.googleusercontent.com",
+              "client_id": "1089447344821-ega88pstjajmtc7855nk7ptkhvuv4buv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
