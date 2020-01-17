@@ -583,6 +583,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         item.title == ''
                                                     ? 'Unknown Nama Event'
                                                     : item.title,
+                                                 overflow:TextOverflow.ellipsis,
+                                                                        softWrap:true,
+                                                                        maxLines: 2,
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -690,12 +693,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     child: Text(
                                                         "Kelola waktu checkin"),
                                                   ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaCheckinPesertaPage,
-                                                    child: Text(
-                                                        "Kelola checkin peserta"),
-                                                  ),
+                                                  // PopupMenuItem(
+                                                  //   value: PageEnum
+                                                  //       .kelolaCheckinPesertaPage,
+                                                  //   child: Text(
+                                                  //       "Kelola checkin peserta"),
+                                                  // ),
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaHasilAKhirPage,
@@ -806,6 +809,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     item.title == ''
                                                 ? 'Unknown Nama Event'
                                                 : item.title,
+                                                 overflow:TextOverflow.ellipsis,
+                                                                        softWrap:true,
+                                                                        maxLines: 2,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -909,12 +915,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                 child: Text(
                                                     "Kelola waktu checkin"),
                                               ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaCheckinPesertaPage,
-                                                child: Text(
-                                                    "Kelola checkin peserta"),
-                                              ),
+                                              // PopupMenuItem(
+                                              //   value: PageEnum
+                                              //       .kelolaCheckinPesertaPage,
+                                              //   child: Text(
+                                              //       "Kelola checkin peserta"),
+                                              // ),
                                               PopupMenuItem(
                                                 value: PageEnum
                                                     .kelolaHasilAKhirPage,
@@ -1025,6 +1031,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         item.title == ''
                                                     ? 'Unknown Nama Event'
                                                     : item.title,
+                                                     overflow:TextOverflow.ellipsis,
+                                                                        softWrap:true,
+                                                                        maxLines: 2,
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -1132,12 +1141,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     child: Text(
                                                         "Kelola waktu checkin"),
                                                   ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaCheckinPesertaPage,
-                                                    child: Text(
-                                                        "Kelola checkin peserta"),
-                                                  ),
+                                                  // PopupMenuItem(
+                                                  //   value: PageEnum
+                                                  //       .kelolaCheckinPesertaPage,
+                                                  //   child: Text(
+                                                  //       "Kelola checkin peserta"),
+                                                  // ),
                                                   PopupMenuItem(
                                                     value: PageEnum
                                                         .kelolaHasilAKhirPage,

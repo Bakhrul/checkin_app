@@ -183,17 +183,17 @@ class _RegisterEvent extends State<RegisterEvents> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Container(
-                                        padding: EdgeInsets.only(bottom: 10.0),
+                                        padding: EdgeInsets.only(bottom: 20.0),
                                         width: double.infinity,
                                         child: Text(
                                             dataEvent.title == null
                                                 ? 'Memuat..'
                                                 : dataEvent.title,
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w600,
                                                 fontSize: 20))),
                                     Container(
-                                        padding: EdgeInsets.only(bottom: 5.0),
+                                        padding: EdgeInsets.only(bottom: 15.0),
                                         width: double.infinity,
                                         child: Row(children: <Widget>[
                                           Padding(
@@ -210,7 +210,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                   color: Colors.grey[600]))
                                         ])),
                                     Container(
-                                        padding: EdgeInsets.only(bottom: 5.0),
+                                        padding: EdgeInsets.only(bottom: 15.0),
                                         width: double.infinity,
                                         child: Row(children: <Widget>[
                                           Padding(
@@ -245,6 +245,11 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
+                                        Divider(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top:10.0,bottom:10.0),
+                                      child: Text('Tentang Event', style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600)),
+                                    ),
                                     Container(
                                         width: double.infinity,
                                         margin: EdgeInsets.only(bottom: 20),
@@ -252,11 +257,12 @@ class _RegisterEvent extends State<RegisterEvents> {
                                             style: TextStyle(
                                                 color: Colors.grey[700],
                                                 height: 1.5))),
+                                    Divider(),
                                     Container(
-                                        margin: EdgeInsets.only(bottom: 10.0),
-                                        child: Text("Posted By",
+                                        margin: EdgeInsets.only(bottom: 20.0,top: 10.0),
+                                        child: Text("Organizer",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold))),
+                                                fontWeight: FontWeight.w500,fontSize: 18))),
                                     InkWell(
                                       onTap: () async {
                                         Navigator.push(
@@ -269,12 +275,14 @@ class _RegisterEvent extends State<RegisterEvents> {
                                       },
                                       child: Container(
                                         child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Container(
                                                 margin: EdgeInsets.only(
                                                     bottom: 20.0, right: 5.0),
-                                                width: 30.0,
-                                                height: 30.0,
+                                                width: 40.0,
+                                                height: 40.0,
                                                 decoration: new BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   image: new DecorationImage(
@@ -286,7 +294,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 )),
                                             Container(
                                                 margin: EdgeInsets.only(
-                                                    bottom: 20.0),
+                                                    bottom: 20.0,left: 10.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -298,11 +306,15 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 16)),
-                                                    Text(creatorEmail,
-                                                        textAlign:
-                                                            TextAlign.left)
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(top:10.0),
+                                                      child: Text(creatorEmail,
+                                                          textAlign:
+                                                              TextAlign.left),
+                                                    )
                                                   ],
                                                 )),
+                                                Divider(),
                                           ],
                                         ),
                                       ),
@@ -338,7 +350,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               child: Text(
                                                 "Daftar Sekarang",
                                                 style:
-                                                    TextStyle(fontSize: 18.0),
+                                                    TextStyle(fontSize: 14.0),
                                               ),
                                             ),
                                           ),
@@ -346,33 +358,6 @@ class _RegisterEvent extends State<RegisterEvents> {
                                   ]))
                         ],
                       ),
-                      // Positioned(
-                      //   top: 180.0,
-                      //   right:0.0,
-                      //   child: Container(
-                      //       width: 140.0,
-                      //       padding: EdgeInsets.only(
-                      //           top: 10.0, bottom: 10.0, left: 30.0, right: 20.0),
-                      //       decoration: BoxDecoration(
-                      //         color: Color.fromRGBO(41, 30, 47, 1),
-                      //         borderRadius: BorderRadius.only(
-                      //             topLeft: Radius.circular(12),
-                      //             bottomLeft: Radius.circular(12)),
-                      //       ),
-                      //       child: Row(children: <Widget>[
-                      //         Container(
-                      //           child:Text(dataEvent.start,
-                      //             style: TextStyle(
-                      //                 fontSize: 18,
-                      //                 fontWeight: FontWeight.bold,
-                      //                 color: Colors.white)),
-                      //         ),
-                      //         Container(
-                      //           margin:EdgeInsets.only(left:10),
-                      //           child:Text(dataEvent.hour, style: TextStyle(color: Colors.white))
-                      //         )
-                      //       ])),
-                      //      )
                     ]),
                   ])),
     );

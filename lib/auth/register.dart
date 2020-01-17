@@ -241,13 +241,12 @@ class _Register extends State<Register> {
                   height: 160.0,
                   child: Center(
                     child: Image.asset(
-                      "images/logo_alamraya.jpg",
+                      "images/logo.png",
                       height: 500.0,
                       width: 500.0,
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
                 namaField,
                 SizedBox(height: 15.0),
                 emailField,
