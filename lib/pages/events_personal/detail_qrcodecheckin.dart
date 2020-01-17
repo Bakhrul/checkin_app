@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:io';
@@ -16,8 +17,8 @@ String _dataString;
 
 
 class DetailQrCheckin extends StatefulWidget {
-  DetailQrCheckin({Key key, this.title, this.event, this.checkin}) : super(key: key);
-  final String title, event, checkin;
+  DetailQrCheckin({Key key, this.title, this.event, this.namaEvent, this.checkin, this.kodecheckin}) : super(key: key);
+  final String title, event, checkin, kodecheckin, namaEvent;
   @override
   State<StatefulWidget> createState() {
     return _DetailQrCheckinState();
@@ -68,8 +69,21 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           Uint8List pngBytes = byteData.buffer.asUint8List();
 
           final tempDir = await getExternalStorageDirectory();
-          final file = await new File('${tempDir.path}/download/image.png').create();
+          var tes = await new Directory('${tempDir.path}/download').create();
+          var sudahada = await File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').exists();          
+          if(sudahada == true){
+          File('${tes.path}/${widget.kodecheckin}.png').delete();
+          final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
           await file.writeAsBytes(pngBytes);
+          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder download, nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          setState(() {
+            sudahada = false;
+          });
+          }else{
+          final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
+          await file.writeAsBytes(pngBytes);
+          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder download, nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          }
       }
       
       

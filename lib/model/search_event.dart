@@ -56,6 +56,7 @@ class SearchEvent{
       String dateStart = DateFormat(format).format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
+      String image = map['ev_image'];
       String status;
       Color color;
 

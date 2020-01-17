@@ -794,35 +794,26 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                         children: <Widget>[
                                                           Expanded(
                                                             flex: 5,
-                                                            child: Container(
-                                                                width: 80.0,
-                                                                height: 80.0,
-                                                                decoration:
-                                                                    new BoxDecoration(
-                                                                  borderRadius: new BorderRadius
-                                                                          .only(
-                                                                      topLeft:
-                                                                          const Radius.circular(
-                                                                              5.0),
-                                                                      topRight:
-                                                                          const Radius.circular(
-                                                                              5.0),
-                                                                      bottomLeft:
-                                                                          const Radius.circular(
-                                                                              5.0),
-                                                                      bottomRight:
-                                                                          const Radius.circular(
-                                                                              5.0)),
-                                                                  image:
-                                                                      new DecorationImage(
-                                                                    fit: BoxFit
-                                                                        .fill,
-                                                                    image:
-                                                                        AssetImage(
-                                                                      'images/bg-header.jpg',
-                                                                    ),
-                                                                  ),
-                                                                )),
+                                                            child:Container(
+                                                                          height:
+                                                                              80.0,
+                                                                          width:
+                                                                              80.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: listItemFollowing[index].image != null || listItemFollowing[index].image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${listItemFollowing[index].image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),
+                                                                        ),
                                                           ),
                                                           Expanded(
                                                             flex: 7,
