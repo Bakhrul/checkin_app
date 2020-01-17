@@ -65,12 +65,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     });
   }
 
-  @override
-  void dispose() {
-    pageScroll?.dispose();
-    super.dispose();
-  }
-
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -121,6 +115,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     print('_getAll()');
 
     setState((){
+      delay = false;
         page = 1;
         _isGetAllDisconnect = false;
       });
@@ -197,7 +192,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   Future _getPage(int type, String query) async {
 
     print('_getPage()');
-
       if(delay){
         return false;
       }else{
@@ -452,6 +446,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         break;
     }
   }
+
+  @override
+  void dispose() {
+    pageScroll?.dispose();
+    super.dispose();
+  }
   
 
   @override
@@ -555,7 +555,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                });
                             },
                             child: Text(
-                              x['c_name'],
+                              x['c_name'] == null ? 'memuat':x['c_name'],
                               style: TextStyle(
                                   color: categoryNow == x['c_id'] ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
                                   fontWeight: FontWeight.w500),
@@ -672,7 +672,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment.start,
                                                       children: <Widget>[
-                                                        Text(
+                                                        Text(_event[x].start == null ? 'memuat':
                                                           _event[x].start+' - '+_event[x].end,
                                                           style: TextStyle(
                                                               color: Colors.blue,
@@ -684,7 +684,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                           padding: const EdgeInsets.only(
                                                               top: 5.0),
                                                           child:
-                                                              Text(_event[x].title,
+                                                              Text(_event[x].title == null ? 'memuat':_event[x].title,
                                                                   style: TextStyle(
                                                                     color: Colors.black,
                                                                     fontWeight:
@@ -695,11 +695,39 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                         Padding(
                                                           padding: const EdgeInsets.only(
                                                               top: 10.0),
-                                                          child: Text(
-                                                            _event[x].location,
-                                                            style: TextStyle(
-                                                                color: Colors.grey),
-                                                          ),
+                                                          child: Row(
+                                                            children: <Widget>[
+                                                              if(_event[x].follow == "Y")
+                                                              Container(
+                                                                   width:50,
+                                                                   padding: EdgeInsets.only(top:2.0,bottom:2.0,left:3.0,right:3.0),
+                                                                   margin:EdgeInsets.only(left:1.0,right:2.0),
+                                                                   child: Text(
+                                                                    'Di ikuti',
+                                                                    textAlign: TextAlign.center,
+                                                                      style: TextStyle(
+                                                                          fontSize: 12,
+                                                                          color: Colors.blue)
+                                                                    ),
+                                                                    decoration: BoxDecoration(
+                                                                      border: Border.all(color:Colors.lightBlueAccent),
+                                                                      borderRadius: BorderRadius.circular(10)
+                                                                    )
+                                                                 ),
+                                                              Expanded(
+                                                                child:Container(
+                                                                   padding: EdgeInsets.only(left:3.0,right:3.0),
+                                                                   child: Text(
+                                                                    _event[x].creatorName == null ? 'memuat':_event[x].creatorName,
+                                                                    style: TextStyle(
+                                                                        color: Colors.grey),
+                                                                    overflow:TextOverflow.ellipsis,
+                                                                    softWrap:true,
+                                                                  )
+                                                                 )
+                                                              )
+                                                            ],
+                                                          )
                                                         )
                                                       ],
                                                     ),
@@ -708,7 +736,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                               ],
                                             ),
                                           ),
-                                          userId == _event[x].userEvent ? Container(child:Text(''),height:0):
                                           Column(
                                             children:<Widget>[Container(
                                               padding: EdgeInsets.only(
@@ -723,7 +750,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                               children: <Widget>[
                                                 Container(
                                                     decoration: new BoxDecoration(
-                                                      color: _event[x].color,
+                                                      color: userId == _event[x].userEvent ? Colors.blue:_event[x].color,
                                                       borderRadius: new BorderRadius.only(
                                                           topLeft:
                                                               const Radius.circular(5.0),
@@ -737,7 +764,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                     padding: EdgeInsets.all(5.0),
                                                     width: 120.0,
                                                     child: Text(
-                                                      _event[x].statusRegistered,
+                                                      userId == _event[x].userEvent ? "Event Saya":_event[x].statusRegistered,
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 12,
@@ -797,20 +824,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                             selfEvent: userId == _event[x].userEvent ? true:false
                                           );
                                           break;
-                                      case 'Proses Daftar':
+                                      case 'Proses':
                                           return WaitingEvent(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,
                                             selfEvent: userId == _event[x].userEvent ? true:false,
                                           );
-                                          break;
-                                      case 'Proses Daftar Sebagai Admin':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: true
-                                            );
                                           break;
                                       case 'Ditolak':
                                           return RegisterEvents(
@@ -820,23 +839,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                             dataUser:dataUser
                                             );
                                           break;
-                                      case 'Ditolak Sebagai Admin':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: userId == _event[x].userEvent ? true:false
-                                            );
-                                          break;
-                                      case 'Ditolak':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: userId == _event[x].userEvent ? true:false
-                                            );
-                                          break;
-                                      case 'Sudah Terdaftar Sebagai Admin':
+                                      case 'Admin / Co-Host':
                                           return RegisterEvents(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,

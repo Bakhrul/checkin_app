@@ -296,7 +296,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
+            follow: i['fo_status'] == null ? "N":i['fo_status'],
             statusdaftar: i['ep_status'],
+            creatorName: i['us_name'],
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -726,15 +728,42 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                             .only(
                                                                         top:
                                                                             10.0),
-                                                                    child: Text(
-                                                                      listItemFollowing[index].alamat ==
-                                                                              null
-                                                                          ? 'Lokasi Event Tidak Diketahui'
-                                                                          : listItemFollowing[index]
-                                                                              .alamat,
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.grey),
+                                                                    child: Row(
+                                                                      children: <Widget>[
+                                                                        if(listItemFollowing[index].follow == "Y")
+                                                                          Container(
+                                                                              width: 50,
+                                                                              padding: EdgeInsets.only(top:2.0,bottom:2.0,left:3.0,right:3.0),
+                                                                              margin:EdgeInsets.only(left:1.0,right:2.0),
+                                                                              child: Text(
+                                                                                'Di ikuti',
+                                                                                textAlign: TextAlign.center,
+                                                                                  style: TextStyle(
+                                                                                      fontSize: 12,
+                                                                                      color: Colors.blue)
+                                                                                ),
+                                                                                decoration: BoxDecoration(
+                                                                                  border: Border.all(color:Colors.lightBlueAccent),
+                                                                                  borderRadius: BorderRadius.circular(10)
+                                                                                )
+                                                                            ),
+                                                                         Expanded(
+                                                                           child:Container(
+                                                                                padding: EdgeInsets.only(left:3.0,right:3.0),
+                                                                                child: Text(
+                                                                                  listItemFollowing[index].creatorName ==
+                                                                                  null
+                                                                              ? 'tidak tersedia'
+                                                                              : listItemFollowing[index]
+                                                                                  .creatorName,
+                                                                                  style: TextStyle(
+                                                                                      color: Colors.grey),
+                                                                                  overflow:TextOverflow.ellipsis,
+                                                                                  softWrap:true,
+                                                                                )
+                                                                              ),
+                                                                         )
+                                                                      ]
                                                                     ),
                                                                   )
                                                                 ],
