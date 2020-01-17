@@ -2,6 +2,7 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'dart:ui';
 import 'model/event.dart';
 import 'pages/events_all/detail_event.dart';
@@ -22,15 +23,19 @@ bool isLoading, isError;
 String tokenType, accessToken;
 String jumlahnotifX;
 List<Event> listEventSelf = [];
-List<Event> listEventUpComming = [];
+List<Event> listParticipant = [];
+List<Event> listWish = [];
+List<Event> listAdmin = [];
+List<Event> listCreator = [];
+List<Event> listFollower = [];
 List<Event> listEventNow = [];
- var listFilter = [
-//    {'index': "1", 'name': "Hari ini" },
-    {'index': "2", 'name': "Minggu ini" },
-    {'index': "3", 'name': "3 Hari" }, 
-    {'index': "4", 'name': "7 Hari" },
-    {'index': "5", 'name': "1 Bulan Lagi" }
-    ];
+var listFilter = [
+    {'index': "1", 'name': "Hari ini" },
+    {'index': "2", 'name': "3 Hari"},
+    {'index': "3", 'name': "7 Hari"},
+    {'index': "4", 'name': "Bulan Ini"},
+    {'index': "5", 'name': "Bulan Depan"}
+];
 
 enum PageEnum {
   kelolaRegisterPage,
@@ -49,9 +54,9 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
-  GlobalKey<ScaffoldState>();
+      GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  new GlobalKey<RefreshIndicatorState>();
+      new GlobalKey<RefreshIndicatorState>();
 
   var height;
   var futureheight;
@@ -64,8 +69,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    eventUpComing(1);
-    eventNow(1);
+    eventList(1);
     getvaluenotif();
     dataProfile();
     getHeaderHTTP();
@@ -143,7 +147,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
- Future<void> getHeaderHTTP() async {
+  Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
     var tokenTypeStorage = await storage.getDataString('token_type');
@@ -155,10 +159,12 @@ class _DashboardState extends State<Dashboard> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
-    return eventNow(1);
+    return eventList(1);
   }
 
-  Future<List<Event>> eventNow(type) async {
+
+
+  Future<List<Event>> eventList(type) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -172,94 +178,31 @@ class _DashboardState extends State<Dashboard> {
       isLoading = true;
     });
     try {
-      final nowevent = await http.get(
-        url('api/event/getdata/dashboard/eventsekarang'),
+      final eventList = await http.get(
+        url('api/event/getdata/dashboard/events/$type'),
         headers: requestHeaders,
       );
-
-      if (nowevent.statusCode == 200) {
+      print(eventList.body);
+      if (eventList.statusCode == 200) {
         // return nota;
-        var noweventJson = json.decode(nowevent.body);
-        var nowevents = noweventJson;
+        var eventListJson = json.decode(eventList.body);
+        var participants = eventListJson['participant_event'];
+        var wishs = eventListJson['wish_event'];
+        var admins = eventListJson['admin_event'];
+        var creators = eventListJson['creator_event'];
+        var followers = eventListJson['follower_organizer'];
 
-        listEventNow = [];
-        for (var i in nowevents) {
-          Event willcomex = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-          );
-          listEventNow.add(willcomex);
-        }
-        setState(() {
-          isLoading = false;
-          isError = false;
-        });
-        eventUpComing(type);
-        // listDoneEvent();
-      } else if (nowevent.statusCode == 401) {
-        Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
-        setState(() {
-          isLoading = false;
-          isError = true;
-        });
-      } else {
-        // print(nowevent.body);
-        setState(() {
-          isLoading = false;
-          isError = true;
-        });
-        return null;
-      }
-    } on TimeoutException catch (_) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-      });
-      Fluttertoast.showToast(msg: "Timed out, Try again");
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        isError = true;
-      });
-      debugPrint('$e');
-    }
-    return null;
-  }
+        // print('willcome $events');
+        listParticipant = [];
+        listWish        = [];
+        listFollower    = [];
+        listAdmin       = [];
+        listCreator     = [];
 
- Future<List<Event>> eventUpComing(type ) async {  
-    var storage = new DataStore();
-    var tokenTypeStorage = await storage.getDataString('token_type');
-    var accessTokenStorage = await storage.getDataString('access_token');
-
-    tokenType = tokenTypeStorage;
-    accessToken = accessTokenStorage;
-    requestHeaders['Accept'] = 'application/json';
-    requestHeaders['Authorization'] = '$tokenType $accessToken';
-
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final willcomeevent = await http.get(
-        url('api/event/getdata/dashboard/eventakandatang/$type'),
-        headers: requestHeaders,
-      );
-  print(willcomeevent.body);
-      if (willcomeevent.statusCode == 200) {
-        // return nota;
-        var willcomeeventJson = json.decode(willcomeevent.body);
-        var willcomeEvents = willcomeeventJson;
-
-        // print('willcome $willcomeEvents');
-        listEventUpComming = [];
-        for (var i in willcomeEvents) {
-          Event willcomex = Event(
+        // get data from api and set data to model
+        //participant
+        for (var i in participants) {
+          Event participant = Event(
             // id: '${i['ev_id']}',
             title: i['title'],
             dateEvent: i['date_event'],
@@ -268,14 +211,71 @@ class _DashboardState extends State<Dashboard> {
             image: i['image'],
             userStatus: i['user_status'],
           );
-          listEventUpComming.add(willcomex);
+          listParticipant.add(participant);
         }
+  // wish
+        for (var i in wishs) {
+          Event wish = Event(
+            // id: '${i['ev_id']}',
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+          );
+          listWish.add(wish);
+        }
+        // admin
+        for (var i in admins) {
+          Event admin = Event(
+            // id: '${i['ev_id']}',
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+          );
+          listAdmin.add(admin);
+        }
+
+        // creator
+        for (var i in creators) {
+          Event creator = Event(
+            // id: '${i['ev_id']}',
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+          );
+          listCreator.add(creator);
+        }
+
+        // followers
+        for (var i in followers) {
+          Event follower = Event(
+            // id: '${i['ev_id']}',
+            title: i['title'],
+            dateEvent: i['date_event'],
+            subtitle: i['subtitle'],
+            location: i['location'],
+            image: i['image'],
+            userStatus: i['user_status'],
+          );
+          listFollower.add(follower);
+        }
+
+
+
         setState(() {
           isLoading = false;
           isError = false;
         });
         // listDoneEvent();
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (eventList.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -283,7 +283,7 @@ class _DashboardState extends State<Dashboard> {
           isError = true;
         });
       } else {
-        // print(willcomeevent.body);
+        // print(eventList.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -347,6 +347,7 @@ class _DashboardState extends State<Dashboard> {
     usernameprofile = await storage.getDataString("name");
     emailprofile = await storage.getDataString('email');
   }
+
   int _count = 0;
   String _username;
   Future<Null> removeSharedPrefs() async {
@@ -373,17 +374,13 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
         backgroundColor: Colors.white,
         key: _scaffoldKeyDashboard,
         appBar: buildBar(context),
-        
         drawer: Drawer(
           child: Container(
-            
             child: Column(
-            
               children: <Widget>[
                 // Profil Drawer Here
                 UserAccountsDrawerHeader(
@@ -515,35 +512,30 @@ class _DashboardState extends State<Dashboard> {
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
           onRefresh: () async {
-            eventNow(1);
-            eventUpComing(1);
+            eventList(1);
           },
-          child:  _builderBody(),
+          child: _builderBody(),
         )
-          
-        // ), 
+
+        // ),
         );
   }
 
-Widget _builderBody(){
-  return SafeArea(
-    child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+  Widget _builderBody() {
+    return SafeArea(
+      child: SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
             Container(
               width: double.infinity,
               child: Padding(
                 padding:
-                    const EdgeInsets.only(left: 10.0, right: 10.0, top: 30.0),
+                    const EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(('Cari Event Yang Akan Datang').toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        )),
+              
                   ],
                 ),
               ),
@@ -553,534 +545,1553 @@ Widget _builderBody(){
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(children: <Widget>[
-                  for(var x in listFilter)
-                  Container(
-                      margin: EdgeInsets.only(right: 10.0),
-                      child: ButtonTheme(
-                        minWidth: 0.0,
-                        height: 0,
-                        child: RaisedButton(
-                          color: categoryNow == x['index'] ? Color.fromRGBO(41, 30, 47, 1):Colors.transparent,
-                          elevation: 0.0,
-                          highlightColor: Colors.transparent,
-                          highlightElevation: 0.0,
-                          padding: EdgeInsets.only(
-                              top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
-                          onPressed: () {
-                                setState((){
-                                  isLoading = true;
-                                  page = 1;
-                                  delay = false;
-                                  categoryNow = x['index'];
-                                  // _getAll(x['c_id'],_searchQuery);
-                                  eventUpComing(x['index']);
-                                  eventNow(x['index']);
-                                });
+                  for (var x in listFilter)
+                    Container(
+                        margin: EdgeInsets.only(right: 10.0),
+                        child: ButtonTheme(
+                          minWidth: 0.0,
+                          height: 0,
+                          child: RaisedButton(
+                            color: categoryNow == x['index']
+                                ? Color.fromRGBO(41, 30, 47, 1)
+                                : Colors.transparent,
+                            elevation: 0.0,
+                            highlightColor: Colors.transparent,
+                            highlightElevation: 0.0,
+                            padding: EdgeInsets.only(
+                                top: 7.0, left: 15.0, right: 15.0, bottom: 7.0),
+                            onPressed: () {
+                              setState(() {
+                                isLoading = true;
+                                page = 1;
+                                delay = false;
+                                categoryNow = x['index'];
+                                // _getAll(x['c_id'],_searchQuery);
+                                eventList(x['index']);
+                              });
                             },
-                          child: Text(
-                                x['name'],
-                                style: TextStyle(
-                                    color: categoryNow == x['index'] ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
-                                    fontWeight: FontWeight.w500),
-                              ),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(18.0),
-                              side: BorderSide(
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                              )),
-                        ),
-                      )),
+                            child: Text(
+                              x['name'],
+                              style: TextStyle(
+                                  color: categoryNow == x['index']
+                                      ? Colors.white
+                                      : Color.fromRGBO(41, 30, 47, 1),
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color.fromRGBO(41, 30, 47, 1),
+                                )),
+                          ),
+                        )),
                 ]),
               ),
             ),
             SafeArea(
               child: isLoading == true
-          ? Center(
-              child: SpinKitFadingCircle(
-          color: Colors.orange,
-          // size: 50.0,
-        )
-            )
-          :
-          isError == true
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => getHeaderHTTP(),
-                    child: Column(children: <Widget>[
-                      new Container(
-                        width: 100.0,
-                        height: 100.0,
-                        child: Image.asset("images/system-eror.png"),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 30.0,
-                          left: 15.0,
-                          right: 15.0,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 15.0, right: 15.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Colors.white,
-                            textColor: Color.fromRGBO(41, 30, 47, 1),
-                            disabledColor: Colors.grey,
-                            disabledTextColor: Colors.black,
-                            padding: EdgeInsets.all(15.0),
-                            splashColor: Colors.blueAccent,
-                            onPressed: () async {
-                              getHeaderHTTP();
-                            },
-                            child: Text(
-                              "Muat Ulang Halaman",
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                ) : Column(
-                children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
-              child: Divider(),
-            ),
-            Container(
-                child: Column(children: <Widget>[
-              InkWell(
-                  onTap: currentEvent,
-                  child: Container(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 10.0, right: 10.0, top: 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(('Event Berlangsung').toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          Icon(height == null
-                              ? Icons.arrow_drop_down
-                              : Icons.arrow_drop_up),
-                        ],
-                      ),
-                    ),
-                  )),
-                  SafeArea(
-                    child: SingleChildScrollView(
-                      // scrollDirection: Axis.horizontal,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // ,
-                        children: 
-                      
-                      listEventNow.map((Event f) => Padding(
-                        padding: EdgeInsets.all(2),
-                child: InkWell(
-                child: Container(
-                    height: height,
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                            child: Column(
-                              children: <Widget>[
-                               
-                                Card(
-                                  elevation: 1,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              flex: 5,
-                                              child: Container(
-                                                  width: 80.0,
-                                                  height: 80.0,
-                                                  decoration: new BoxDecoration(
-                                                    borderRadius: new BorderRadius
-                                                            .only(
-                                                        topLeft:
-                                                            const Radius.circular(
-                                                                5.0),
-                                                        topRight:
-                                                            const Radius.circular(
-                                                                5.0),
-                                                        bottomLeft:
-                                                            const Radius.circular(
-                                                                5.0),
-                                                        bottomRight:
-                                                            const Radius.circular(
-                                                                5.0)),
-                                                    image: new DecorationImage(
-                                                      fit: BoxFit.fill,
-                                                      image: AssetImage(
-                                                        'images/bg-header.jpg',
-                                                      ),
-                                                    ),
-                                                  )),
-                                            ),
-                                            Expanded(
-                                              flex: 7,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 15.0, right: 5.0),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      f.dateEvent,
-                                                      style: TextStyle(
-                                                          color: Colors.blue,
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 5.0),
-                                                      child: Text(
-                                                          f.title,
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 16,
-                                                          )),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 10.0),
-                                                      child: Text(
-                                                        f.location,
-                                                        style: TextStyle(
-                                                            color: Colors.grey),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 10.0, right: 10.0),
-                                          child: Divider()),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10.0, right: 10.0, bottom: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                              Padding(
-                                                padding: EdgeInsets.all(2.0),
-                                                child: _buildTextStatus(f.userStatus.toString()),
-                                              ),
-                                                
-                                                f.userStatus != null ? 
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(right: 0),
-                                              child: ButtonTheme(
-                                                minWidth: 0, //wraps child's width
-                                                height: 0,
-                                                child: FlatButton(
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.favorite,
-                                                        color: wishlistone == true
-                                                            ? Colors.pink
-                                                            : Colors.grey,
-                                                        size: 18,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  color: Colors.white,
-                                                  materialTapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                  padding: EdgeInsets.all(5.0),
-                                                  onPressed: () async {
-                                                    setState(() {
-                                                      if(f.userStatus != null){
-                                                         if (wishlistone == true) {
-                                                        wishlistone = false;
-                                                      } else {
-                                                        wishlistone = true;
-                                                      }
-
-                                                      }
-                                                     
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            )
-                                            : Text(""),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )),
-                        Positioned(
-                            width: 30.0,
-                            right: 10,
-                            top: -7,
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: new BorderRadius.only(
-                                    topLeft: const Radius.circular(5.0),
-                                    topRight: const Radius.circular(5.0),
-                                    bottomLeft: const Radius.circular(5.0),
-                                    bottomRight: const Radius.circular(5.0)),
+                  ? Center(
+                      child: SpinKitFadingCircle(
+                      color: Colors.orange,
+                      // size: 50.0,
+                    ))
+                  : isError == true
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: RefreshIndicator(
+                            onRefresh: () => getHeaderHTTP(),
+                            child: Column(children: <Widget>[
+                              new Container(
+                                width: 100.0,
+                                height: 100.0,
+                                child: Image.asset("images/system-eror.png"),
                               ),
-                              padding: EdgeInsets.all(5.0),
-                              child: Icon(Icons.star_border,
-                                  color: Colors.orangeAccent),
-                            )),
-                      ],
-                    ),
-                ),
-                onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => f.userStatus == "P" ? WaitingEvent() : f.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: f.id.toString()),
-                        ));
-                },
-              ),
-              )).toList(),)
-                    ,),
-                  )
-              
-            ])),
-            Container(
-              padding: EdgeInsets.only(
-                  left: 10.0, right: 10.0, top: 15.0, bottom: 0.0),
-              child: Divider(),
-            ),
-            Column(children: <Widget>[
-              InkWell(
-                  onTap: futureEvent,
-                  child: Container(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(('Event yang akan datang').toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          Icon(futureheight == null
-                              ? Icons.arrow_drop_down
-                              : Icons.arrow_drop_up),
-                        ],
-                      ),
-                    ),
-                  )),
-                  Column(children: listEventUpComming.map((Event item) => Container(
-
-              child: InkWell(
-                child: Container(
-                    margin: EdgeInsets.only(
-                        top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                    height: futureheight,
-                    child: Column(
-                      children: <Widget>[
-                        
-                        Card(
-                          elevation: 1,
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 5,
-                                      child: Container(
-                                          width: 80.0,
-                                          height: 80.0,
-                                          decoration: new BoxDecoration(
-                                            borderRadius: new BorderRadius.only(
-                                                topLeft:
-                                                    const Radius.circular(5.0),
-                                                topRight:
-                                                    const Radius.circular(5.0),
-                                                bottomLeft:
-                                                    const Radius.circular(5.0),
-                                                bottomRight:
-                                                    const Radius.circular(5.0)),
-                                            image: new DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: AssetImage(
-                                                'images/bg-header.jpg',
-                                              ),
-                                            ),
-                                          )),
-                                    ),
-                                    Expanded(
-                                      flex: 7,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 5.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              item.dateEvent,
-                                              style: TextStyle(
-                                                  color: Colors.blue,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5.0),
-                                              child: Text(item.title,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 16,
-                                                  )),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0),
-                                              child: Text(
-                                                item.location,
-                                                style:
-                                                    TextStyle(color: Colors.grey),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10.0),
-                                  child: Divider()),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 10.0, right: 10.0, bottom: 10.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    
-                                    Padding(
-                                      padding: EdgeInsets.all(2),
-                                      child: _buildTextStatus(item.userStatus),),
-                                  item.userStatus != null ?
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 0),
-                                      child: ButtonTheme(
-                                        minWidth: 0, //wraps child's width
-                                        height: 0,
-                                        child: FlatButton(
-                                          child: Row(
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.favorite,
-                                                color: wishlisttwo == true
-                                                    ? Colors.pink
-                                                    : Colors.grey,
-                                                size: 18,
-                                              ),
-                                            ],
-                                          ),
-                                          color: Colors.white,
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          padding: EdgeInsets.all(5.0),
-                                          onPressed: () async {
-                                            setState(() {
-                                              if (wishlisttwo == true) {
-                                                wishlisttwo = false;
-                                              } else {
-                                                wishlisttwo = true;
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ) : Text(""),
-                                  ],
+                                  top: 30.0,
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                      height: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
-                            ],
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0, left: 15.0, right: 15.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    textColor: Color.fromRGBO(41, 30, 47, 1),
+                                    disabledColor: Colors.grey,
+                                    disabledTextColor: Colors.black,
+                                    padding: EdgeInsets.all(15.0),
+                                    splashColor: Colors.blueAccent,
+                                    onPressed: () async {
+                                      getHeaderHTTP();
+                                    },
+                                    child: Text(
+                                      "Muat Ulang Halaman",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]),
                           ),
-                        ),
-                        
-                      ],
-                    )),
-                onTap: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => item.userStatus == "P" ? WaitingEvent() : item.userStatus == "A" ? SuccesRegisteredEvent() : DashboardCheckin(idevent: item.id.toString()),
-                      ));
-                },
-              ),
-                                      )).toList()),
-              
-            ]),
-              ],),
-            )
+                        )
+                      :
+              Column(
+                          children: <Widget>[
+ 
 
-            
-            
-            
-          ])
-          ),
-  );
-}
+//                            ==================================Follower========================================
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 15.0,
+                                  bottom: 0.0),
+                              child: Divider(),
+                            ),
+                            Column(children: <Widget>[
+//
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 5.0,
+                                          bottom: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              ('Event diIkuti')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14 ,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                         InkWell(
+                                           child: Container(
+                                             child: Row(children: <Widget>[
+                                               Text("Lihat Lainnya"),
+                                               Icon(Icons.chevron_right)
+                                             ],)
+                                           )
+                                         ),
+//                                          Text(
+//                                              ('Lihat Lainnya'),
+//                                              style: TextStyle(
+//                                                fontSize: 12 ,
+//
+//                                              ) ),
+//                                          Icon(Icons.chevron_right )
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                      child:
+                                      Row(
+                                        children: <Widget>[
+                                          Row(children:  listFollower.map((Event item ) =>
+                                            Container(
+                                              child: InkWell(
+                                                child: Container(
+                                                    width: 300,
+                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                        bottom: 5.0,
+                                                        left: 5.0,
+                                                        right: 5.0),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Card(
+                                                          elevation: 1,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.all(
+                                                                    10.0),
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Container(
+                                                                      height: 100,
+                                                                          width:250,
+                                                                          decoration:
+                                                                          new BoxDecoration(
+                                                                            borderRadius: new BorderRadius
+                                                                                .only(
+                                                                                topLeft:
+                                                                                const Radius.circular(
+                                                                                    5.0),
+                                                                                topRight:
+                                                                                const Radius.circular(
+                                                                                    5.0),
+                                                                                bottomLeft:
+                                                                                const Radius.circular(
+                                                                                    5.0),
+                                                                                bottomRight:
+                                                                                const Radius.circular(
+                                                                                    5.0)),
+                                                                            image:
+                                                                            new DecorationImage(
+                                                                              fit: BoxFit
+                                                                                  .fill,
+                                                                              image:
+                                                                              AssetImage(
+                                                                                'images/bg-header.jpg',
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(top:10),
+                                                                      child: Row(children: <Widget>[
+                                                                        Expanded(
+                                                                          flex: 2,
+                                                                          child: Card(
+                                                                            elevation: 0.5,
+                                                                              child:Padding(
+                                                                                padding: const EdgeInsets.all(7.0),
+                                                                                child: Column(
+                                                                                  children: <Widget>[
+
+                                                                            Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                            Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                            Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                          ],),
+                                                                              ))
+                                                                        ),
+                                                                        Expanded(
+                                                                            flex: 6,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                              Text("${item.title}",
+                                                                                  style:TextStyle(fontWeight:FontWeight.bold),
+                                                                                  maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
+                                                                               Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                            ],)
+                                                                        )
+                                                                      ],),
+                                                                    )
+
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                  padding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10.0,
+                                                                      right: 10.0),
+                                                                  child: Divider()),
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom: 10.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.all(
+                                                                          2),
+                                                                      child: _buildTextStatus(
+                                                                          item.userStatus),
+                                                                    ),
+                                                                    item.userStatus !=
+                                                                        null
+                                                                        ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right: 0),
+                                                                      child:
+                                                                      ButtonTheme(
+                                                                        minWidth:
+                                                                        0, //wraps child's width
+                                                                        height: 0,
+                                                                        child:
+                                                                        FlatButton(
+                                                                          child:
+                                                                          Row(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              Icon(
+                                                                                Icons.favorite,
+                                                                                color: wishlisttwo == true
+                                                                                    ? Colors.pink
+                                                                                    : Colors.grey,
+                                                                                size:
+                                                                                18,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                          padding:
+                                                                          EdgeInsets.all(
+                                                                              5.0),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            setState(
+                                                                                    () {
+                                                                                  if (wishlisttwo ==
+                                                                                      true) {
+                                                                                    wishlisttwo =
+                                                                                    false;
+                                                                                  } else {
+                                                                                    wishlisttwo =
+                                                                                    true;
+                                                                                  }
+                                                                                });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                        : Text(""),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    )),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        "item.userStatus" == "P"
+                                                            ? WaitingEvent()
+                                                            : "item.userStatus" == "A"
+                                                            ? DashboardCheckin()
+                                                            : DashboardCheckin(
+                                                            idevent:
+                                                            "item.id.toString()"),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                        ).toList(),
+                                          ),
+                                         listFollower.length >= 5 ? Container(
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                      bottom: 5.0,
+                                                      left: 5.0,
+                                                      right: 5.0),
+                                                  child: InkWell(
+                                                    child: Column(children: <Widget>[
+                                                      Icon(Icons.navigate_next),
+                                                      Text("Lihat Lainnya")
+                                                    ],),
+                                                  )),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                      "item.userStatus" == "P"
+                                                          ? WaitingEvent()
+                                                          : "item.userStatus" == "A"
+                                                          ? SuccesRegisteredEvent()
+                                                          : DashboardCheckin(
+                                                          idevent:
+                                                          "item.id.toString()"),
+                                                    ));
+                                              },
+                                            ),
+                                          ) : Container(),
+                                        ],
+
+                                      ),
+                                  )),
+                            ]),
+//====================================End===============================
+//                            ==================================Wish========================================
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 15.0,
+                                  bottom: 0.0),
+                              child: Divider(),
+                            ),
+                            Column(children: <Widget>[
+//
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 5.0,
+                                          bottom: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              ('Event yang di sukai')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14 ,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          InkWell(
+                                              child: Container(
+                                                  child: Row(children: <Widget>[
+                                                    Text("Lihat Lainnya"),
+                                                    Icon(Icons.chevron_right)
+                                                  ],)
+                                              )
+                                          ),
+//                                          Text(
+//                                              ('Lihat Lainnya'),
+//                                              style: TextStyle(
+//                                                fontSize: 12 ,
+//
+//                                              ) ),
+//                                          Icon(Icons.chevron_right )
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child:
+                                    Row(
+                                      children: <Widget>[
+                                        Row(children:  listWish.map((Event item ) =>
+                                            Container(
+                                              child: InkWell(
+                                                child: Container(
+                                                    width: 300,
+                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                        bottom: 5.0,
+                                                        left: 5.0,
+                                                        right: 5.0),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Card(
+                                                          elevation: 1,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.all(
+                                                                    10.0),
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Container(
+                                                                        height: 100,
+                                                                        width:250,
+                                                                        decoration:
+                                                                        new BoxDecoration(
+                                                                          borderRadius: new BorderRadius
+                                                                              .only(
+                                                                              topLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              topRight:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomRight:
+                                                                              const Radius.circular(
+                                                                                  5.0)),
+                                                                          image:
+                                                                          new DecorationImage(
+                                                                            fit: BoxFit
+                                                                                .fill,
+                                                                            image:
+                                                                            AssetImage(
+                                                                              'images/bg-header.jpg',
+                                                                            ),
+                                                                          ),
+                                                                        )),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(top:10),
+                                                                      child: Row(children: <Widget>[
+                                                                        Expanded(
+                                                                            flex: 2,
+                                                                            child: Card(
+                                                                                elevation: 0.5,
+                                                                                child:Padding(
+                                                                                  padding: const EdgeInsets.all(7.0),
+                                                                                  child: Column(
+                                                                                    children: <Widget>[
+
+                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                                    ],),
+                                                                                ))
+                                                                        ),
+                                                                        Expanded(
+                                                                            flex: 6,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text("${item.title}",
+                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
+                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
+                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                              ],)
+                                                                        )
+                                                                      ],),
+                                                                    )
+
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                  padding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10.0,
+                                                                      right: 10.0),
+                                                                  child: Divider()),
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom: 10.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.all(
+                                                                          2),
+                                                                      child: _buildTextStatus(
+                                                                          item.userStatus),
+                                                                    ),
+                                                                    item.userStatus !=
+                                                                        null
+                                                                        ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right: 0),
+                                                                      child:
+                                                                      ButtonTheme(
+                                                                        minWidth:
+                                                                        0, //wraps child's width
+                                                                        height: 0,
+                                                                        child:
+                                                                        FlatButton(
+                                                                          child:
+                                                                          Row(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              Icon(
+                                                                                Icons.favorite,
+                                                                                color: wishlisttwo == true
+                                                                                    ? Colors.pink
+                                                                                    : Colors.grey,
+                                                                                size:
+                                                                                18,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                          padding:
+                                                                          EdgeInsets.all(
+                                                                              5.0),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            setState(
+                                                                                    () {
+                                                                                  if (wishlisttwo ==
+                                                                                      true) {
+                                                                                    wishlisttwo =
+                                                                                    false;
+                                                                                  } else {
+                                                                                    wishlisttwo =
+                                                                                    true;
+                                                                                  }
+                                                                                });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                        : Text(""),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    )),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        "item.userStatus" == "P"
+                                                            ? WaitingEvent()
+                                                            : "item.userStatus" == "A"
+                                                            ? DashboardCheckin()
+                                                            : DashboardCheckin(
+                                                            idevent:
+                                                            "item.id.toString()"),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                        ).toList(),
+                                        ),
+                                        listWish.length >= 5 ? Container(
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                    bottom: 5.0,
+                                                    left: 5.0,
+                                                    right: 5.0),
+                                                child: InkWell(
+                                                  child: Column(children: <Widget>[
+                                                    Icon(Icons.navigate_next),
+                                                    Text("Lihat Lainnya")
+                                                  ],),
+                                                )),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    "item.userStatus" == "P"
+                                                        ? WaitingEvent()
+                                                        : "item.userStatus" == "A"
+                                                        ? SuccesRegisteredEvent()
+                                                        : DashboardCheckin(
+                                                        idevent:
+                                                        "item.id.toString()"),
+                                                  ));
+                                            },
+                                          ),
+                                        ) : Container(),
+                                      ],
+
+                                    ),
+                                  )),
+                            ]),
+//====================================End===============================
+
+//                            ==================================Participant========================================
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 15.0,
+                                  bottom: 0.0),
+                              child: Divider(),
+                            ),
+                            Column(children: <Widget>[
+//
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 5.0,
+                                          bottom: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              ('Event Jadi Peserta')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14 ,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          InkWell(
+                                              child: Container(
+                                                  child: Row(children: <Widget>[
+                                                    Text("Lihat Lainnya"),
+                                                    Icon(Icons.chevron_right)
+                                                  ],)
+                                              )
+                                          ),
+//                                          Text(
+//                                              ('Lihat Lainnya'),
+//                                              style: TextStyle(
+//                                                fontSize: 12 ,
+//
+//                                              ) ),
+//                                          Icon(Icons.chevron_right )
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child:
+                                    Row(
+                                      children: <Widget>[
+                                        Row(children:  listParticipant.map((Event item ) =>
+                                            Container(
+                                              child: InkWell(
+                                                child: Container(
+                                                    width: 300,
+                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                        bottom: 5.0,
+                                                        left: 5.0,
+                                                        right: 5.0),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Card(
+                                                          elevation: 1,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.all(
+                                                                    10.0),
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Container(
+                                                                        height: 100,
+                                                                        width:250,
+                                                                        decoration:
+                                                                        new BoxDecoration(
+                                                                          borderRadius: new BorderRadius
+                                                                              .only(
+                                                                              topLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              topRight:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomRight:
+                                                                              const Radius.circular(
+                                                                                  5.0)),
+                                                                          image:
+                                                                          new DecorationImage(
+                                                                            fit: BoxFit
+                                                                                .fill,
+                                                                            image:
+                                                                            AssetImage(
+                                                                              'images/bg-header.jpg',
+                                                                            ),
+                                                                          ),
+                                                                        )),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(top:10),
+                                                                      child: Row(children: <Widget>[
+                                                                        Expanded(
+                                                                            flex: 2,
+                                                                            child: Card(
+                                                                                elevation: 0.5,
+                                                                                child:Padding(
+                                                                                  padding: const EdgeInsets.all(7.0),
+                                                                                  child: Column(
+                                                                                    children: <Widget>[
+
+                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                                    ],),
+                                                                                ))
+                                                                        ),
+                                                                        Expanded(
+                                                                            flex: 6,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text("${item.title}",
+                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
+                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
+                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                              ],)
+                                                                        )
+                                                                      ],),
+                                                                    )
+
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                  padding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10.0,
+                                                                      right: 10.0),
+                                                                  child: Divider()),
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom: 10.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.all(
+                                                                          2),
+                                                                      child: _buildTextStatus(
+                                                                          item.userStatus),
+                                                                    ),
+                                                                    item.userStatus !=
+                                                                        null
+                                                                        ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right: 0),
+                                                                      child:
+                                                                      ButtonTheme(
+                                                                        minWidth:
+                                                                        0, //wraps child's width
+                                                                        height: 0,
+                                                                        child:
+                                                                        FlatButton(
+                                                                          child:
+                                                                          Row(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              Icon(
+                                                                                Icons.favorite,
+                                                                                color: wishlisttwo == true
+                                                                                    ? Colors.pink
+                                                                                    : Colors.grey,
+                                                                                size:
+                                                                                18,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                          padding:
+                                                                          EdgeInsets.all(
+                                                                              5.0),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            setState(
+                                                                                    () {
+                                                                                  if (wishlisttwo ==
+                                                                                      true) {
+                                                                                    wishlisttwo =
+                                                                                    false;
+                                                                                  } else {
+                                                                                    wishlisttwo =
+                                                                                    true;
+                                                                                  }
+                                                                                });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                        : Text(""),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    )),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        "item.userStatus" == "P"
+                                                            ? WaitingEvent()
+                                                            : "item.userStatus" == "A"
+                                                            ? DashboardCheckin()
+                                                            : DashboardCheckin(
+                                                            idevent:
+                                                            "item.id.toString()"),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                        ).toList(),
+                                        ),
+                                        listParticipant.length >= 5 ? Container(
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                    bottom: 5.0,
+                                                    left: 5.0,
+                                                    right: 5.0),
+                                                child: InkWell(
+                                                  child: Column(children: <Widget>[
+                                                    Icon(Icons.navigate_next),
+                                                    Text("Lihat Lainnya")
+                                                  ],),
+                                                )),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    "item.userStatus" == "P"
+                                                        ? WaitingEvent()
+                                                        : "item.userStatus" == "A"
+                                                        ? SuccesRegisteredEvent()
+                                                        : DashboardCheckin(
+                                                        idevent:
+                                                        "item.id.toString()"),
+                                                  ));
+                                            },
+                                          ),
+                                        ) : Container(),
+                                      ],
+
+                                    ),
+                                  )),
+                            ]),
+//====================================End===============================
+                            //                            ==================================Admin========================================
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 15.0,
+                                  bottom: 0.0),
+                              child: Divider(),
+                            ),
+                            Column(children: <Widget>[
+//
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 5.0,
+                                          bottom: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              ('Event Jadi Admin')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14 ,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          InkWell(
+                                              child: Container(
+                                                  child: Row(children: <Widget>[
+                                                    Text("Lihat Lainnya"),
+                                                    Icon(Icons.chevron_right)
+                                                  ],)
+                                              )
+                                          ),
+//                                          Text(
+//                                              ('Lihat Lainnya'),
+//                                              style: TextStyle(
+//                                                fontSize: 12 ,
+//
+//                                              ) ),
+//                                          Icon(Icons.chevron_right )
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child:
+                                    Row(
+                                      children: <Widget>[
+                                        Row(children:  listAdmin.map((Event item ) =>
+                                            Container(
+                                              child: InkWell(
+                                                child: Container(
+                                                    width: 300,
+                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                        bottom: 5.0,
+                                                        left: 5.0,
+                                                        right: 5.0),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Card(
+                                                          elevation: 1,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.all(
+                                                                    10.0),
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Container(
+                                                                        height: 100,
+                                                                        width:250,
+                                                                        decoration:
+                                                                        new BoxDecoration(
+                                                                          borderRadius: new BorderRadius
+                                                                              .only(
+                                                                              topLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              topRight:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomRight:
+                                                                              const Radius.circular(
+                                                                                  5.0)),
+                                                                          image:
+                                                                          new DecorationImage(
+                                                                            fit: BoxFit
+                                                                                .fill,
+                                                                            image:
+                                                                            AssetImage(
+                                                                              'images/bg-header.jpg',
+                                                                            ),
+                                                                          ),
+                                                                        )),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(top:10),
+                                                                      child: Row(children: <Widget>[
+                                                                        Expanded(
+                                                                            flex: 2,
+                                                                            child: Card(
+                                                                                elevation: 0.5,
+                                                                                child:Padding(
+                                                                                  padding: const EdgeInsets.all(7.0),
+                                                                                  child: Column(
+                                                                                    children: <Widget>[
+
+                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                                    ],),
+                                                                                ))
+                                                                        ),
+                                                                        Expanded(
+                                                                            flex: 6,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text("${item.title}",
+                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
+                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
+                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                              ],)
+                                                                        )
+                                                                      ],),
+                                                                    )
+
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                  padding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10.0,
+                                                                      right: 10.0),
+                                                                  child: Divider()),
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom: 10.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.all(
+                                                                          2),
+                                                                      child: _buildTextStatus(
+                                                                          item.userStatus),
+                                                                    ),
+                                                                    item.userStatus !=
+                                                                        null
+                                                                        ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right: 0),
+                                                                      child:
+                                                                      ButtonTheme(
+                                                                        minWidth:
+                                                                        0, //wraps child's width
+                                                                        height: 0,
+                                                                        child:
+                                                                        FlatButton(
+                                                                          child:
+                                                                          Row(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              Icon(
+                                                                                Icons.favorite,
+                                                                                color: wishlisttwo == true
+                                                                                    ? Colors.pink
+                                                                                    : Colors.grey,
+                                                                                size:
+                                                                                18,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                          padding:
+                                                                          EdgeInsets.all(
+                                                                              5.0),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            setState(
+                                                                                    () {
+                                                                                  if (wishlisttwo ==
+                                                                                      true) {
+                                                                                    wishlisttwo =
+                                                                                    false;
+                                                                                  } else {
+                                                                                    wishlisttwo =
+                                                                                    true;
+                                                                                  }
+                                                                                });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                        : Text(""),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    )),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        "item.userStatus" == "P"
+                                                            ? WaitingEvent()
+                                                            : "item.userStatus" == "A"
+                                                            ? DashboardCheckin()
+                                                            : DashboardCheckin(
+                                                            idevent:
+                                                            "item.id.toString()"),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                        ).toList(),
+                                        ),
+                                        listAdmin.length >= 5 ? Container(
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                    bottom: 5.0,
+                                                    left: 5.0,
+                                                    right: 5.0),
+                                                child: InkWell(
+                                                  child: Column(children: <Widget>[
+                                                    Icon(Icons.navigate_next),
+                                                    Text("Lihat Lainnya")
+                                                  ],),
+                                                )),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    "item.userStatus" == "P"
+                                                        ? WaitingEvent()
+                                                        : "item.userStatus" == "A"
+                                                        ? SuccesRegisteredEvent()
+                                                        : DashboardCheckin(
+                                                        idevent:
+                                                        "item.id.toString()"),
+                                                  ));
+                                            },
+                                          ),
+                                        ) : Container(),
+                                      ],
+
+                                    ),
+                                  )),
+                            ]),
+//====================================End===============================
+                            //                            ==================================Creator========================================
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  top: 15.0,
+                                  bottom: 0.0),
+                              child: Divider(),
+                            ),
+                            Column(children: <Widget>[
+//
+                              InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 5.0,
+                                          bottom: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              ('Event Yang Dibuat')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14 ,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          InkWell(
+                                              child: Container(
+                                                  child: Row(children: <Widget>[
+                                                    Text("Lihat Lainnya"),
+                                                    Icon(Icons.chevron_right)
+                                                  ],)
+                                              )
+                                          ),
+//                                          Text(
+//                                              ('Lihat Lainnya'),
+//                                              style: TextStyle(
+//                                                fontSize: 12 ,
+//
+//                                              ) ),
+//                                          Icon(Icons.chevron_right )
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Container(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child:
+                                    Row(
+                                      children: <Widget>[
+                                        Row(children:  listCreator.map((Event item ) =>
+                                            Container(
+                                              child: InkWell(
+                                                child: Container(
+                                                    width: 300,
+                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                        bottom: 5.0,
+                                                        left: 5.0,
+                                                        right: 5.0),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Card(
+                                                          elevation: 1,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.all(
+                                                                    10.0),
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    Container(
+                                                                        height: 100,
+                                                                        width:250,
+                                                                        decoration:
+                                                                        new BoxDecoration(
+                                                                          borderRadius: new BorderRadius
+                                                                              .only(
+                                                                              topLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              topRight:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomLeft:
+                                                                              const Radius.circular(
+                                                                                  5.0),
+                                                                              bottomRight:
+                                                                              const Radius.circular(
+                                                                                  5.0)),
+                                                                          image:
+                                                                          new DecorationImage(
+                                                                            fit: BoxFit
+                                                                                .fill,
+                                                                            image:
+                                                                            AssetImage(
+                                                                              'images/bg-header.jpg',
+                                                                            ),
+                                                                          ),
+                                                                        )),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(top:10),
+                                                                      child: Row(children: <Widget>[
+                                                                        Expanded(
+                                                                            flex: 2,
+                                                                            child: Card(
+                                                                                elevation: 0.5,
+                                                                                child:Padding(
+                                                                                  padding: const EdgeInsets.all(7.0),
+                                                                                  child: Column(
+                                                                                    children: <Widget>[
+
+                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                                    ],),
+                                                                                ))
+                                                                        ),
+                                                                        Expanded(
+                                                                            flex: 6,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Text("${item.title}",
+                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
+                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
+                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                              ],)
+                                                                        )
+                                                                      ],),
+                                                                    )
+
+
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                  padding:
+                                                                  EdgeInsets.only(
+                                                                      left: 10.0,
+                                                                      right: 10.0),
+                                                                  child: Divider()),
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom: 10.0),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets.all(
+                                                                          2),
+                                                                      child: _buildTextStatus(
+                                                                          item.userStatus),
+                                                                    ),
+                                                                    item.userStatus !=
+                                                                        null
+                                                                        ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right: 0),
+                                                                      child:
+                                                                      ButtonTheme(
+                                                                        minWidth:
+                                                                        0, //wraps child's width
+                                                                        height: 0,
+                                                                        child:
+                                                                        FlatButton(
+                                                                          child:
+                                                                          Row(
+                                                                            children: <
+                                                                                Widget>[
+                                                                              Icon(
+                                                                                Icons.favorite,
+                                                                                color: wishlisttwo == true
+                                                                                    ? Colors.pink
+                                                                                    : Colors.grey,
+                                                                                size:
+                                                                                18,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          color: Colors
+                                                                              .white,
+                                                                          materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                          padding:
+                                                                          EdgeInsets.all(
+                                                                              5.0),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            setState(
+                                                                                    () {
+                                                                                  if (wishlisttwo ==
+                                                                                      true) {
+                                                                                    wishlisttwo =
+                                                                                    false;
+                                                                                  } else {
+                                                                                    wishlisttwo =
+                                                                                    true;
+                                                                                  }
+                                                                                });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                        : Text(""),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    )),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        "item.userStatus" == "P"
+                                                            ? WaitingEvent()
+                                                            : "item.userStatus" == "A"
+                                                            ? DashboardCheckin()
+                                                            : DashboardCheckin(
+                                                            idevent:
+                                                            "item.id.toString()"),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                        ).toList(),
+                                        ),
+                                        listCreator.length >= 5 ? Container(
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                    bottom: 5.0,
+                                                    left: 5.0,
+                                                    right: 5.0),
+                                                child: InkWell(
+                                                  child: Column(children: <Widget>[
+                                                    Icon(Icons.navigate_next),
+                                                    Text("Lihat Lainnya")
+                                                  ],),
+                                                )),
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                    "item.userStatus" == "P"
+                                                        ? WaitingEvent()
+                                                        : "item.userStatus" == "A"
+                                                        ? SuccesRegisteredEvent()
+                                                        : DashboardCheckin(
+                                                        idevent:
+                                                        "item.id.toString()"),
+                                                  ));
+                                            },
+                                          ),
+                                        ) : Container(),
+                                      ],
+
+                                    ),
+                                  )),
+                            ]),
+//====================================End===============================
+                          ],
+                        ),
+            )
+          ])),
+    );
+  }
+
   Widget buildBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
@@ -1210,7 +2221,7 @@ Widget _builderBody(){
     }
   }
 
-    Future<Null> _handleRefresh() async {
+  Future<Null> _handleRefresh() async {
     await new Future.delayed(new Duration(seconds: 3));
 
     setState(() {
