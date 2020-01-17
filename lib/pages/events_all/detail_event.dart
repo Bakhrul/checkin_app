@@ -90,12 +90,12 @@ class _RegisterEvent extends State<RegisterEvents> {
 
       if (ongoingevent.statusCode == 200) {
         Map rawData = json.decode(ongoingevent.body);
-        setState((){
-           dataEvent = SearchEvent.fromJson(rawData['data']);
-           _isLoading = false;
-           expired = dataEvent.expired;
-           creatorEmail = rawData['creator_email'];
-           creatorName = rawData['creator_name'];
+        setState(() {
+          dataEvent = SearchEvent.fromJson(rawData['data']);
+          _isLoading = false;
+          expired = dataEvent.expired;
+          creatorEmail = rawData['creator_email'];
+          creatorName = rawData['creator_name'];
         });
       } else {
         print('ok');
@@ -159,16 +159,24 @@ class _RegisterEvent extends State<RegisterEvents> {
                       Column(
                         children: <Widget>[
                           ClipRect(
-                              child: Container(
-                                  height: 300.0,
-                                  padding: EdgeInsets.only(top: offset),
-                                  child: Image.asset(
-                                    'images/noimage.jpg',
-                                    height: 300,
-                                    width: double.infinity,
-                                    fit: BoxFit.none,
-                                    alignment: Alignment.topCenter,
-                                  ))),
+                            child: Container(
+                              height: 300.0,
+                              padding: EdgeInsets.only(top: offset),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'images/noimage.jpg',
+                                image: dataEvent.image != null ||
+                                        dataEvent.image != ''
+                                    ? url(
+                                        'storage/image/event/event_thumbnail/${dataEvent.image}',
+                                      )
+                                    : 'images/noimage.jpg',
+                                height: 300,
+                                width: double.infinity,
+                                fit: BoxFit.none,
+                                alignment: Alignment.topCenter,
+                              ),
+                            ),
+                          ),
                           Container(
                               padding: EdgeInsets.all(20.0),
                               child: Column(
@@ -177,7 +185,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                                     Container(
                                         padding: EdgeInsets.only(bottom: 10.0),
                                         width: double.infinity,
-                                        child: Text(dataEvent.title == null ? 'Memuat..':dataEvent.title ,
+                                        child: Text(
+                                            dataEvent.title == null
+                                                ? 'Memuat..'
+                                                : dataEvent.title,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20))),
@@ -191,7 +202,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 size: 16,
                                                 color: Colors.grey[600]),
                                           ),
-                                          Text(dataEvent.location == null ? 'Memuat ...':dataEvent.location,
+                                          Text(
+                                              dataEvent.location == null
+                                                  ? 'Memuat ...'
+                                                  : dataEvent.location,
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
@@ -205,10 +219,12 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               child: Icon(Icons.date_range,
                                                   size: 16,
                                                   color: Colors.grey[600])),
-                                          Text(dataEvent.start == null ? "Memuat ...":
-                                              dataEvent.start +
-                                                  ' - ' +
-                                                  dataEvent.end,
+                                          Text(
+                                              dataEvent.start == null
+                                                  ? "Memuat ..."
+                                                  : dataEvent.start +
+                                                      ' - ' +
+                                                      dataEvent.end,
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
@@ -222,7 +238,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 size: 16,
                                                 color: Colors.grey[600]),
                                           ),
-                                          Text(dataEvent.hour == null ? 'Memuat ...':dataEvent.hour,
+                                          Text(
+                                              dataEvent.hour == null
+                                                  ? 'Memuat ...'
+                                                  : dataEvent.hour,
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
@@ -244,7 +263,8 @@ class _RegisterEvent extends State<RegisterEvents> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  ProfileOrganizer(iduser : widget.creatorId),
+                                                  ProfileOrganizer(
+                                                      iduser: widget.creatorId),
                                             ));
                                       },
                                       child: Container(
@@ -288,40 +308,41 @@ class _RegisterEvent extends State<RegisterEvents> {
                                       ),
                                     ),
                                     if (!widget.selfEvent)
-                                       if(expired == false)
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 20.0),
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: RaisedButton(
-                                            color:
-                                                Color.fromRGBO(41, 30, 47, 1),
-                                            textColor: Colors.white,
-                                            disabledColor: Colors.green[400],
-                                            disabledTextColor: Colors.white,
-                                            padding: EdgeInsets.all(15.0),
-                                            splashColor: Colors.blueAccent,
-                                            onPressed: () async {
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEventMethod(
-                                                            id: dataEvent.id,
-                                                            creatorId: widget
-                                                                .creatorId,
-                                                            dataUser: widget
-                                                                .dataUser),
-                                                  ));
-                                            },
-                                            child: Text(
-                                              "Daftar Sekarang",
-                                              style: TextStyle(fontSize: 18.0),
+                                      if (expired == false)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20.0),
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: RaisedButton(
+                                              color:
+                                                  Color.fromRGBO(41, 30, 47, 1),
+                                              textColor: Colors.white,
+                                              disabledColor: Colors.green[400],
+                                              disabledTextColor: Colors.white,
+                                              padding: EdgeInsets.all(15.0),
+                                              splashColor: Colors.blueAccent,
+                                              onPressed: () async {
+                                                Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          RegisterEventMethod(
+                                                              id: dataEvent.id,
+                                                              creatorId: widget
+                                                                  .creatorId,
+                                                              dataUser: widget
+                                                                  .dataUser),
+                                                    ));
+                                              },
+                                              child: Text(
+                                                "Daftar Sekarang",
+                                                style:
+                                                    TextStyle(fontSize: 18.0),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
                                   ]))
                         ],
                       ),

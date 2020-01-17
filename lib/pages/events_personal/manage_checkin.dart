@@ -19,6 +19,7 @@ bool isLoading, isError;
 String tokenType, accessToken;
 List<ListCheckinEvent> listcheckinevent = [];
 Map<String, String> requestHeaders = Map();
+String namaeventX;
 enum PageEnum {
   editCheckinPage,
   deleteCheckinPage,
@@ -39,6 +40,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
   @override
   void initState() {
     super.initState();
+    namaeventX  = '';
     getHeaderHTTP();
   }
 
@@ -84,6 +86,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
       if (checkinevent.statusCode == 200) {
         var listuserJson = json.decode(checkinevent.body);
         var listUsers = listuserJson['checkin'];
+        String namaevent = listuserJson['namaevent'];
+        setState(() {
+          namaeventX = namaevent;
+        });
         print(listuserJson);
         listcheckinevent = [];
         for (var i in listUsers) {
@@ -324,6 +330,12 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                 listcheckinevent[
                                                                         index]
                                                                     .id,
+                                                            kodecheckin:
+                                                                listcheckinevent[
+                                                                        index]
+                                                                    .code,
+                                                            namaEvent:
+                                                                namaeventX,
                                                           )));
                                               break;
                                             case PageEnum.deleteCheckinPage:

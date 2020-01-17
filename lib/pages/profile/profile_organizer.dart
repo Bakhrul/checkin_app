@@ -14,7 +14,6 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:image_picker/image_picker.dart';
 
 String tokenType,
     accessToken,
