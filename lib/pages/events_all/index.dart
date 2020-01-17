@@ -634,32 +634,31 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Expanded(
                                                   flex: 5,
-                                                  child: Container(
-                                                      width: 80.0,
-                                                      height: 80.0,
-                                                      decoration: new BoxDecoration(
-                                                        borderRadius:
-                                                            new BorderRadius.only(
-                                                                topLeft: const Radius
-                                                                    .circular(5.0),
-                                                                topRight:
-                                                                    const Radius.circular(
-                                                                        5.0),
-                                                                bottomLeft:
-                                                                    const Radius.circular(
-                                                                        5.0),
-                                                                bottomRight: const Radius
-                                                                    .circular(5.0)),
-                                                        image: new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: AssetImage(
-                                                            'images/bg-header.jpg',
-                                                          ),
-                                                        ),
-                                                      )),
+                                                  child:Container(
+                                                                          height:
+                                                                              80.0,
+                                                                          width:
+                                                                              80.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: _event[x].image != null || _event[x].image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${_event[x].image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),
+                                                                        ),
                                                 ),
                                                 Expanded(
                                                   flex: 7,
@@ -772,9 +771,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                       ),
                                                       textAlign: TextAlign.center,
                                                     )),
+                                                _event[x].userEvent == userId ?
+                                                Container():
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(right: 0),
+                                                      
                                                   child: ButtonTheme(
                                                     minWidth: 0, //wraps child's width
                                                     height: 0,

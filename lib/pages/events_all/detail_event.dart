@@ -158,20 +158,6 @@ class _RegisterEvent extends State<RegisterEvents> {
                     Stack(children: <Widget>[
                       Column(
                         children: <Widget>[
-                          //  Container(
-                          //           width: double.infinity,
-                          //           height: 200.0,
-                          //           decoration: new BoxDecoration(
-                          //             shape: BoxShape.rectangle,
-                          //             image: new DecorationImage(
-                          //               fit: BoxFit.fill,
-                          //               image: AssetImage(
-                          //                 'images/noimage.jpg',
-                          //               ),
-                          //             ),
-                          //           )
-                          //         ),
-
                           ClipRect(
                               child: Container(
                                   height: 300.0,

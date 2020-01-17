@@ -14,13 +14,15 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 String tokenType,
     accessToken,
     eventberlangsungX,
     eventakandatangX,
     eventselesaiX,
-    namaOrganizerX, userId;
+    namaOrganizerX,
+    userId;
 Map<String, String> requestHeaders = Map();
 String getNowfilter, cekfollowX;
 List<EventOrganizer> listItemFollowing = [];
@@ -83,7 +85,6 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           setState(() {
             dataUser = rawData;
             userId = rawData['us_code'].toString();
-
           });
         }
         setState(() {
@@ -167,10 +168,13 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
+            creatorName:  i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: DateFormat("dd MMM yyyy")
+                .format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: DateFormat("dd MMM yyyy")
+                .format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -265,10 +269,13 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
+            creatorName:  i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: DateFormat("dd MMM yyyy")
+                .format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: DateFormat("dd MMM yyyy")
+                .format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -321,106 +328,105 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         appBar: new AppBar(
           elevation: 0,
           actions: <Widget>[
-            widget.iduser == userId ? Container(): isError == true ? Container():
-          ButtonTheme(
-                          minWidth: 0, //wraps child's width
-                          height: 0,
-                          buttonColor: Colors.white,
-                          child: FlatButton(
-                            padding: EdgeInsets.only(right: 15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                isLoadingfollow == true?
-                                Container(
-                                  width: 25.0,
-                                  height: 25.0,
-                                  child: CircularProgressIndicator(
-                        valueColor:
-                            new AlwaysStoppedAnimation<Color>(Colors.white)),
-                                ):
-                                Icon(
-                                  cekfollowX == '0' ?Icons.check : Icons.close,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                                isLoadingfollow == true ?  Container():
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text(cekfollowX == '0' ? 'Ikuti Sekarang' : 'Batal Mengikuti',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      )),
-                                ),
-                              ],
-                            ),
-                            color: Colors.transparent,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            onPressed:
-                                                                   isLoadingfollow == true ? null : () async {
-                                                                  try {
-                                                                    setState(() {
-                                                                      isLoadingfollow = true;
-                                                                    });
-                                                                    final hapuswishlist = await http.post(
-                                                                        url(
-                                                                            'api/followorganizer'),
-                                                                        headers:
-                                                                            requestHeaders,
-                                                                        body: {
-                                                                          'organizer':
-                                                                              widget.iduser,
-                                                                        });
-
-                                                                    if (hapuswishlist
-                                                                            .statusCode ==
-                                                                        200) {
-                                                                      var hapuswishlistJson =
-                                                                          json.decode(
-                                                                              hapuswishlist.body);
-                                                                      if (hapuswishlistJson[
-                                                                              'status'] ==
-                                                                          'aktif') {
-                                                                        setState(() {
-                                                                      isLoadingfollow = false;
-                                                                      cekfollowX = '1';
-                                                                    });
-                                                                      } else if (hapuswishlistJson[
-                                                                              'status'] ==
-                                                                          'nonaktif') {
-                                                                        setState(() {
-                                                                      isLoadingfollow = false;
-                                                                      cekfollowX = '0';
-                                                                    });
-                                                                      }
-                                                                    } else {
-                                                                      print(hapuswishlist
-                                                                          .body);
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                              setState(() {
-                                                                      isLoadingfollow = false;
-                                                                    });
-                                                                    }
-                                                                  } on TimeoutException catch (_) {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Timed out, Try again");
-                                                                                setState(() {
-                                                                      isLoadingfollow = false;
-                                                                    });
-                                                                  } catch (e) {
-                                                                    setState(() {
-                                                                      isLoadingfollow = false;
-                                                                    });
-                                                                    print(e);
-                                                                    
-                                                                  }
-                                                                },
+            widget.iduser == userId
+                ? Container()
+                : isError == true
+                    ? Container()
+                    : ButtonTheme(
+                        minWidth: 0, //wraps child's width
+                        height: 0,
+                        buttonColor: Colors.white,
+                        child: FlatButton(
+                          padding: EdgeInsets.only(right: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              isLoadingfollow == true
+                                  ? Container(
+                                      width: 25.0,
+                                      height: 25.0,
+                                      child: CircularProgressIndicator(
+                                          valueColor:
+                                              new AlwaysStoppedAnimation<Color>(
+                                                  Colors.white)),
+                                    )
+                                  : Icon(
+                                      cekfollowX == '0'
+                                          ? Icons.check
+                                          : Icons.close,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                              isLoadingfollow == true
+                                  ? Container()
+                                  : Padding(
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: Text(
+                                          cekfollowX == '0'
+                                              ? 'Ikuti Sekarang'
+                                              : 'Batal Mengikuti',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          )),
+                                    ),
+                            ],
                           ),
+                          color: Colors.transparent,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          onPressed: isLoadingfollow == true
+                              ? null
+                              : () async {
+                                  try {
+                                    setState(() {
+                                      isLoadingfollow = true;
+                                    });
+                                    final hapuswishlist = await http.post(
+                                        url('api/followorganizer'),
+                                        headers: requestHeaders,
+                                        body: {
+                                          'organizer': widget.iduser,
+                                        });
+
+                                    if (hapuswishlist.statusCode == 200) {
+                                      var hapuswishlistJson =
+                                          json.decode(hapuswishlist.body);
+                                      if (hapuswishlistJson['status'] ==
+                                          'aktif') {
+                                        setState(() {
+                                          isLoadingfollow = false;
+                                          cekfollowX = '1';
+                                        });
+                                      } else if (hapuswishlistJson['status'] ==
+                                          'nonaktif') {
+                                        setState(() {
+                                          isLoadingfollow = false;
+                                          cekfollowX = '0';
+                                        });
+                                      }
+                                    } else {
+                                      print(hapuswishlist.body);
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "Request failed with status: ${hapuswishlist.statusCode}");
+                                      setState(() {
+                                        isLoadingfollow = false;
+                                      });
+                                    }
+                                  } on TimeoutException catch (_) {
+                                    Fluttertoast.showToast(
+                                        msg: "Timed out, Try again");
+                                    setState(() {
+                                      isLoadingfollow = false;
+                                    });
+                                  } catch (e) {
+                                    setState(() {
+                                      isLoadingfollow = false;
+                                    });
+                                    print(e);
+                                  }
+                                },
+                        ),
                       ),
           ],
           iconTheme: IconThemeData(
@@ -428,521 +434,264 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           ),
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         ),
-        body:
-        isLoading == true ?
-        Center(
-          child: CircularProgressIndicator(),
-        )
-        : isError == true ?
-        Center(
-          child:GestureDetector(
-            onTap: () async{
-              eventOrganizeGet();
-            },
-            child:Container(
-              padding: EdgeInsets.all(5.0),
-              child:Icon(
-              Icons.refresh,
-              color: Colors.blueAccent,
-              size: 25
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:BorderRadius.only(
-                  topLeft : Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomLeft : Radius.circular(20.0),
-                  bottomRight : Radius.circular(20.0)
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
-                  ),
-                ]
+        body: isLoading == true
+            ? Center(
+                child: CircularProgressIndicator(),
               )
-            ) 
-          )
-        ):
-         SafeArea(
-          child: Stack(
-            children: <Widget>[
-              RefreshIndicator(
-                onRefresh: () async {
-                  eventOrganizeGet();
-                },
-                child: ListView(
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          height: 200.0,
-                          padding: EdgeInsets.only(left: 40.0, right: 40.0),
-                          color: Color.fromRGBO(41, 30, 47, 1),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 0.0),
-                            child: Container(
-                                width: 80.0,
-                                height: 80.0,
-                                decoration: new BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2.0,
+            : isError == true
+                ? Center(
+                    child: GestureDetector(
+                        onTap: () async {
+                          eventOrganizeGet();
+                        },
+                        child: Container(
+                            padding: EdgeInsets.all(5.0),
+                            child: Icon(Icons.refresh,
+                                color: Colors.blueAccent, size: 25),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
+                                    bottomLeft: Radius.circular(20.0),
+                                    bottomRight: Radius.circular(20.0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                    offset: Offset(
+                                        0, 1), // changes position of shadow
                                   ),
-                                  shape: BoxShape.circle,
-                                  image: new DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: AssetImage(
-                                      'images/imgavatar.png',
+                                ]))))
+                : SafeArea(
+                    child: Stack(
+                      children: <Widget>[
+                        RefreshIndicator(
+                          onRefresh: () async {
+                            eventOrganizeGet();
+                          },
+                          child: ListView(
+                            children: <Widget>[
+                              Stack(
+                                children: <Widget>[
+                                  Container(
+                                    height: 200.0,
+                                    padding: EdgeInsets.only(
+                                        left: 40.0, right: 40.0),
+                                    color: Color.fromRGBO(41, 30, 47, 1),
+                                  ),
+                                  Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 0.0),
+                                      child: Container(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          decoration: new BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2.0,
+                                            ),
+                                            shape: BoxShape.circle,
+                                            image: new DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: AssetImage(
+                                                'images/imgavatar.png',
+                                              ),
+                                            ),
+                                          )),
                                     ),
                                   ),
-                                )),
-                          ),
-                        ),
-                        
-                        Padding(
-                          padding: const EdgeInsets.only(top: 100.0),
-                          child: Center(
-                            child: Text(
-                              namaOrganizerX,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        ),
-                        
-                        Center(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: 20.0, right: 20.0, top: 150.0),
-                                color: Colors.white,
-                                width: double.infinity,
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.all(0),
-                                child: Card(
-                                  margin: EdgeInsets.all(0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 4,
-                                        child: Container(
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 100.0),
+                                    child: Center(
+                                      child: Text(
+                                        namaOrganizerX,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
                                           margin: EdgeInsets.only(
-                                              top: 5.0, bottom: 5.0),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  right: BorderSide(
-                                            color: Color.fromRGBO(41, 30, 47, 1),
-                                            width: 1.0,
-                                          ))),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Container(
-                                                alignment: Alignment.center,
-                                                padding: const EdgeInsets.only(
-                                                    left: 5.0, right: 5.0),
-                                                height: 80.0,
-                                                child: Text(
-                                                  'Sedang Berlangsung',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      height: 1.5,
-                                                      color: Colors.black87),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 20.0, bottom: 20.0),
-                                                child: Text(
-                                                  eventberlangsungX,
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(41, 30, 47, 1),
-                                                      fontSize: 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 4,
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              top: 5.0, bottom: 5.0),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  right: BorderSide(
-                                            color: Color.fromRGBO(41, 30, 47, 1),
-                                            width: 1.0,
-                                          ))),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Container(
-                                                alignment: Alignment.center,
-                                                padding: const EdgeInsets.only(
-                                                    left: 5.0, right: 5.0),
-                                                height: 80.0,
-                                                child: Text(
-                                                  'Akan Datang',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      height: 1.5,
-                                                      color: Colors.black87),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 20.0, bottom: 20.0),
-                                                child: Text(
-                                                  eventakandatangX,
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(41, 30, 47, 1),
-                                                      fontSize: 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 4,
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Container(
-                                                alignment: Alignment.center,
-                                                padding: const EdgeInsets.only(
-                                                    left: 5.0, right: 5.0),
-                                                height: 80.0,
-                                                child: Text(
-                                                  'Sudah Selesai',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      height: 1.5,
-                                                      color: Colors.black87),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 20.0, bottom: 20.0),
-                                                child: Text(
-                                                  eventselesaiX,
-                                                  style: TextStyle(
-                                                      color: Color.fromRGBO(41, 30, 47, 1),
-                                                      fontSize: 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          top: 30.0, right: 15.0, left: 15.0, bottom: 20.0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ))),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                              flex: 4,
-                              child: InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    getNowfilter = 'berlangsung';
-                                  });
-                                  filtereventOrganizeGet();
-                                },
-                                child: Container(
-                                  height: 60.0,
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: getNowfilter == 'berlangsung'
-                                        ? Color.fromRGBO(41, 30, 47, 1)
-                                        : Colors.transparent,
-                                    width: 1.0,
-                                  ))),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, bottom: 10.0),
-                                        child: Text(
-                                          'Sedang Berlangsung',
-                                          style: TextStyle(
-                                              color:
-                                                  getNowfilter == 'berlangsung'
-                                                      ? Color.fromRGBO(41, 30, 47, 1)
-                                                      : Colors.grey,
-                                                    fontWeight: getNowfilter == 'berlangsung'? FontWeight.w500 : FontWeight.w400),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                          Expanded(
-                              flex: 4,
-                              child: InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    getNowfilter = 'akan datang';
-                                  });
-                                  filtereventOrganizeGet();
-                                },
-                                child: Container(
-                                  height: 60.0,
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: getNowfilter == 'akan datang'
-                                        ? Color.fromRGBO(41, 30, 47, 1)
-                                        : Colors.transparent,
-                                    width: 1.0,
-                                  ))),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, bottom: 10.0),
-                                        child: Text(
-                                          'Akan Datang',
-                                          style: TextStyle(
-                                              color:
-                                                  getNowfilter == 'akan datang'
-                                                      ? Color.fromRGBO(41, 30, 47, 1)
-                                                      : Colors.grey,
-                                                      fontWeight: getNowfilter == 'akan datang'? FontWeight.w500 : FontWeight.w400),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                          Expanded(
-                              flex: 4,
-                              child: InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    getNowfilter = 'selesai';
-                                  });
-                                  filtereventOrganizeGet();
-                                },
-                                child: Container(
-                                  height: 60.0,
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: getNowfilter == 'selesai'
-                                        ? Color.fromRGBO(41, 30, 47, 1)
-                                        : Colors.transparent,
-                                    width: 1.0,
-                                  ))),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10.0, bottom: 10.0),
-                                        child: Text(
-                                          'Sudah Selesai',
-                                          style: TextStyle(
-                                              color: getNowfilter == 'selesai'
-                                                  ? Color.fromRGBO(41, 30, 47, 1)
-                                                  : Colors.grey,
-                                              fontWeight: getNowfilter == 'selesai'? FontWeight.w500 : FontWeight.w400),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                    isFilter == true
-                        ? Center(child: CircularProgressIndicator())
-                        :
-                        isErrorfilter == true ?
-                        Center(
-          child:GestureDetector(
-            onTap: () async{
-              filtereventOrganizeGet();
-            },
-            child:Container(
-              padding: EdgeInsets.all(5.0),
-              child:Icon(
-              Icons.refresh,
-              color: Colors.blueAccent,
-              size: 25
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:BorderRadius.only(
-                  topLeft : Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomLeft : Radius.circular(20.0),
-                  bottomRight : Radius.circular(20.0)
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
-                  ),
-                ]
-              )
-            ) 
-          )
-        ): Container(
-                            margin: EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: listItemFollowing
-                                  .map(
-                                    (EventOrganizer item) => InkWell(
-                                        child: Container(
-                                            child: Card(
-                                      elevation: 1,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
+                                              left: 20.0,
+                                              right: 20.0,
+                                              top: 150.0),
+                                          color: Colors.white,
+                                          width: double.infinity,
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.all(0),
+                                          child: Card(
+                                            margin: EdgeInsets.all(0),
                                             child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
-                                                  flex: 5,
+                                                  flex: 4,
                                                   child: Container(
-                                                      width: 80.0,
-                                                      height: 80.0,
-                                                      decoration:
-                                                          new BoxDecoration(
-                                                        borderRadius: new BorderRadius
-                                                                .only(
-                                                            topLeft: const Radius
-                                                                .circular(5.0),
-                                                            topRight: const Radius
-                                                                .circular(5.0),
-                                                            bottomLeft:
-                                                                const Radius
-                                                                        .circular(
-                                                                    5.0),
-                                                            bottomRight:
-                                                                const Radius
-                                                                        .circular(
-                                                                    5.0)),
-                                                        image:
-                                                            new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: AssetImage(
-                                                            'images/bg-header.jpg',
-                                                          ),
-                                                        ),
-                                                      )),
-                                                ),
-                                                Expanded(
-                                                  flex: 7,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 15.0,
-                                                            right: 5.0),
+                                                    margin: EdgeInsets.only(
+                                                        top: 5.0, bottom: 5.0),
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            right: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          41, 30, 47, 1),
+                                                      width: 1.0,
+                                                    ))),
                                                     child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .start,
+                                                              .center,
                                                       children: <Widget>[
-                                                        Text(
-                                                          '${item.waktuawal} - ${item.waktuakhir}',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.blue,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        Padding(
+                                                        Container(
+                                                          alignment:
+                                                              Alignment.center,
                                                           padding:
                                                               const EdgeInsets
                                                                       .only(
-                                                                  top: 5.0),
+                                                                  left: 5.0,
+                                                                  right: 5.0),
+                                                          height: 80.0,
                                                           child: Text(
-                                                              item.title ==
-                                                                          null ||
-                                                                      item.title ==
-                                                                          ''
-                                                                  ? 'Event Tidak Diketahui'
-                                                                  : item.title,
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 16,
-                                                              )),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 10.0),
-                                                          child: Text(
-                                                            item.alamat ==
-                                                                        null ||
-                                                                    item.alamat ==
-                                                                        ''
-                                                                ? 'Alamat Tidak Diketahui'
-                                                                : item.alamat,
+                                                            'Sedang Berlangsung',
+                                                            textAlign: TextAlign
+                                                                .center,
                                                             style: TextStyle(
+                                                                height: 1.5,
                                                                 color: Colors
-                                                                    .grey),
+                                                                    .black87),
                                                           ),
-                                                        )
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 20.0,
+                                                                  bottom: 20.0),
+                                                          child: Text(
+                                                            eventberlangsungX,
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        41,
+                                                                        30,
+                                                                        47,
+                                                                        1),
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 5.0, bottom: 5.0),
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            right: BorderSide(
+                                                      color: Color.fromRGBO(
+                                                          41, 30, 47, 1),
+                                                      width: 1.0,
+                                                    ))),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 5.0,
+                                                                  right: 5.0),
+                                                          height: 80.0,
+                                                          child: Text(
+                                                            'Akan Datang',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                height: 1.5,
+                                                                color: Colors
+                                                                    .black87),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 20.0,
+                                                                  bottom: 20.0),
+                                                          child: Text(
+                                                            eventakandatangX,
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        41,
+                                                                        30,
+                                                                        47,
+                                                                        1),
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 5.0,
+                                                                  right: 5.0),
+                                                          height: 80.0,
+                                                          child: Text(
+                                                            'Sudah Selesai',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                height: 1.5,
+                                                                color: Colors
+                                                                    .black87),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 20.0,
+                                                                  bottom: 20.0),
+                                                          child: Text(
+                                                            eventselesaiX,
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        41,
+                                                                        30,
+                                                                        47,
+                                                                        1),
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -950,334 +699,558 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                               ],
                                             ),
                                           ),
-                                          item.idcreator == userId ? Container():
-                                          Column(children: <Widget>[
-                                            
-                                            Container(
-                                                padding: EdgeInsets.only(
-                                                    left: 10.0, right: 10.0),
-                                                child: Divider()),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10.0,
-                                                  right: 10.0,
-                                                  bottom: 10.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Container(
-                                                      decoration:
-                                                          new BoxDecoration(
-                                                        color: item.statusdaftar ==
-                                                                null
-                                                            ? Colors.grey
-                                                            : item.statusdaftar == 'P'
-                                                                ? Colors.orange
-                                                                : item.statusdaftar ==
-                                                                        'C'
-                                                                    ? Colors.red
-                                                                    : item.statusdaftar ==
-                                                                            'A'
-                                                                        ? Colors
-                                                                            .green
-                                                                        : Colors
-                                                                            .blue,
-                                                        borderRadius: new BorderRadius
-                                                                .only(
-                                                            topLeft: const Radius
-                                                                .circular(5.0),
-                                                            topRight: const Radius
-                                                                .circular(5.0),
-                                                            bottomLeft:
-                                                                const Radius
-                                                                        .circular(
-                                                                    5.0),
-                                                            bottomRight:
-                                                                const Radius
-                                                                        .circular(
-                                                                    5.0)),
-                                                      ),
-                                                      padding:
-                                                          EdgeInsets.all(5.0),
-                                                      width: 120.0,
-                                                      child: Text(
-                                                        item.statusdaftar ==
-                                                                null
-                                                            ? 'Belum Terdaftar'
-                                                            : item.statusdaftar ==
-                                                                        'P' &&
-                                                                    item.posisi ==
-                                                                        '3'
-                                                                ? 'Proses Daftar'
-                                                                : item.statusdaftar ==
-                                                                            'C' &&
-                                                                        item.posisi ==
-                                                                            '3'
-                                                                    ? 'Pendaftaran Ditolak'
-                                                                    : item.statusdaftar ==
-                                                                                'A' &&
-                                                                            item.posisi ==
-                                                                                '3'
-                                                                        ? 'Sudah Terdaftar'
-                                                                        : item.statusdaftar == 'P' && item.posisi == '2'
-                                                                            ? 'Proses Daftar Admin'
-                                                                            : item.statusdaftar == 'C' && item.posisi == '2'
-                                                                                ? 'Tolak Pendaftaran Admin'
-                                                                                : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      )),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 0),
-                                                    child: ButtonTheme(
-                                                      minWidth:
-                                                          0, //wraps child's width
-                                                      height: 0,
-                                                      child: FlatButton(
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Icon(
-                                                              Icons.favorite,
-                                                              color: item
-                                                                              .wishlist ==
-                                                                          null ||
-                                                                      item.wishlist ==
-                                                                          'null' ||
-                                                                      item.wishlist ==
-                                                                          '0'
-                                                                  ? Colors.grey
-                                                                  : Colors.pink,
-                                                              size: 18,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        color: Colors.white,
-                                                        materialTapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap,
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 15,
-                                                                right: 15.0),
-                                                        onPressed: () async {
-                                                          try {
-                                                            final hapuswishlist =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/actionwishlist'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'event':
-                                                                      item.id,
-                                                                });
-
-                                                            if (hapuswishlist
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var hapuswishlistJson =
-                                                                  json.decode(
-                                                                      hapuswishlist
-                                                                          .body);
-                                                              if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'tambah') {
-                                                                setState(() {
-                                                                  item.wishlist =
-                                                                      item.id;
-                                                                });
-                                                              } else if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'hapus') {
-                                                                setState(() {
-                                                                  item.wishlist =
-                                                                      null;
-                                                                });
-                                                              }
-                                                            } else {
-                                                              print(
-                                                                  hapuswishlist
-                                                                      .body);
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                          } catch (e) {
-                                                            print(e);
-                                                          }
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ])
-                                        ],
-                                      ),
-                                    )),
-                                    onTap: () async {
-                                        switch (item
-                                            .statusdaftar) {
-                                          case 'P':
-                                            if (item
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: true,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (item
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WaitingEvent(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: true,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
-                                          case 'C':
-                                            if (item
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: false,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (item
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: false,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
-                                          case 'A':
-                                            if (item
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: true,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (item
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SuccesRegisteredEvent(
-                                                      id: int.parse(
-                                                          item
-                                                              .id),
-                                                      selfEvent: true,
-                                                      creatorId:
-                                                          item
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
-                                          default:
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RegisterEvents(
-                                                    id: int.parse(
-                                                        item
-                                                            .id),
-                                                    
-                                                    selfEvent: widget.iduser == userId ? true : false,
-                                                    dataUser: dataUser,
-                                                    creatorId:
-                                                        item
-                                                            .idcreator,
-                                                  ),
-                                                ));
-                                            break;
-                                        }
-                                      }),
+                                        ),
+                                      ],
+                                    ),
                                   )
-                                  .toList(),
-                            ),
+                                ],
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    top: 30.0,
+                                    right: 15.0,
+                                    left: 15.0,
+                                    bottom: 20.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ))),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                        flex: 4,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            setState(() {
+                                              getNowfilter = 'berlangsung';
+                                            });
+                                            filtereventOrganizeGet();
+                                          },
+                                          child: Container(
+                                            height: 60.0,
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                              color:
+                                                  getNowfilter == 'berlangsung'
+                                                      ? Color.fromRGBO(
+                                                          41, 30, 47, 1)
+                                                      : Colors.transparent,
+                                              width: 1.0,
+                                            ))),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0,
+                                                          bottom: 10.0),
+                                                  child: Text(
+                                                    'Sedang Berlangsung',
+                                                    style: TextStyle(
+                                                        color: getNowfilter ==
+                                                                'berlangsung'
+                                                            ? Color.fromRGBO(
+                                                                41, 30, 47, 1)
+                                                            : Colors.grey,
+                                                        fontWeight:
+                                                            getNowfilter ==
+                                                                    'berlangsung'
+                                                                ? FontWeight
+                                                                    .w500
+                                                                : FontWeight
+                                                                    .w400),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                    Expanded(
+                                        flex: 4,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            setState(() {
+                                              getNowfilter = 'akan datang';
+                                            });
+                                            filtereventOrganizeGet();
+                                          },
+                                          child: Container(
+                                            height: 60.0,
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                              color:
+                                                  getNowfilter == 'akan datang'
+                                                      ? Color.fromRGBO(
+                                                          41, 30, 47, 1)
+                                                      : Colors.transparent,
+                                              width: 1.0,
+                                            ))),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0,
+                                                          bottom: 10.0),
+                                                  child: Text(
+                                                    'Akan Datang',
+                                                    style: TextStyle(
+                                                        color: getNowfilter ==
+                                                                'akan datang'
+                                                            ? Color.fromRGBO(
+                                                                41, 30, 47, 1)
+                                                            : Colors.grey,
+                                                        fontWeight:
+                                                            getNowfilter ==
+                                                                    'akan datang'
+                                                                ? FontWeight
+                                                                    .w500
+                                                                : FontWeight
+                                                                    .w400),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                    Expanded(
+                                        flex: 4,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            setState(() {
+                                              getNowfilter = 'selesai';
+                                            });
+                                            filtereventOrganizeGet();
+                                          },
+                                          child: Container(
+                                            height: 60.0,
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                              color: getNowfilter == 'selesai'
+                                                  ? Color.fromRGBO(
+                                                      41, 30, 47, 1)
+                                                  : Colors.transparent,
+                                              width: 1.0,
+                                            ))),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10.0,
+                                                          bottom: 10.0),
+                                                  child: Text(
+                                                    'Sudah Selesai',
+                                                    style: TextStyle(
+                                                        color: getNowfilter ==
+                                                                'selesai'
+                                                            ? Color.fromRGBO(
+                                                                41, 30, 47, 1)
+                                                            : Colors.grey,
+                                                        fontWeight:
+                                                            getNowfilter ==
+                                                                    'selesai'
+                                                                ? FontWeight
+                                                                    .w500
+                                                                : FontWeight
+                                                                    .w400),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              isFilter == true
+                                  ? Center(child: CircularProgressIndicator())
+                                  : isErrorfilter == true
+                                      ? Center(
+                                          child: GestureDetector(
+                                              onTap: () async {
+                                                filtereventOrganizeGet();
+                                              },
+                                              child: Container(
+                                                  padding: EdgeInsets.all(5.0),
+                                                  child: Icon(Icons.refresh,
+                                                      color: Colors.blueAccent,
+                                                      size: 25),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomLeft: Radius
+                                                                  .circular(
+                                                                      20.0),
+                                                              bottomRight: Radius
+                                                                  .circular(
+                                                                      20.0)),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 1,
+                                                          offset: Offset(0,
+                                                              1), // changes position of shadow
+                                                        ),
+                                                      ]))))
+                                      : Container(
+                                          margin: EdgeInsets.only(
+                                            top: 10.0,
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: listItemFollowing
+                                                .map(
+                                                  (EventOrganizer item) =>
+                                                      InkWell(
+                                                          child: Container(
+                                                              child: Card(
+                                                            elevation: 1,
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          10.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Expanded(
+                                                                        flex: 5,
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              80.0,
+                                                                          width:
+                                                                              80.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: item.image != null || item.image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 7,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 15.0,
+                                                                              right: 5.0),
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Text(
+                                                                                '${item.waktuawal} - ${item.waktuakhir}',
+                                                                                style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(top: 5.0),
+                                                                                child: Text(item.title == null || item.title == '' ? 'Event Tidak Diketahui' : item.title,
+                                                                                    style: TextStyle(
+                                                                                      color: Colors.black,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      fontSize: 16,
+                                                                                    ),
+                                                                                    overflow:TextOverflow.ellipsis,
+                                                                                    maxLines: 2,
+                                                                                    softWrap:true,),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(top: 10.0),
+                                                                                child: Text(
+                                                                                  item.creatorName == null || item.creatorName == '' ? 'Organizer Tidak Diketahui' : item.creatorName,
+                                                                                  style: TextStyle(color: Colors.grey),
+                                                                                  overflow:TextOverflow.ellipsis,
+                                                                                  softWrap:true,
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                item.idcreator ==
+                                                                        userId
+                                                                    ? Container()
+                                                                    : Column(
+                                                                        children: <
+                                                                            Widget>[
+                                                                            Container(
+                                                                                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                                child: Divider()),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: <Widget>[
+                                                                                  Container(
+                                                                                      decoration: new BoxDecoration(
+                                                                                        color: item.statusdaftar == null ? Colors.grey : item.statusdaftar == 'P' ? Colors.orange : item.statusdaftar == 'C' ? Colors.red : item.statusdaftar == 'A' ? Colors.green : Colors.blue,
+                                                                                        borderRadius: new BorderRadius.only(topLeft: const Radius.circular(5.0), topRight: const Radius.circular(5.0), bottomLeft: const Radius.circular(5.0), bottomRight: const Radius.circular(5.0)),
+                                                                                      ),
+                                                                                      padding: EdgeInsets.all(5.0),
+                                                                                      width: 120.0,
+                                                                                      child: Text(
+                                                                                        item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                        style: TextStyle(
+                                                                                          color: Colors.white,
+                                                                                          fontSize: 12,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                        textAlign: TextAlign.center,
+                                                                                      )),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(right: 0),
+                                                                                    child: ButtonTheme(
+                                                                                      minWidth: 0, //wraps child's width
+                                                                                      height: 0,
+                                                                                      child: FlatButton(
+                                                                                        child: Row(
+                                                                                          children: <Widget>[
+                                                                                            Icon(
+                                                                                              Icons.favorite,
+                                                                                              color: item.wishlist == null || item.wishlist == 'null' || item.wishlist == '0' ? Colors.grey : Colors.pink,
+                                                                                              size: 18,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                        color: Colors.white,
+                                                                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                        padding: EdgeInsets.only(left: 15, right: 15.0),
+                                                                                        onPressed: () async {
+                                                                                          try {
+                                                                                            final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
+                                                                                              'event': item.id,
+                                                                                            });
+
+                                                                                            if (hapuswishlist.statusCode == 200) {
+                                                                                              var hapuswishlistJson = json.decode(hapuswishlist.body);
+                                                                                              if (hapuswishlistJson['status'] == 'tambah') {
+                                                                                                setState(() {
+                                                                                                  item.wishlist = item.id;
+                                                                                                });
+                                                                                              } else if (hapuswishlistJson['status'] == 'hapus') {
+                                                                                                setState(() {
+                                                                                                  item.wishlist = null;
+                                                                                                });
+                                                                                              }
+                                                                                            } else {
+                                                                                              print(hapuswishlist.body);
+                                                                                              Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                            }
+                                                                                          } on TimeoutException catch (_) {
+                                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                                          } catch (e) {
+                                                                                            print(e);
+                                                                                          }
+                                                                                        },
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ])
+                                                              ],
+                                                            ),
+                                                          )),
+                                                          onTap: () async {
+                                                            switch (item
+                                                                .statusdaftar) {
+                                                              case 'P':
+                                                                if (item.posisi ==
+                                                                    '2') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                RegisterEvents(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              true,
+                                                                          dataUser:
+                                                                              dataUser,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else if (item
+                                                                        .posisi ==
+                                                                    '3') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                WaitingEvent(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              true,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else {}
+                                                                break;
+                                                              case 'C':
+                                                                if (item.posisi ==
+                                                                    '2') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                RegisterEvents(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              false,
+                                                                          dataUser:
+                                                                              dataUser,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else if (item
+                                                                        .posisi ==
+                                                                    '3') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                RegisterEvents(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              false,
+                                                                          dataUser:
+                                                                              dataUser,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else {}
+                                                                break;
+                                                              case 'A':
+                                                                if (item.posisi ==
+                                                                    '2') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                RegisterEvents(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              true,
+                                                                          dataUser:
+                                                                              dataUser,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else if (item
+                                                                        .posisi ==
+                                                                    '3') {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                SuccesRegisteredEvent(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              true,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                                } else {}
+                                                                break;
+                                                              default:
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              RegisterEvents(
+                                                                        id: int.parse(
+                                                                            item.id),
+                                                                        selfEvent: widget.iduser ==
+                                                                                userId
+                                                                            ? true
+                                                                            : false,
+                                                                        dataUser:
+                                                                            dataUser,
+                                                                        creatorId:
+                                                                            item.idcreator,
+                                                                      ),
+                                                                    ));
+                                                                break;
+                                                            }
+                                                          }),
+                                                )
+                                                .toList(),
+                                          ),
+                                        ),
+                            ],
                           ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+                        ),
+                      ],
+                    ),
+                  ));
   }
 }
