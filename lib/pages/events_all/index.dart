@@ -508,24 +508,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: double.infinity,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(('Cari Event Berdasarkan Kategori').toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
                 margin: EdgeInsets.only(left: 10.0, bottom: 0),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -689,7 +671,11 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                     fontWeight:
                                                                         FontWeight.w500,
                                                                     fontSize: 16,
-                                                                  )),
+                                                                  ),
+                                                                  overflow:TextOverflow.ellipsis,
+                                                                  softWrap:true,
+                                                                  maxLines: 2
+                                                                  ),           
                                                         ),
                                                         Padding(
                                                           padding: const EdgeInsets.only(

@@ -68,10 +68,12 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     int manyPage;
     bool _isLoadingPagination = false;
     bool _isPageDisconnect = false;
+    String userId;
 
   @override
   void initState() {
     _searchQuery.text = '';
+    getUser();
     listDoneEvent();
     pageScroll.addListener((){
       if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
@@ -82,10 +84,20 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     super.initState();
   }
 
+    getUser() async {
+
+      var session = new DataStore();
+      var id = await session.getDataString('id');
+
+      setState((){
+        userId = id;
+      });
+
+    }
+
     _getPage(String type, String query) async {
 
     print('_getPage()');
-
       if(delay){
         return false;
       }else{
@@ -136,12 +148,61 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
       if(mounted){
 
+
         for (var i in rawData['eventfollow']) {
           
+          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
           DateTime waktuawal = DateTime.parse(i['ev_time_start']);
           DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
           String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
           String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          Color color;
+          String status;
+
+        if(dif.inSeconds <= 0){
+
+        status = 'Event Selesai';
+        color = Color.fromRGBO(255, 191, 128,1);
+
+        }else if(i['ep_position'] != 2){
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Ditolak';
+              color = Colors.red;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          case 'A':
+              status = 'Sudah Terdaftar';
+              color = Colors.green;
+              break;
+          default:
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          }
+
+        }else{
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          default:
+            status = 'Admin / Co-Host';
+            color = Colors.green;
+            break;
+          }
+
+        }
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
@@ -153,10 +214,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
+            follow: i['fo_status'] == null ? "N":i['fo_status'],
             statusdaftar: i['ep_status'],
+            creatorName: i['us_name'],
+            color:color,
+            status: status == null ? "Memuat":status,
             posisi: i['ep_position'].toString(),
           );
-
           listItemFollowing.add(followX);
         }
 
@@ -261,9 +325,10 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
     setState(() {
       isLoading = true;
-      filterX = 'all';
       page = 1;
+      delay = false;
     });
+
     try {
       final followevent = await http.post(
         url('api/getfollowingevent/$page'),
@@ -281,10 +346,58 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         listItemFollowing = [];
         for (var i in followevents) {
           
+          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
           DateTime waktuawal = DateTime.parse(i['ev_time_start']);
           DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
           String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
           String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          Color color;
+          String status;
+
+        if(dif.inSeconds <= 0){
+
+        status = 'Event Selesai';
+        color = Color.fromRGBO(255, 191, 128,1);
+
+        }else if(i['ep_position'] != 2){
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Ditolak';
+              color = Colors.red;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          case 'A':
+              status = 'Sudah Terdaftar';
+              color = Colors.green;
+              break;
+          default:
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          }
+
+        }else{
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          default:
+            status = 'Admin / Co-Host';
+            color = Colors.green;
+            break;
+          }
+
+        }
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
@@ -299,6 +412,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             follow: i['fo_status'] == null ? "N":i['fo_status'],
             statusdaftar: i['ep_status'],
             creatorName: i['us_name'],
+            color:color,
+            status: status == null ? "Memuat":status,
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -351,6 +466,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     setState(() {
       isFilter = true;
       page = 1;
+      delay = false;
     });
     try {
       final followevent = await http.post(
@@ -362,25 +478,79 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
       if (followevent.statusCode == 200) {
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['eventfollow'];
-
+        manyPage = eventfollowingJson['num_page'];
+        
         listItemFollowing = [];
         for (var i in followevents) {
-
+          
+          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
           DateTime waktuawal = DateTime.parse(i['ev_time_start']);
           DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd-mm-y').format(waktuawal);
-          String timeend = DateFormat('dd-mm-y').format(waktuakhir);
+          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
+          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          Color color;
+          String status;
+
+        if(dif.inSeconds <= 0){
+
+        status = 'Event Selesai';
+        color = Color.fromRGBO(255, 191, 128,1);
+
+        }else if(i['ep_position'] != 2){
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Ditolak';
+              color = Colors.red;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          case 'A':
+              status = 'Sudah Terdaftar';
+              color = Colors.green;
+              break;
+          default:
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          }
+
+        }else{
+
+          switch(i['ep_status']){
+          case 'C':
+              status = 'Belum Terdaftar';
+              color = Colors.grey;
+              break;
+          case 'P':
+              status = 'Proses';
+              color = Colors.orange;
+              break;
+          default:
+            status = 'Admin / Co-Host';
+            color = Colors.green;
+            break;
+          }
+
+        }
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
+            idcreator: i['ev_create_user'].toString(),
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: timestart.toString(),
-            waktuakhir: timeend.toString(),
-            fullday: i['ev_allday'],
-            alamat: i['ev_address'],
+            waktuawal: timestart,
+            waktuakhir: timeend,
+            fullday: i['ev_allday'].toString(),
+            alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
+            follow: i['fo_status'] == null ? "N":i['fo_status'],
             statusdaftar: i['ep_status'],
+            creatorName: i['us_name'],
+            color:color,
+            status: status == null ? "Memuat":status,
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -529,25 +699,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                 onRefresh: () => listDoneEvent(),
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10.0, right: 10.0, top: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                                ('Cari Event Berdasarkan Kategori')
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
                     Container(
                       padding: EdgeInsets.only(top: 10, left: 5, bottom: 5.0),
                       height: 50.0,
@@ -713,6 +864,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                             ? 'Unknown Event'
                                                                             : listItemFollowing[index]
                                                                                 .title,
+                                                                        overflow:TextOverflow.ellipsis,
+                                                                        softWrap:true,
+                                                                        maxLines: 2,
                                                                         style:
                                                                             TextStyle(
                                                                           color:
@@ -793,22 +947,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                           Container(
                                                               decoration:
                                                                   new BoxDecoration(
-                                                                color: listItemFollowing[index]
-                                                                            .statusdaftar ==
-                                                                        null
-                                                                    ? Colors
-                                                                        .grey
-                                                                    : listItemFollowing[index].statusdaftar ==
-                                                                            'P'
-                                                                        ? Colors
-                                                                            .orange
-                                                                        : listItemFollowing[index].statusdaftar ==
-                                                                                'C'
-                                                                            ? Colors
-                                                                                .red
-                                                                            : listItemFollowing[index].statusdaftar == 'A'
-                                                                                ? Colors.green
-                                                                                : Colors.blue,
+                                                                color: listItemFollowing[index].color,
                                                                 borderRadius: new BorderRadius
                                                                         .only(
                                                                     topLeft:
@@ -828,21 +967,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                   EdgeInsets
                                                                       .all(5.0),
                                                               width: 120.0,
-                                                              child: Text(
-                                                                listItemFollowing[index]
-                                                                            .statusdaftar ==
-                                                                        null
-                                                                    ? 'Belum Terdaftar'
-                                                                    : listItemFollowing[index].statusdaftar ==
-                                                                                'P' &&
-                                                                            listItemFollowing[index].posisi ==
-                                                                                '3'
-                                                                        ? 'Proses Daftar'
-                                                                        : listItemFollowing[index].statusdaftar == 'C' && listItemFollowing[index].posisi == '3'
-                                                                            ? 'Pendaftaran Ditolak'
-                                                                            : listItemFollowing[index].statusdaftar == 'A' && listItemFollowing[index].posisi == '3'
-                                                                                ? 'Sudah Terdaftar'
-                                                                                : listItemFollowing[index].statusdaftar == 'P' && listItemFollowing[index].posisi == '2' ? 'Proses Daftar Admin' : listItemFollowing[index].statusdaftar == 'C' && listItemFollowing[index].posisi == '2' ? 'Tolak Pendaftaran Admin' : listItemFollowing[index].statusdaftar == 'A' && listItemFollowing[index].posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                              child: Text(listItemFollowing[index].status,
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -960,135 +1085,222 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             ],
                                           )),
                                       onTap: () async {
-                                        switch (listItemFollowing[index]
-                                            .statusdaftar) {
-                                          case 'P':
-                                            if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
+                                        switch (listItemFollowing[index].status) {
+                                          case 'Event Selesai':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: true,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                        id: int.parse(listItemFollowing[index].id),
+                                                        creatorId:listItemFollowing[index].idcreator,
+                                                        dataUser:dataUser,
+                                                        selfEvent: true
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Belum Terdaftar':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WaitingEvent(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: true,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
-                                          case 'C':
-                                            if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                        id: int.parse(listItemFollowing[index].id),
+                                                        creatorId:listItemFollowing[index].idcreator,
+                                                        dataUser:dataUser,
+                                                        selfEvent: listItemFollowing[index].idcreator == userId ? true:false
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Proses':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: false,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
+                                                    builder: (context){
+                                                     return WaitingEvent(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Sudah Terdaftar':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: false,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
-                                          case 'A':
-                                            if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '2') {
-                                              Navigator.push(
+                                                    builder: (context){
+                                                     return SuccesRegisteredEvent(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Ditolak':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RegisterEvents(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: true,
-                                                      dataUser: dataUser,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else if (listItemFollowing[index]
-                                                    .posisi ==
-                                                '3') {
-                                              Navigator.push(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: false,
+                                                          dataUser: dataUser,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Admin / Co-Host':
+                                               return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SuccesRegisteredEvent(
-                                                      id: int.parse(
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .id),
-                                                      selfEvent: true,
-                                                      creatorId:
-                                                          listItemFollowing[
-                                                                  index]
-                                                              .idcreator,
-                                                    ),
-                                                  ));
-                                            } else {}
-                                            break;
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          dataUser: dataUser,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          // case 'P':
+                                          //   if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '2') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               RegisterEvents(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: true,
+                                          //             dataUser: dataUser,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '3') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               WaitingEvent(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: true,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else {}
+                                          //   break;
+                                          // case 'C':
+                                          //   if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '2') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               RegisterEvents(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: false,
+                                          //             dataUser: dataUser,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '3') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               RegisterEvents(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: false,
+                                          //             dataUser: dataUser,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else {}
+                                          //   break;
+                                          // case 'A':
+                                          //   if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '2') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               RegisterEvents(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: true,
+                                          //             dataUser: dataUser,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else if (listItemFollowing[index]
+                                          //           .posisi ==
+                                          //       '3') {
+                                          //     Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //           builder: (context) =>
+                                          //               SuccesRegisteredEvent(
+                                          //             id: int.parse(
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .id),
+                                          //             selfEvent: true,
+                                          //             creatorId:
+                                          //                 listItemFollowing[
+                                          //                         index]
+                                          //                     .idcreator,
+                                          //           ),
+                                          //         ));
+                                          //   } else {}
+                                          //   break;
                                           default:
                                             Navigator.push(
                                                 context,
