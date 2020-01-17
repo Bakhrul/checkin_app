@@ -18,6 +18,7 @@ String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 var datepicker;
+bool isUpdate;
 void showInSnackBar(String value) {
   _scaffoldKeyeditcheckin.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -57,6 +58,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
     firstdate = FocusNode();
     lastdate = FocusNode();
     getHeaderHTTP();
+    isUpdate = false;
     _namacheckinController.text = widget.namacheckin;
     _kodecheckinController.text = widget.kodecheckin;
     print(widget.namacheckin);
@@ -72,6 +74,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
         : widget.timeend;
     super.initState();
   }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -90,17 +93,29 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
     if (_namacheckinController.text == null ||
         _namacheckinController.text == '') {
       Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
+      setState(() {
+        isUpdate = false;
+      });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
       Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
+      setState(() {
+        isUpdate = false;
+      });
     } else if (_tanggalawal == 'kosong' ||
         _tanggalawal == '' ||
         _tanggalawal == null) {
       Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
+      setState(() {
+        isUpdate = false;
+      });
     } else if (_tanggalakhir == 'kosong' ||
         _tanggalakhir == '' ||
         _tanggalakhir == null) {
       Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
+      setState(() {
+        isUpdate = false;
+      });
     } else {
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
@@ -120,8 +135,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
               widget.timestart == null ||
               widget.timestart == ''
           ? null
-          : DateFormat('dd-MM-y HH:mm:ss')
-              .format(DateTime.parse(_tanggalawal));
+          : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal));
       formSerialize['time_end'] = widget.timeend == 'kosong' ||
               widget.timeend == null ||
               widget.timeend == ''
@@ -149,22 +163,41 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
             Fluttertoast.showToast(msg: "Berhasil Update Data Checkin");
+            setState(() {
+              isUpdate = false;
+            });
             Navigator.pop(context);
             Navigator.pop(context);
-            Navigator.pushReplacement(
+            Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ManageCheckin(event: widget.event)));
+          } else if (responseJson['status'] == 'keywordsudahdigunakan') {
+            setState(() {
+              isUpdate = false;
+            });
+            Fluttertoast.showToast(
+                msg:
+                    "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
           }
           print('response decoded $responseJson');
         } else {
           print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Update Checkin, Silahkan Coba Kembali");
+          setState(() {
+            isUpdate = false;
+          });
         }
       } on TimeoutException catch (_) {
         Fluttertoast.showToast(msg: "Timed out, Try again");
+        setState(() {
+          isUpdate = false;
+        });
       } catch (e) {
+        setState(() {
+          isUpdate = false;
+        });
         print(e);
       }
     }
@@ -229,7 +262,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                     final date = await showDatePicker(
                         context: context,
                         firstDate: DateTime.now(),
-                        initialDate:DateTime.now(),
+                        initialDate: DateTime.now(),
                         lastDate: DateTime(2100));
                     if (date != null) {
                       final time = await showTimePicker(
@@ -265,7 +298,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                                 widget.timeend == '' ||
                                 widget.timeend == null
                             ? null
-                            : DateTime.parse(widget.timestart),
+                            : DateTime.parse(widget.timeend),
                         readOnly: true,
                         format: format,
                         focusNode: lastdate,
@@ -273,7 +306,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                           final date = await showDatePicker(
                               context: context,
                               firstDate: DateTime.now(),
-                              initialDate:DateTime.now(),
+                              initialDate: DateTime.now(),
                               lastDate: DateTime(2100));
                           if (date != null) {
                             final time = await showTimePicker(
@@ -314,39 +347,29 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                   child: RaisedButton(
                     color: Color.fromRGBO(41, 30, 47, 1),
                     textColor: Colors.white,
-                    disabledColor: Colors.green[400],
+                    disabledColor: Color.fromRGBO(41, 30, 47, 0.7),
                     disabledTextColor: Colors.white,
                     padding: EdgeInsets.all(15.0),
                     splashColor: Colors.blueAccent,
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: Text('Peringatan!'),
-                          content: Text(
-                              'Apakah Anda Ingin Mengubah Data Checkin Anda? '),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Tidak'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            FlatButton(
-                              textColor: Colors.green,
-                              child: Text('Ya'),
-                              onPressed: () async {
-                                _updatecheckin();
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Update data checkin',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
+                    onPressed: isUpdate == true
+                        ? null
+                        : () async {
+                            setState(() {
+                              isUpdate = true;
+                            });
+                            _updatecheckin();
+                          },
+                    child: isUpdate == true
+                        ? Container(
+                            width: 25.0,
+                            height: 25.0,
+                            child: CircularProgressIndicator(
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.white)))
+                        : Text(
+                            'Update data checkin',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
                   ),
                 ),
               ),

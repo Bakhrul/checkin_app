@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'model.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
+bool isSame;
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
@@ -31,6 +32,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     firstdate = FocusNode();
     lastdate = FocusNode();
+    isSame = false;
     _namacheckinController.text = '';
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
@@ -74,6 +76,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 title: TextField(
                   controller: _namacheckinController,
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'Nama Checkin',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
@@ -86,6 +89,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 ),
                 title: DateTimeField(
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Waktu Awal dimulainya checkin',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
                   ),
@@ -124,6 +128,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       ),
                       title: DateTimeField(
                         decoration: InputDecoration(
+                          border: InputBorder.none,
                           hintText: 'Waktu Akhir Checkin',
                           hintStyle:
                               TextStyle(fontSize: 13, color: Colors.black),
@@ -164,6 +169,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 title: TextField(
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
@@ -174,28 +180,50 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          if(_namacheckinController.text == null || _namacheckinController.text == ''){
+          if (_namacheckinController.text == null ||
+              _namacheckinController.text == '') {
             Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
-          }else if(_kodecheckinController.text == null || _kodecheckinController.text == ''){
+          } else if (_kodecheckinController.text == null ||
+              _kodecheckinController.text == '') {
             Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
-          }else if(_tanggalawal == 'kosong'){
-            Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
-          }else if(_tanggalakhir == 'kosong'){
-            Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
-          }else{
-            setState(() {
-            ListCheckinAdd notax = ListCheckinAdd(
-              nama: _namacheckinController.text,
-              keyword: _kodecheckinController.text,
-              timestart: _tanggalawal == 'kosong' ? null : DateFormat('dd-MM-y HH:mm:ss').format(DateTime.parse(_tanggalawal)),
-              timeend: _tanggalakhir == 'kosong' ? null : DateFormat('dd-MM-y HH:mm:ss')
-                  .format(DateTime.parse(_tanggalakhir)),
-            );
-            listcheckinAdd.add(notax);
-          });
-          Navigator.pop(context);
+          } else if (_tanggalawal == 'kosong') {
+            Fluttertoast.showToast(
+                msg: "Waktu Awal Checkin Tidak Boleh Kosong");
+          } else if (_tanggalakhir == 'kosong') {
+            Fluttertoast.showToast(
+                msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
+          } else {
+            for (int i = 0; i < listcheckinAdd.length; i++) {
+              if (_kodecheckinController.text == listcheckinAdd[i].keyword) {
+                setState(() {
+                  isSame = true;
+                });
+              }
+            }
+            if (isSame == true) {
+              Fluttertoast.showToast(msg: 'Kode Unik Checkin Tidak Boleh Sama');
+              setState(() {
+                isSame = false;
+              });
+            } else {
+              setState(() {
+                ListCheckinAdd notax = ListCheckinAdd(
+                  nama: _namacheckinController.text,
+                  keyword: _kodecheckinController.text,
+                  timestart: _tanggalawal == 'kosong'
+                      ? null
+                      : DateFormat('dd-MM-y HH:mm:ss')
+                          .format(DateTime.parse(_tanggalawal)),
+                  timeend: _tanggalakhir == 'kosong'
+                      ? null
+                      : DateFormat('dd-MM-y HH:mm:ss')
+                          .format(DateTime.parse(_tanggalakhir)),
+                );
+                listcheckinAdd.add(notax);
+              });
+              Navigator.pop(context);
+            }
           }
-          
         },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
