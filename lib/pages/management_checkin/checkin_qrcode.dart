@@ -50,9 +50,9 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
     sudahCheckin = false;
     tidakadaCheckin = false;
     resultX = widget.idcheckin;
+    getHeaderHTTP();
     _debouncer.run(() {
       checkinsekarang();
-      getHeaderHTTP();
     });
   }
 
@@ -68,7 +68,6 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
-    return checkinsekarang();
   }
 
   void checkinsekarang() async {

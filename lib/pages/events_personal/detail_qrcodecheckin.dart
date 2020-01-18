@@ -75,14 +75,14 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           File('${tes.path}/${widget.kodecheckin}.png').delete();
           final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
           await file.writeAsBytes(pngBytes);
-          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder EventZhee - Media - nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          Fluttertoast.showToast(msg: "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
           setState(() {
             sudahada = false;
           });
           }else{
           final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
           await file.writeAsBytes(pngBytes);
-          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder EventZhee - Media - nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          Fluttertoast.showToast(msg: "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
           }
       }
       
