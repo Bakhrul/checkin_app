@@ -83,6 +83,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     );
     super.initState();
   }
+   void dispose() {
+    super.dispose();
+  }
 
     getUser() async {
 
@@ -791,6 +794,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                           const EdgeInsets.all(
                                                               10.0),
                                                       child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: <Widget>[
                                                           Expanded(
                                                             flex: 5,

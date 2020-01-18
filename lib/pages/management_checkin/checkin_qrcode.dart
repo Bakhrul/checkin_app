@@ -5,8 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'checkin_success.dart';
 import 'dart:async';
-import 'scan_qrcode_checkin.dart';
-import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/dashboard.dart';
@@ -48,12 +46,12 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
   @override
   void initState() {
     super.initState();
-    isCheckin = true;
     gagalCheckin = false;
     sudahCheckin = false;
     tidakadaCheckin = false;
     resultX = widget.idcheckin;
     _debouncer.run(() {
+      checkinsekarang();
       getHeaderHTTP();
     });
   }
@@ -70,10 +68,11 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
-    checkinsekarang();
+    return checkinsekarang();
   }
 
   void checkinsekarang() async {
+    print('jaln');
     setState(() {
       isCheckin = true;
     });
@@ -152,10 +151,6 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -260,7 +260,7 @@ class _DashboardState extends State<Dashboard> {
   // wish
         for (var i in wishs) {
           Event wish = Event(
-            // id: '${i['ev_id']}',
+            id: i['id'],
             title: i['title'],
             dateEvent: i['date_event'],
             subtitle: i['subtitle'],
@@ -274,7 +274,7 @@ class _DashboardState extends State<Dashboard> {
         // admin
         for (var i in admins) {
           Event admin = Event(
-            // id: '${i['ev_id']}',
+            id: i['id'],
             title: i['title'],
             dateEvent: i['date_event'],
             subtitle: i['subtitle'],
@@ -289,7 +289,7 @@ class _DashboardState extends State<Dashboard> {
         // creator
         for (var i in creators) {
           Event creator = Event(
-            // id: '${i['ev_id']}',
+            id: i['id'],
             title: i['title'],
             dateEvent: i['date_event'],
             subtitle: i['subtitle'],
@@ -303,7 +303,7 @@ class _DashboardState extends State<Dashboard> {
         // followers
         for (var i in followers) {
           Event follower = Event(
-            // id: '${i['ev_id']}',
+            id: i['id'],
             title: i['title'],
             dateEvent: i['date_event'],
             subtitle: i['subtitle'],
