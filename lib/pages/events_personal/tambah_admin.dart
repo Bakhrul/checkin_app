@@ -8,7 +8,7 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
-bool isLoading, isError, isFilter, isErrorfilter;
+bool isLoading, isError, isFilter, isErrorfilter, isCreate;
 TextEditingController _filtercontroller = new TextEditingController();
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
@@ -46,6 +46,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
+    isCreate = false;
     isFilter = false;
     isErrorfilter = false;
     getHeaderHTTP();
@@ -280,6 +281,19 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                   padding: const EdgeInsets.only(top: 0.0),
                   child: Column(
                     children: <Widget>[
+                      isCreate == true
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                    width: 15.0,
+                                    margin:
+                                        EdgeInsets.only(top: 10.0, right: 15.0),
+                                    height: 15.0,
+                                    child: CircularProgressIndicator()),
+                              ],
+                            )
+                          : Container(),
                       Container(
                         margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
                         decoration: BoxDecoration(
@@ -417,133 +431,116 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                                               .email),
                                                 )),
                                               ),
-                                              onTap: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title: Text('Peringatan!'),
-                                                    content: Text(
-                                                        'Apakah Anda Ingin Menambahkan Admin ini ke Event Anda? '),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        child: Text('Tidak'),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      ),
-                                                      FlatButton(
-                                                        textColor: Colors.green,
-                                                        child: Text('Ya'),
-                                                        onPressed: () async {
-                                                          try {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Mohon Tunggu Sebentar");
-                                                            final addadminevent =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/addadmin_event'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'event': widget
-                                                                      .event,
-                                                                  'peserta':
-                                                                      listUserItem[
-                                                                              index]
-                                                                          .id,
-                                                                });
+                                              onTap: isCreate == true
+                                                  ? null
+                                                  : () async {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            AlertDialog(
+                                                          title: Text(
+                                                              'Peringatan!'),
+                                                          content: Text(
+                                                              'Apakah Anda Ingin Menambahkan Member ini ke Admin Event Anda? '),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                              child:
+                                                                  Text('Tidak'),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              textColor:
+                                                                  Colors.green,
+                                                              child: Text('Ya'),
+                                                              onPressed:
+                                                                  isCreate ==
+                                                                          true
+                                                                      ? null
+                                                                      : () async {
+                                                                          setState(
+                                                                              () {
+                                                                            isCreate =
+                                                                                true;
+                                                                          });
+                                                                          try {
+                                                                            Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+                                                                            final addadminevent =
+                                                                                await http.post(url('api/addadmin_event'), headers: requestHeaders, body: {
+                                                                              'event': widget.event,
+                                                                              'peserta': listUserItem[index].id,
+                                                                            });
 
-                                                            if (addadminevent
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var addadmineventJson =
-                                                                  json.decode(
-                                                                      addadminevent
-                                                                          .body);
-                                                              if (addadmineventJson[
-                                                                      'status'] ==
-                                                                  'success') {
-                                                                    Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Berhasil !");
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.pushReplacement(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                ManageAdmin(event: widget.event)));
-                                                              } else if (addadmineventJson[
-                                                                      'status'] ==
-                                                                  'sudah ada') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini sudah terdaftar menjadi admin event anda");
-                                                              }else if (addadmineventJson[
-                                                                      'status'] ==
-                                                                  'creator') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini merupakan pembuat event");
-                                                              } else if (addadmineventJson[
-                                                                      'status'] ==
-                                                                  'pending') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Permintaan menjadi admin menunggu persetujuan");
-                                                                      Navigator.pop(context);
-                                                              } else if(addadmineventJson['status'] == 'sudahpeserta'){
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini sudah menjadi peserta event anda");
-                                                                            Navigator.pop(context);
-                                                              }else if(addadmineventJson['status'] == 'pendingpeserta'){
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
-                                                                            Navigator.pop(context);
-                                                              }else{
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Status tidak diketahui");
-                                                                            Navigator.pop(context);
-                                                              }
-                                                            } else {
-                                                              print(
-                                                                  addadminevent
-                                                                      .body);
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${addadminevent.statusCode}");
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                          } catch (e) {
-                                                            print(e);
-                                                          }
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
+                                                                            if (addadminevent.statusCode ==
+                                                                                200) {
+                                                                              var addadmineventJson = json.decode(addadminevent.body);
+                                                                              if (addadmineventJson['status'] == 'success') {
+                                                                                Fluttertoast.showToast(msg: "Berhasil !");
+                                                                                Navigator.pop(context);
+                                                                                Navigator.pop(context);
+                                                                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ManageAdmin(event: widget.event)));
+                                                                              } else if (addadmineventJson['status'] == 'sudah ada') {
+                                                                                Fluttertoast.showToast(msg: "Member ini sudah terdaftar menjadi admin event anda");
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                              } else if (addadmineventJson['status'] == 'creator') {
+                                                                                Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                              } else if (addadmineventJson['status'] == 'pending') {
+                                                                                Fluttertoast.showToast(msg: "Permintaan menjadi admin menunggu persetujuan");
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              } else if (addadmineventJson['status'] == 'sudahpeserta') {
+                                                                                Fluttertoast.showToast(msg: "Member ini sudah menjadi peserta event anda");
+                                                                                Navigator.pop(context);
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                              } else if (addadmineventJson['status'] == 'pendingpeserta') {
+                                                                                Fluttertoast.showToast(msg: "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
+                                                                                Navigator.pop(context);
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                              } else {
+                                                                                Fluttertoast.showToast(msg: "Status tidak diketahui");
+                                                                                Navigator.pop(context);
+                                                                                setState(() {
+                                                                                  isCreate = false;
+                                                                                });
+                                                                              }
+                                                                            } else {
+                                                                              print(addadminevent.body);
+                                                                              Fluttertoast.showToast(msg: "Request failed with status: ${addadminevent.statusCode}");
+                                                                              setState(() {
+                                                                                isCreate = false;
+                                                                              });
+                                                                            }
+                                                                          } on TimeoutException catch (_) {
+                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                            setState(() {
+                                                                              isCreate = false;
+                                                                            });
+                                                                          } catch (e) {
+                                                                            setState(() {
+                                                                              isCreate = false;
+                                                                            });
+                                                                            print(e);
+                                                                          }
+                                                                        },
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
                                             );
                                           },
                                         ),

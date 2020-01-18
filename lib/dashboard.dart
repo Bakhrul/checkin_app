@@ -4,11 +4,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
+import 'listdetail.dart';
 import 'model/event.dart';
 import 'pages/events_all/detail_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'pages/register_event/step_register_six.dart';
 import 'pages/register_event/step_register_three.dart';
+import 'pages/profile/profile_akun.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
@@ -61,6 +63,7 @@ class _DashboardState extends State<Dashboard> {
   var height;
   var futureheight;
   var pastheight, heightmyevent;
+  var wishCount;
   DataStore user;
   int page = 1;
   bool delay = false;
@@ -162,7 +165,47 @@ class _DashboardState extends State<Dashboard> {
     return eventList(1);
   }
 
+  Future<dynamic> _wish(String wish,eventId,index) async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
 
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    int newWish = wish == '1'? 0:1;
+
+    Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
+    try{
+
+      final ongoingevent = await http.post(
+          url('api/wish'),
+          headers: requestHeaders,
+          body:body
+      );
+
+      if (ongoingevent.statusCode == 200) {
+
+        setState((){
+          if(newWish != 1){
+            listWish[index].wish = '0';
+            listWish.remove(index);
+
+          }else{
+            listWish[index].wish = '1';
+          }
+        });
+
+      }
+
+    } on TimeoutException catch(_) {
+      Fluttertoast.showToast(msg : "Time out , please try again later");
+    } catch(e) {
+      print(e);
+    }
+
+  }
 
   Future<List<Event>> eventList(type) async {
     var storage = new DataStore();
@@ -203,13 +246,14 @@ class _DashboardState extends State<Dashboard> {
         //participant
         for (var i in participants) {
           Event participant = Event(
-            // id: '${i['ev_id']}',
+            id: i['id'],
             title: i['title'],
             dateEvent: i['date_event'],
             subtitle: i['subtitle'],
             location: i['location'],
             image: i['image'],
             userStatus: i['user_status'],
+            wish: i['wish'].toString(),
           );
           listParticipant.add(participant);
         }
@@ -223,6 +267,7 @@ class _DashboardState extends State<Dashboard> {
             location: i['location'],
             image: i['image'],
             userStatus: i['user_status'],
+            wish: i['wish'],
           );
           listWish.add(wish);
         }
@@ -236,6 +281,7 @@ class _DashboardState extends State<Dashboard> {
             location: i['location'],
             image: i['image'],
             userStatus: i['user_status'],
+            wish: i['wish'],
           );
           listAdmin.add(admin);
         }
@@ -264,6 +310,7 @@ class _DashboardState extends State<Dashboard> {
             location: i['location'],
             image: i['image'],
             userStatus: i['user_status'],
+            wish: i['wish'],
           );
           listFollower.add(follower);
         }
@@ -379,134 +426,144 @@ class _DashboardState extends State<Dashboard> {
         key: _scaffoldKeyDashboard,
         appBar: buildBar(context),
         drawer: Drawer(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                // Profil Drawer Here
-                UserAccountsDrawerHeader(
-                  // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
-                  accountName: Text(usernameprofile),
-                  accountEmail: Text(emailprofile),
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(41, 30, 47, 1),
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Text(
-                      "A",
-                      style: TextStyle(
-                        fontSize: 40.0,
+          child: GestureDetector(
+            onTap:(){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder:(context) => ProfileUser())
+              );
+            },
+            child: Container(
+            
+                child: Column(
+                
+                  children: <Widget>[
+                    // Profil Drawer Here
+                    UserAccountsDrawerHeader(
+                      // accountName: Text("Muhammad Bakhrul Bila Sakhil"),
+                      accountName: Text(usernameprofile),
+                      accountEmail: Text(emailprofile),
+                      decoration: BoxDecoration(
                         color: Color.fromRGBO(41, 30, 47, 1),
                       ),
-                    ),
-                  ),
-                ),
-                //  Menu Section Here
-                Expanded(
-                  child: Container(
-                    // color: Colors.red,
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
-                        ListTile(
-                          title: Text(
-                            'Cari Event',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          "A",
+                          style: TextStyle(
+                            fontSize: 40.0,
+                            color: Color.fromRGBO(41, 30, 47, 1),
                           ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/semua_event");
-                          },
                         ),
-                        ListTile(
-                          title: Text(
-                            'Event Anda',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/personal_event");
-                          },
-                        ),
-                        ListTile(
-                          title: Text(
-                            'Event Yang di Ikuti',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: 'Roboto',
-                              color: Color(0xff25282b),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, "/follow_event");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        width: 0.5,
-                        color: Colors.black54,
                       ),
                     ),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      'Logout',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontFamily: 'Roboto',
-                        color: Color(0xff25282b),
-                      ),
-                    ),
-                    trailing: Icon(Icons.exit_to_app),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: Text('Peringatan!'),
-                          content: Text('Apa anda yakin ingin logout?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                'Tidak',
-                                style: TextStyle(color: Colors.black54),
+                    //  Menu Section Here
+                    Expanded(
+                      child: Container(
+                        // color: Colors.red,
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(
+                                'Cari Event',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
+                              onTap: () {
+                                Navigator.pushNamed(context, "/semua_event");
                               },
                             ),
-                            FlatButton(
-                              child: Text(
-                                'Ya',
-                                style: TextStyle(color: Colors.cyan),
+                            ListTile(
+                              title: Text(
+                                'Event Saya',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
                               ),
-                              onPressed: () {
-                                removeSharedPrefs();
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                                Navigator.pushReplacementNamed(
-                                    context, "/login");
+                              onTap: () {
+                                Navigator.pushNamed(context, "/personal_event");
                               },
-                            )
+                            ),
+                            ListTile(
+                              title: Text(
+                                'Event Yang di Ikuti',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, "/follow_event");
+                              },
+                            ),
                           ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            width: 0.5,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontFamily: 'Roboto',
+                            color: Color(0xff25282b),
+                          ),
+                        ),
+                        trailing: Icon(Icons.exit_to_app),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text('Peringatan!'),
+                              content: Text('Apa anda yakin ingin logout?'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text(
+                                    'Tidak',
+                                    style: TextStyle(color: Colors.black54),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text(
+                                    'Ya',
+                                    style: TextStyle(color: Colors.cyan),
+                                  ),
+                                  onPressed: () {
+                                    removeSharedPrefs();
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacementNamed(
+                                        context, "/login");
+                                  },
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              )
           ),
         ),
         body: RefreshIndicator(
@@ -758,9 +815,11 @@ class _DashboardState extends State<Dashboard> {
                                                                               fit: BoxFit
                                                                                   .fill,
                                                                               image:
-                                                                              AssetImage(
-                                                                                'images/bg-header.jpg',
-                                                                              ),
+                                                                             item.image != null || item.image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
                                                                             ),
                                                                           )),
                                                                     Container(
@@ -890,20 +949,14 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                        "item.userStatus" == "P"
-                                                            ? WaitingEvent()
-                                                            : "item.userStatus" == "A"
-                                                            ? DashboardCheckin()
-                                                            : DashboardCheckin(
-                                                            idevent:
-                                                            "item.id.toString()"),
+                                                        RegisterEvents()
                                                       ));
                                                 },
                                               ),
                                             ),
                                         ).toList(),
                                           ),
-                                         listFollower.length >= 5 ? Container(
+                                         listFollower.length >= 115 ? Container(
                                             alignment: Alignment.center,
                                             child: InkWell(
                                               child: Container(
@@ -923,13 +976,7 @@ class _DashboardState extends State<Dashboard> {
                                                     context,
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                      "item.userStatus" == "P"
-                                                          ? WaitingEvent()
-                                                          : "item.userStatus" == "A"
-                                                          ? SuccesRegisteredEvent()
-                                                          : DashboardCheckin(
-                                                          idevent:
-                                                          "item.id.toString()"),
+                                                      DetailList()
                                                     ));
                                               },
                                             ),
@@ -998,7 +1045,7 @@ class _DashboardState extends State<Dashboard> {
                                     child:
                                     Row(
                                       children: <Widget>[
-                                        Row(children:  listWish.map((Event item ) =>
+                                        for(var x = 0; x < listWish.length; x++)
                                             Container(
                                               child: InkWell(
                                                 child: Container(
@@ -1021,34 +1068,24 @@ class _DashboardState extends State<Dashboard> {
                                                                 child: Column(
                                                                   children: <Widget>[
                                                                     Container(
-                                                                        height: 100,
-                                                                        width:250,
-                                                                        decoration:
-                                                                        new BoxDecoration(
-                                                                          borderRadius: new BorderRadius
-                                                                              .only(
-                                                                              topLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              topRight:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomRight:
-                                                                              const Radius.circular(
-                                                                                  5.0)),
-                                                                          image:
-                                                                          new DecorationImage(
-                                                                            fit: BoxFit
-                                                                                .fill,
-                                                                            image:
-                                                                            AssetImage(
-                                                                              'images/bg-header.jpg',
-                                                                            ),
-                                                                          ),
-                                                                        )),
+                                                                        height:
+                                                                              100.0,
+                                                                          width:
+                                                                              250.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: listWish[x].image != null || listWish[x].image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${listWish[x].image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),),
                                                                     Container(
                                                                       margin: EdgeInsets.only(top:10),
                                                                       child: Row(children: <Widget>[
@@ -1061,9 +1098,9 @@ class _DashboardState extends State<Dashboard> {
                                                                                   child: Column(
                                                                                     children: <Widget>[
 
-                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
+                                                                                      Text(DateFormat("dd").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("MMM").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
                                                                                     ],),
                                                                                 ))
                                                                         ),
@@ -1072,10 +1109,10 @@ class _DashboardState extends State<Dashboard> {
                                                                             child: Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: <Widget>[
-                                                                                Text("${item.title}",
+                                                                                Text(listWish[x].title,
                                                                                     style:TextStyle(fontWeight:FontWeight.bold),
                                                                                     maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
+                                                                                Text(listWish[x].location,style: TextStyle(color: Colors.grey  ),)
                                                                               ],)
                                                                         )
                                                                       ],),
@@ -1107,9 +1144,9 @@ class _DashboardState extends State<Dashboard> {
                                                                       EdgeInsets.all(
                                                                           2),
                                                                       child: _buildTextStatus(
-                                                                          item.userStatus),
+                                                                          listWish[x].userStatus),
                                                                     ),
-                                                                    item.userStatus !=
+                                                                    listWish[x].userStatus !=
                                                                         null
                                                                         ? Padding(
                                                                       padding: const EdgeInsets
@@ -1120,45 +1157,28 @@ class _DashboardState extends State<Dashboard> {
                                                                         minWidth:
                                                                         0, //wraps child's width
                                                                         height: 0,
-                                                                        child:
-                                                                        FlatButton(
-                                                                          child:
-                                                                          Row(
-                                                                            children: <
-                                                                                Widget>[
-                                                                              Icon(
-                                                                                Icons.favorite,
-                                                                                color: wishlisttwo == true
-                                                                                    ? Colors.pink
-                                                                                    : Colors.grey,
-                                                                                size:
-                                                                                18,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          materialTapTargetSize:
-                                                                          MaterialTapTargetSize
-                                                                              .shrinkWrap,
-                                                                          padding:
-                                                                          EdgeInsets.all(
-                                                                              5.0),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            setState(
-                                                                                    () {
-                                                                                  if (wishlisttwo ==
-                                                                                      true) {
-                                                                                    wishlisttwo =
-                                                                                    false;
-                                                                                  } else {
-                                                                                    wishlisttwo =
-                                                                                    true;
-                                                                                  }
-                                                                                });
-                                                                          },
-                                                                        ),
+                                                                         child: FlatButton(
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.favorite,
+                                                            color: listWish[x].wish == '1'
+                                                                ? Colors.pink
+                                                                : Colors.grey,
+                                                            size: 18,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      color: Colors.white,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      padding: EdgeInsets.all(5.0),
+                                                      onPressed:() async {
+                                                        _wish(listWish[x].wish,listWish[x].id,x);
+                                                      } 
+                                                    ),
+
                                                                       ),
                                                                     )
                                                                         : Text(""),
@@ -1176,19 +1196,12 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                        "item.userStatus" == "P"
-                                                            ? WaitingEvent()
-                                                            : "item.userStatus" == "A"
-                                                            ? DashboardCheckin()
-                                                            : DashboardCheckin(
-                                                            idevent:
-                                                            "item.id.toString()"),
+                                                        RegisterEvents()
                                                       ));
                                                 },
                                               ),
                                             ),
-                                        ).toList(),
-                                        ),
+                                        
                                         listWish.length >= 5 ? Container(
                                           alignment: Alignment.center,
                                           child: InkWell(
@@ -1285,7 +1298,8 @@ class _DashboardState extends State<Dashboard> {
                                     child:
                                     Row(
                                       children: <Widget>[
-                                        Row(children:  listParticipant.map((Event item ) =>
+                                        Row(children: listParticipant.map((Event item) =>  
+                                        
                                             Container(
                                               child: InkWell(
                                                 child: Container(
@@ -1307,35 +1321,25 @@ class _DashboardState extends State<Dashboard> {
                                                                     10.0),
                                                                 child: Column(
                                                                   children: <Widget>[
-                                                                    Container(
-                                                                        height: 100,
-                                                                        width:250,
-                                                                        decoration:
-                                                                        new BoxDecoration(
-                                                                          borderRadius: new BorderRadius
-                                                                              .only(
-                                                                              topLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              topRight:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomRight:
-                                                                              const Radius.circular(
-                                                                                  5.0)),
-                                                                          image:
-                                                                          new DecorationImage(
-                                                                            fit: BoxFit
-                                                                                .fill,
-                                                                            image:
-                                                                            AssetImage(
-                                                                              'images/bg-header.jpg',
-                                                                            ),
-                                                                          ),
-                                                                        )),
+                                                                   Container(
+                                                                        height:
+                                                                              100.0,
+                                                                          width:
+                                                                              250.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: item.image != null || item.image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),),
                                                                     Container(
                                                                       margin: EdgeInsets.only(top:10),
                                                                       child: Row(children: <Widget>[
@@ -1407,44 +1411,27 @@ class _DashboardState extends State<Dashboard> {
                                                                         minWidth:
                                                                         0, //wraps child's width
                                                                         height: 0,
-                                                                        child:
-                                                                        FlatButton(
-                                                                          child:
-                                                                          Row(
-                                                                            children: <
-                                                                                Widget>[
-                                                                              Icon(
-                                                                                Icons.favorite,
-                                                                                color: wishlisttwo == true
-                                                                                    ? Colors.pink
-                                                                                    : Colors.grey,
-                                                                                size:
-                                                                                18,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          materialTapTargetSize:
-                                                                          MaterialTapTargetSize
-                                                                              .shrinkWrap,
-                                                                          padding:
-                                                                          EdgeInsets.all(
-                                                                              5.0),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            setState(
-                                                                                    () {
-                                                                                  if (wishlisttwo ==
-                                                                                      true) {
-                                                                                    wishlisttwo =
-                                                                                    false;
-                                                                                  } else {
-                                                                                    wishlisttwo =
-                                                                                    true;
-                                                                                  }
-                                                                                });
-                                                                          },
+                                                                        child: FlatButton(
+                                                                            child: Row(
+                                                                              children: <Widget>[
+                                                                                // Icon(
+                                                                                //   Icons.favorite,
+                                                                                //   color: item.wish.toString() == '1'
+                                                                                //       ? Colors.pink
+                                                                                //       : Colors.grey,
+                                                                                //   size: 18,
+                                                                                // ),
+                                                                              ],
+                                                                            ),
+                                                                            color: Colors.white,
+                                                                            materialTapTargetSize:
+                                                                            MaterialTapTargetSize
+                                                                                .shrinkWrap,
+                                                                            padding: EdgeInsets.all(5.0),
+                                                                            onPressed:() async {
+                                                                              // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
+                                                                              
+                                                                            }
                                                                         ),
                                                                       ),
                                                                     )
@@ -1463,18 +1450,18 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                        "item.userStatus" == "P"
+                                                        item.userStatus == "P"
                                                             ? WaitingEvent()
-                                                            : "item.userStatus" == "A"
-                                                            ? DashboardCheckin()
+                                                            : item.userStatus == "A"
+                                                            ? SuccesRegisteredEvent()
                                                             : DashboardCheckin(
                                                             idevent:
-                                                            "item.id.toString()"),
+                                                            item.id.toString()),
                                                       ));
                                                 },
                                               ),
-                                            ),
-                                        ).toList(),
+                                            )
+                                        ).toList()
                                         ),
                                         listParticipant.length >= 5 ? Container(
                                           alignment: Alignment.center,
@@ -1594,34 +1581,24 @@ class _DashboardState extends State<Dashboard> {
                                                                 child: Column(
                                                                   children: <Widget>[
                                                                     Container(
-                                                                        height: 100,
-                                                                        width:250,
-                                                                        decoration:
-                                                                        new BoxDecoration(
-                                                                          borderRadius: new BorderRadius
-                                                                              .only(
-                                                                              topLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              topRight:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomRight:
-                                                                              const Radius.circular(
-                                                                                  5.0)),
-                                                                          image:
-                                                                          new DecorationImage(
-                                                                            fit: BoxFit
-                                                                                .fill,
-                                                                            image:
-                                                                            AssetImage(
-                                                                              'images/bg-header.jpg',
-                                                                            ),
-                                                                          ),
-                                                                        )),
+                                                                        height:
+                                                                              100.0,
+                                                                          width:
+                                                                              250.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: item.image != null || item.image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),),
                                                                     Container(
                                                                       margin: EdgeInsets.only(top:10),
                                                                       child: Row(children: <Widget>[
@@ -1699,14 +1676,14 @@ class _DashboardState extends State<Dashboard> {
                                                                           Row(
                                                                             children: <
                                                                                 Widget>[
-                                                                              Icon(
-                                                                                Icons.favorite,
-                                                                                color: wishlisttwo == true
-                                                                                    ? Colors.pink
-                                                                                    : Colors.grey,
-                                                                                size:
-                                                                                18,
-                                                                              ),
+                                                                              // Icon(
+                                                                              //   Icons.favorite,
+                                                                              //   color: wishlisttwo == true
+                                                                              //       ? Colors.pink
+                                                                              //       : Colors.grey,
+                                                                              //   size:
+                                                                              //   18,
+                                                                              // ),
                                                                             ],
                                                                           ),
                                                                           color: Colors
@@ -1749,13 +1726,13 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                        "item.userStatus" == "P"
+                                                        item.userStatus == "P"
                                                             ? WaitingEvent()
-                                                            : "item.userStatus" == "A"
-                                                            ? DashboardCheckin()
+                                                            : item.userStatus == "A"
+                                                            ? SuccesRegisteredEvent()
                                                             : DashboardCheckin(
                                                             idevent:
-                                                            "item.id.toString()"),
+                                                            item.id.toString()),
                                                       ));
                                                 },
                                               ),
@@ -1879,35 +1856,25 @@ class _DashboardState extends State<Dashboard> {
                                                                     10.0),
                                                                 child: Column(
                                                                   children: <Widget>[
-                                                                    Container(
-                                                                        height: 100,
-                                                                        width:250,
-                                                                        decoration:
-                                                                        new BoxDecoration(
-                                                                          borderRadius: new BorderRadius
-                                                                              .only(
-                                                                              topLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              topRight:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomLeft:
-                                                                              const Radius.circular(
-                                                                                  5.0),
-                                                                              bottomRight:
-                                                                              const Radius.circular(
-                                                                                  5.0)),
-                                                                          image:
-                                                                          new DecorationImage(
-                                                                            fit: BoxFit
-                                                                                .fill,
-                                                                            image:
-                                                                            AssetImage(
-                                                                              'images/bg-header.jpg',
-                                                                            ),
-                                                                          ),
-                                                                        )),
+                                                                     Container(
+                                                                        height:
+                                                                              100.0,
+                                                                          width:
+                                                                              250.0,
+                                                                          child:
+                                                                              FadeInImage.assetNetwork(
+                                                                            placeholder:
+                                                                                'images/noimage.jpg',
+                                                                            image: item.image != null || item.image != ''
+                                                                                ? url(
+                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                  )
+                                                                                : 'images/noimage.jpg',
+                                                                                
+                                                                            fit:
+                                                                                BoxFit.cover,
+
+                                                                          ),),
                                                                     Container(
                                                                       margin: EdgeInsets.only(top:10),
                                                                       child: Row(children: <Widget>[
@@ -1985,14 +1952,14 @@ class _DashboardState extends State<Dashboard> {
                                                                           Row(
                                                                             children: <
                                                                                 Widget>[
-                                                                              Icon(
-                                                                                Icons.favorite,
-                                                                                color: wishlisttwo == true
-                                                                                    ? Colors.pink
-                                                                                    : Colors.grey,
-                                                                                size:
-                                                                                18,
-                                                                              ),
+                                                                              // Icon(
+                                                                              //   Icons.favorite,
+                                                                              //   color: wishlisttwo == true
+                                                                              //       ? Colors.pink
+                                                                              //       : Colors.grey,
+                                                                              //   size:
+                                                                              //   18,
+                                                                              // ),
                                                                             ],
                                                                           ),
                                                                           color: Colors
@@ -2035,13 +2002,9 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                        "item.userStatus" == "P"
-                                                            ? WaitingEvent()
-                                                            : "item.userStatus" == "A"
-                                                            ? DashboardCheckin()
-                                                            : DashboardCheckin(
+                                                         DashboardCheckin(
                                                             idevent:
-                                                            "item.id.toString()"),
+                                                            item.id.toString()),
                                                       ));
                                                 },
                                               ),
@@ -2216,8 +2179,29 @@ class _DashboardState extends State<Dashboard> {
             ),
             textAlign: TextAlign.center,
           ));
-    } else {
+    }else if(status == "W"){
       return null;
+    } else {
+        return Container(
+          decoration: new BoxDecoration(
+            color: Colors.grey,
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(5.0),
+                topRight: const Radius.circular(5.0),
+                bottomLeft: const Radius.circular(5.0),
+                bottomRight: const Radius.circular(5.0)),
+          ),
+          padding: EdgeInsets.all(5.0),
+          width: 120.0,
+          child: Text(
+            'Belum Terdaftar ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ));
     }
   }
 

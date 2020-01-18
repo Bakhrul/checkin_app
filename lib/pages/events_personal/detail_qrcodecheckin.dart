@@ -2,19 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 GlobalKey globalKey = new GlobalKey();
 String _dataString;
 
+
+
 class DetailQrCheckin extends StatefulWidget {
-  DetailQrCheckin({Key key, this.title, this.event, this.checkin}) : super(key: key);
-  final String title, event, checkin;
+  DetailQrCheckin({Key key, this.title, this.event, this.namaEvent, this.checkin, this.kodecheckin}) : super(key: key);
+  final String title, event, checkin, kodecheckin, namaEvent;
   @override
   State<StatefulWidget> createState() {
     return _DetailQrCheckinState();
@@ -51,14 +55,39 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
 
   Future<void> _captureAndSharePng() async {
     try {
-      RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
-      var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.png').create();
-      await file.writeAsBytes(pngBytes);
+      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
+
+      if(permission != PermissionStatus.denied){
+         
+          Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      
+          RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
+          
+          var image = await boundary.toImage();
+          ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+          Uint8List pngBytes = byteData.buffer.asUint8List();
+
+          final tempDir = await getExternalStorageDirectory();
+          var tes = await new Directory('${tempDir.path}/download').create();
+          var sudahada = await File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').exists();          
+          if(sudahada == true){
+          File('${tes.path}/${widget.kodecheckin}.png').delete();
+          final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
+          await file.writeAsBytes(pngBytes);
+          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder download, nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          setState(() {
+            sudahada = false;
+          });
+          }else{
+          final file = await new File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').create();
+          await file.writeAsBytes(pngBytes);
+          Fluttertoast.showToast(msg: "Cari gambar QrCode pada folder download, nama file ${widget.namaEvent}-${widget.kodecheckin}.png");
+          }
+      }
+      
+      
+      
 
     } catch(e) {
       print(e.toString());
@@ -92,10 +121,15 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
             child:  Center(
               child: RepaintBoundary(
                 key: globalKey,
-                child: QrImage(
+                child: Container(
+                  width:  MediaQuery.of(context).size.width,
+                  height :  MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  child:QrImage(
                   data: _dataString,
                   size:  bodyHeight,
-                ),
+                 ),
+                )
               ),
             ),
           ),

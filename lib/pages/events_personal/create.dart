@@ -12,11 +12,14 @@ import 'dart:async';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:convert';
 import 'model.dart';
+import 'dart:io';
 import 'index.dart';
+import 'package:image_picker/image_picker.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String tokenType, accessToken;
 Map<String, dynamic> formSerialize;
+File _image;
 List<ListUserAdd> listUseradd = [];
 bool isCreate;
 List<ListCheckinAdd> listcheckinAdd = [];
@@ -46,6 +49,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+
   @override
   void initState() {
     _scaffoldKeycreateevent = GlobalKey<ScaffoldState>();
@@ -56,6 +60,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     firstdate = FocusNode();
     lastdate = FocusNode();
     _tanggalawalevent = null;
+    _image = null;
     _tanggalakhirevent = null;
     isCreate = false;
     listcheckinAdd = [];
@@ -64,6 +69,14 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     _namaeventController.text = '';
     _alamateventController.text = '';
     _deskripsieventController.text = '';
+  }
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
   }
 
   Future<void> getHeaderHTTP() async {
@@ -90,132 +103,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
   void _handleTabIndex() {
     setState(() {});
   }
-  void _tambahevent() async {
-    if (_namaeventController.text == null || _namaeventController.text == '') {
-      Fluttertoast.showToast(msg: "Nama Event Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
-    } else if (_deskripsieventController.text == null ||
-        _deskripsieventController.text == '') {
-      Fluttertoast.showToast(msg: "Deskripsi Event Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
-    } else if (_alamateventController.text == '' ||
-        _alamateventController.text == '') {
-      Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
-    } else if (_tanggalawalevent == null) {
-      Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
-    } else if (_tanggalakhirevent == null) {
-      Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
-    } else {
-      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-      formSerialize = Map<String, dynamic>();
-      formSerialize['title'] = null;
-      formSerialize['deskripsi'] = null;
-      formSerialize['lokasi'] = null;
-      formSerialize['time_start'] = null;
-      formSerialize['time_end'] = null;
-      formSerialize['kategori'] = List();
-      formSerialize['admin'] = List();
-      formSerialize['checkin'] = List();
-      formSerialize['keyword'] = List();
-      formSerialize['timeendcheckin'] = List();
-      formSerialize['timestartcheckin'] = List();
-      formSerialize['typecheckin'] = List();
-
-      formSerialize['title'] = _namaeventController.text;
-      formSerialize['deskripsi'] = _deskripsieventController.text;
-      formSerialize['lokasi'] = _alamateventController.text;
-      formSerialize['tanggalawalevent'] = _tanggalawalevent == null
-          ? null
-          : DateFormat('dd-MM-y HH:mm:ss')
-              .format(DateTime.parse(_tanggalawalevent));
-      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null
-          ? null
-          : DateFormat('dd-MM-y HH:mm:ss')
-              .format(DateTime.parse(_tanggalakhirevent));
-
-      for (int i = 0; i < listKategoriAdd.length; i++) {
-        formSerialize['kategori'].add(listKategoriAdd[i].id);
-      }
-
-      for (int i = 0; i < listUseradd.length; i++) {
-        formSerialize['admin'].add(listUseradd[i].id);
-      }
-
-      for (int i = 0; i < listcheckinAdd.length; i++) {
-        formSerialize['checkin'].add(listcheckinAdd[i].nama);
-        formSerialize['keyword'].add(listcheckinAdd[i].keyword);
-        formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
-        formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
-        formSerialize['typecheckin'].add('S');
-      }
-
-      print(formSerialize);
-
-      Map<String, dynamic> requestHeadersX = requestHeaders;
-
-      requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
-      try {
-        final response = await http.post(
-          url('api/createcheckin'),
-          headers: requestHeadersX,
-          body: {
-            'type_platform': 'android',
-            'data': jsonEncode(formSerialize),
-          },
-          encoding: Encoding.getByName("utf-8"),
-        );
-
-        if (response.statusCode == 200) {
-          dynamic responseJson = jsonDecode(response.body);
-          if (responseJson['status'] == 'success') {
-            setState(() {
-              isCreate = false;
-            });
-            Fluttertoast.showToast(msg: "Berhasil Membuat Event");
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ManajemenEventPersonal()));
-          }
-          print('response decoded $responseJson');
-        } else {
-          print('${response.body}');
-          Fluttertoast.showToast(
-              msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
-          setState(() {
-            isCreate = false;
-          });
-        }
-      } on TimeoutException catch (_) {
-        showInSnackBar('Timed out, Try again');
-        setState(() {
-          isCreate = false;
-        });
-      } catch (e) {
-        Fluttertoast.showToast(
-            msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
-        setState(() {
-          isCreate = false;
-        });
-        print(e);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +111,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-          title: Text('Buat Event Sekarang', style: TextStyle(fontSize: 14)),
+          title: Text('Buat Event Baru', style: TextStyle(fontSize: 14)),
           bottom: TabBar(
             controller: _tabController,
             tabs: [
@@ -241,37 +128,41 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                 color: Colors.white,
               ),
               tooltip: 'Simpan Data Event',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: Text('Peringatan!'),
-                    content: Text(
-                        'Apakah Anda Ingin Menyimpan Data Event Anda Sekarang? '),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Tidak'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      FlatButton(
-                        textColor: Colors.green,
-                        child:
-                            Text(isCreate == true ? 'Tunggu Sebentar' : 'Ya'),
-                        onPressed: isCreate == true
-                            ? null
-                            : () async {
-                                setState(() {
-                                  isCreate = true;
-                                });
-                                _tambahevent();
+              onPressed: isCreate == true
+                  ? null
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: Text('Peringatan!'),
+                          content: Text(
+                              'Apakah Anda Ingin Menyimpan Data Event Anda Sekarang? '),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Tidak'),
+                              onPressed: () {
+                                Navigator.pop(context);
                               },
-                      )
-                    ],
-                  ),
-                );
-              },
+                            ),
+                            FlatButton(
+                              textColor: Colors.green,
+                              child: Text(
+                                  isCreate == true ? 'Tunggu Sebentar' : 'Ya'),
+                              onPressed: isCreate == true
+                                  ? null
+                                  : () async {
+                                      Navigator.pop(context);
+                                      setState(() {
+                                        isCreate = true;
+                                      });
+
+                                      _tambahevent();
+                                    },
+                            )
+                          ],
+                        ),
+                      );
+                    },
             ),
           ],
         ), //
@@ -281,6 +172,71 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
             SingleChildScrollView(
               padding: const EdgeInsets.all(5.0),
               child: Column(children: <Widget>[
+                isCreate == true
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                              width: 20.0,
+                              margin: EdgeInsets.all(15.0),
+                              height: 20.0,
+                              child: CircularProgressIndicator()),
+                        ],
+                      )
+                    : Container(),
+                _image == null ?
+                Container():
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(right:5.0,bottom: 5.0,top: 10.0),
+                      width: 30.0,
+                      height: 30.0,
+                      child: FlatButton(
+                        textColor: Colors.white,
+                        padding: EdgeInsets.all(0),
+                        color: Colors.red,
+                        child: Icon(Icons.close,size: 14.0,),
+                        onPressed: () async{
+                          setState(() {
+                            _image = null;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Center(
+                  child: _image == null
+                      ? InkWell(
+                          onTap: getImage,
+                          child: Container(
+                              margin: EdgeInsets.only(left:5.0,right:5.0,bottom: 20.0,top:10.0),
+                              width: double.infinity,
+                              height: 250.0,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                  border: Border.all(
+                                width: 1.0,
+                                color: Colors.grey,
+                              )),
+                              child: Text('Tidak ada gambar yang dipilih.')),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: 250.0,
+                          margin: EdgeInsets.only(left:5.0,right:5.0,bottom: 20.0),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                            width: 1.0,
+                            color: Colors.grey,
+                          )),
+                          child: Image.file(_image),
+                        ),
+                ),
                 Card(
                     child: ListTile(
                   leading: Icon(
@@ -291,6 +247,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     controller: _namaeventController,
                     decoration: InputDecoration(
                         hintText: 'Nama Event / Acara',
+                        border: InputBorder.none,
                         hintStyle:
                             TextStyle(fontSize: 13, color: Colors.black)),
                   ),
@@ -303,6 +260,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                         ),
                         title: DateTimeField(
                           decoration: InputDecoration(
+                            border: InputBorder.none,
                             hintText: 'Tanggal Awal Event',
                             hintStyle:
                                 TextStyle(fontSize: 13, color: Colors.black),
@@ -342,6 +300,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                         ),
                         title: DateTimeField(
                           decoration: InputDecoration(
+                            border: InputBorder.none,
                             hintText: 'Tanggal Akhir Event',
                             hintStyle:
                                 TextStyle(fontSize: 13, color: Colors.black),
@@ -383,6 +342,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     controller: _deskripsieventController,
                     maxLines: 8,
                     decoration: InputDecoration(
+                      border: InputBorder.none,
                         hintText: 'Deskripsi Event',
                         hintStyle:
                             TextStyle(fontSize: 13, color: Colors.black)),
@@ -398,6 +358,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     controller: _alamateventController,
                     maxLines: 8,
                     decoration: InputDecoration(
+                      border: InputBorder.none,
                         hintText: 'Alamat Lengkap',
                         hintStyle:
                             TextStyle(fontSize: 13, color: Colors.black)),
@@ -409,6 +370,18 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
               padding: EdgeInsets.all(5.0),
               child: Column(
                 children: <Widget>[
+                  isCreate == true
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                                width: 20.0,
+                                margin: EdgeInsets.all(15.0),
+                                height: 20.0,
+                                child: CircularProgressIndicator()),
+                          ],
+                        )
+                      : Container(),
                   listKategoriAdd.length == 0
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -479,6 +452,18 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
               padding: EdgeInsets.all(5.0),
               child: Column(
                 children: <Widget>[
+                  isCreate == true
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                                width: 20.0,
+                                margin: EdgeInsets.all(15.0),
+                                height: 20.0,
+                                child: CircularProgressIndicator()),
+                          ],
+                        )
+                      : Container(),
                   listUseradd.length == 0
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -556,6 +541,18 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
               ),
               child: Column(
                 children: <Widget>[
+                  isCreate == true
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                                width: 20.0,
+                                margin: EdgeInsets.all(15.0),
+                                height: 20.0,
+                                child: CircularProgressIndicator()),
+                          ],
+                        )
+                      : Container(),
                   listcheckinAdd.length == 0
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -648,14 +645,16 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     if (_tabController.index == 1) {
       return FloatingActionButton(
           shape: StadiumBorder(),
-          onPressed: () async {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ManajemenCreateCategory(
-                      listKategoriadd: ListKategoriEventAdd),
-                ));
-          },
+          onPressed: isCreate == true
+              ? null
+              : () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManajemenCreateCategory(
+                            listKategoriadd: ListKategoriEventAdd),
+                      ));
+                },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           child: Icon(
             Icons.add,
@@ -664,14 +663,16 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     } else if (_tabController.index == 2) {
       return FloatingActionButton(
           shape: StadiumBorder(),
-          onPressed: () async {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ManajemeCreateAdmin(listUseradd: ListUserAdd),
-                ));
-          },
+          onPressed: isCreate == true
+              ? null
+              : () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ManajemeCreateAdmin(listUseradd: ListUserAdd),
+                      ));
+                },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           child: Icon(
             Icons.add,
@@ -680,13 +681,15 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     } else if (_tabController.index == 3) {
       return FloatingActionButton(
           shape: StadiumBorder(),
-          onPressed: () async {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ManajemeCreateCheckin(),
-                ));
-          },
+          onPressed: isCreate == true
+              ? null
+              : () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManajemeCreateCheckin(),
+                      ));
+                },
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           child: Icon(
             Icons.add,
@@ -696,5 +699,130 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     return null;
   }
 
-  
+  void _tambahevent() async {
+    if (_namaeventController.text == null || _namaeventController.text == '') {
+      Fluttertoast.showToast(msg: "Nama Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_deskripsieventController.text == null ||
+        _deskripsieventController.text == '') {
+      Fluttertoast.showToast(msg: "Deskripsi Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_alamateventController.text == '' ||
+        _alamateventController.text == '') {
+      Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_tanggalawalevent == null) {
+      Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else if (_tanggalakhirevent == null) {
+      Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
+      setState(() {
+        isCreate = false;
+      });
+    } else {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      formSerialize = Map<String, dynamic>();
+      formSerialize['title'] = null;
+      formSerialize['deskripsi'] = null;
+      formSerialize['lokasi'] = null;
+      formSerialize['time_start'] = null;
+      formSerialize['time_end'] = null;
+      formSerialize['gambar'] = null;
+      formSerialize['kategori'] = List();
+      formSerialize['admin'] = List();
+      formSerialize['checkin'] = List();
+      formSerialize['keyword'] = List();
+      formSerialize['timeendcheckin'] = List();
+      formSerialize['timestartcheckin'] = List();
+      formSerialize['typecheckin'] = List();
+
+      formSerialize['title'] = _namaeventController.text;
+      formSerialize['deskripsi'] = _deskripsieventController.text;
+      formSerialize['lokasi'] = _alamateventController.text;
+      if (_image != null) {
+        formSerialize['gambar'] = base64Encode(_image.readAsBytesSync());
+      }
+      formSerialize['tanggalawalevent'] = _tanggalawalevent == null
+          ? null
+          : DateFormat('dd-MM-y HH:mm:ss')
+              .format(DateTime.parse(_tanggalawalevent));
+      formSerialize['tanggalakhirevent'] = _tanggalakhirevent == null
+          ? null
+          : DateFormat('dd-MM-y HH:mm:ss')
+              .format(DateTime.parse(_tanggalakhirevent));
+
+      for (int i = 0; i < listKategoriAdd.length; i++) {
+        formSerialize['kategori'].add(listKategoriAdd[i].id);
+      }
+
+      for (int i = 0; i < listUseradd.length; i++) {
+        formSerialize['admin'].add(listUseradd[i].id);
+      }
+
+      for (int i = 0; i < listcheckinAdd.length; i++) {
+        formSerialize['checkin'].add(listcheckinAdd[i].nama);
+        formSerialize['keyword'].add(listcheckinAdd[i].keyword);
+        formSerialize['timestartcheckin'].add(listcheckinAdd[i].timestart);
+        formSerialize['timeendcheckin'].add(listcheckinAdd[i].timeend);
+        formSerialize['typecheckin'].add('S');
+      }
+
+      print(formSerialize);
+
+      Map<String, dynamic> requestHeadersX = requestHeaders;
+
+      requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+      try {
+        final response = await http.post(
+          url('api/createcheckin'),
+          headers: requestHeadersX,
+          body: {
+            'type_platform': 'android',
+            'data': jsonEncode(formSerialize),
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+
+        if (response.statusCode == 200) {
+          dynamic responseJson = jsonDecode(response.body);
+          if (responseJson['status'] == 'success') {
+            Fluttertoast.showToast(msg: "Berhasil Membuat Event");
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManajemenEventPersonal()));
+          }
+          print('response decoded $responseJson');
+        } else {
+          print('${response.body}');
+          Fluttertoast.showToast(
+              msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+          setState(() {
+            isCreate = false;
+          });
+        }
+      } on TimeoutException catch (_) {
+        showInSnackBar('Timed out, Try again');
+        setState(() {
+          isCreate = false;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+        setState(() {
+          isCreate = false;
+        });
+        print(e);
+      }
+    }
+  }
 }

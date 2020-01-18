@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ListFollowingEvent {
    String id;
    String image;
@@ -10,6 +12,10 @@ class ListFollowingEvent {
    String idcreator;
    String statusdaftar;
    String posisi;
+   String follow;
+   String creatorName;
+   Color color;
+   String status;
 
   ListFollowingEvent(
       {this.id,
@@ -22,6 +28,10 @@ class ListFollowingEvent {
       this.wishlist,
       this.idcreator,
       this.statusdaftar,
+      this.follow,
+      this.status,
+      this.creatorName,
+      this.color,
       this.posisi});
 }
 
