@@ -18,7 +18,9 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
   String _captureText = 'Arahkan ke Kode Qr';
 
   postDataCheckin(data) async {
-    Navigator.pushReplacement(
+     _captureController.pause();
+    Navigator.pop(context);
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>

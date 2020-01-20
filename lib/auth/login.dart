@@ -469,13 +469,13 @@ class _LoginPageState extends State<LoginPage> {
                     height: 160.0,
                     child: Center(
                       child: Image.asset(
-                        "images/logo_alamraya.jpg",
+                        "images/logo.png",
                         height: 500.0,
                         width: 500.0,
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                
                   usernameField,
                   SizedBox(height: 15.0),
                   passwordField,
@@ -483,54 +483,83 @@ class _LoginPageState extends State<LoginPage> {
                     height: 15.0,
                   ),
                   loginButton,
+                  // Container(
+                  //   margin: EdgeInsets.only(top: 20.0),
+                  //   width: double.infinity,
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: <Widget>[
+                  //       Expanded(
+                  //         flex: 3,
+                  //         child: Container(
+                  //           decoration: BoxDecoration(
+                  //               border: BorderDirectional(
+                  //             bottom:
+                  //                 BorderSide(width: 1 / 2, color: Colors.grey),
+                  //           )),
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         flex: 6,
+                  //         child: Center(
+                  //           child: Text(
+                  //             'Login Dengan',
+                  //             textAlign: TextAlign.center,
+                  //             style: TextStyle(
+                  //                 fontFamily: 'Roboto',
+                  //                 color: Colors.grey,
+                  //                 fontWeight: FontWeight.w600,
+                  //                 fontSize: 12),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         flex: 3,
+                  //         child: Container(
+                  //           decoration: BoxDecoration(
+                  //               border: BorderDirectional(
+                  //             bottom:
+                  //                 BorderSide(width: 1 / 2, color: Colors.grey),
+                  //           )),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: 15.0,
+                  // ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: BorderDirectional(
-                              bottom:
-                                  BorderSide(width: 1 / 2, color: Colors.grey),
-                            )),
+                  padding: EdgeInsets.only(top:5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('Belum Memiliki Akun ?',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w500),),
+                      ButtonTheme(
+                      minWidth: 0.0,
+                      height: 0.0,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(5.0),
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Register()));
+                        },
+                        child: Text(
+                          'Daftar Sekarang',
+                          style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 102, 1),
                           ),
                         ),
-                        Expanded(
-                          flex: 6,
-                          child: Center(
-                            child: Text(
-                              'Login Dengan',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'Roboto',
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: BorderDirectional(
-                              bottom:
-                                  BorderSide(width: 1 / 2, color: Colors.grey),
-                            )),
-                          ),
-                        ),
-                      ],
+                        color: Colors.white,
+                      ),
                     ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  adsSection,
+                )
+                  // adsSection,
                 ],
               ),
             ),

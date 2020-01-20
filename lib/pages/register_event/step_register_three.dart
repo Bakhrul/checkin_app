@@ -138,23 +138,23 @@ class _WaitingEvent extends State<WaitingEvent> {
                       width:double.infinity,
                       child:Column(
                         children: <Widget>[
-                          Container(
-                            width: double.infinity,
-                            child:RaisedButton(
-                                  color:Color.fromRGBO(54, 55, 84, 1),
-                                  child:Text("Kirim Notifikasi Konfirmasi",style:TextStyle(
-                                    color:Colors.white
-                                  )),
-                                  onPressed: (){
-                                    Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event");
-                                  }
-                                )
-                          ),
+                          // Container(
+                          //   width: double.infinity,
+                          //   child:RaisedButton(
+                          //         color:Color.fromRGBO(54, 55, 84, 1),
+                          //         child:Text("Kirim Notifikasi Konfirmasi",style:TextStyle(
+                          //           color:Colors.white
+                          //         )),
+                          //         onPressed: (){
+                          //           Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event");
+                          //         }
+                          //       )
+                          // ),
                           Container(
                             width: double.infinity,
                             child:RaisedButton(
                                   color:Colors.white,
-                                  child:Text(_isLoading ? "mengirim Data....":"Batalkan",style:TextStyle(
+                                  child:Text(_isLoading ? "mengirim Data....":"Batal Mendaftar Event",style:TextStyle(
                                     color:Colors.black
                                   )),
                                   onPressed: (){
