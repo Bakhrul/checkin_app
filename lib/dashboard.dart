@@ -1,4 +1,5 @@
 import 'package:checkin_app/routes/env.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -66,6 +67,7 @@ class _DashboardState extends State<Dashboard> {
   var futureheight;
   var pastheight, heightmyevent;
   var wishCount;
+  var types;
   DataStore user;
   int page = 1;
   bool delay = false;
@@ -245,13 +247,13 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       isLoading = true;
       userId = getidUser;
+      types = type;
     });
     try {
       final eventList = await http.get(
         url('api/event/getdata/dashboard/events/$type'),
         headers: requestHeaders,
       );
-      print(eventList.body);
       if (eventList.statusCode == 200) {
         // return nota;
         var eventListJson = json.decode(eventList.body);
@@ -763,7 +765,12 @@ class _DashboardState extends State<Dashboard> {
                                               Text("Lihat Lainnya"),
                                               Icon(Icons.chevron_right)
                                             ],
-                                          ))),
+                                          )),
+                                          onTap: () async{
+                                           linkToPageDetail(types,'follow');
+
+                                          },
+                                          ),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -947,13 +954,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DetailList()));
-                                              },
+                                              onTap: () async{
+                                           linkToPageDetail(types,'follow');
+
+                                          },
                                             ),
                                           )
                                         : Container(),
@@ -974,7 +978,10 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () {},
+                                  onTap: () async{
+                                           linkToPageDetail(types,'wish');
+
+                                          },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1210,21 +1217,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => "item.userStatus" ==
-                                                              "P"
-                                                          ? WaitingEvent()
-                                                          : "item.userStatus" ==
-                                                                  "A"
-                                                              ? SuccesRegisteredEvent()
-                                                              : DashboardCheckin(
-                                                                  idevent:
-                                                                      "item.id.toString()"),
-                                                    ));
-                                              },
+                                             onTap: () async{
+                                           linkToPageDetail(types,'wish');
+
+                                          },
                                             ),
                                           )
                                         : Container(),
@@ -1246,7 +1242,10 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () {},
+                                  onTap: () async{
+                                           linkToPageDetail(types,'participant');
+
+                                          },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1475,21 +1474,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => "item.userStatus" ==
-                                                              "P"
-                                                          ? WaitingEvent()
-                                                          : "item.userStatus" ==
-                                                                  "A"
-                                                              ? SuccesRegisteredEvent()
-                                                              : DashboardCheckin(
-                                                                  idevent:
-                                                                      "item.id.toString()"),
-                                                    ));
-                                              },
+                                              onTap: () async{
+                                           linkToPageDetail(types,'participant');
+
+                                          },
                                             ),
                                           )
                                         : Container(),
@@ -1510,7 +1498,10 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () {},
+                                  onTap: () async{
+                                           linkToPageDetail(types,'admin');
+
+                                          },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1754,21 +1745,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => "item.userStatus" ==
-                                                              "P"
-                                                          ? WaitingEvent()
-                                                          : "item.userStatus" ==
-                                                                  "A"
-                                                              ? SuccesRegisteredEvent()
-                                                              : DashboardCheckin(
-                                                                  idevent:
-                                                                      "item.id.toString()"),
-                                                    ));
-                                              },
+                                              onTap: () async{
+                                           linkToPageDetail(types,'admin');
+
+                                          },
                                             ),
                                           )
                                         : Container(),
@@ -1789,7 +1769,10 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () {},
+                                  onTap: () async{
+                                           linkToPageDetail(types,'creator');
+
+                                          },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -2037,21 +2020,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) => "item.userStatus" ==
-                                                              "P"
-                                                          ? WaitingEvent()
-                                                          : "item.userStatus" ==
-                                                                  "A"
-                                                              ? SuccesRegisteredEvent()
-                                                              : DashboardCheckin(
-                                                                  idevent:
-                                                                      "item.id.toString()"),
-                                                    ));
-                                              },
+                                              onTap: () async{
+                                           linkToPageDetail(types,'creator');
+
+                                          },
                                             ),
                                           )
                                         : Container(),
@@ -2178,7 +2150,10 @@ class _DashboardState extends State<Dashboard> {
           ));
     }
   }
-
+  Widget linkToPageDetail(types,categories){
+    var type = types != null ? types:1;
+    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailList(type:type, typeCategory: categories) ));
+  }
   Widget linkToPage(status, cratorId, eventId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       switch (status) {
