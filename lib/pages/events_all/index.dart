@@ -10,6 +10,7 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import "dart:convert";
 import "dart:io";
 
@@ -57,11 +58,33 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     _getCategory();
     _getAll(0,_searchQuery);
     super.initState();
-
+    getMessage();
     pageScroll.addListener(() async {
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
          _getPage(categoryNow,_searchQuery);
        }
+    });
+  }
+
+   String _message = '';
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  _register() {
+    _firebaseMessaging.getToken().then((token) => print(token));
+  }
+
+  void getMessage(){
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+      print('on message $message');
+      setState(() => _message = message["notification"]["title"]);
+    }, onResume: (Map<String, dynamic> message) async {
+      print('on resume $message');
+      setState(() => _message = message["notification"]["title"]);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('on launch $message');
+      setState(() => _message = message["notification"]["title"]);
     });
   }
 
@@ -343,6 +366,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
+
+    _register();
 
     tokenType = tokenTypeStorage;
     accessToken = accessTokenStorage;

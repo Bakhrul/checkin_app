@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1089447344821:android:11ca335996f3d2e4469cfc",
+        "mobilesdk_app_id": "1:1089447344821:android:cc91b4c2f1b47fd4469cfc",
         "android_client_info": {
-          "package_name": "com.bisniskita.checkin_app"
+          "package_name": "com.example.checkin_app"
         }
       },
       "oauth_client": [
