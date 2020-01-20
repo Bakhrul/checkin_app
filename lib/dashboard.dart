@@ -24,6 +24,7 @@ bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
 bool isLoading, isError;
 String tokenType, accessToken;
 String jumlahnotifX;
+String userId;
 List<Event> listEventSelf = [];
 List<Event> listParticipant = [];
 List<Event> listWish = [];
@@ -31,12 +32,13 @@ List<Event> listAdmin = [];
 List<Event> listCreator = [];
 List<Event> listFollower = [];
 List<Event> listEventNow = [];
+Map dataUser;
 var listFilter = [
-    {'index': "1", 'name': "Hari ini" },
-    {'index': "2", 'name': "3 Hari"},
-    {'index': "3", 'name': "7 Hari"},
-    {'index': "4", 'name': "Bulan Ini"},
-    {'index': "5", 'name': "Bulan Depan"}
+  {'index': "1", 'name': "Hari ini"},
+  {'index': "2", 'name': "3 Hari"},
+  {'index': "3", 'name': "7 Hari"},
+  {'index': "4", 'name': "Bulan Ini"},
+  {'index': "5", 'name': "Bulan Depan"}
 ];
 
 enum PageEnum {
@@ -76,6 +78,7 @@ class _DashboardState extends State<Dashboard> {
     getvaluenotif();
     dataProfile();
     getHeaderHTTP();
+    _getUserData();
     emailprofile = 'Email Anda';
     usernameprofile = 'Username';
     jumlahnotifX = '0';
@@ -165,7 +168,7 @@ class _DashboardState extends State<Dashboard> {
     return eventList(1);
   }
 
-  Future<dynamic> _wish(String wish,eventId,index) async {
+  _getUserData() async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -174,44 +177,66 @@ class _DashboardState extends State<Dashboard> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    int newWish = wish == '1'? 0:1;
 
-    Map<String, dynamic> body = {'event_id':eventId.toString(),'wish':newWish.toString()};
-    try{
-
-      final ongoingevent = await http.post(
-          url('api/wish'),
-          headers: requestHeaders,
-          body:body
-      );
+    try {
+      final ongoingevent =
+          await http.get(url('api/user'), headers: requestHeaders);
 
       if (ongoingevent.statusCode == 200) {
+        Map rawData = json.decode(ongoingevent.body);
 
-        setState((){
-          if(newWish != 1){
+        if (mounted) {
+          setState(() {
+            dataUser = rawData;
+          });
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<dynamic> _wish(String wish, eventId, index) async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    int newWish = wish == '1' ? 0 : 1;
+
+    Map<String, dynamic> body = {
+      'event_id': eventId.toString(),
+      'wish': newWish.toString()
+    };
+    try {
+      final ongoingevent =
+          await http.post(url('api/wish'), headers: requestHeaders, body: body);
+
+      if (ongoingevent.statusCode == 200) {
+        setState(() {
+          if (newWish != 1) {
             listWish[index].wish = '0';
             listWish.remove(index);
-
-          }else{
+          } else {
             listWish[index].wish = '1';
           }
         });
-
       }
-
-    } on TimeoutException catch(_) {
-      Fluttertoast.showToast(msg : "Time out , please try again later");
-    } catch(e) {
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Time out , please try again later");
+    } catch (e) {
       print(e);
     }
-
   }
 
   Future<List<Event>> eventList(type) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
-
+    var getidUser = await storage.getDataString('access_token');
     tokenType = tokenTypeStorage;
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
@@ -219,6 +244,7 @@ class _DashboardState extends State<Dashboard> {
 
     setState(() {
       isLoading = true;
+      userId = getidUser;
     });
     try {
       final eventList = await http.get(
@@ -237,85 +263,83 @@ class _DashboardState extends State<Dashboard> {
 
         // print('willcome $events');
         listParticipant = [];
-        listWish        = [];
-        listFollower    = [];
-        listAdmin       = [];
-        listCreator     = [];
+        listWish = [];
+        listFollower = [];
+        listAdmin = [];
+        listCreator = [];
 
         // get data from api and set data to model
         //participant
         for (var i in participants) {
           Event participant = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-            wish: i['wish'].toString(),
-          );
+              id: i['id'],
+              title: i['title'],
+              dateEvent: i['date_event'],
+              subtitle: i['subtitle'],
+              location: i['location'],
+              image: i['image'],
+              userStatus: i['user_status'],
+              wish: i['wish'].toString(),
+              eventCreator: i['event_creator']);
           listParticipant.add(participant);
         }
-  // wish
+        // wish
         for (var i in wishs) {
           Event wish = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-            wish: i['wish'],
-          );
+              id: i['id'],
+              title: i['title'],
+              dateEvent: i['date_event'],
+              subtitle: i['subtitle'],
+              location: i['location'],
+              image: i['image'],
+              userStatus: i['user_status'],
+              wish: i['wish'],
+              eventCreator: i['event_creator']);
           listWish.add(wish);
         }
         // admin
         for (var i in admins) {
           Event admin = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-            wish: i['wish'],
-          );
+              id: i['id'],
+              title: i['title'],
+              dateEvent: i['date_event'],
+              subtitle: i['subtitle'],
+              location: i['location'],
+              image: i['image'],
+              userStatus: i['user_status'],
+              wish: i['wish'],
+              eventCreator: i['event_creator']);
           listAdmin.add(admin);
         }
 
         // creator
         for (var i in creators) {
           Event creator = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-          );
+              id: i['id'],
+              title: i['title'],
+              dateEvent: i['date_event'],
+              subtitle: i['subtitle'],
+              location: i['location'],
+              image: i['image'],
+              userStatus: i['user_status'],
+              eventCreator: i['event_creator']);
           listCreator.add(creator);
         }
 
         // followers
         for (var i in followers) {
           Event follower = Event(
-            id: i['id'],
-            title: i['title'],
-            dateEvent: i['date_event'],
-            subtitle: i['subtitle'],
-            location: i['location'],
-            image: i['image'],
-            userStatus: i['user_status'],
-            wish: i['wish'],
-          );
+              id: i['id'],
+              title: i['title'],
+              dateEvent: i['date_event'],
+              subtitle: i['subtitle'],
+              location: i['location'],
+              image: i['image'],
+              userStatus: i['user_status'],
+              wish: i['wish'],
+              eventCreator: i['event_creator']);
           listFollower.add(follower);
         }
-
-
 
         setState(() {
           isLoading = false;
@@ -427,16 +451,12 @@ class _DashboardState extends State<Dashboard> {
         appBar: buildBar(context),
         drawer: Drawer(
           child: GestureDetector(
-            onTap:(){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder:(context) => ProfileUser())
-              );
-            },
-            child: Container(
-            
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfileUser()));
+              },
+              child: Container(
                 child: Column(
-                
                   children: <Widget>[
                     // Profil Drawer Here
                     UserAccountsDrawerHeader(
@@ -563,8 +583,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-              )
-          ),
+              )),
         ),
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
@@ -591,9 +610,7 @@ class _DashboardState extends State<Dashboard> {
                     const EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-              
-                  ],
+                  children: <Widget>[],
                 ),
               ),
             ),
@@ -706,11 +723,8 @@ class _DashboardState extends State<Dashboard> {
                             ]),
                           ),
                         )
-                      :
-              Column(
+                      : Column(
                           children: <Widget>[
- 
-
 //                            ==================================Follower========================================
                             Container(
                               padding: EdgeInsets.only(
@@ -737,21 +751,19 @@ class _DashboardState extends State<Dashboard> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(
-                                              ('Event diIkuti')
-                                                  .toUpperCase(),
+                                          Text(('Event diIkuti').toUpperCase(),
                                               style: TextStyle(
-                                                fontSize: 14 ,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
-                                         InkWell(
-                                           child: Container(
-                                             child: Row(children: <Widget>[
-                                               Text("Lihat Lainnya"),
-                                               Icon(Icons.chevron_right)
-                                             ],)
-                                           )
-                                         ),
+                                          InkWell(
+                                              child: Container(
+                                                  child: Row(
+                                            children: <Widget>[
+                                              Text("Lihat Lainnya"),
+                                              Icon(Icons.chevron_right)
+                                            ],
+                                          ))),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -765,198 +777,159 @@ class _DashboardState extends State<Dashboard> {
                                   )),
                               Container(
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                      child:
-                                      Row(
-                                        children: <Widget>[
-                                          Row(children:  listFollower.map((Event item ) =>
-                                            Container(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: <Widget>[
+                                    Row(
+                                      children: listFollower
+                                          .map(
+                                            (Event item) => Container(
                                               child: InkWell(
-                                                child: Container(
-                                                    width: 300,
-                                                    margin: EdgeInsets.only(
+                                                  child: Container(
+                                                      width: 300,
+                                                      margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                        bottom: 5.0,
-                                                        left: 5.0,
-                                                        right: 5.0),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Card(
-                                                          elevation: 1,
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.all(
-                                                                    10.0),
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                    Container(
-                                                                      height: 100,
-                                                                          width:250,
-                                                                          decoration:
-                                                                          new BoxDecoration(
-                                                                            borderRadius: new BorderRadius
-                                                                                .only(
-                                                                                topLeft:
-                                                                                const Radius.circular(
-                                                                                    5.0),
-                                                                                topRight:
-                                                                                const Radius.circular(
-                                                                                    5.0),
-                                                                                bottomLeft:
-                                                                                const Radius.circular(
-                                                                                    5.0),
-                                                                                bottomRight:
-                                                                                const Radius.circular(
-                                                                                    5.0)),
-                                                                            image:
-                                                                            new DecorationImage(
-                                                                              fit: BoxFit
-                                                                                  .fill,
-                                                                              image:
-                                                                             item.image != null || item.image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${item.image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
-                                                                            ),
-                                                                          )),
-                                                                    Container(
-                                                                      margin: EdgeInsets.only(top:10),
-                                                                      child: Row(children: <Widget>[
-                                                                        Expanded(
-                                                                          flex: 2,
-                                                                          child: Card(
-                                                                            elevation: 0.5,
-                                                                              child:Padding(
-                                                                                padding: const EdgeInsets.all(7.0),
-                                                                                child: Column(
-                                                                                  children: <Widget>[
-
-                                                                            Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                            Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                            Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
-                                                                          ],),
-                                                                              ))
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex: 6,
-                                                                            child: Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                              Text("${item.title}",
-                                                                                  style:TextStyle(fontWeight:FontWeight.bold),
-                                                                                  maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                               Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
-                                                                            ],)
-                                                                        )
-                                                                      ],),
-                                                                    )
-
-
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Container(
+                                                          bottom: 5.0,
+                                                          left: 5.0,
+                                                          right: 5.0),
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          Card(
+                                                            elevation: 1,
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Padding(
                                                                   padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                                  child: Divider()),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.only(
-                                                                    left: 10.0,
-                                                                    right: 10.0,
-                                                                    bottom: 10.0),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                                  children: <Widget>[
-                                                                    Padding(
-                                                                      padding:
-                                                                      EdgeInsets.all(
-                                                                          2),
-                                                                      child: _buildTextStatus(
-                                                                          item.userStatus),
-                                                                    ),
-                                                                    item.userStatus !=
-                                                                        null
-                                                                        ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right: 0),
-                                                                      child:
-                                                                      ButtonTheme(
-                                                                        minWidth:
-                                                                        0, //wraps child's width
-                                                                        height: 0,
-                                                                        child:
-                                                                        FlatButton(
-                                                                          child:
-                                                                          Row(
-                                                                            children: <
-                                                                                Widget>[
-                                                                              Icon(
-                                                                                Icons.favorite,
-                                                                                color: wishlisttwo == true
-                                                                                    ? Colors.pink
-                                                                                    : Colors.grey,
-                                                                                size:
-                                                                                18,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          materialTapTargetSize:
-                                                                          MaterialTapTargetSize
-                                                                              .shrinkWrap,
-                                                                          padding:
-                                                                          EdgeInsets.all(
-                                                                              5.0),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            setState(
-                                                                                    () {
-                                                                                  if (wishlisttwo ==
-                                                                                      true) {
-                                                                                    wishlisttwo =
-                                                                                    false;
-                                                                                  } else {
-                                                                                    wishlisttwo =
-                                                                                    true;
-                                                                                  }
-                                                                                });
-                                                                          },
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          10.0),
+                                                                  child: Column(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Container(
+                                                                        height:
+                                                                            100.0,
+                                                                        width:
+                                                                            250.0,
+                                                                        child: FadeInImage
+                                                                            .assetNetwork(
+                                                                          placeholder:
+                                                                              'images/noimage.jpg',
+                                                                          image: item.image != null || item.image != ''
+                                                                              ? url(
+                                                                                  'storage/image/event/event_thumbnail/${item.image}',
+                                                                                )
+                                                                              : 'images/noimage.jpg',
+                                                                          fit: BoxFit
+                                                                              .cover,
                                                                         ),
                                                                       ),
-                                                                    )
-                                                                        : Text(""),
-                                                                  ],
+                                                                      Container(
+                                                                        margin: EdgeInsets.only(
+                                                                            top:
+                                                                                10),
+                                                                        child:
+                                                                            Row(
+                                                                          children: <
+                                                                              Widget>[
+                                                                            Expanded(
+                                                                                flex: 2,
+                                                                                child: Card(
+                                                                                    elevation: 0.5,
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsets.all(7.0),
+                                                                                      child: Column(
+                                                                                        children: <Widget>[
+                                                                                          Text(
+                                                                                            DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                          ),
+                                                                                          Text(
+                                                                                            DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                          ),
+                                                                                          Text(
+                                                                                            DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                          )
+                                                                                        ],
+                                                                                      ),
+                                                                                    ))),
+                                                                            Expanded(
+                                                                                flex: 6,
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                    Text(
+                                                                                      "${item.location}",
+                                                                                      style: TextStyle(color: Colors.grey),
+                                                                                    )
+                                                                                  ],
+                                                                                ))
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
+                                                                Container(
+                                                                    padding: EdgeInsets.only(
+                                                                        left:
+                                                                            10.0,
+                                                                        right:
+                                                                            10.0),
+                                                                    child:
+                                                                        Divider()),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      left:
+                                                                          10.0,
+                                                                      right:
+                                                                          10.0,
+                                                                      bottom:
+                                                                          10.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(2),
+                                                                        child: _buildTextStatus(
+                                                                            item.userStatus),
+                                                                      ),
+                                                                      item.userStatus !=
+                                                                              null
+                                                                          ? Padding(
+                                                                              padding: const EdgeInsets.only(right: 0),
+                                                                            )
+                                                                          : Text(
+                                                                              ""),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-
-                                                      ],
-                                                    )),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        RegisterEvents()
-                                                      ));
-                                                },
-                                              ),
+                                                        ],
+                                                      )),
+                                                  onTap: () {
+                                                    linkToPage(
+                                                        item.userStatus,
+                                                        item.eventCreator,
+                                                        item.id);
+                                                  }),
                                             ),
-                                        ).toList(),
-                                          ),
-                                         listFollower.length >= 115 ? Container(
+                                          )
+                                          .toList(),
+                                    ),
+                                    listFollower.length >= 115
+                                        ? Container(
                                             alignment: Alignment.center,
                                             child: InkWell(
                                               child: Container(
@@ -966,25 +939,27 @@ class _DashboardState extends State<Dashboard> {
                                                       left: 5.0,
                                                       right: 5.0),
                                                   child: InkWell(
-                                                    child: Column(children: <Widget>[
-                                                      Icon(Icons.navigate_next),
-                                                      Text("Lihat Lainnya")
-                                                    ],),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Icon(Icons
+                                                            .navigate_next),
+                                                        Text("Lihat Lainnya")
+                                                      ],
+                                                    ),
                                                   )),
                                               onTap: () async {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                      builder: (context) =>
-                                                      DetailList()
-                                                    ));
+                                                        builder: (context) =>
+                                                            DetailList()));
                                               },
                                             ),
-                                          ) : Container(),
-                                        ],
-
-                                      ),
-                                  )),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              )),
                             ]),
 //====================================End===============================
 //                            ==================================Wish========================================
@@ -1011,23 +986,23 @@ class _DashboardState extends State<Dashboard> {
                                           bottom: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                               ('Event yang di sukai')
                                                   .toUpperCase(),
                                               style: TextStyle(
-                                                fontSize: 14 ,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                           InkWell(
                                               child: Container(
-                                                  child: Row(children: <Widget>[
-                                                    Text("Lihat Lainnya"),
-                                                    Icon(Icons.chevron_right)
-                                                  ],)
-                                              )
-                                          ),
+                                                  child: Row(
+                                            children: <Widget>[
+                                              Text("Lihat Lainnya"),
+                                              Icon(Icons.chevron_right)
+                                            ],
+                                          ))),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -1041,202 +1016,221 @@ class _DashboardState extends State<Dashboard> {
                                   )),
                               Container(
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child:
-                                    Row(
-                                      children: <Widget>[
-                                        for(var x = 0; x < listWish.length; x++)
-                                            Container(
-                                              child: InkWell(
-                                                child: Container(
-                                                    width: 300,
-                                                    margin: EdgeInsets.only(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: <Widget>[
+                                    for (var x = 0; x < listWish.length; x++)
+                                      Container(
+                                        child: InkWell(
+                                          child: Container(
+                                              width: 300,
+                                              margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                        bottom: 5.0,
-                                                        left: 5.0,
-                                                        right: 5.0),
+                                                  bottom: 5.0,
+                                                  left: 5.0,
+                                                  right: 5.0),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Card(
+                                                    elevation: 1,
                                                     child: Column(
                                                       children: <Widget>[
-                                                        Card(
-                                                          elevation: 1,
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10.0),
                                                           child: Column(
                                                             children: <Widget>[
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.all(
-                                                                    10.0),
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                    Container(
-                                                                        height:
-                                                                              100.0,
-                                                                          width:
-                                                                              250.0,
-                                                                          child:
-                                                                              FadeInImage.assetNetwork(
-                                                                            placeholder:
-                                                                                'images/noimage.jpg',
-                                                                            image: listWish[x].image != null || listWish[x].image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${listWish[x].image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
-                                                                                
-                                                                            fit:
-                                                                                BoxFit.cover,
-
-                                                                          ),),
-                                                                    Container(
-                                                                      margin: EdgeInsets.only(top:10),
-                                                                      child: Row(children: <Widget>[
-                                                                        Expanded(
-                                                                            flex: 2,
-                                                                            child: Card(
-                                                                                elevation: 0.5,
-                                                                                child:Padding(
-                                                                                  padding: const EdgeInsets.all(7.0),
-                                                                                  child: Column(
-                                                                                    children: <Widget>[
-
-                                                                                      Text(DateFormat("dd").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("MMM").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(listWish[x].dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
-                                                                                    ],),
-                                                                                ))
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex: 6,
-                                                                            child: Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text(listWish[x].title,
-                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
-                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                                Text(listWish[x].location,style: TextStyle(color: Colors.grey  ),)
-                                                                              ],)
+                                                              Container(
+                                                                height: 100.0,
+                                                                width: 250.0,
+                                                                child: FadeInImage
+                                                                    .assetNetwork(
+                                                                  placeholder:
+                                                                      'images/noimage.jpg',
+                                                                  image: listWish[x].image !=
+                                                                              null ||
+                                                                          listWish[x].image !=
+                                                                              ''
+                                                                      ? url(
+                                                                          'storage/image/event/event_thumbnail/${listWish[x].image}',
                                                                         )
-                                                                      ],),
-                                                                    )
-
-
-                                                                  ],
+                                                                      : 'images/noimage.jpg',
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
                                                               ),
                                                               Container(
-                                                                  padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                                  child: Divider()),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.only(
-                                                                    left: 10.0,
-                                                                    right: 10.0,
-                                                                    bottom: 10.0),
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        top:
+                                                                            10),
                                                                 child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                                  children: <Widget>[
-                                                                    Padding(
-                                                                      padding:
-                                                                      EdgeInsets.all(
-                                                                          2),
-                                                                      child: _buildTextStatus(
-                                                                          listWish[x].userStatus),
-                                                                    ),
-                                                                    listWish[x].userStatus !=
-                                                                        null
-                                                                        ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right: 0),
-                                                                      child:
-                                                                      ButtonTheme(
-                                                                        minWidth:
-                                                                        0, //wraps child's width
-                                                                        height: 0,
-                                                                         child: FlatButton(
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.favorite,
-                                                            color: listWish[x].wish == '1'
-                                                                ? Colors.pink
-                                                                : Colors.grey,
-                                                            size: 18,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      color: Colors.white,
-                                                      materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                      padding: EdgeInsets.all(5.0),
-                                                      onPressed:() async {
-                                                        _wish(listWish[x].wish,listWish[x].id,x);
-                                                      } 
-                                                    ),
-
-                                                                      ),
-                                                                    )
-                                                                        : Text(""),
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Expanded(
+                                                                        flex: 2,
+                                                                        child: Card(
+                                                                            elevation: 0.5,
+                                                                            child: Padding(
+                                                                              padding: const EdgeInsets.all(7.0),
+                                                                              child: Column(
+                                                                                children: <Widget>[
+                                                                                  Text(
+                                                                                    DateFormat("dd").format(DateTime.parse(listWish[x].dateEvent)).toString(),
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    DateFormat("MMM").format(DateTime.parse(listWish[x].dateEvent)).toString(),
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    DateFormat("yyyy").format(DateTime.parse(listWish[x].dateEvent)).toString(),
+                                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                  )
+                                                                                ],
+                                                                              ),
+                                                                            ))),
+                                                                    Expanded(
+                                                                        flex: 6,
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: <
+                                                                              Widget>[
+                                                                            Text(listWish[x].title,
+                                                                                style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                maxLines: 2,
+                                                                                softWrap: true,
+                                                                                overflow: TextOverflow.ellipsis),
+                                                                            Text(
+                                                                              listWish[x].location,
+                                                                              style: TextStyle(color: Colors.grey),
+                                                                            )
+                                                                          ],
+                                                                        ))
                                                                   ],
                                                                 ),
-                                                              ),
+                                                              )
                                                             ],
                                                           ),
                                                         ),
-
+                                                        Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right:
+                                                                        10.0),
+                                                            child: Divider()),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 10.0,
+                                                                  right: 10.0,
+                                                                  bottom: 10.0),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(2),
+                                                                child: _buildTextStatus(
+                                                                    listWish[x]
+                                                                        .userStatus),
+                                                              ),
+                                                              listWish[x].userStatus !=
+                                                                      null
+                                                                  ? Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          right:
+                                                                              0),
+                                                                      child:
+                                                                          ButtonTheme(
+                                                                        minWidth:
+                                                                            0, //wraps child's width
+                                                                        height:
+                                                                            0,
+                                                                        child: FlatButton(
+                                                                            child: Row(
+                                                                              children: <Widget>[
+                                                                                Icon(
+                                                                                  Icons.favorite,
+                                                                                  color: listWish[x].wish == '1' ? Colors.pink : Colors.grey,
+                                                                                  size: 18,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            color: Colors.white,
+                                                                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                            padding: EdgeInsets.all(5.0),
+                                                                            onPressed: () async {
+                                                                              _wish(listWish[x].wish, listWish[x].id, x);
+                                                                            }),
+                                                                      ),
+                                                                    )
+                                                                  : Text(""),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ],
-                                                    )),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        RegisterEvents()
-                                                      ));
-                                                },
-                                              ),
-                                            ),
-                                        
-                                        listWish.length >= 5 ? Container(
-                                          alignment: Alignment.center,
-                                          child: InkWell(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          onTap: () async {
+                                            linkToPage(
+                                                listWish[x].userStatus,
+                                                listWish[x].eventCreator,
+                                                listWish[x].id);
+                                          },
+                                        ),
+                                      ),
+                                    listWish.length >= 5
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                    bottom: 5.0,
-                                                    left: 5.0,
-                                                    right: 5.0),
-                                                child: InkWell(
-                                                  child: Column(children: <Widget>[
-                                                    Icon(Icons.navigate_next),
-                                                    Text("Lihat Lainnya")
-                                                  ],),
-                                                )),
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    "item.userStatus" == "P"
-                                                        ? WaitingEvent()
-                                                        : "item.userStatus" == "A"
-                                                        ? SuccesRegisteredEvent()
-                                                        : DashboardCheckin(
-                                                        idevent:
-                                                        "item.id.toString()"),
-                                                  ));
-                                            },
-                                          ),
-                                        ) : Container(),
-                                      ],
-
-                                    ),
-                                  )),
+                                                      bottom: 5.0,
+                                                      left: 5.0,
+                                                      right: 5.0),
+                                                  child: InkWell(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Icon(Icons
+                                                            .navigate_next),
+                                                        Text("Lihat Lainnya")
+                                                      ],
+                                                    ),
+                                                  )),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => "item.userStatus" ==
+                                                              "P"
+                                                          ? WaitingEvent()
+                                                          : "item.userStatus" ==
+                                                                  "A"
+                                                              ? SuccesRegisteredEvent()
+                                                              : DashboardCheckin(
+                                                                  idevent:
+                                                                      "item.id.toString()"),
+                                                    ));
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              )),
                             ]),
 //====================================End===============================
 
@@ -1264,23 +1258,23 @@ class _DashboardState extends State<Dashboard> {
                                           bottom: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                               ('Event Jadi Peserta')
                                                   .toUpperCase(),
                                               style: TextStyle(
-                                                fontSize: 14 ,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                           InkWell(
                                               child: Container(
-                                                  child: Row(children: <Widget>[
-                                                    Text("Lihat Lainnya"),
-                                                    Icon(Icons.chevron_right)
-                                                  ],)
-                                              )
-                                          ),
+                                                  child: Row(
+                                            children: <Widget>[
+                                              Text("Lihat Lainnya"),
+                                              Icon(Icons.chevron_right)
+                                            ],
+                                          ))),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -1294,35 +1288,37 @@ class _DashboardState extends State<Dashboard> {
                                   )),
                               Container(
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child:
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: <Widget>[
                                     Row(
-                                      children: <Widget>[
-                                        Row(children: listParticipant.map((Event item) =>  
-                                        
-                                            Container(
-                                              child: InkWell(
-                                                child: Container(
-                                                    width: 300,
-                                                    margin: EdgeInsets.only(
+                                        children: listParticipant
+                                            .map((Event item) => Container(
+                                                  child: InkWell(
+                                                    child: Container(
+                                                        width: 300,
+                                                        margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                        bottom: 5.0,
-                                                        left: 5.0,
-                                                        right: 5.0),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Card(
-                                                          elevation: 1,
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.all(
-                                                                    10.0),
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                   Container(
-                                                                        height:
+                                                            bottom: 5.0,
+                                                            left: 5.0,
+                                                            right: 5.0),
+                                                        child: Column(
+                                                          children: <Widget>[
+                                                            Card(
+                                                              elevation: 1,
+                                                              child: Column(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .all(
+                                                                        10.0),
+                                                                    child:
+                                                                        Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Container(
+                                                                          height:
                                                                               100.0,
                                                                           width:
                                                                               250.0,
@@ -1335,169 +1331,171 @@ class _DashboardState extends State<Dashboard> {
                                                                                     'storage/image/event/event_thumbnail/${item.image}',
                                                                                   )
                                                                                 : 'images/noimage.jpg',
-                                                                                
                                                                             fit:
                                                                                 BoxFit.cover,
-
-                                                                          ),),
-                                                                    Container(
-                                                                      margin: EdgeInsets.only(top:10),
-                                                                      child: Row(children: <Widget>[
-                                                                        Expanded(
-                                                                            flex: 2,
-                                                                            child: Card(
-                                                                                elevation: 0.5,
-                                                                                child:Padding(
-                                                                                  padding: const EdgeInsets.all(7.0),
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          margin:
+                                                                              EdgeInsets.only(top: 10),
+                                                                          child:
+                                                                              Row(
+                                                                            children: <Widget>[
+                                                                              Expanded(
+                                                                                  flex: 2,
+                                                                                  child: Card(
+                                                                                      elevation: 0.5,
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.all(7.0),
+                                                                                        child: Column(
+                                                                                          children: <Widget>[
+                                                                                            Text(
+                                                                                              DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                            ),
+                                                                                            Text(
+                                                                                              DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                            ),
+                                                                                            Text(
+                                                                                              DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                            )
+                                                                                          ],
+                                                                                        ),
+                                                                                      ))),
+                                                                              Expanded(
+                                                                                  flex: 6,
                                                                                   child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: <Widget>[
-
-                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
-                                                                                    ],),
-                                                                                ))
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex: 6,
-                                                                            child: Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text("${item.title}",
-                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
-                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
-                                                                              ],)
+                                                                                      Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                      Text(
+                                                                                        "${item.location}",
+                                                                                        style: TextStyle(color: Colors.grey),
+                                                                                      )
+                                                                                    ],
+                                                                                  ))
+                                                                            ],
+                                                                          ),
                                                                         )
-                                                                      ],),
-                                                                    )
-
-
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Container(
-                                                                  padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                                  child: Divider()),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets.only(
-                                                                    left: 10.0,
-                                                                    right: 10.0,
-                                                                    bottom: 10.0),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                                  children: <Widget>[
-                                                                    Padding(
-                                                                      padding:
-                                                                      EdgeInsets.all(
-                                                                          2),
-                                                                      child: _buildTextStatus(
-                                                                          item.userStatus),
+                                                                      ],
                                                                     ),
-                                                                    item.userStatus !=
-                                                                        null
-                                                                        ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right: 0),
+                                                                  ),
+                                                                  Container(
+                                                                      padding: EdgeInsets.only(
+                                                                          left:
+                                                                              10.0,
+                                                                          right:
+                                                                              10.0),
                                                                       child:
-                                                                      ButtonTheme(
-                                                                        minWidth:
-                                                                        0, //wraps child's width
-                                                                        height: 0,
-                                                                        child: FlatButton(
-                                                                            child: Row(
-                                                                              children: <Widget>[
-                                                                                // Icon(
-                                                                                //   Icons.favorite,
-                                                                                //   color: item.wish.toString() == '1'
-                                                                                //       ? Colors.pink
-                                                                                //       : Colors.grey,
-                                                                                //   size: 18,
-                                                                                // ),
-                                                                              ],
-                                                                            ),
-                                                                            color: Colors.white,
-                                                                            materialTapTargetSize:
-                                                                            MaterialTapTargetSize
-                                                                                .shrinkWrap,
-                                                                            padding: EdgeInsets.all(5.0),
-                                                                            onPressed:() async {
-                                                                              // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
-                                                                              
-                                                                            }
+                                                                          Divider()),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            10.0,
+                                                                        right:
+                                                                            10.0,
+                                                                        bottom:
+                                                                            10.0),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Padding(
+                                                                          padding:
+                                                                              EdgeInsets.all(2),
+                                                                          child:
+                                                                              _buildTextStatus(item.userStatus),
                                                                         ),
-                                                                      ),
-                                                                    )
-                                                                        : Text(""),
-                                                                  ],
-                                                                ),
+                                                                        item.userStatus !=
+                                                                                null
+                                                                            ? Padding(
+                                                                                padding: const EdgeInsets.only(right: 0),
+                                                                                child: ButtonTheme(
+                                                                                  minWidth: 0, //wraps child's width
+                                                                                  height: 0,
+                                                                                  child: FlatButton(
+                                                                                      child: Row(
+                                                                                        children: <Widget>[
+                                                                                          // Icon(
+                                                                                          //   Icons.favorite,
+                                                                                          //   color: item.wish.toString() == '1'
+                                                                                          //       ? Colors.pink
+                                                                                          //       : Colors.grey,
+                                                                                          //   size: 18,
+                                                                                          // ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      color: Colors.white,
+                                                                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                      padding: EdgeInsets.all(5.0),
+                                                                                      onPressed: () async {
+                                                                                        // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
+                                                                                      }),
+                                                                                ),
+                                                                              )
+                                                                            : Text(""),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-
-                                                      ],
-                                                    )),
-                                                onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        item.userStatus == "P"
-                                                            ? WaitingEvent()
-                                                            : item.userStatus == "A"
-                                                            ? SuccesRegisteredEvent()
-                                                            : DashboardCheckin(
-                                                            idevent:
-                                                            item.id.toString()),
-                                                      ));
-                                                },
-                                              ),
-                                            )
-                                        ).toList()
-                                        ),
-                                        listParticipant.length >= 5 ? Container(
-                                          alignment: Alignment.center,
-                                          child: InkWell(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
+                                                            ),
+                                                          ],
+                                                        )),
+                                                    onTap: () async {
+                                                      linkToPage(
+                                                          item.userStatus,
+                                                          item.eventCreator,
+                                                          item.id);
+                                                    },
+                                                  ),
+                                                ))
+                                            .toList()),
+                                    listParticipant.length >= 5
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                    bottom: 5.0,
-                                                    left: 5.0,
-                                                    right: 5.0),
-                                                child: InkWell(
-                                                  child: Column(children: <Widget>[
-                                                    Icon(Icons.navigate_next),
-                                                    Text("Lihat Lainnya")
-                                                  ],),
-                                                )),
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    "item.userStatus" == "P"
-                                                        ? WaitingEvent()
-                                                        : "item.userStatus" == "A"
-                                                        ? SuccesRegisteredEvent()
-                                                        : DashboardCheckin(
-                                                        idevent:
-                                                        "item.id.toString()"),
-                                                  ));
-                                            },
-                                          ),
-                                        ) : Container(),
-                                      ],
-
-                                    ),
-                                  )),
+                                                      bottom: 5.0,
+                                                      left: 5.0,
+                                                      right: 5.0),
+                                                  child: InkWell(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Icon(Icons
+                                                            .navigate_next),
+                                                        Text("Lihat Lainnya")
+                                                      ],
+                                                    ),
+                                                  )),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => "item.userStatus" ==
+                                                              "P"
+                                                          ? WaitingEvent()
+                                                          : "item.userStatus" ==
+                                                                  "A"
+                                                              ? SuccesRegisteredEvent()
+                                                              : DashboardCheckin(
+                                                                  idevent:
+                                                                      "item.id.toString()"),
+                                                    ));
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              )),
                             ]),
 //====================================End===============================
                             //                            ==================================Admin========================================
@@ -1524,23 +1522,23 @@ class _DashboardState extends State<Dashboard> {
                                           bottom: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                               ('Event Jadi Admin')
                                                   .toUpperCase(),
                                               style: TextStyle(
-                                                fontSize: 14 ,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                           InkWell(
                                               child: Container(
-                                                  child: Row(children: <Widget>[
-                                                    Text("Lihat Lainnya"),
-                                                    Icon(Icons.chevron_right)
-                                                  ],)
-                                              )
-                                          ),
+                                                  child: Row(
+                                            children: <Widget>[
+                                              Text("Lihat Lainnya"),
+                                              Icon(Icons.chevron_right)
+                                            ],
+                                          ))),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -1554,12 +1552,13 @@ class _DashboardState extends State<Dashboard> {
                                   )),
                               Container(
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child:
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: <Widget>[
                                     Row(
-                                      children: <Widget>[
-                                        Row(children:  listAdmin.map((Event item ) =>
-                                            Container(
+                                      children: listAdmin
+                                          .map(
+                                            (Event item) => Container(
                                               child: InkWell(
                                                 child: Container(
                                                     width: 300,
@@ -1576,204 +1575,206 @@ class _DashboardState extends State<Dashboard> {
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsets.all(
-                                                                    10.0),
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        10.0),
                                                                 child: Column(
-                                                                  children: <Widget>[
+                                                                  children: <
+                                                                      Widget>[
                                                                     Container(
-                                                                        height:
-                                                                              100.0,
-                                                                          width:
-                                                                              250.0,
-                                                                          child:
-                                                                              FadeInImage.assetNetwork(
-                                                                            placeholder:
-                                                                                'images/noimage.jpg',
-                                                                            image: item.image != null || item.image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                      height:
+                                                                          100.0,
+                                                                      width:
+                                                                          250.0,
+                                                                      child: FadeInImage
+                                                                          .assetNetwork(
+                                                                        placeholder:
+                                                                            'images/noimage.jpg',
+                                                                        image: item.image != null ||
+                                                                                item.image != ''
+                                                                            ? url(
+                                                                                'storage/image/event/event_thumbnail/${item.image}',
+                                                                              )
+                                                                            : 'images/noimage.jpg',
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              top: 10),
+                                                                      child:
+                                                                          Row(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Expanded(
+                                                                              flex: 2,
+                                                                              child: Card(
+                                                                                  elevation: 0.5,
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.all(7.0),
+                                                                                    child: Column(
+                                                                                      children: <Widget>[
+                                                                                        Text(
+                                                                                          DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
+                                                                                  ))),
+                                                                          Expanded(
+                                                                              flex: 6,
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                  Text(
+                                                                                    "${item.location}",
+                                                                                    style: TextStyle(color: Colors.grey),
                                                                                   )
-                                                                                : 'images/noimage.jpg',
-                                                                                
-                                                                            fit:
-                                                                                BoxFit.cover,
-
-                                                                          ),),
-                                                                    Container(
-                                                                      margin: EdgeInsets.only(top:10),
-                                                                      child: Row(children: <Widget>[
-                                                                        Expanded(
-                                                                            flex: 2,
-                                                                            child: Card(
-                                                                                elevation: 0.5,
-                                                                                child:Padding(
-                                                                                  padding: const EdgeInsets.all(7.0),
-                                                                                  child: Column(
-                                                                                    children: <Widget>[
-
-                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
-                                                                                    ],),
-                                                                                ))
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex: 6,
-                                                                            child: Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text("${item.title}",
-                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
-                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
-                                                                              ],)
-                                                                        )
-                                                                      ],),
+                                                                                ],
+                                                                              ))
+                                                                        ],
+                                                                      ),
                                                                     )
-
-
                                                                   ],
                                                                 ),
                                                               ),
                                                               Container(
-                                                                  padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                                  child: Divider()),
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                          10.0,
+                                                                      right:
+                                                                          10.0),
+                                                                  child:
+                                                                      Divider()),
                                                               Padding(
-                                                                padding:
-                                                                const EdgeInsets.only(
+                                                                padding: const EdgeInsets
+                                                                        .only(
                                                                     left: 10.0,
                                                                     right: 10.0,
-                                                                    bottom: 10.0),
+                                                                    bottom:
+                                                                        10.0),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                                  children: <Widget>[
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: <
+                                                                      Widget>[
                                                                     Padding(
                                                                       padding:
-                                                                      EdgeInsets.all(
-                                                                          2),
+                                                                          EdgeInsets.all(
+                                                                              2),
                                                                       child: _buildTextStatus(
                                                                           item.userStatus),
                                                                     ),
                                                                     item.userStatus !=
-                                                                        null
+                                                                            null
                                                                         ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right: 0),
-                                                                      child:
-                                                                      ButtonTheme(
-                                                                        minWidth:
-                                                                        0, //wraps child's width
-                                                                        height: 0,
-                                                                        child:
-                                                                        FlatButton(
-                                                                          child:
-                                                                          Row(
-                                                                            children: <
-                                                                                Widget>[
-                                                                              // Icon(
-                                                                              //   Icons.favorite,
-                                                                              //   color: wishlisttwo == true
-                                                                              //       ? Colors.pink
-                                                                              //       : Colors.grey,
-                                                                              //   size:
-                                                                              //   18,
-                                                                              // ),
-                                                                            ],
-                                                                          ),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          materialTapTargetSize:
-                                                                          MaterialTapTargetSize
-                                                                              .shrinkWrap,
-                                                                          padding:
-                                                                          EdgeInsets.all(
-                                                                              5.0),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            setState(
-                                                                                    () {
-                                                                                  if (wishlisttwo ==
-                                                                                      true) {
-                                                                                    wishlisttwo =
-                                                                                    false;
-                                                                                  } else {
-                                                                                    wishlisttwo =
-                                                                                    true;
-                                                                                  }
-                                                                                });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                        : Text(""),
+                                                                            padding:
+                                                                                const EdgeInsets.only(right: 0),
+                                                                            child:
+                                                                                ButtonTheme(
+                                                                              minWidth: 0, //wraps child's width
+                                                                              height: 0,
+                                                                              child: FlatButton(
+                                                                                child: Row(
+                                                                                  children: <Widget>[
+                                                                                    // Icon(
+                                                                                    //   Icons.favorite,
+                                                                                    //   color: wishlisttwo == true
+                                                                                    //       ? Colors.pink
+                                                                                    //       : Colors.grey,
+                                                                                    //   size:
+                                                                                    //   18,
+                                                                                    // ),
+                                                                                  ],
+                                                                                ),
+                                                                                color: Colors.white,
+                                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                padding: EdgeInsets.all(5.0),
+                                                                                onPressed: () async {
+                                                                                  setState(() {
+                                                                                    if (wishlisttwo == true) {
+                                                                                      wishlisttwo = false;
+                                                                                    } else {
+                                                                                      wishlisttwo = true;
+                                                                                    }
+                                                                                  });
+                                                                                },
+                                                                              ),
+                                                                            ),
+                                                                          )
+                                                                        : Text(
+                                                                            ""),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ],
                                                           ),
                                                         ),
-
                                                       ],
                                                     )),
                                                 onTap: () async {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        item.userStatus == "P"
-                                                            ? WaitingEvent()
-                                                            : item.userStatus == "A"
-                                                            ? SuccesRegisteredEvent()
-                                                            : DashboardCheckin(
-                                                            idevent:
-                                                            item.id.toString()),
-                                                      ));
+                                                  linkToPage(
+                                                      item.userStatus,
+                                                      item.eventCreator,
+                                                      item.id);
                                                 },
                                               ),
                                             ),
-                                        ).toList(),
-                                        ),
-                                        listAdmin.length >= 5 ? Container(
-                                          alignment: Alignment.center,
-                                          child: InkWell(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-//                                                    top: 5.0,
-                                                    bottom: 5.0,
-                                                    left: 5.0,
-                                                    right: 5.0),
-                                                child: InkWell(
-                                                  child: Column(children: <Widget>[
-                                                    Icon(Icons.navigate_next),
-                                                    Text("Lihat Lainnya")
-                                                  ],),
-                                                )),
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    "item.userStatus" == "P"
-                                                        ? WaitingEvent()
-                                                        : "item.userStatus" == "A"
-                                                        ? SuccesRegisteredEvent()
-                                                        : DashboardCheckin(
-                                                        idevent:
-                                                        "item.id.toString()"),
-                                                  ));
-                                            },
-                                          ),
-                                        ) : Container(),
-                                      ],
-
+                                          )
+                                          .toList(),
                                     ),
-                                  )),
+                                    listAdmin.length >= 5
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                      bottom: 5.0,
+                                                      left: 5.0,
+                                                      right: 5.0),
+                                                  child: InkWell(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Icon(Icons
+                                                            .navigate_next),
+                                                        Text("Lihat Lainnya")
+                                                      ],
+                                                    ),
+                                                  )),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => "item.userStatus" ==
+                                                              "P"
+                                                          ? WaitingEvent()
+                                                          : "item.userStatus" ==
+                                                                  "A"
+                                                              ? SuccesRegisteredEvent()
+                                                              : DashboardCheckin(
+                                                                  idevent:
+                                                                      "item.id.toString()"),
+                                                    ));
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              )),
                             ]),
 //====================================End===============================
                             //                            ==================================Creator========================================
@@ -1800,23 +1801,23 @@ class _DashboardState extends State<Dashboard> {
                                           bottom: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
                                               ('Event Yang Dibuat')
                                                   .toUpperCase(),
                                               style: TextStyle(
-                                                fontSize: 14 ,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                           InkWell(
                                               child: Container(
-                                                  child: Row(children: <Widget>[
-                                                    Text("Lihat Lainnya"),
-                                                    Icon(Icons.chevron_right)
-                                                  ],)
-                                              )
-                                          ),
+                                                  child: Row(
+                                            children: <Widget>[
+                                              Text("Lihat Lainnya"),
+                                              Icon(Icons.chevron_right)
+                                            ],
+                                          ))),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
 //                                              style: TextStyle(
@@ -1830,12 +1831,13 @@ class _DashboardState extends State<Dashboard> {
                                   )),
                               Container(
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child:
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: <Widget>[
                                     Row(
-                                      children: <Widget>[
-                                        Row(children:  listCreator.map((Event item ) =>
-                                            Container(
+                                      children: listCreator
+                                          .map(
+                                            (Event item) => Container(
                                               child: InkWell(
                                                 child: Container(
                                                     width: 300,
@@ -1852,149 +1854,153 @@ class _DashboardState extends State<Dashboard> {
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsets.all(
-                                                                    10.0),
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        10.0),
                                                                 child: Column(
-                                                                  children: <Widget>[
-                                                                     Container(
-                                                                        height:
-                                                                              100.0,
-                                                                          width:
-                                                                              250.0,
-                                                                          child:
-                                                                              FadeInImage.assetNetwork(
-                                                                            placeholder:
-                                                                                'images/noimage.jpg',
-                                                                            image: item.image != null || item.image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${item.image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
-                                                                                
-                                                                            fit:
-                                                                                BoxFit.cover,
-
-                                                                          ),),
+                                                                  children: <
+                                                                      Widget>[
                                                                     Container(
-                                                                      margin: EdgeInsets.only(top:10),
-                                                                      child: Row(children: <Widget>[
-                                                                        Expanded(
-                                                                            flex: 2,
-                                                                            child: Card(
-                                                                                elevation: 0.5,
-                                                                                child:Padding(
-                                                                                  padding: const EdgeInsets.all(7.0),
-                                                                                  child: Column(
-                                                                                    children: <Widget>[
-
-                                                                                      Text(DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                                                                                      Text(DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),)
-                                                                                    ],),
-                                                                                ))
-                                                                        ),
-                                                                        Expanded(
-                                                                            flex: 6,
-                                                                            child: Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text("${item.title}",
-                                                                                    style:TextStyle(fontWeight:FontWeight.bold),
-                                                                                    maxLines: 2,softWrap: true,overflow: TextOverflow.ellipsis),
-                                                                                Text("${item.location}",style: TextStyle(color: Colors.grey  ),)
-                                                                              ],)
-                                                                        )
-                                                                      ],),
+                                                                      height:
+                                                                          100.0,
+                                                                      width:
+                                                                          250.0,
+                                                                      child: FadeInImage
+                                                                          .assetNetwork(
+                                                                        placeholder:
+                                                                            'images/noimage.jpg',
+                                                                        image: item.image != null ||
+                                                                                item.image != ''
+                                                                            ? url(
+                                                                                'storage/image/event/event_thumbnail/${item.image}',
+                                                                              )
+                                                                            : 'images/noimage.jpg',
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              top: 10),
+                                                                      child:
+                                                                          Row(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Expanded(
+                                                                              flex: 2,
+                                                                              child: Card(
+                                                                                  elevation: 0.5,
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.all(7.0),
+                                                                                    child: Column(
+                                                                                      children: <Widget>[
+                                                                                        Text(
+                                                                                          DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
+                                                                                  ))),
+                                                                          Expanded(
+                                                                              flex: 6,
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                  Text(
+                                                                                    "${item.location}",
+                                                                                    style: TextStyle(color: Colors.grey),
+                                                                                  )
+                                                                                ],
+                                                                              ))
+                                                                        ],
+                                                                      ),
                                                                     )
-
-
                                                                   ],
                                                                 ),
                                                               ),
                                                               Container(
-                                                                  padding:
-                                                                  EdgeInsets.only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                                  child: Divider()),
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                          10.0,
+                                                                      right:
+                                                                          10.0),
+                                                                  child:
+                                                                      Divider()),
                                                               Padding(
-                                                                padding:
-                                                                const EdgeInsets.only(
+                                                                padding: const EdgeInsets
+                                                                        .only(
                                                                     left: 10.0,
                                                                     right: 10.0,
-                                                                    bottom: 10.0),
+                                                                    bottom:
+                                                                        10.0),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                                  children: <Widget>[
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: <
+                                                                      Widget>[
                                                                     Padding(
                                                                       padding:
-                                                                      EdgeInsets.all(
-                                                                          2),
+                                                                          EdgeInsets.all(
+                                                                              2),
                                                                       child: _buildTextStatus(
                                                                           item.userStatus),
                                                                     ),
                                                                     item.userStatus !=
-                                                                        null
+                                                                            null
                                                                         ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right: 0),
-                                                                      child:
-                                                                      ButtonTheme(
-                                                                        minWidth:
-                                                                        0, //wraps child's width
-                                                                        height: 0,
-                                                                        child:
-                                                                        FlatButton(
-                                                                          child:
-                                                                          Row(
-                                                                            children: <
-                                                                                Widget>[
-                                                                              // Icon(
-                                                                              //   Icons.favorite,
-                                                                              //   color: wishlisttwo == true
-                                                                              //       ? Colors.pink
-                                                                              //       : Colors.grey,
-                                                                              //   size:
-                                                                              //   18,
-                                                                              // ),
-                                                                            ],
-                                                                          ),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          materialTapTargetSize:
-                                                                          MaterialTapTargetSize
-                                                                              .shrinkWrap,
-                                                                          padding:
-                                                                          EdgeInsets.all(
-                                                                              5.0),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            setState(
-                                                                                    () {
-                                                                                  if (wishlisttwo ==
-                                                                                      true) {
-                                                                                    wishlisttwo =
-                                                                                    false;
-                                                                                  } else {
-                                                                                    wishlisttwo =
-                                                                                    true;
-                                                                                  }
-                                                                                });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                        : Text(""),
+                                                                            padding:
+                                                                                const EdgeInsets.only(right: 0),
+                                                                            child:
+                                                                                ButtonTheme(
+                                                                              minWidth: 0, //wraps child's width
+                                                                              height: 0,
+                                                                              child: FlatButton(
+                                                                                child: Row(
+                                                                                  children: <Widget>[
+                                                                                    // Icon(
+                                                                                    //   Icons.favorite,
+                                                                                    //   color: wishlisttwo == true
+                                                                                    //       ? Colors.pink
+                                                                                    //       : Colors.grey,
+                                                                                    //   size:
+                                                                                    //   18,
+                                                                                    // ),
+                                                                                  ],
+                                                                                ),
+                                                                                color: Colors.white,
+                                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                padding: EdgeInsets.all(5.0),
+                                                                                onPressed: () async {
+                                                                                  setState(() {
+                                                                                    if (wishlisttwo == true) {
+                                                                                      wishlisttwo = false;
+                                                                                    } else {
+                                                                                      wishlisttwo = true;
+                                                                                    }
+                                                                                  });
+                                                                                },
+                                                                              ),
+                                                                            ),
+                                                                          )
+                                                                        : Text(
+                                                                            ""),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ],
                                                           ),
                                                         ),
-
                                                       ],
                                                     )),
                                                 onTap: () async {
@@ -2002,50 +2008,56 @@ class _DashboardState extends State<Dashboard> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                         DashboardCheckin(
-                                                            idevent:
-                                                            item.id.toString()),
+                                                            DashboardCheckin(
+                                                                idevent: item.id
+                                                                    .toString()),
                                                       ));
                                                 },
                                               ),
                                             ),
-                                        ).toList(),
-                                        ),
-                                        listCreator.length >= 5 ? Container(
-                                          alignment: Alignment.center,
-                                          child: InkWell(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-//                                                    top: 5.0,
-                                                    bottom: 5.0,
-                                                    left: 5.0,
-                                                    right: 5.0),
-                                                child: InkWell(
-                                                  child: Column(children: <Widget>[
-                                                    Icon(Icons.navigate_next),
-                                                    Text("Lihat Lainnya")
-                                                  ],),
-                                                )),
-                                            onTap: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                    "item.userStatus" == "P"
-                                                        ? WaitingEvent()
-                                                        : "item.userStatus" == "A"
-                                                        ? SuccesRegisteredEvent()
-                                                        : DashboardCheckin(
-                                                        idevent:
-                                                        "item.id.toString()"),
-                                                  ));
-                                            },
-                                          ),
-                                        ) : Container(),
-                                      ],
-
+                                          )
+                                          .toList(),
                                     ),
-                                  )),
+                                    listCreator.length >= 5
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            child: InkWell(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                      bottom: 5.0,
+                                                      left: 5.0,
+                                                      right: 5.0),
+                                                  child: InkWell(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Icon(Icons
+                                                            .navigate_next),
+                                                        Text("Lihat Lainnya")
+                                                      ],
+                                                    ),
+                                                  )),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => "item.userStatus" ==
+                                                              "P"
+                                                          ? WaitingEvent()
+                                                          : "item.userStatus" ==
+                                                                  "A"
+                                                              ? SuccesRegisteredEvent()
+                                                              : DashboardCheckin(
+                                                                  idevent:
+                                                                      "item.id.toString()"),
+                                                    ));
+                                              },
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              )),
                             ]),
 //====================================End===============================
                           ],
@@ -2061,44 +2073,6 @@ class _DashboardState extends State<Dashboard> {
       title: appBarTitle,
       backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       actions: <Widget>[
-        //  new IconButton(
-        //       icon: const Icon(Icons.refresh),
-        //       tooltip: 'Refresh',
-        //       onPressed: () {
-        //         _refreshIndicatorKey.currentState.show();
-        //       }),
-        // IconButton(
-        //   icon: actionIcon,
-        //   onPressed: () {
-        //     setState(() {
-        //       if (this.actionIcon.icon == Icons.search) {
-        //         // ignore: new_with_non_type
-        //         this.actionIcon = new Icon(
-        //           Icons.close,
-        //           color: Colors.white,
-        //         );
-        //         this.appBarTitle = TextField(
-        //           controller: _searchQuery,
-        //           style: TextStyle(
-        //             color: Colors.white,
-        //           ),
-        //           decoration: InputDecoration(
-        //               contentPadding:
-        //                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        //               border: InputBorder.none,
-        //               prefixIcon: new Icon(Icons.search, color: Colors.white),
-        //               hintText: "Cari Berdasarkan Nama, Kategori , Tempat",
-        //               hintStyle: TextStyle(
-        //                 color: Colors.white,
-        //                 fontSize: 14,
-        //               )),
-        //         );
-        //       } else {
-        //         _handleSearchEnd();
-        //       }
-        //     });
-        //   },
-        // ),
         new Stack(
           children: <Widget>[
             new IconButton(
@@ -2137,7 +2111,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   _buildTextStatus(status) {
-    if (status == "A") {
+    if (status == "Sudah Terdaftar") {
       return Container(
           decoration: new BoxDecoration(
             color: Colors.green,
@@ -2158,7 +2132,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             textAlign: TextAlign.center,
           ));
-    } else if (status == "P") {
+    } else if (status == "Proses") {
       return Container(
           decoration: new BoxDecoration(
             color: Colors.orange,
@@ -2171,7 +2145,7 @@ class _DashboardState extends State<Dashboard> {
           padding: EdgeInsets.all(5.0),
           width: 120.0,
           child: Text(
-            'Proses Daftar ',
+            'Proses ',
             style: TextStyle(
               color: Colors.white,
               fontSize: 12,
@@ -2179,10 +2153,10 @@ class _DashboardState extends State<Dashboard> {
             ),
             textAlign: TextAlign.center,
           ));
-    }else if(status == "W"){
+    } else if (status == "Creator") {
       return null;
     } else {
-        return Container(
+      return Container(
           decoration: new BoxDecoration(
             color: Colors.grey,
             borderRadius: new BorderRadius.only(
@@ -2203,6 +2177,48 @@ class _DashboardState extends State<Dashboard> {
             textAlign: TextAlign.center,
           ));
     }
+  }
+
+  Widget linkToPage(status, cratorId, eventId) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      switch (status) {
+        case 'Sudah Terdaftar':
+          return SuccesRegisteredEvent(
+              id: eventId,
+              creatorId: cratorId,
+              dataUser: dataUser,
+              selfEvent: userId == cratorId ? true : false);
+          break;
+        case 'Proses':
+          return WaitingEvent(
+            id: eventId,
+            creatorId: cratorId,
+            selfEvent: userId == cratorId ? true : false,
+          );
+          break;
+        case 'Ditolak':
+          return RegisterEvents(
+              id: eventId,
+              creatorId: cratorId,
+              selfEvent: userId == cratorId ? true : false,
+              dataUser: dataUser);
+          break;
+        case 'Admin / Co-Host':
+          return RegisterEvents(
+              id: eventId,
+              creatorId: cratorId,
+              dataUser: dataUser,
+              selfEvent: true);
+          break;
+        default:
+          return RegisterEvents(
+              id: eventId,
+              creatorId: cratorId,
+              dataUser: dataUser,
+              selfEvent: userId == cratorId ? true : false);
+          break;
+      }
+    }));
   }
 
   Future<Null> _handleRefresh() async {
