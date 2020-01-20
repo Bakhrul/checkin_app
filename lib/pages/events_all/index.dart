@@ -10,9 +10,11 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:checkin_app/utils/notification_local.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import "dart:convert";
 import "dart:io";
+
 
 enum PageEnum {
   kelolaRegisterPage,
@@ -50,6 +52,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   bool delay = false;
   bool _isPageDisconnect = false;
   bool _isGetAllDisconnect = false;
+  NotificationLocal notif = new NotificationLocal();
+  String _message = '';
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
@@ -64,11 +69,13 @@ class _ManajemenEventState extends State<ManajemenEvent> {
          _getPage(categoryNow,_searchQuery);
        }
     });
+    notif.mustInit();   
+
   }
 
-   String _message = '';
+  
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  
 
   _register() {
     _firebaseMessaging.getToken().then((token) => print(token));
@@ -77,6 +84,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   void getMessage(){
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
+          notif.showNotificationWithSound(message["notification"]["title"],message["notification"]["body"]);
       print('on message $message');
       setState(() => _message = message["notification"]["title"]);
     }, onResume: (Map<String, dynamic> message) async {
@@ -655,7 +663,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: _event[x].image != null || _event[x].image != ''
+                                                                            image: _event[x].image != null
                                                                                 ? url(
                                                                                     'storage/image/event/event_thumbnail/${_event[x].image}',
                                                                                   )

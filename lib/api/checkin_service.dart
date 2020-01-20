@@ -1,6 +1,5 @@
 import 'package:http/http.dart' show Client;
-import '../model/user_checkin.dart';
-import '../model/checkin.dart';
+
 
 class UserCheckinService {
   final String baseUrl = "http://192.168.100.17";
