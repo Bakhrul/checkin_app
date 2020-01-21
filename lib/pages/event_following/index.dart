@@ -133,7 +133,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
+    // Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
 
   try{
    final followevent = await http.post(
@@ -808,11 +808,10 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: listItemFollowing[index].image != null || listItemFollowing[index].image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${listItemFollowing[index].image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                            image: listItemFollowing[index].image == null || listItemFollowing[index].image == '' || listItemFollowing[index].image == 'null'
+                                                                                ? 
+                                                                                  'images/noimage.jpg'
+                                                                                : url('storage/image/event/event_thumbnail/${listItemFollowing[index].image}'),
                                                                                 
                                                                             fit:
                                                                                 BoxFit.cover,

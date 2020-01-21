@@ -77,22 +77,22 @@ class _ManageCheckinState extends State<ManageCheckin> {
       isLoading = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getCheckinEvent = await http.post(
         url('api/listcheckinevent'),
         body: {'event': widget.event},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
-        var listUsers = listuserJson['checkin'];
-        String namaevent = listuserJson['namaevent'];
+      if (getCheckinEvent.statusCode == 200) {
+        var listCheckinJson = json.decode(getCheckinEvent.body);
+        var listCheckins = listCheckinJson['checkin'];
+        String namaevent = listCheckinJson['namaevent'];
         setState(() {
           namaeventX = namaevent;
         });
-        print(listuserJson);
+        print(listCheckins);
         listcheckinevent = [];
-        for (var i in listUsers) {
+        for (var i in listCheckins) {
           ListCheckinEvent willcomex = ListCheckinEvent(
             idevent: '${i['ec_eventsid']}',
             id: '${i['ec_checkid']}',
@@ -109,7 +109,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
           isLoading = false;
           isError = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getCheckinEvent.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -117,7 +117,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getCheckinEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -360,7 +360,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                       onPressed: () async {
                                                         Navigator.pop(context);
                                                         try {
-                                                          final hapuswishlist =
+                                                          final removeCheckin =
                                                               await http.post(
                                                                   url('api/deletecheckin_event'),
                                                                   headers: requestHeaders,
@@ -374,15 +374,15 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                             index]
                                                                         .id
                                                               });
-                                                          print(hapuswishlist);
-                                                          if (hapuswishlist
+                                                          print(removeCheckin);
+                                                          if (removeCheckin
                                                                   .statusCode ==
                                                               200) {
-                                                            var hapuswishlistJson =
+                                                            var removeCheckinJson =
                                                                 json.decode(
-                                                                    hapuswishlist
+                                                                    removeCheckin
                                                                         .body);
-                                                            if (hapuswishlistJson[
+                                                            if (removeCheckinJson[
                                                                     'status'] ==
                                                                 'success') {
                                                               Fluttertoast
@@ -394,20 +394,20 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                     listcheckinevent[
                                                                         index]);
                                                               });
-                                                            } else if (hapuswishlistJson[
+                                                            } else if (removeCheckinJson[
                                                                     'status'] ==
                                                                 'Error') {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                          "Request failed with status: ${removeCheckin.statusCode}");
                                                             }
                                                           } else {
-                                                            print(hapuswishlist
+                                                            print(removeCheckin
                                                                 .body);
                                                             Fluttertoast.showToast(
                                                                 msg:
-                                                                    "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                    "Request failed with status: ${removeCheckin.statusCode}");
                                                           }
                                                         } on TimeoutException catch (_) {
                                                           Fluttertoast.showToast(

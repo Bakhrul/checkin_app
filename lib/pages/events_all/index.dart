@@ -10,9 +10,9 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import "dart:convert";
 import "dart:io";
+
 
 enum PageEnum {
   kelolaRegisterPage,
@@ -58,34 +58,12 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     _getCategory();
     _getAll(0,_searchQuery);
     super.initState();
-    getMessage();
     pageScroll.addListener(() async {
        if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
          _getPage(categoryNow,_searchQuery);
        }
-    });
-  }
+    });  
 
-   String _message = '';
-
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-  _register() {
-    _firebaseMessaging.getToken().then((token) => print(token));
-  }
-
-  void getMessage(){
-    _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async {
-      print('on message $message');
-      setState(() => _message = message["notification"]["title"]);
-    }, onResume: (Map<String, dynamic> message) async {
-      print('on resume $message');
-      setState(() => _message = message["notification"]["title"]);
-    }, onLaunch: (Map<String, dynamic> message) async {
-      print('on launch $message');
-      setState(() => _message = message["notification"]["title"]);
-    });
   }
 
   Future<void> getHeaderHTTP() async {
@@ -367,8 +345,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
 
-    _register();
-
     tokenType = tokenTypeStorage;
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
@@ -461,16 +437,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     Icons.search,
     color: Colors.white,
   );
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.kelolaRegisterPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => RegisterEvents()));
-        break;
-      default:
-        break;
-    }
-  }
 
   @override
   void dispose() {
@@ -655,11 +621,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: _event[x].image != null
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${_event[x].image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                            image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
+                                                                                ? 'images/noimage.jpg'
+                                                                                : url('storage/image/event/event_thumbnail/${_event[x].image}'),
                                                                                 
                                                                             fit:
                                                                                 BoxFit.cover,

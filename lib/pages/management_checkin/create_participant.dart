@@ -127,8 +127,6 @@ Future<void> getHeaderHTTP() async {
 
   @override
   Widget build(BuildContext context) {
-    final bodyHeight = MediaQuery.of(context).size.height -
-        MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(

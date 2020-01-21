@@ -81,13 +81,13 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
       isLoading = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final getUser = await http.post(
         url('api/getdataparticipant'),
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (getUser.statusCode == 200) {
+        var listuserJson = json.decode(getUser.body);
         var listUsers = listuserJson['participant'];
         listUserItem = [];
         for (var i in listUsers) {
@@ -102,7 +102,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
           isLoading = false;
           isError = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (getUser.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -110,7 +110,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
           isError = true;
         });
       } else {
-        print(willcomeevent.body);
+        print(getUser.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -147,7 +147,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
       isFilter = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final getUserFilter = await http.post(
         url('api/getdataparticipant'),
         body: {
           'filter': _filtercontroller.text,
@@ -155,8 +155,8 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (getUserFilter.statusCode == 200) {
+        var listuserJson = json.decode(getUserFilter.body);
         var listUsers = listuserJson['participant'];
         listUserItem = [];
         for (var i in listUsers) {
@@ -171,7 +171,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
           isFilter = false;
           isErrorfilter = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (getUserFilter.statusCode == 401) {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -179,7 +179,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(willcomeevent.body);
+        print(getUserFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -461,80 +461,15 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                                                           true
                                                                       ? null
                                                                       : () async {
+                                                                        Navigator.pop(context);
                                                                           setState(
                                                                               () {
                                                                             isCreate =
                                                                                 true;
                                                                           });
-                                                                          try {
-                                                                            Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                                                                            final addadminevent =
-                                                                                await http.post(url('api/addadmin_event'), headers: requestHeaders, body: {
-                                                                              'event': widget.event,
-                                                                              'peserta': listUserItem[index].id,
-                                                                            });
-
-                                                                            if (addadminevent.statusCode ==
-                                                                                200) {
-                                                                              var addadmineventJson = json.decode(addadminevent.body);
-                                                                              if (addadmineventJson['status'] == 'success') {
-                                                                                Fluttertoast.showToast(msg: "Berhasil !");
-                                                                                Navigator.pop(context);
-                                                                                Navigator.pop(context);
-                                                                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ManageAdmin(event: widget.event)));
-                                                                              } else if (addadmineventJson['status'] == 'sudah ada') {
-                                                                                Fluttertoast.showToast(msg: "Member ini sudah terdaftar menjadi admin event anda");
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                              } else if (addadmineventJson['status'] == 'creator') {
-                                                                                Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                              } else if (addadmineventJson['status'] == 'pending') {
-                                                                                Fluttertoast.showToast(msg: "Permintaan menjadi admin menunggu persetujuan");
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                                Navigator.pop(context);
-                                                                              } else if (addadmineventJson['status'] == 'sudahpeserta') {
-                                                                                Fluttertoast.showToast(msg: "Member ini sudah menjadi peserta event anda");
-                                                                                Navigator.pop(context);
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                              } else if (addadmineventJson['status'] == 'pendingpeserta') {
-                                                                                Fluttertoast.showToast(msg: "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
-                                                                                Navigator.pop(context);
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                              } else {
-                                                                                Fluttertoast.showToast(msg: "Status tidak diketahui");
-                                                                                Navigator.pop(context);
-                                                                                setState(() {
-                                                                                  isCreate = false;
-                                                                                });
-                                                                              }
-                                                                            } else {
-                                                                              print(addadminevent.body);
-                                                                              Fluttertoast.showToast(msg: "Request failed with status: ${addadminevent.statusCode}");
-                                                                              setState(() {
-                                                                                isCreate = false;
-                                                                              });
-                                                                            }
-                                                                          } on TimeoutException catch (_) {
-                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
-                                                                            setState(() {
-                                                                              isCreate = false;
-                                                                            });
-                                                                          } catch (e) {
-                                                                            setState(() {
-                                                                              isCreate = false;
-                                                                            });
-                                                                            print(e);
-                                                                          }
+                                                                          _tambahadmin(
+                                                                              widget.event,
+                                                                              listUserItem[index].id);
                                                                         },
                                                             )
                                                           ],
@@ -550,5 +485,85 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                   ),
                 ),
     );
+  }
+
+  void _tambahadmin(idevent, idpeserta) async {
+    try {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      final addadminevent = await http
+          .post(url('api/addadmin_event'), headers: requestHeaders, body: {
+        'event': idevent,
+        'peserta': idpeserta,
+      });
+
+      if (addadminevent.statusCode == 200) {
+        var addadmineventJson = json.decode(addadminevent.body);
+        if (addadmineventJson['status'] == 'success') {
+          Fluttertoast.showToast(msg: "Berhasil !");
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ManageAdmin(event: widget.event)));
+        } else if (addadmineventJson['status'] == 'sudah ada') {
+          Fluttertoast.showToast(
+              msg: "Member ini sudah terdaftar menjadi admin event anda");
+          setState(() {
+            isCreate = false;
+          });
+        } else if (addadmineventJson['status'] == 'creator') {
+          Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
+          setState(() {
+            isCreate = false;
+          });
+        } else if (addadmineventJson['status'] == 'pending') {
+          Fluttertoast.showToast(
+              msg: "Permintaan menjadi admin menunggu persetujuan");
+          setState(() {
+            isCreate = false;
+          });
+          Navigator.pop(context);
+        } else if (addadmineventJson['status'] == 'sudahpeserta') {
+          Fluttertoast.showToast(
+              msg: "Member ini sudah menjadi peserta event anda");
+          Navigator.pop(context);
+          setState(() {
+            isCreate = false;
+          });
+        } else if (addadmineventJson['status'] == 'pendingpeserta') {
+          Fluttertoast.showToast(
+              msg:
+                  "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
+          Navigator.pop(context);
+          setState(() {
+            isCreate = false;
+          });
+        } else {
+          Fluttertoast.showToast(msg: "Status tidak diketahui");
+          Navigator.pop(context);
+          setState(() {
+            isCreate = false;
+          });
+        }
+      } else {
+        print(addadminevent.body);
+        Fluttertoast.showToast(
+            msg: "Request failed with status: ${addadminevent.statusCode}");
+        setState(() {
+          isCreate = false;
+        });
+      }
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+      setState(() {
+        isCreate = false;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: "${e.toString()}");
+      setState(() {
+        isCreate = false;
+      });
+      print(e);
+    }
   }
 }

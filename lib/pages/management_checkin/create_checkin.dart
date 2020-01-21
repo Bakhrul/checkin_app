@@ -1,29 +1,18 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
-import 'package:checkin_app/api/checkin_service.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
-import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
-import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
-import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
+import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
+import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/rendering.dart';
 
 var datepicker;
 
@@ -31,8 +20,7 @@ class ManajemeCreateCheckin extends StatefulWidget {
   Checkin checkin;
   final String title;
   final idevent;
-
-
+  
   ManajemeCreateCheckin({Key key, this.title, this.checkin, this.idevent})
       : super(key: key);
 
@@ -44,19 +32,19 @@ class ManajemeCreateCheckin extends StatefulWidget {
 
 class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   bool _isLoading = false;
-  UserCheckinService _checkinService = UserCheckinService();
-  static const double _topSectionTopPadding = 50.0;
-  static const double _topSectionBottomPadding = 20.0;
-  static const double _topSectionHeight = 50.0;
+  // UserCheckinService _checkinService = UserCheckinService();
+  // static const double _topSectionTopPadding = 50.0;
+  // static const double _topSectionBottomPadding = 20.0;
+  // static const double _topSectionHeight = 50.0;
   GlobalKey globalKey = new GlobalKey();
   String _dataString;
   String _inputErrorText;
-  bool _isFieldDateValid;
-  bool _isFieldTimeStartlValid;
-  bool _isFieldTimeEndValid;
+  // bool _isFieldDateValid;
+  // bool _isFieldTimeStartlValid;
+  // bool _isFieldTimeEndValid;
   final TextEditingController _controllerGenerate = TextEditingController();
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
-  TextEditingController _controllerDate = TextEditingController();
+  // TextEditingController _controllerDate = TextEditingController();
   TextEditingController _controllerTimeStart = TextEditingController();
   TextEditingController _controllerTimeEnd = TextEditingController();
   TextEditingController _controllerSessionname = TextEditingController();
@@ -136,7 +124,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     // _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     if (widget.checkin != null) {
-      _isFieldDateValid = true;
+      // _isFieldDateValid = true;
       // _controllerDate.text = widget.checkin.checkin_date;
       // _isFieldEmailValid = true;
       // _controllerEmail.text = widget.profile.email;

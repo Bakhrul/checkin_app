@@ -32,9 +32,6 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
     _dataString = widget.checkin.toString();
   }
 
-  static const double _topSectionTopPadding = 50.0;
-  static const double _topSectionBottomPadding = 20.0;
-  static const double _topSectionHeight = 50.0;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,6 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           var image = await boundary.toImage();
           ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
           Uint8List pngBytes = byteData.buffer.asUint8List();
-
           final tempDir = await getExternalStorageDirectory();
           var tes = await new Directory('${tempDir.path}/EventZhee').create();
           var sudahada = await File('${tes.path}/${widget.namaEvent}-${widget.kodecheckin}.png').exists();          

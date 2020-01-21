@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class AfterRegisterEvents extends StatefulWidget {
   AfterRegisterEvents({Key key}) : super(key: key);

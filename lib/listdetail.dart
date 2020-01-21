@@ -42,7 +42,7 @@ class _DetailListState extends State<DetailList> {
   bool _isDisconnect = false;
   ScrollController pageScroll = new ScrollController();
   int manyPage = 0;
-  Timer _debouncer;
+  // Timer _debouncer;
   String _searchQuery = '';
   String userId;
   List listCategory = [];
@@ -430,16 +430,6 @@ class _DetailListState extends State<DetailList> {
   //   Icons.search,
   //   color: Colors.white,
   // );
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.kelolaRegisterPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => RegisterEvents()));
-        break;
-      default:
-        break;
-    }
-  }
 
   @override
   void dispose() {

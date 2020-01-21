@@ -88,7 +88,7 @@ class GenerateScreenState extends State<GenerateScreen> {
           color: Colors.white,
         ),
         title: new Text(
-          "Generate QR CODE",
+          "Kode Qr",
           style: TextStyle(
             color: Colors.white,
           ),

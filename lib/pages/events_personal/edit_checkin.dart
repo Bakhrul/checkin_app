@@ -168,7 +168,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             });
             Navigator.pop(context);
             Navigator.pop(context);
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ManageCheckin(event: widget.event)));

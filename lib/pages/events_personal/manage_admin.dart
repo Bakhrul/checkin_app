@@ -83,14 +83,14 @@ class _ManageAdminState extends State<ManageAdmin> {
       isLoading = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getAdminEvent = await http.post(
         url('api/listadminevent'),
         body: {'event': widget.event},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
+      if (getAdminEvent.statusCode == 200) {
+        var listuserJson = json.decode(getAdminEvent.body);
         var listUsers = listuserJson['admin'];
         print(listUsers);
         listadminevent = [];
@@ -109,7 +109,7 @@ class _ManageAdminState extends State<ManageAdmin> {
           isLoading = false;
           isError = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getAdminEvent.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -117,7 +117,7 @@ class _ManageAdminState extends State<ManageAdmin> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getAdminEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -530,14 +530,14 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                             });
                                                                             try {
                                                                               Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                                                                              final hapuswishlist = await http.post(url('api/deleteadmin_event'), headers: requestHeaders, body: {
+                                                                              final removeAdmin = await http.post(url('api/deleteadmin_event'), headers: requestHeaders, body: {
                                                                                 'peserta': listadminevent[index].idpeserta,
                                                                                 'event': listadminevent[index].idevent
                                                                               });
-                                                                              print(hapuswishlist);
-                                                                              if (hapuswishlist.statusCode == 200) {
-                                                                                var hapuswishlistJson = json.decode(hapuswishlist.body);
-                                                                                if (hapuswishlistJson['status'] == 'success') {
+                                                                              print(removeAdmin);
+                                                                              if (removeAdmin.statusCode == 200) {
+                                                                                var removeAdminJson = json.decode(removeAdmin.body);
+                                                                                if (removeAdminJson['status'] == 'success') {
                                                                                   Fluttertoast.showToast(msg: "Berhasil");
                                                                                   setState(() {
                                                                                     isDelete = false;
@@ -545,14 +545,14 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                                   setState(() {
                                                                                     listadminevent.remove(listadminevent[index]);
                                                                                   });
-                                                                                } else if (hapuswishlistJson['status'] == 'Error') {
-                                                                                  Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                } else if (removeAdminJson['status'] == 'Error') {
+                                                                                  Fluttertoast.showToast(msg: "Request failed with status: ${removeAdmin.statusCode}");
                                                                                   setState(() {
                                                                                     isDelete = false;
                                                                                   });
                                                                                 }
                                                                               } else {
-                                                                                Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                Fluttertoast.showToast(msg: "Request failed with status: ${removeAdmin.statusCode}");
                                                                                 setState(() {
                                                                                   isDelete = false;
                                                                                 });

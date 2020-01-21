@@ -94,14 +94,14 @@ class _ManagePesertaState extends State<ManagePeserta> {
       isLoading = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getParticipantEvent = await http.post(
         url('api/listpesertaevent'),
         body: {'event': widget.event},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
+      if (getParticipantEvent.statusCode == 200) {
+        var listuserJson = json.decode(getParticipantEvent.body);
         var listUsers = listuserJson['peserta'];
         print(listUsers);
         listpesertaevent = [];
@@ -120,7 +120,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
           isLoading = false;
           isError = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getParticipantEvent.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -128,7 +128,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getParticipantEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -165,14 +165,14 @@ class _ManagePesertaState extends State<ManagePeserta> {
       isFilter = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getParticipantEventFilter = await http.post(
         url('api/listpesertaevent'),
         body: {'event': widget.event, 'filter': _searchQuery.text},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
+      if (getParticipantEventFilter.statusCode == 200) {
+        var listuserJson = json.decode(getParticipantEventFilter.body);
         var listUsers = listuserJson['peserta'];
         print(listUsers);
         listpesertaevent = [];
@@ -191,7 +191,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
           isFilter = false;
           isErrorfilter = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getParticipantEventFilter.statusCode == 401) {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -199,7 +199,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getParticipantEventFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -539,7 +539,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                             isDenied = true;
                                                           });
                                                           try {
-                                                            final hapuswishlist =
+                                                            final deniedParticipantEvent =
                                                                 await http.post(
                                                                     url(
                                                                         'api/tolakpeserta_event'),
@@ -554,15 +554,15 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                       .idevent
                                                                 });
                                                             print(
-                                                                hapuswishlist);
-                                                            if (hapuswishlist
+                                                                deniedParticipantEvent);
+                                                            if (deniedParticipantEvent
                                                                     .statusCode ==
                                                                 200) {
-                                                              var hapuswishlistJson =
+                                                              var deniedParticipantEventJson =
                                                                   json.decode(
-                                                                      hapuswishlist
+                                                                      deniedParticipantEvent
                                                                           .body);
-                                                              if (hapuswishlistJson[
+                                                              if (deniedParticipantEventJson[
                                                                       'status'] ==
                                                                   'success') {
                                                                 Fluttertoast
@@ -578,13 +578,13 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           index]
                                                                       .status = 'C';
                                                                 });
-                                                              } else if (hapuswishlistJson[
+                                                              } else if (deniedParticipantEventJson[
                                                                       'status'] ==
                                                                   'Error') {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
-                                                                            "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                            "Request failed with status: ${deniedParticipantEvent.statusCode}");
                                                                 setState(() {
                                                                   isDenied =
                                                                       false;
@@ -594,7 +594,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                          "Request failed with status: ${deniedParticipantEvent.statusCode}");
                                                               setState(() {
                                                                 isDenied =
                                                                     false;

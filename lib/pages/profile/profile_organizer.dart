@@ -957,11 +957,10 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: item.image != null || item.image != ''
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${item.image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                            image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                ? 
+                                                                                 'images/noimage.jpg'  
+                                                                                : url('storage/image/event/event_thumbnail/${item.image}'),
                                                                                 
                                                                             fit:
                                                                                 BoxFit.cover,
