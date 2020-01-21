@@ -84,7 +84,7 @@ class _RegisterEvent extends State<RegisterEvents> {
 
     try {
       final ongoingevent = await http.get(
-        url('api/event/${id}'),
+        url('api/event/$id'),
         headers: requestHeaders,
       );
 

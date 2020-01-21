@@ -3,7 +3,6 @@ import 'package:checkin_app/pages/events_all/index.dart';
 import 'package:flutter/material.dart';
 
 //pages
-import 'api/api_service.dart';
 import 'auth/login.dart';
 import 'dashboard.dart';
 import 'pages/events_all/index.dart';

@@ -1,4 +1,3 @@
-import 'package:checkin_app/pages/events_personal/create_category.dart';
 import 'package:checkin_app/pages/events_personal/edit_event.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';

@@ -1,13 +1,10 @@
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
-import 'package:checkin_app/model/user_checkin.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
 import 'create_participant.dart';
 import 'list_approval.dart';

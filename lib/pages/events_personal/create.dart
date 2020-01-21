@@ -16,7 +16,6 @@ import 'dart:io';
 import 'index.dart';
 import 'package:image_picker/image_picker.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreateevent;
 String tokenType, accessToken;
 Map<String, dynamic> formSerialize;
 File _image;
@@ -31,10 +30,6 @@ TextEditingController _alamateventController = new TextEditingController();
 TextEditingController _deskripsieventController = new TextEditingController();
 var firstdate, lastdate, _tanggalawalevent, _tanggalakhirevent;
 
-void showInSnackBar(String value) {
-  _scaffoldKeycreateevent.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 class ManajemeCreateEvent extends StatefulWidget {
   ManajemeCreateEvent({Key key, this.title}) : super(key: key);
@@ -52,7 +47,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
 
   @override
   void initState() {
-    _scaffoldKeycreateevent = GlobalKey<ScaffoldState>();
     super.initState();
     getHeaderHTTP();
     _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
@@ -811,7 +805,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
           });
         }
       } on TimeoutException catch (_) {
-        showInSnackBar('Timed out, Try again');
+         Fluttertoast.showToast(
+              msg: "Time Out, Try Again");
         setState(() {
           isCreate = false;
         });

@@ -23,9 +23,6 @@ class ConfirmEvent extends StatefulWidget{
 
 class _ConfirmEvent extends State<ConfirmEvent> {
 
-  List<Map> _comboBox = [{"name":"Vip","value":1},{"name":"Regular","value":2},{"name":"Gold","value":3}];
-  int _valueCombo = 1;
-  bool _check = false;
   bool _isLoading = false;
 
   @override

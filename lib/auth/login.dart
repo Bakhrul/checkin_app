@@ -1,4 +1,3 @@
-import 'package:checkin_app/pages/tes.dart';
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import 'register.dart';
@@ -6,7 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -187,21 +186,21 @@ class _LoginPageState extends State<LoginPage> {
     if (user.displayName != '' || user.displayName != null) {
       Navigator.pushNamed(context, '/dashboard');
     }
-    // return user;
+    return user;
   }
 
-  signfacebook() async {
-    var facebooklogin = await FacebookLogin();
-    var result = await facebooklogin.logIn(['email']);
-    final token = result.accessToken.token;
-    final graphResponse = await http.get(
-        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-    final profile = json.decode(graphResponse.body);
-    print(profile);
-    if (profile != null) {
-      Navigator.pushNamed(context, '/dashboard');
-    }
-  }
+  // void signfacebook() async {
+  //   var facebooklogin = await FacebookLogin();
+  //   var result = await facebooklogin.logIn(['email']);
+  //   final token = result.accessToken.token;
+  //   final graphResponse = await http.get(
+  //       'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+  //   final profile = json.decode(graphResponse.body);
+  //   print(profile);
+  //   if (profile != null) {
+  //     Navigator.pushNamed(context, '/dashboard');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -280,178 +279,178 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-    final adsSection = Material(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  width: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.all(0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: OutlineButton(
-                      color: Colors.white,
-                      textColor: Color.fromRGBO(41, 30, 47, 1),
-                      disabledTextColor: Colors.green[400],
-                      padding: EdgeInsets.all(0),
-                      splashColor: Colors.blueAccent,
-                      borderSide: BorderSide(
-                        color: Colors.grey, //Color of the border
-                        style: BorderStyle.solid, //Style of the border
-                        width: 0.2, //width of the border
-                      ),
-                      onPressed: () async {
-                        signin();
-                        },
-                      child: new Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              margin: EdgeInsets.only(
-                                left: 15.0,
-                                right: 15.0,
-                              ),
-                              height: 40.0,
-                              width: 20.0,
-                              padding: EdgeInsets.all(15),
-                              decoration: new BoxDecoration(
-                                color: Colors.white,
-                                image: new DecorationImage(
-                                  image: AssetImage(
-                                    'images/google.png',
-                                  ),
-                                ),
-                              )),
-                          new Container(
-                              height: 40.0,
-                              decoration: new BoxDecoration(
-                                  border: Border(
-                                left:
-                                    BorderSide(width: 0.2, color: Colors.grey),
-                              )),
-                              padding: EdgeInsets.only(
-                                left: 10.0,
-                                right: 10.0,
-                                top: 12.0,
-                              ),
-                              child: new Text(
-                                "Google",
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top:10.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: OutlineButton(
-                      color: Colors.white,
-                      textColor: Color.fromRGBO(41, 30, 47, 1),
-                      disabledTextColor: Colors.green[400],
-                      padding: EdgeInsets.all(0),
-                      splashColor: Colors.blueAccent,
-                      borderSide: BorderSide(
-                        color: Colors.grey, //Color of the border
-                        style: BorderStyle.solid, //Style of the border
-                        width: 0.2, //width of the border
-                      ),
-                      onPressed: () async {
-                        signfacebook();
-                        },
-                      child: new Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              margin: EdgeInsets.only(
-                                left: 15.0,
-                                right: 15.0,
-                              ),
-                              height: 40.0,
-                              width: 20.0,
-                              padding: EdgeInsets.all(15),
-                              decoration: new BoxDecoration(
-                                color: Colors.white,
-                                image: new DecorationImage(
-                                  image: AssetImage(
-                                    'images/facebook.png',
-                                  ),
-                                ),
-                              )),
-                          Column(
-                            children: <Widget>[
-                              new Container(
-                                  height: 40.0,
-                                  decoration: new BoxDecoration(
-                                      border: Border(
-                                    left:
-                                        BorderSide(width: 0.2, color: Colors.grey),
-                                  )),
-                                  padding: EdgeInsets.only(
-                                    left: 10.0,
-                                    right: 10.0,
-                                    top: 12.0,
-                                  ),
-                                  child: new Text(
-                                    "Facebook",
-                                    style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top:40.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('Belum Memiliki Akun ?',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w500),),
-                      ButtonTheme(
-                      minWidth: 0.0,
-                      height: 0.0,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(5.0),
-                        onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Register()));
-                        },
-                        child: Text(
-                          'Daftar Sekarang',
-                          style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 102, 1),
-                          ),
-                        ),
-                        color: Colors.white,
-                      ),
-                    ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    // final adsSection = Material(
+    //   color: Colors.white,
+    //   child: Column(
+    //     children: <Widget>[
+    //       SizedBox(height: 10),
+    //       Container(
+    //         width: double.infinity,
+    //         child: Column(
+    //           children: <Widget>[
+    //             SizedBox(
+    //               width: 20,
+    //             ),
+    //             Padding(
+    //               padding: EdgeInsets.all(0),
+    //               child: SizedBox(
+    //                 width: double.infinity,
+    //                 child: OutlineButton(
+    //                   color: Colors.white,
+    //                   textColor: Color.fromRGBO(41, 30, 47, 1),
+    //                   disabledTextColor: Colors.green[400],
+    //                   padding: EdgeInsets.all(0),
+    //                   splashColor: Colors.blueAccent,
+    //                   borderSide: BorderSide(
+    //                     color: Colors.grey, //Color of the border
+    //                     style: BorderStyle.solid, //Style of the border
+    //                     width: 0.2, //width of the border
+    //                   ),
+    //                   onPressed: () async {
+    //                     signin();
+    //                     },
+    //                   child: new Row(
+    //                     crossAxisAlignment: CrossAxisAlignment.start,
+    //                     children: <Widget>[
+    //                       Container(
+    //                           margin: EdgeInsets.only(
+    //                             left: 15.0,
+    //                             right: 15.0,
+    //                           ),
+    //                           height: 40.0,
+    //                           width: 20.0,
+    //                           padding: EdgeInsets.all(15),
+    //                           decoration: new BoxDecoration(
+    //                             color: Colors.white,
+    //                             image: new DecorationImage(
+    //                               image: AssetImage(
+    //                                 'images/google.png',
+    //                               ),
+    //                             ),
+    //                           )),
+    //                       new Container(
+    //                           height: 40.0,
+    //                           decoration: new BoxDecoration(
+    //                               border: Border(
+    //                             left:
+    //                                 BorderSide(width: 0.2, color: Colors.grey),
+    //                           )),
+    //                           padding: EdgeInsets.only(
+    //                             left: 10.0,
+    //                             right: 10.0,
+    //                             top: 12.0,
+    //                           ),
+    //                           child: new Text(
+    //                             "Google",
+    //                             style: TextStyle(
+    //                                 color: Colors.black54,
+    //                                 fontWeight: FontWeight.bold),
+    //                           )),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: EdgeInsets.only(top:10.0),
+    //               child: SizedBox(
+    //                 width: double.infinity,
+    //                 child: OutlineButton(
+    //                   color: Colors.white,
+    //                   textColor: Color.fromRGBO(41, 30, 47, 1),
+    //                   disabledTextColor: Colors.green[400],
+    //                   padding: EdgeInsets.all(0),
+    //                   splashColor: Colors.blueAccent,
+    //                   borderSide: BorderSide(
+    //                     color: Colors.grey, //Color of the border
+    //                     style: BorderStyle.solid, //Style of the border
+    //                     width: 0.2, //width of the border
+    //                   ),
+    //                   onPressed: () async {
+    //                     // signfacebook();
+    //                     },
+    //                   child: new Row(
+    //                     crossAxisAlignment: CrossAxisAlignment.start,
+    //                     children: <Widget>[
+    //                       Container(
+    //                           margin: EdgeInsets.only(
+    //                             left: 15.0,
+    //                             right: 15.0,
+    //                           ),
+    //                           height: 40.0,
+    //                           width: 20.0,
+    //                           padding: EdgeInsets.all(15),
+    //                           decoration: new BoxDecoration(
+    //                             color: Colors.white,
+    //                             image: new DecorationImage(
+    //                               image: AssetImage(
+    //                                 'images/facebook.png',
+    //                               ),
+    //                             ),
+    //                           )),
+    //                       Column(
+    //                         children: <Widget>[
+    //                           new Container(
+    //                               height: 40.0,
+    //                               decoration: new BoxDecoration(
+    //                                   border: Border(
+    //                                 left:
+    //                                     BorderSide(width: 0.2, color: Colors.grey),
+    //                               )),
+    //                               padding: EdgeInsets.only(
+    //                                 left: 10.0,
+    //                                 right: 10.0,
+    //                                 top: 12.0,
+    //                               ),
+    //                               child: new Text(
+    //                                 "Facebook",
+    //                                 style: TextStyle(
+    //                                     color: Colors.black54,
+    //                                     fontSize: 14,
+    //                                     fontWeight: FontWeight.bold),
+    //                               )),
+    //                         ],
+    //                       ),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             Container(
+    //               padding: EdgeInsets.only(top:40.0),
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: <Widget>[
+    //                   Text('Belum Memiliki Akun ?',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w500),),
+    //                   ButtonTheme(
+    //                   minWidth: 0.0,
+    //                   height: 0.0,
+    //                   child: FlatButton(
+    //                     padding: EdgeInsets.all(5.0),
+    //                     onPressed: () async {
+    //                       Navigator.push(
+    //                           context,
+    //                           MaterialPageRoute(
+    //                               builder: (context) => Register()));
+    //                     },
+    //                     child: Text(
+    //                       'Daftar Sekarang',
+    //                       style: TextStyle(
+    //                         color: Color.fromRGBO(0, 0, 102, 1),
+    //                       ),
+    //                     ),
+    //                     color: Colors.white,
+    //                   ),
+    //                 ),
+    //                 ],
+    //               ),
+    //             )
+    //           ],
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

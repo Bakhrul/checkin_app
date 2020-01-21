@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:checkin_app/model/search_event.dart';
 
 class RegisterEvents extends StatefulWidget {
 

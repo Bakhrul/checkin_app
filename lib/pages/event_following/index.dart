@@ -133,7 +133,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
+    // Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
 
   try{
    final followevent = await http.post(

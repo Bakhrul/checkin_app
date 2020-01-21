@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class UserParticipant {
   String id;
   String name;

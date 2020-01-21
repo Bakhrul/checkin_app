@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class Checkin {
   String id;

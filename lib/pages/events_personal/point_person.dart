@@ -1,4 +1,3 @@
-import 'package:checkin_app/pages/events_personal/manage_checkin.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:checkin_app/storage/storage.dart';
@@ -205,27 +204,7 @@ class _PointEventsState extends State<PointEvents> {
       debugPrint('$e');
     }
     return null;
-  }
-
-  void _handleSearchEnd() {
-    setState(() {
-      // ignore: new_with_non_type
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Kelola Hasil Absen Peserta",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      );
-      _searchQuery.clear();
-    });
-  }
-
-  final TextEditingController _searchQuery = new TextEditingController();
+  }  
 
   Widget appBarTitle = Text(
     "Kelola Hasil Absen Peserta",
