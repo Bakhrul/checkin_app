@@ -1,27 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:checkin_app/pages/profile/profile_akun_edit.dart';
 
-class ProfileUser extends StatefulWidget{
+class ProfileUserEdit extends StatefulWidget{
 
-  ProfileUser({Key key}) : super(key : key);
+  ProfileUserEdit({Key key}) : super(key : key);
 
   @override
   State<StatefulWidget> createState(){
-    return _ProfileUser();
+    return _ProfileUserEdit();
   }
 }
 
-class _ProfileUser extends State<ProfileUser> {
+class _ProfileUserEdit extends State<ProfileUserEdit> {
 
   
   String nama;
   String email;
+  String phone;
+  String location;
+  TextEditingController _controllerNama = new TextEditingController();
+  TextEditingController _controllerEmail = new TextEditingController();
+  TextEditingController _controllerPhone = new TextEditingController();
+  TextEditingController _controllerLocation = new TextEditingController();
 
   @override
   void initState() {
     _getUser();
+
+    _controllerNama.addListener(nameEdit);
+    _controllerEmail.addListener(emailEdit);
+    _controllerPhone.addListener(phoneEdit);
+    _controllerLocation.addListener(locationEdit);
+
+
     super.initState();
+  }
+
+  nameEdit(){
+    setState((){
+        nama = _controllerNama.text;
+    });
+  }
+
+  emailEdit(){
+    setState((){
+        email = _controllerEmail.text;
+    });
+  }
+
+  phoneEdit(){
+    setState((){
+        phone = _controllerPhone.text;
+    });
+  }
+
+  locationEdit(){
+    setState((){
+        location = _controllerLocation.text;
+    });
   }
 
   _getUser() async {
@@ -32,6 +68,12 @@ class _ProfileUser extends State<ProfileUser> {
   setState(() {
     nama = namaUser;
     email = emailUser;
+    phone = '08123456789';
+    location = 'Indonesia , Jawa Timur';
+     _controllerNama.text = namaUser;
+     _controllerEmail.text = emailUser;
+     _controllerPhone.text = '08123456789';
+     _controllerLocation.text = 'Indonesia , Jawa Timur';
   });
   }
 
@@ -39,31 +81,21 @@ class _ProfileUser extends State<ProfileUser> {
   Widget build(BuildContext context) {
     
     return Scaffold(
+           backgroundColor: Colors.white,
            appBar: AppBar(
              iconTheme: IconThemeData(
                 color: Colors.white,
               ),
              backgroundColor: Color.fromRGBO(41, 30, 47, 1),
              elevation: 0.0,
-             actions:<Widget>[
-               IconButton(
-                 icon:Icon(Icons.edit),
-                 onPressed:(){
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context)=> ProfileUserEdit())
-                   );
-                 }
-               )
-             ]
            ),
            body:SingleChildScrollView(
              child:Stack(
                children: <Widget>[
                   Container(
-                    height: 300,
+                    height: 200,
                     width: double.infinity,
-                    color: Color.fromRGBO(41, 30, 47, 1)
+                    color: Color.fromRGBO(41, 30, 47, 1),
                   ),
                   Container(
                       child: Column(
@@ -95,7 +127,7 @@ class _ProfileUser extends State<ProfileUser> {
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 50.0),
-                                    child: Text('Indonesia, Jawa Timur',
+                                    child: Text(location,
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.white,
@@ -105,12 +137,10 @@ class _ProfileUser extends State<ProfileUser> {
                           Container(
                               width: double.infinity,
                               padding: EdgeInsets.only(left:50.0,right:50.0,top:20.0,),
-                              color: Colors.white,
                               child:Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 5.0),
                                     child: Text('Nama',
                                       style: TextStyle(
                                         color: Colors.grey
@@ -119,11 +149,9 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(nama == null ? 'memuat..':nama,
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                      )
-                                    ),
+                                    child:TextField(
+                                       controller:_controllerNama,
+                                    )
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 5.0),
@@ -135,10 +163,8 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(email == null ? 'memuat..':email,
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                      )
+                                    child:TextField(
+                                       controller:_controllerEmail,
                                     )
                                   ),
                                   Container(
@@ -151,10 +177,8 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text('0812345678',
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                      )
+                                    child:TextField(
+                                       controller:_controllerPhone,
                                     )
                                   ),
                                   Container(
@@ -166,11 +190,27 @@ class _ProfileUser extends State<ProfileUser> {
                                     ),
                                   ),
                                   Container(
-                                    child: Text('Jawa timur',
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                      )
+                                    margin: EdgeInsets.only(bottom: 30.0),
+                                    child:TextField(
+                                       controller:_controllerLocation,
                                     )
+                                  ),
+                                  Center(
+                                   child:Container(
+                                     width: 200,
+                                     margin: EdgeInsets.only(bottom: 50.0),
+                                     child: RaisedButton(
+                                        onPressed:(){
+
+                                        },
+                                        color: Color.fromRGBO(41, 30, 47, 1),
+                                        child: Text("Save",
+                                           style:TextStyle(
+                                             color: Colors.white
+                                           )
+                                        )
+                                      )
+                                   )
                                   )
                                 ],
                               )

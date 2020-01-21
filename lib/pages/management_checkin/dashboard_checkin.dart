@@ -1,13 +1,14 @@
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
+import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:unicorndial/unicorndial.dart';
 import 'create_checkin.dart';
 import 'create_participant.dart';
-import 'list_approval.dart';
 import 'list_peserta_checkin.dart';
 // import 'listprovinsi.dart';
 // import 'listkabupaten.dart';
@@ -41,7 +42,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     Icons.mail,
     Icons.phone
   ];
+var childButtons = List<UnicornButton>();
 
+    
   getDataMember() async {
     setState(() {
       isLoading = true;
@@ -86,7 +89,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       dynamic response =
           await RequestGet(name: "checkin/getdata/checkin/", customrequest: "${widget.idevent}")
               .getdata();
-              print(response);
       for (var i = 0; i < response.length; i++) {
         Checkin checkin = Checkin(
           id: response[i]["id"].toString(),
@@ -166,7 +168,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         await RequestPost(name: "checkin/deletedata/checkinreguler", body: body)
             .sendrequest();
 
-            print(response);
     if (response == "success") {
       setState(() {});
 
@@ -230,6 +231,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   @override
   Widget build(BuildContext context) {
+             
     this.context = context;
     String jumlahPeserta = listPeserta.length.toString();
     return SafeArea(
@@ -240,14 +242,14 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           backgroundColor: Color.fromRGBO(41, 30, 47, 1),
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
           actions: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.notifications_none),
-              tooltip: 'Air it',
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ListApproval()));
-              },
-            ),
+            // new IconButton(
+            //   icon: new Icon(Icons.notifications_none),
+            //   tooltip: 'Air it',
+            //   onPressed: () {
+            //     Navigator.push(context,
+            //         MaterialPageRoute(builder: (context) => ListApproval()));
+            //   },
+            // ),
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -270,21 +272,22 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(25.0)),
                     ),
-                    child: TextField(
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black,
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding:
-                              EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Color.fromRGBO(41, 30, 47, 1),
-                          ),
-                          hintText: "Cari Berdasarkan Nama Lengkap",
-                          border: InputBorder.none,
-                        )),
+                    // child: TextField(
+                    //     style: TextStyle(
+                    //       fontSize: 14.0,
+                    //       color: Colors.black,
+                    //     ),
+                    //     decoration: InputDecoration(
+                    //       contentPadding:
+                    //           EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    //       prefixIcon: Icon(
+                    //         Icons.search,
+                    //         color: Color.fromRGBO(41, 30, 47, 1),
+                    //       ),
+                    //       hintText: "Cari Berdasarkan Nama Lengkap",
+                    //       border: InputBorder.none,
+                    //     )
+                    //     ),
                   ),
                   SingleChildScrollView(
                     child: isLoading == true
@@ -519,7 +522,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   Widget _bottomButtons() {
     return _tabController.index == 1
-        ? DraggableFab(
+        ? 
+        DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
                 onPressed: () async {
@@ -527,7 +531,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            ManajemeCreateCheckin(idevent: widget.idevent),
+                            ChoiceCheckin(idevent: widget.idevent),
                       ));
                 },
                 backgroundColor: Color.fromRGBO(41, 30, 47, 1),
@@ -535,6 +539,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                   Icons.add,
                   size: 20.0,
                 )))
+
         : DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),

@@ -25,3 +25,4 @@ lib/routes/env.dart
 lib/core/env.dart
 lib/core/env.dart
 lib/routes/env.dart
+lib/core/env.dart

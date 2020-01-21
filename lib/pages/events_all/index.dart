@@ -801,14 +801,22 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                             selfEvent: userId == _event[x].userEvent ? true:false
                                           );
                                           break;
-                                      case 'Proses':
+                                      case 'Proses Pendaftaran':
                                           return WaitingEvent(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,
                                             selfEvent: userId == _event[x].userEvent ? true:false,
                                           );
                                           break;
-                                      case 'Ditolak':
+                                      case 'Proses Daftar Admin':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            selfEvent: true,
+                                            dataUser:dataUser
+                                            );
+                                          break;
+                                      case 'Pendaftaran Ditolak':
                                           return RegisterEvents(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,
