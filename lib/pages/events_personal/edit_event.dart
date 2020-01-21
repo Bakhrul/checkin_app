@@ -114,22 +114,22 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
       isLoading = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getEditEvent = await http.post(
         url('api/editdataevent'),
         body: {'event': widget.idevent},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
-        var listUsers = listuserJson['kategori'];
-        String gambar = listuserJson['gambar'];
+      if (getEditEvent.statusCode == 200) {
+        var getEditEventJson = json.decode(getEditEvent.body);
+        var listCategoryEvent = getEditEventJson['kategori'];
+        String image = getEditEventJson['gambar'];
         setState(() {
-          gambarX = gambar;
+          gambarX = image;
         });
-        print(listUsers);
+        print(listCategoryEvent);
         listkategoriEventEdit = [];
-        for (var i in listUsers) {
+        for (var i in listCategoryEvent) {
           ListEditKategoriEvent willcomex = ListEditKategoriEvent(
             id: '${i['c_id']}',
             nama: '${i['c_name']}',
@@ -140,7 +140,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
           isLoading = false;
           isError = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getEditEvent.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -148,7 +148,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getEditEvent.body);
         setState(() {
           isLoading = false;
           isError = true;

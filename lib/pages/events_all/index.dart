@@ -621,11 +621,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: _event[x].image != null
-                                                                                ? url(
-                                                                                    'storage/image/event/event_thumbnail/${_event[x].image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                            image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
+                                                                                ? 'images/noimage.jpg'
+                                                                                : url('storage/image/event/event_thumbnail/${_event[x].image}'),
                                                                                 
                                                                             fit:
                                                                                 BoxFit.cover,

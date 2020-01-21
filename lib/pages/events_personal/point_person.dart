@@ -79,7 +79,7 @@ class _PointEventsState extends State<PointEvents> {
       isLoading = true;
     });
     try {
-      final hasilakhirevent = await http.post(
+      final resultCheckinParticipant = await http.post(
         url('api/checkin/getdata/countcheckin/users'),
         body: {
           'idevent': widget.idevent,
@@ -87,8 +87,8 @@ class _PointEventsState extends State<PointEvents> {
         headers: requestHeaders,
       );
 
-      if (hasilakhirevent.statusCode == 200) {
-        var listuserJson = json.decode(hasilakhirevent.body);
+      if (resultCheckinParticipant.statusCode == 200) {
+        var listuserJson = json.decode(resultCheckinParticipant.body);
         print(listuserJson);
         listpointcheckin = [];
         for (var i in listuserJson) {
@@ -104,7 +104,7 @@ class _PointEventsState extends State<PointEvents> {
           isLoading = false;
           isError = false;
         });
-      } else if (hasilakhirevent.statusCode == 401) {
+      } else if (resultCheckinParticipant.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -112,7 +112,7 @@ class _PointEventsState extends State<PointEvents> {
           isError = true;
         });
       } else {
-        print(hasilakhirevent.body);
+        print(resultCheckinParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -149,7 +149,7 @@ class _PointEventsState extends State<PointEvents> {
       isFilter = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final resultCheckinParticipantFilter = await http.post(
         url('api/checkin/getdata/countcheckin/users'),
         body: {
           'idevent': widget.idevent,
@@ -158,8 +158,8 @@ class _PointEventsState extends State<PointEvents> {
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (resultCheckinParticipantFilter.statusCode == 200) {
+        var listuserJson = json.decode(resultCheckinParticipantFilter.body);
         print(listuserJson);
         listpointcheckin = [];
         for (var i in listuserJson) {
@@ -175,7 +175,7 @@ class _PointEventsState extends State<PointEvents> {
           isFilter = false;
           isErrorfilter = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (resultCheckinParticipantFilter.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -183,7 +183,7 @@ class _PointEventsState extends State<PointEvents> {
           isErrorfilter = true;
         });
       } else {
-        print(willcomeevent.body);
+        print(resultCheckinParticipantFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;

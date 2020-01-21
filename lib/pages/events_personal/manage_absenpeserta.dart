@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import 'package:percent_indicator/percent_indicator.dart';
-
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +12,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:core';
 import 'model.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeyManageAbsenPeserta;
 bool isLoading, isError;
 String jumlahhadirX, jumlahtidakhadirX, jumlahpesertaX, percentX;
 List<ListCheckinUsers> listuserscheckin = [];
@@ -31,7 +29,6 @@ class ManageAbsenPeserta extends StatefulWidget {
 class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
   @override
   void initState() {
-    _scaffoldKeyManageAbsenPeserta = GlobalKey<ScaffoldState>();
     super.initState();
     getHeaderHTTP();
     isLoading = true;
@@ -71,14 +68,14 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
       isLoading = true;
     });
     try {
-      final checkinevent = await http.post(
+      final getAttendParticipant = await http.post(
         url('api/listUserscheckin'),
         body: {'event': widget.idevent, 'checkin': widget.idcheckin},
         headers: requestHeaders,
       );
 
-      if (checkinevent.statusCode == 200) {
-        var listuserJson = json.decode(checkinevent.body);
+      if (getAttendParticipant.statusCode == 200) {
+        var listuserJson = json.decode(getAttendParticipant.body);
         var listUsers = listuserJson['checkinUsers'];
         String jumlahhadir = listuserJson['jumlahhadir'].toString();
         String jumlahtidakhadir = listuserJson['jumlahtidakhadir'].toString();
@@ -107,7 +104,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
           isLoading = false;
           isError = false;
         });
-      } else if (checkinevent.statusCode == 401) {
+      } else if (getAttendParticipant.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -115,7 +112,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(checkinevent.body);
+        print(getAttendParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -151,7 +148,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyManageAbsenPeserta,
       appBar: buildBar(context),
       body: isLoading == true
           ? Center(

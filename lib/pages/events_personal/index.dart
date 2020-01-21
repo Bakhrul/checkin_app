@@ -17,7 +17,7 @@ import 'model.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
 
-bool isLoading, isError;
+bool isLoading, isError, isDelete;
 String tokenType, accessToken;
 String jumlahongoingX, jumlahwillcomeX, jumlahdoneeventX;
 Map<String, String> requestHeaders = Map();
@@ -58,7 +58,9 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     jumlahwillcomeX = null;
     jumlahdoneeventX = null;
     isError = false;
+    isDelete = false;
   }
+
   void dispose() {
     super.dispose();
   }
@@ -101,30 +103,46 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             textColor: Colors.green,
             child: Text('Ya'),
             onPressed: () async {
+              setState(() {
+                isDelete = true;
+              });
               try {
                 Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                final hapuswishlist = await http.post(url('api/deleteevent'),
+                final deleteEvent = await http.post(url('api/deleteevent'),
                     headers: requestHeaders,
                     body: {
                       'event': idevent,
                     });
 
-                if (hapuswishlist.statusCode == 200) {
-                  var hapuswishlistJson = json.decode(hapuswishlist.body);
-                  if (hapuswishlistJson['status'] == 'success') {
+                if (deleteEvent.statusCode == 200) {
+                  var deleteEventJson = json.decode(deleteEvent.body);
+                  if (deleteEventJson['status'] == 'success') {
                     Navigator.pop(context);
+                    setState(() {
+                      isDelete = false;
+                    });
                     listOngoingEvent();
                     Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
                   }
                 } else {
-                  print(hapuswishlist.body);
+                  setState(() {
+                    isDelete = false;
+                  });
+                  print(deleteEvent.body);
                   Fluttertoast.showToast(
                       msg:
-                          "Request failed with status: ${hapuswishlist.statusCode}");
+                          "Request failed with status: ${deleteEvent.statusCode}");
                 }
               } on TimeoutException catch (_) {
+                setState(() {
+                  isDelete = false;
+                });
                 Fluttertoast.showToast(msg: "Timed out, Try again");
               } catch (e) {
+                setState(() {
+                  isDelete = false;
+                });
+                Fluttertoast.showToast(msg: "${e.toString()}");
                 print(e);
               }
             },
@@ -173,14 +191,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       isLoading = true;
     });
     try {
-      final ongoingevent = await http.post(
+      final getOngoningMyEvent = await http.post(
         url('api/getongoingmyevent'),
         headers: requestHeaders,
       );
 
-      if (ongoingevent.statusCode == 200) {
+      if (getOngoningMyEvent.statusCode == 200) {
         // return nota;
-        var ongoingeventJson = json.decode(ongoingevent.body);
+        var ongoingeventJson = json.decode(getOngoningMyEvent.body);
         var ongoingevents = ongoingeventJson['eventongoing'];
         String jumlahongoing = ongoingeventJson['jumlahongoing'].toString();
         listItemOngoing = [];
@@ -203,7 +221,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = false;
         });
         listWillComeEvent();
-      } else if (ongoingevent.statusCode == 401) {
+      } else if (getOngoningMyEvent.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -211,7 +229,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = true;
         });
       } else {
-        print(ongoingevent.body);
+        print(getOngoningMyEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -255,14 +273,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       isLoading = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final getWillComeMyEvent = await http.post(
         url('api/getwillcomemyevent'),
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
+      if (getWillComeMyEvent.statusCode == 200) {
         // return nota;
-        var willcomeeventJson = json.decode(willcomeevent.body);
+        var willcomeeventJson = json.decode(getWillComeMyEvent.body);
         var willcomeEvents = willcomeeventJson['eventakandatang'];
         print(willcomeEvents);
         String jumlahwillcome =
@@ -288,7 +306,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           jumlahwillcomeX = jumlahwillcome;
         });
         listDoneEvent();
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (getWillComeMyEvent.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -296,7 +314,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = true;
         });
       } else {
-        print(willcomeevent.body);
+        print(getWillComeMyEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -333,14 +351,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       isLoading = true;
     });
     try {
-      final doneevent = await http.post(
+      final getDoneMyEvent = await http.post(
         url('api/getdonemyevent'),
         headers: requestHeaders,
       );
 
-      if (doneevent.statusCode == 200) {
+      if (getDoneMyEvent.statusCode == 200) {
         // return nota;
-        var doneeventJson = json.decode(doneevent.body);
+        var doneeventJson = json.decode(getDoneMyEvent.body);
         var doneEvents = doneeventJson['eventselesai'];
         String jumlahdoneevent = doneeventJson['jumlahselesai'].toString();
 
@@ -363,7 +381,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = false;
           jumlahdoneeventX = jumlahdoneevent;
         });
-      } else if (doneevent.statusCode == 401) {
+      } else if (getDoneMyEvent.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -430,8 +448,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          :
-          isError == true
+          : isError == true
               ? Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: RefreshIndicator(
@@ -485,568 +502,126 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     ]),
                   ),
                 )
-                : Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    RefreshIndicator(
-                        onRefresh: () => listOngoingEvent(),
-                        child: Column(
-                          children: <Widget>[
-                            InkWell(
-                                onTap: currentEvent,
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 10.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, right: 10.0, top: 0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                            (jumlahongoingX == null
-                                                    ? 'Event Berlangsung  ( 0 Event )'
-                                                    : 'Event Berlangsung  ( $jumlahongoingX Event )')
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            )),
-                                        Icon(height == null
-                                            ? Icons.arrow_drop_down
-                                            : Icons.arrow_drop_up),
-                                      ],
-                                    ),
-                                  ),
-                                )),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 10.0,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: listItemOngoing
-                                    .map((ListOngoingEvent item) => Container(
-                                          height: height,
-                                          child: Card(
-                                            child: ListTile(
-                                              leading: Container(
-                                                padding: EdgeInsets.only(
-                                                    right: 10.0),
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        right: BorderSide(
-                                                  color: Colors.lightBlue,
-                                                  width: 2.0,
-                                                ))),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      item.waktuawal == null
-                                                          ? 'Unknown Date'
-                                                          : DateFormat(
-                                                                  'dd-MM-y')
-                                                              .format(DateTime
-                                                                  .parse(item
-                                                                      .waktuawal)),
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 10.0),
-                                                      child: Text(
-                                                        item.waktuakhir == null
-                                                            ? 'Unknown Date'
-                                                            : DateFormat(
-                                                                    'dd-MM-y')
-                                                                .format(DateTime
-                                                                    .parse(item
-                                                                        .waktuakhir)),
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              title: Text(
-                                                item.title == null ||
-                                                        item.title == ''
-                                                    ? 'Unknown Nama Event'
-                                                    : item.title,
-                                                 overflow:TextOverflow.ellipsis,
-                                                                        softWrap:true,
-                                                                        maxLines: 2,
+              : Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        RefreshIndicator(
+                            onRefresh: () => listOngoingEvent(),
+                            child: Column(
+                              children: <Widget>[
+                                InkWell(
+                                    onTap: currentEvent,
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 10.0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0, right: 10.0, top: 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                                (jumlahongoingX == null
+                                                        ? 'Event Berlangsung  ( 0 Event )'
+                                                        : 'Event Berlangsung  ( $jumlahongoingX Event )')
+                                                    .toUpperCase(),
                                                 style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              trailing:
-                                                  PopupMenuButton<PageEnum>(
-                                                onSelected: (PageEnum value) {
-                                                  switch (value) {
-                                                    case PageEnum
-                                                        .kelolaeditEventPage:
-                                                      Navigator.of(context).push(CupertinoPageRoute(
-                                                          builder: (BuildContext context) =>
-                                                              ManajemeEditEvent(
-                                                                  idevent:
-                                                                      item.id,
-                                                                  nama: item
-                                                                      .title,
-                                                                  lokasi: item
-                                                                      .lokasi,
-                                                                  waktuawal: item
-                                                                      .waktuawal,
-                                                                  waktuakhir: item
-                                                                      .waktuakhir,
-                                                                  deskripsi: item
-                                                                      .deskripsi)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaadminPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageAdmin(
-                                                                      event: item
-                                                                          .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManagePeserta(
-                                                                      event: item
-                                                                          .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaWaktuCheckinPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageCheckin(
-                                                                      event: item
-                                                                          .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaCheckinPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ListMultiCheckin()));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaHasilAKhirPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  PointEvents(idevent: item.id)));
-                                                      break;
-                                                    case PageEnum.deleteEvent:
-                                                      konfirmasidelete(item.id, listItemOngoing, item);
-                                                      break;
-                                                    default:
-                                                      break;
-                                                  }
-                                                },
-                                                icon: Icon(Icons.more_vert),
-                                                itemBuilder: (context) => [
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaeditEventPage,
-                                                    child:
-                                                        Text("Edit Data Event"),
-                                                  ) :null,
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaadminPage,
-                                                    child: Text(
-                                                        "Kelola Admin / Co - Host"),
-                                                  ): null,
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaPesertaPage,
-                                                    child:
-                                                        Text("Kelola Peserta"),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaWaktuCheckinPage,
-                                                    child: Text(
-                                                        "Kelola waktu checkin"),
-                                                  ),
-                                                  // PopupMenuItem(
-                                                  //   value: PageEnum
-                                                  //       .kelolaCheckinPesertaPage,
-                                                  //   child: Text(
-                                                  //       "Kelola checkin peserta"),
-                                                  // ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaHasilAKhirPage,
-                                                    child: Text(
-                                                        "Hasil akhir checkin peserta"),
-                                                  ),
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum.deleteEvent,
-                                                    child: Text("Hapus Event"),
-                                                  ): null,
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              child: Divider(),
-                            ),
-                            InkWell(
-                              onTap: futureEvent,
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 10.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10.0, top: 0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                          (jumlahwillcomeX == null
-                                                  ? 'Event Yang Akan Datang  ( 0 Event )'
-                                                  : 'Event Yang Akan Datang  ( $jumlahwillcomeX Event )')
-                                              .toUpperCase(),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          )),
-                                      Icon(futureheight == null
-                                          ? Icons.arrow_drop_down
-                                          : Icons.arrow_drop_up),
-                                    ],
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                )),
+                                            Icon(height == null
+                                                ? Icons.arrow_drop_down
+                                                : Icons.arrow_drop_up),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: 10.0,
                                   ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 10.0,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: listItemWillCome
-                                    .map((ListWillComeEvent item) => Container(
-                                        height: futureheight,
-                                        child: Card(
-                                            child: ListTile(
-                                          leading: Container(
-                                            padding:
-                                                EdgeInsets.only(right: 10.0),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    right: BorderSide(
-                                              color: Colors.lightBlue,
-                                              width: 2.0,
-                                            ))),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  item.waktuawal == null
-                                                      ? 'Unknown Date'
-                                                      : DateFormat('dd-MM-y')
-                                                          .format(DateTime
-                                                              .parse(item
-                                                                  .waktuawal)),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10.0),
-                                                  child: Text(
-                                                    item.waktuakhir == null
-                                                        ? 'Unknown Date'
-                                                        : DateFormat('dd-MM-y')
-                                                            .format(DateTime
-                                                                .parse(item
-                                                                    .waktuakhir)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: listItemOngoing
+                                        .map((ListOngoingEvent item) =>
+                                            Container(
+                                              height: height,
+                                              child: Card(
+                                                child: ListTile(
+                                                  leading: Container(
+                                                    padding: EdgeInsets.only(
+                                                        right: 10.0),
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            right: BorderSide(
+                                                      color: Colors.lightBlue,
+                                                      width: 2.0,
+                                                    ))),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          item.waktuawal == null
+                                                              ? 'Unknown Date'
+                                                              : DateFormat(
+                                                                      'dd-MM-y')
+                                                                  .format(DateTime
+                                                                      .parse(item
+                                                                          .waktuawal)),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10.0),
+                                                          child: Text(
+                                                            item.waktuakhir ==
+                                                                    null
+                                                                ? 'Unknown Date'
+                                                                : DateFormat(
+                                                                        'dd-MM-y')
+                                                                    .format(DateTime
+                                                                        .parse(item
+                                                                            .waktuakhir)),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    item.title == null ||
+                                                            item.title == ''
+                                                        ? 'Unknown Nama Event'
+                                                        : item.title,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 2,
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          title: Text(
-                                            item.title == null ||
-                                                    item.title == ''
-                                                ? 'Unknown Nama Event'
-                                                : item.title,
-                                                 overflow:TextOverflow.ellipsis,
-                                                                        softWrap:true,
-                                                                        maxLines: 2,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          trailing: PopupMenuButton<PageEnum>(
-                                            onSelected: (PageEnum value) {
-                                              switch (value) {
-                                                case PageEnum
-                                                    .kelolaeditEventPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManajemeEditEvent(
-                                                                idevent:
-                                                                    item.id,
-                                                                nama:
-                                                                    item.title,
-                                                                lokasi:
-                                                                    item.lokasi,
-                                                                waktuawal: item
-                                                                    .waktuawal,
-                                                                waktuakhir: item
-                                                                    .waktuakhir,
-                                                                deskripsi: item
-                                                                    .deskripsi,
-                                                              )));
-                                                  break;
-                                                case PageEnum.kelolaadminPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageAdmin(
-                                                                  event: item
-                                                                      .id)));
-                                                  break;
-                                                case PageEnum.kelolaPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManagePeserta(
-                                                                  event: item
-                                                                      .id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaWaktuCheckinPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ManageCheckin(
-                                                                  event: item
-                                                                      .id)));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaCheckinPesertaPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ListMultiCheckin()));
-                                                  break;
-                                                case PageEnum
-                                                    .kelolaHasilAKhirPage:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              PointEvents(idevent: item.id)));
-                                                  break;
-                                                case PageEnum.deleteEvent:
-                                                  konfirmasidelete(item.id, listItemWillCome, item);
-                                                  break;
-                                                default:
-                                                  break;
-                                              }
-                                            },
-                                            icon: Icon(Icons.more_vert),
-                                            itemBuilder: (context) => [
-                                              item.status == 'creator' ?
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaeditEventPage,
-                                                child: Text("Edit Data Event"),
-                                              ): null,
-                                              item.status == 'creator' ?
-                                              PopupMenuItem(
-                                                value: PageEnum.kelolaadminPage,
-                                                child: Text(
-                                                    "Kelola Admin / Co - Host"),
-                                              ) : null,
-                                              PopupMenuItem(
-                                                value:
-                                                    PageEnum.kelolaPesertaPage,
-                                                child: Text("Kelola Peserta"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaWaktuCheckinPage,
-                                                child: Text(
-                                                    "Kelola waktu checkin"),
-                                              ),
-                                              // PopupMenuItem(
-                                              //   value: PageEnum
-                                              //       .kelolaCheckinPesertaPage,
-                                              //   child: Text(
-                                              //       "Kelola checkin peserta"),
-                                              // ),
-                                              PopupMenuItem(
-                                                value: PageEnum
-                                                    .kelolaHasilAKhirPage,
-                                                child: Text(
-                                                    "Hasil akhir checkin peserta"),
-                                              ),
-                                              item.status == 'creator' ?
-                                              PopupMenuItem(
-                                                value: PageEnum.deleteEvent,
-                                                child: Text("Hapus Event"),
-                                              ) : null,
-                                            ],
-                                          ),
-                                        ))))
-                                    .toList(),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              child: Divider(),
-                            ),
-                            InkWell(
-                                onTap: pastEvent,
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 10.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, right: 10.0, top: 0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                            (jumlahdoneeventX == null
-                                                    ? 'Event Telah Selesai  ( 0 Event )'
-                                                    : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            )),
-                                        Icon(pastheight == null
-                                            ? Icons.arrow_drop_down
-                                            : Icons.arrow_drop_up),
-                                      ],
-                                    ),
-                                  ),
-                                )),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 10.0,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: listItemDoneEvent
-                                    .map((ListDoneEvent item) => Container(
-                                          height: pastheight,
-                                          child: Card(
-                                            child: ListTile(
-                                              leading: Container(
-                                                padding: EdgeInsets.only(
-                                                    right: 10.0),
-                                                decoration: BoxDecoration(
-                                                    border: Border(
-                                                        right: BorderSide(
-                                                  color: Colors.lightBlue,
-                                                  width: 2.0,
-                                                ))),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      item.waktuawal == null
-                                                          ? 'Unknown Date'
-                                                          : DateFormat(
-                                                                  'dd-MM-y')
-                                                              .format(DateTime
-                                                                  .parse(item
-                                                                      .waktuawal)),
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 10.0),
-                                                      child: Text(
-                                                        item.waktuakhir == null
-                                                            ? 'Unknown Date'
-                                                            : DateFormat(
-                                                                    'dd-MM-y')
-                                                                .format(DateTime
-                                                                    .parse(item
-                                                                        .waktuakhir)),
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              title: Text(
-                                                item.title == null ||
-                                                        item.title == ''
-                                                    ? 'Unknown Nama Event'
-                                                    : item.title,
-                                                     overflow:TextOverflow.ellipsis,
-                                                                        softWrap:true,
-                                                                        maxLines: 2,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              trailing:
-                                                  PopupMenuButton<PageEnum>(
-                                                onSelected: (PageEnum value) {
-                                                  switch (value) {
-                                                    case PageEnum
-                                                        .kelolaeditEventPage:
-                                                      Navigator.of(context).push(CupertinoPageRoute(
-                                                          builder: (BuildContext context) =>
-                                                              ManajemeEditEvent(
+                                                  trailing:
+                                                      PopupMenuButton<PageEnum>(
+                                                    onSelected:
+                                                        (PageEnum value) {
+                                                      switch (value) {
+                                                        case PageEnum
+                                                            .kelolaeditEventPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext context) => ManajemeEditEvent(
                                                                   idevent:
                                                                       item.id,
                                                                   nama: item
@@ -1059,119 +634,616 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       .waktuakhir,
                                                                   deskripsi: item
                                                                       .deskripsi)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaadminPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageAdmin(
-                                                                      event: item
-                                                                          .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaadminPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageAdmin(
+                                                                          event:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
                                                                   ManagePeserta(
                                                                       event: item
                                                                           .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaWaktuCheckinPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
                                                               builder: (BuildContext
                                                                       context) =>
                                                                   ManageCheckin(
                                                                       event: item
                                                                           .id)));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaCheckinPesertaPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ListMultiCheckin()));
-                                                      break;
-                                                    case PageEnum
-                                                        .kelolaHasilAKhirPage:
-                                                      Navigator.of(context).push(
-                                                          CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  PointEvents(idevent : item.id)));
-                                                      break;
-                                                    case PageEnum.deleteEvent:
-                                                      konfirmasidelete(item.id, listItemDoneEvent, item);
-                                                      break;
-                                                    default:
-                                                      break;
-                                                  }
-                                                },
-                                                icon: Icon(Icons.more_vert),
-                                                itemBuilder: (context) => [
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaeditEventPage,
-                                                    child:
-                                                        Text("Edit Data Event"),
-                                                  ) :null,
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaadminPage,
-                                                    child: Text(
-                                                        "Kelola Admin / Co - Host"),
-                                                  ) : null,
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaPesertaPage,
-                                                    child:
-                                                        Text("Kelola Peserta"),
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin()));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaHasilAKhirPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      PointEvents(
+                                                                          idevent:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .deleteEvent:
+                                                          konfirmasidelete(
+                                                              item.id,
+                                                              listItemOngoing,
+                                                              item);
+                                                          break;
+                                                        default:
+                                                          break;
+                                                      }
+                                                    },
+                                                    icon: Icon(Icons.more_vert),
+                                                    itemBuilder: (context) => [
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaeditEventPage,
+                                                              child: Text(
+                                                                  "Edit Data Event"),
+                                                            )
+                                                          : null,
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaadminPage,
+                                                              child: Text(
+                                                                  "Kelola Admin / Co - Host"),
+                                                            )
+                                                          : null,
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaPesertaPage,
+                                                        child: Text(
+                                                            "Kelola Peserta"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaWaktuCheckinPage,
+                                                        child: Text(
+                                                            "Kelola waktu checkin"),
+                                                      ),
+                                                      // PopupMenuItem(
+                                                      //   value: PageEnum
+                                                      //       .kelolaCheckinPesertaPage,
+                                                      //   child: Text(
+                                                      //       "Kelola checkin peserta"),
+                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaHasilAKhirPage,
+                                                        child: Text(
+                                                            "Hasil akhir checkin peserta"),
+                                                      ),
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .deleteEvent,
+                                                              child: Text(
+                                                                  "Hapus Event"),
+                                                            )
+                                                          : null,
+                                                    ],
                                                   ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaWaktuCheckinPage,
-                                                    child: Text(
-                                                        "Kelola waktu checkin"),
-                                                  ),
-                                                  // PopupMenuItem(
-                                                  //   value: PageEnum
-                                                  //       .kelolaCheckinPesertaPage,
-                                                  //   child: Text(
-                                                  //       "Kelola checkin peserta"),
-                                                  // ),
-                                                  PopupMenuItem(
-                                                    value: PageEnum
-                                                        .kelolaHasilAKhirPage,
-                                                    child: Text(
-                                                        "Hasil akhir checkin peserta"),
-                                                  ),
-                                                  item.status == 'creator' ?
-                                                  PopupMenuItem(
-                                                    value: PageEnum.deleteEvent,
-                                                    child: Text("Hapus Event"),
-                                                  ): null,
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
-                          ],
-                        )),
-                  ],
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Divider(),
+                                ),
+                                InkWell(
+                                  onTap: futureEvent,
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, right: 10.0, top: 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                              (jumlahwillcomeX == null
+                                                      ? 'Event Yang Akan Datang  ( 0 Event )'
+                                                      : 'Event Yang Akan Datang  ( $jumlahwillcomeX Event )')
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          Icon(futureheight == null
+                                              ? Icons.arrow_drop_down
+                                              : Icons.arrow_drop_up),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: 10.0,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: listItemWillCome
+                                        .map((ListWillComeEvent item) =>
+                                            Container(
+                                                height: futureheight,
+                                                child: Card(
+                                                    child: ListTile(
+                                                  leading: Container(
+                                                    padding: EdgeInsets.only(
+                                                        right: 10.0),
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            right: BorderSide(
+                                                      color: Colors.lightBlue,
+                                                      width: 2.0,
+                                                    ))),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          item.waktuawal == null
+                                                              ? 'Unknown Date'
+                                                              : DateFormat(
+                                                                      'dd-MM-y')
+                                                                  .format(DateTime
+                                                                      .parse(item
+                                                                          .waktuawal)),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10.0),
+                                                          child: Text(
+                                                            item.waktuakhir ==
+                                                                    null
+                                                                ? 'Unknown Date'
+                                                                : DateFormat(
+                                                                        'dd-MM-y')
+                                                                    .format(DateTime
+                                                                        .parse(item
+                                                                            .waktuakhir)),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    item.title == null ||
+                                                            item.title == ''
+                                                        ? 'Unknown Nama Event'
+                                                        : item.title,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  trailing:
+                                                      PopupMenuButton<PageEnum>(
+                                                    onSelected:
+                                                        (PageEnum value) {
+                                                      switch (value) {
+                                                        case PageEnum
+                                                            .kelolaeditEventPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManajemeEditEvent(
+                                                                        idevent:
+                                                                            item.id,
+                                                                        nama: item
+                                                                            .title,
+                                                                        lokasi:
+                                                                            item.lokasi,
+                                                                        waktuawal:
+                                                                            item.waktuawal,
+                                                                        waktuakhir:
+                                                                            item.waktuakhir,
+                                                                        deskripsi:
+                                                                            item.deskripsi,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaadminPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageAdmin(
+                                                                          event:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManagePeserta(
+                                                                      event: item
+                                                                          .id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageCheckin(
+                                                                      event: item
+                                                                          .id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin()));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaHasilAKhirPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      PointEvents(
+                                                                          idevent:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .deleteEvent:
+                                                          konfirmasidelete(
+                                                              item.id,
+                                                              listItemWillCome,
+                                                              item);
+                                                          break;
+                                                        default:
+                                                          break;
+                                                      }
+                                                    },
+                                                    icon: Icon(Icons.more_vert),
+                                                    itemBuilder: (context) => [
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaeditEventPage,
+                                                              child: Text(
+                                                                  "Edit Data Event"),
+                                                            )
+                                                          : null,
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaadminPage,
+                                                              child: Text(
+                                                                  "Kelola Admin / Co - Host"),
+                                                            )
+                                                          : null,
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaPesertaPage,
+                                                        child: Text(
+                                                            "Kelola Peserta"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaWaktuCheckinPage,
+                                                        child: Text(
+                                                            "Kelola waktu checkin"),
+                                                      ),
+                                                      // PopupMenuItem(
+                                                      //   value: PageEnum
+                                                      //       .kelolaCheckinPesertaPage,
+                                                      //   child: Text(
+                                                      //       "Kelola checkin peserta"),
+                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaHasilAKhirPage,
+                                                        child: Text(
+                                                            "Hasil akhir checkin peserta"),
+                                                      ),
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .deleteEvent,
+                                                              child: Text(
+                                                                  "Hapus Event"),
+                                                            )
+                                                          : null,
+                                                    ],
+                                                  ),
+                                                ))))
+                                        .toList(),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: Divider(),
+                                ),
+                                InkWell(
+                                    onTap: pastEvent,
+                                    child: Container(
+                                      margin: EdgeInsets.only(bottom: 10.0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0, right: 10.0, top: 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Text(
+                                                (jumlahdoneeventX == null
+                                                        ? 'Event Telah Selesai  ( 0 Event )'
+                                                        : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                )),
+                                            Icon(pastheight == null
+                                                ? Icons.arrow_drop_down
+                                                : Icons.arrow_drop_up),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: 10.0,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: listItemDoneEvent
+                                        .map((ListDoneEvent item) => Container(
+                                              height: pastheight,
+                                              child: Card(
+                                                child: ListTile(
+                                                  leading: Container(
+                                                    padding: EdgeInsets.only(
+                                                        right: 10.0),
+                                                    decoration: BoxDecoration(
+                                                        border: Border(
+                                                            right: BorderSide(
+                                                      color: Colors.lightBlue,
+                                                      width: 2.0,
+                                                    ))),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          item.waktuawal == null
+                                                              ? 'Unknown Date'
+                                                              : DateFormat(
+                                                                      'dd-MM-y')
+                                                                  .format(DateTime
+                                                                      .parse(item
+                                                                          .waktuawal)),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10.0),
+                                                          child: Text(
+                                                            item.waktuakhir ==
+                                                                    null
+                                                                ? 'Unknown Date'
+                                                                : DateFormat(
+                                                                        'dd-MM-y')
+                                                                    .format(DateTime
+                                                                        .parse(item
+                                                                            .waktuakhir)),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    item.title == null ||
+                                                            item.title == ''
+                                                        ? 'Unknown Nama Event'
+                                                        : item.title,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  trailing:
+                                                      PopupMenuButton<PageEnum>(
+                                                    onSelected:
+                                                        (PageEnum value) {
+                                                      switch (value) {
+                                                        case PageEnum
+                                                            .kelolaeditEventPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext context) => ManajemeEditEvent(
+                                                                  idevent:
+                                                                      item.id,
+                                                                  nama: item
+                                                                      .title,
+                                                                  lokasi: item
+                                                                      .lokasi,
+                                                                  waktuawal: item
+                                                                      .waktuawal,
+                                                                  waktuakhir: item
+                                                                      .waktuakhir,
+                                                                  deskripsi: item
+                                                                      .deskripsi)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaadminPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageAdmin(
+                                                                          event:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManagePeserta(
+                                                                      event: item
+                                                                          .id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageCheckin(
+                                                                      event: item
+                                                                          .id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin()));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaHasilAKhirPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      PointEvents(
+                                                                          idevent:
+                                                                              item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .deleteEvent:
+                                                          konfirmasidelete(
+                                                              item.id,
+                                                              listItemDoneEvent,
+                                                              item);
+                                                          break;
+                                                        default:
+                                                          break;
+                                                      }
+                                                    },
+                                                    icon: Icon(Icons.more_vert),
+                                                    itemBuilder: (context) => [
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaeditEventPage,
+                                                              child: Text(
+                                                                  "Edit Data Event"),
+                                                            )
+                                                          : null,
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .kelolaadminPage,
+                                                              child: Text(
+                                                                  "Kelola Admin / Co - Host"),
+                                                            )
+                                                          : null,
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaPesertaPage,
+                                                        child: Text(
+                                                            "Kelola Peserta"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaWaktuCheckinPage,
+                                                        child: Text(
+                                                            "Kelola waktu checkin"),
+                                                      ),
+                                                      // PopupMenuItem(
+                                                      //   value: PageEnum
+                                                      //       .kelolaCheckinPesertaPage,
+                                                      //   child: Text(
+                                                      //       "Kelola checkin peserta"),
+                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaHasilAKhirPage,
+                                                        child: Text(
+                                                            "Hasil akhir checkin peserta"),
+                                                      ),
+                                                      item.status == 'creator'
+                                                          ? PopupMenuItem(
+                                                              value: PageEnum
+                                                                  .deleteEvent,
+                                                              child: Text(
+                                                                  "Hapus Event"),
+                                                            )
+                                                          : null,
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
     );
   }
 }

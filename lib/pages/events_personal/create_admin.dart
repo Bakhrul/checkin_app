@@ -8,17 +8,12 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreateadmin;
 TextEditingController _filtercontroller = new TextEditingController();
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
 bool isLoading, isError, isSame, isFilter, isErrorfilter;
 var datepicker;
 List<ListUser> listUserItem = [];
-void showInSnackBar(String value) {
-  _scaffoldKeycreateadmin.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 class ManajemeCreateAdmin extends StatefulWidget {
   ManajemeCreateAdmin({Key key, this.title, this.listUseradd})
@@ -49,7 +44,6 @@ class Debouncer {
 class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
   @override
   void initState() {
-    _scaffoldKeycreateadmin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
@@ -90,13 +84,13 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
       isLoading = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final getUser = await http.post(
         url('api/getdataparticipant'),
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (getUser.statusCode == 200) {
+        var listuserJson = json.decode(getUser.body);
         var listUsers = listuserJson['participant'];
         listUserItem = [];
         for (var i in listUsers) {
@@ -111,7 +105,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
           isLoading = false;
           isError = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (getUser.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -119,7 +113,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(willcomeevent.body);
+        print(getUser.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -156,7 +150,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
       isFilter = true;
     });
     try {
-      final willcomeevent = await http.post(
+      final getUserFilter = await http.post(
         url('api/getdataparticipant'),
         body: {
           'filter': _filtercontroller.text,
@@ -164,8 +158,8 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
+      if (getUserFilter.statusCode == 200) {
+        var listuserJson = json.decode(getUserFilter.body);
         var listUsers = listuserJson['participant'];
         listUserItem = [];
         for (var i in listUsers) {
@@ -180,7 +174,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
           isFilter = false;
           isErrorfilter = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (getUserFilter.statusCode == 401) {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -188,7 +182,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(willcomeevent.body);
+        print(getUserFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -215,7 +209,6 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-      key: _scaffoldKeycreateadmin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
