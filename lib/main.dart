@@ -14,6 +14,8 @@ import 'splash_screen.dart';
 import 'pages/check_in/tes.dart';
 import 'pages/event_following/index.dart';
 import 'notifications/list_notification.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:checkin_app/utils/notification_local.dart';
 
 Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/dashboard": (BuildContext context) => Dashboard(),
@@ -30,9 +32,52 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
 };
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget{
+  MyApp({Key key}) : super(key: key);
+
+  State<StatefulWidget> createState() {
+    return _MyApp();
+  }
+}
+
+class _MyApp extends State<MyApp> {
+  
+  String _message = '';
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  NotificationLocal notif = new NotificationLocal();
+  bool _isConfigured = false;
+
+
   // This widget is the root of your application.
   // Platform messages are asynchronous, so we initialize in an async method.
+  @override
+  void initState(){
+    notif.mustInit(); 
+    getMessage();
+    register();
+    super.initState();
+  }
+
+   register() {
+    _firebaseMessaging.getToken().then((token) => print(token));
+  }
+
+  void getMessage(){
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+          notif.showNotificationWithSound(message["notification"]["title"],message["notification"]["body"]);
+          print('on message $message');
+          setState(() => _message = message["notification"]["title"]);
+    }, onResume: (Map<String, dynamic> message) async {
+          print('on resume $message');
+          setState(() => _message = message["notification"]["title"]);
+    }, onLaunch: (Map<String, dynamic> message) async {
+          print('on launch $message');
+          setState(() => _message = message["notification"]["title"]);
+    });
+
+  }
   
   @override
   Widget build(BuildContext context) {

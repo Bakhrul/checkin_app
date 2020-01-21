@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 TextEditingController username = TextEditingController();
 TextEditingController password = TextEditingController();
@@ -28,17 +29,30 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // String indexIki;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String fcmToken;
 
   void initState() {
     _isLoading = false;
     username.text = '';
     password.text = '';
+    register();
     super.initState();
   }
 
   void dispose() {
     super.dispose();
   }
+
+   register() {
+    _firebaseMessaging.getToken().then((token){
+      setState(() {
+        fcmToken = token;
+      });
+    });
+  }
+
+
   login() async {
     print('login');
     // await Auth(username: username,password: password ,name: 'login',nameStringsession: headsession , dataStringsession: getsession).getuser();
@@ -114,12 +128,35 @@ class _LoginPageState extends State<LoginPage> {
             store.setDataString("email", datauser['us_email']);
             store.setDataString("name", datauser['us_name']);
 
-            print(datauser);
+            
 
-            Navigator.pushReplacementNamed(context, "/dashboard");
-            setState(() {
-              _isLoading = false;
-            });
+              try{
+
+                Map body = {'id':datauser['us_code'].toString(),'token':fcmToken.toString()};
+                final getToken =
+                await http.post(url("api/updateTokenFcm"), headers: requestHeaders,body:body);
+
+                if(getToken.statusCode == 200){
+
+                  Navigator.pushReplacementNamed(context, "/dashboard");
+                  setState(() {
+                    _isLoading = false;
+                  });
+
+                } else if(getToken.statusCode != 200){
+                  Fluttertoast.showToast(msg: "error: cannot update token");
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+
+              } catch(e) {
+                Fluttertoast.showToast(msg: "error: $e");
+                  setState(() {
+                    _isLoading = false;
+                  });
+              }
+
           } else {
             Fluttertoast.showToast(msg: "Request failed with status: ${getUser.statusCode}");
             setState(() {
