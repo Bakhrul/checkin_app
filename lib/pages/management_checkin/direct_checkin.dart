@@ -147,9 +147,6 @@ postDataCheckin() async {
       ),
     );
   }
-  Widget _buildTextFieldDirect(){
-
-  }
 
    Widget _builderGenerateDirect(bodyHeight) {
     if (_dataString != null) {

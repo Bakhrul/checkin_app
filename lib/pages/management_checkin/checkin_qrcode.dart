@@ -71,7 +71,6 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
   }
 
   void checkinsekarang() async {
-    print('jaln');
     setState(() {
       isCheckin = true;
     });
@@ -134,7 +133,7 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
         });
       }
     } on TimeoutException catch (_) {
-      Fluttertoast.showToast(msg: "Timeout!!, Gagal Melakukan Checkin");
+      Fluttertoast.showToast(msg: "Timeout!!, Try Again");
       setState(() {
         isCheckin = false;
         gagalCheckin = true;

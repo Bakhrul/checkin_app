@@ -8,16 +8,11 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreatecategory;
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isSame;
 var datepicker;
 String tokenType, accessToken;
 List<ListUser> listUserItem = [];
-void showInSnackBar(String value) {
-  _scaffoldKeycreatecategory.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 class ManajemenCreateCategory extends StatefulWidget {
   ManajemenCreateCategory({Key key, this.title, this.listKategoriadd})
@@ -33,7 +28,6 @@ class ManajemenCreateCategory extends StatefulWidget {
 class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
   @override
   void initState() {
-    _scaffoldKeycreatecategory = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
@@ -71,13 +65,13 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
       isLoading = true;
     });
     try {
-      final kategorievent = await http.get(
+      final getCategory = await http.get(
         url('api/listkategorievent'),
         headers: requestHeaders,
       );
 
-      if (kategorievent.statusCode == 200) {
-        var kategorieventJson = json.decode(kategorievent.body);
+      if (getCategory.statusCode == 200) {
+        var kategorieventJson = json.decode(getCategory.body);
         var kategorievents = kategorieventJson['kategori'];
 
         listkategoriEvent = [];
@@ -92,7 +86,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
           isLoading = false;
           isError = false;
         });
-      } else if (kategorievent.statusCode == 401) {
+      } else if (getCategory.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -126,7 +120,6 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-      key: _scaffoldKeycreatecategory,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(

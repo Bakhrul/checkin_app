@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
-import 'package:checkin_app/pages/events_all/index.dart';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();

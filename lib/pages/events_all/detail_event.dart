@@ -98,7 +98,6 @@ class _RegisterEvent extends State<RegisterEvents> {
           creatorName = rawData['creator_name'];
         });
       } else {
-        print('ok');
       }
     } on SocketException catch (_) {
       setState(() {
@@ -164,12 +163,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                               padding: EdgeInsets.only(top: offset),
                               child: FadeInImage.assetNetwork(
                                 placeholder: 'images/noimage.jpg',
-                                image: dataEvent.image != null ||
-                                        dataEvent.image != ''
-                                    ? url(
-                                        'storage/image/event/event_thumbnail/${dataEvent.image}',
-                                      )
-                                    : 'images/noimage.jpg',
+                                image: dataEvent.image == null || dataEvent.image == '' || dataEvent.image == 'null'
+                                    ? 
+                                      'images/noimage.jpg'
+                                    : url('storage/image/event/event_original/${dataEvent.image}'),
                                 height: 300,
                                 width: double.infinity,
                                 fit: BoxFit.none,

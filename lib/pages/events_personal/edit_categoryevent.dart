@@ -8,17 +8,12 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreatecategory;
 List<ListKategoriEvent> listkategoriEvent = [];
 Map<String, String> requestHeaders = Map();
 bool isLoading, isError, isSame;
 var datepicker;
 String tokenType, accessToken;
 List<ListUser> listUserItem = [];
-void showInSnackBar(String value) {
-  _scaffoldKeycreatecategory.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
 
 class ManajemenEditCategoryEvent extends StatefulWidget {
   ManajemenEditCategoryEvent({Key key, this.title, this.listkategoryedit})
@@ -35,7 +30,6 @@ class _ManajemenEditCategoryEventState
     extends State<ManajemenEditCategoryEvent> {
   @override
   void initState() {
-    _scaffoldKeycreatecategory = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
@@ -73,13 +67,13 @@ class _ManajemenEditCategoryEventState
       isLoading = true;
     });
     try {
-      final kategorievent = await http.get(
+      final getCategory = await http.get(
         url('api/listkategorievent'),
         headers: requestHeaders,
       );
 
-      if (kategorievent.statusCode == 200) {
-        var kategorieventJson = json.decode(kategorievent.body);
+      if (getCategory.statusCode == 200) {
+        var kategorieventJson = json.decode(getCategory.body);
         var kategorievents = kategorieventJson['kategori'];
 
         listkategoriEvent = [];
@@ -94,7 +88,7 @@ class _ManajemenEditCategoryEventState
           isLoading = false;
           isError = false;
         });
-      } else if (kategorievent.statusCode == 401) {
+      } else if (getCategory.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
@@ -102,8 +96,8 @@ class _ManajemenEditCategoryEventState
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
       } else {
-        print(kategorievent.body);
-        print(kategorievent.statusCode);
+        print(getCategory.body);
+        print(getCategory.statusCode);
         setState(() {
           isLoading = false;
           isError = true;
@@ -130,7 +124,6 @@ class _ManajemenEditCategoryEventState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-      key: _scaffoldKeycreatecategory,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(

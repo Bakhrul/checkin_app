@@ -13,7 +13,7 @@ import 'dart:core';
 
 String tokenType, accessToken;
 List<ListNotifications> listnotifications = [];
-bool isLoading, isError;
+bool isLoading, isError, isAction;
 Map<String, String> requestHeaders = Map();
 enum PageEnum {
   detailEvent,
@@ -37,6 +37,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
     super.initState();
     isLoading = true;
     isError = false;
+    isAction = false;
     getHeaderHTTP();
   }
 
@@ -69,24 +70,28 @@ class _NotificationsState extends State<ManajemenNotifications> {
       isLoading = true;
     });
     try {
-      final willcomeevent = await http.get(
+      final notification = await http.get(
         url('api/getnotification_event'),
         headers: requestHeaders,
       );
 
-      if (willcomeevent.statusCode == 200) {
-        var listuserJson = json.decode(willcomeevent.body);
-        var listUsers = listuserJson['notifikasi'];
+      if (notification.statusCode == 200) {
+        var listNotificationJson = json.decode(notification.body);
+        var listNotifications = listNotificationJson['notifikasi'];
         listnotifications = [];
-        for (var i in listUsers) {
+        for (var i in listNotifications) {
           ListNotifications willcomex = ListNotifications(
             id: '${i['nev_id']}',
-            idcreator: i['nev_toperson'].toString(),
+            idcreator: i['ev_create_user'].toString(),
             idtoperson: i['nev_toperson'].toString(),
             idfromperson: i['nev_fromperson'].toString(),
+            namafromperson: i['namafromperson'],
+            namatoperson: i['namatoperson'],
+            namaupdateperson: i['namaupdateperson'],
             updatepeserta: i['nev_updateperson'].toString(),
             idevent: i['nev_event'].toString(),
             title: i['n_title'],
+            idmessage: i['nev_notifications'].toString(),
             message: i['n_message'],
             confirmation: i['n_confirmation'],
           );
@@ -96,7 +101,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
           isLoading = false;
           isError = false;
         });
-      } else if (willcomeevent.statusCode == 401) {
+      } else if (notification.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
@@ -104,7 +109,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
           isError = true;
         });
       } else {
-        print(willcomeevent.body);
+        print(notification.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -143,61 +148,84 @@ class _NotificationsState extends State<ManajemenNotifications> {
         ),
         actions: <Widget>[
           new IconButton(
-              icon: Icon(Icons.delete_outline,color:Colors.white),
-              onPressed: listnotifications.length == 0 ? null : () async {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    title: Text('Peringatan!'),
-                    content: Text('Apakah Anda Ingin Menhapus Semua Pesan?'),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Tidak'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      FlatButton(
-                        textColor: Colors.green,
-                        child: Text('Ya'),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          try {
-                            Fluttertoast.showToast(
-                                msg: "Mohon Tunggu Sebentar");
-                            final accConfirmation = await http.post(
-                              url('api/removeall_notification'),
-                              headers: requestHeaders,
-                            );
-                            print(accConfirmation);
-                            if (accConfirmation.statusCode == 200) {
-                              var hapuswishlistJson =
-                                  json.decode(accConfirmation.body);
-                              if (hapuswishlistJson['status'] == 'success') {
-                                getHeaderHTTP();
-                                Fluttertoast.showToast(msg: "Berhasil");
-                              } else if (hapuswishlistJson['status'] ==
-                                  'Error') {
-                                Fluttertoast.showToast(
-                                    msg:
-                                        "Request failed with status: ${accConfirmation.statusCode}");
-                              }
-                            } else {
-                              Fluttertoast.showToast(
-                                  msg:
-                                      "Request failed with status: ${accConfirmation.statusCode}");
-                            }
-                          } on TimeoutException catch (_) {
-                            Fluttertoast.showToast(msg: "Timed out, Try again");
-                          } catch (e) {
-                            print(e);
-                          }
-                        },
-                      )
-                    ],
-                  ),
-                );
-              }),
+              icon: Icon(Icons.delete_outline, color: Colors.white),
+              onPressed: listnotifications.length == 0
+                  ? null
+                  : () async {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: Text('Peringatan!'),
+                          content:
+                              Text('Apakah Anda Ingin Menhapus Semua Pesan?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Tidak'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            FlatButton(
+                              textColor: Colors.green,
+                              child: Text('Ya'),
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                setState(() {
+                                  isAction = true;
+                                });
+                                try {
+                                  Fluttertoast.showToast(
+                                      msg: "Mohon Tunggu Sebentar");
+                                  final removeAllNotifications = await http.post(
+                                    url('api/removeall_notification'),
+                                    headers: requestHeaders,
+                                  );
+                                  print(removeAllNotifications);
+                                  if (removeAllNotifications.statusCode == 200) {
+                                    var removeAllNotificationsJson =
+                                        json.decode(removeAllNotifications.body);
+                                    if (removeAllNotificationsJson['status'] ==
+                                        'success') {
+                                      setState(() {
+                                        isAction = false;
+                                      });
+                                      getHeaderHTTP();
+                                      Fluttertoast.showToast(msg: "Berhasil");
+                                    } else if (removeAllNotificationsJson['status'] ==
+                                        'Error') {
+                                      setState(() {
+                                        isAction = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "Request failed with status: ${removeAllNotifications.statusCode}");
+                                    }
+                                  } else {
+                                    setState(() {
+                                      isAction = false;
+                                    });
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Request failed with status: ${removeAllNotifications.statusCode}");
+                                  }
+                                } on TimeoutException catch (_) {
+                                  setState(() {
+                                    isAction = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                      msg: "Timed out, Try again");
+                                } catch (e) {
+                                  setState(() {
+                                    isAction = false;
+                                  });
+                                  print(e);
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    }),
         ],
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       ),
@@ -292,6 +320,18 @@ class _NotificationsState extends State<ManajemenNotifications> {
                       padding: const EdgeInsets.only(top: 20.0),
                       child: Column(
                         children: <Widget>[
+                          isAction == true
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 20.0,
+                                        margin: EdgeInsets.all(15.0),
+                                        height: 20.0,
+                                        child: CircularProgressIndicator()),
+                                  ],
+                                )
+                              : Container(),
                           Expanded(
                             child: Scrollbar(
                               child: ListView.builder(
@@ -343,6 +383,9 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                         onPressed: () async {
                                                           Navigator.pop(
                                                               context);
+                                                          setState(() {
+                                                            isAction = true;
+                                                          });
                                                           try {
                                                             Fluttertoast.showToast(
                                                                 msg:
@@ -370,13 +413,17 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                             if (accConfirmation
                                                                     .statusCode ==
                                                                 200) {
-                                                              var hapuswishlistJson =
+                                                              var accConfirmationJson =
                                                                   json.decode(
                                                                       accConfirmation
                                                                           .body);
-                                                              if (hapuswishlistJson[
+                                                              if (accConfirmationJson[
                                                                       'status'] ==
                                                                   'success') {
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
                                                                 setState(() {
                                                                   listnotifications.remove(
                                                                       listnotifications[
@@ -386,27 +433,48 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                     .showToast(
                                                                         msg:
                                                                             "Berhasil");
-                                                              } else if (hapuswishlistJson[
+                                                              } else if (accConfirmationJson[
                                                                       'status'] ==
                                                                   'Error') {
-                                                                    print(hapuswishlistJson.body);
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
+                                                                print(
+                                                                    accConfirmationJson
+                                                                        .body);
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Request failed with status: ${accConfirmation.statusCode}");
                                                               }
                                                             } else {
-                                                              print(accConfirmation.body);
+                                                              setState(() {
+                                                                isAction =
+                                                                    false;
+                                                              });
+                                                              print(
+                                                                  accConfirmation
+                                                                      .body);
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
                                                                           "Request failed with status: ${accConfirmation.statusCode}");
                                                             }
                                                           } on TimeoutException catch (_) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Timed out, Try again");
                                                           } catch (e) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "${e.toString()}");
                                                             print(e);
                                                           }
                                                         },
@@ -438,6 +506,9 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                         onPressed: () async {
                                                           Navigator.pop(
                                                               context);
+                                                          setState(() {
+                                                            isAction = true;
+                                                          });
                                                           try {
                                                             Fluttertoast.showToast(
                                                                 msg:
@@ -465,13 +536,17 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                             if (tolakConfirmation
                                                                     .statusCode ==
                                                                 200) {
-                                                              var hapuswishlistJson =
+                                                              var tolakConfirmationJson =
                                                                   json.decode(
                                                                       tolakConfirmation
                                                                           .body);
-                                                              if (hapuswishlistJson[
+                                                              if (tolakConfirmationJson[
                                                                       'status'] ==
                                                                   'success') {
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
                                                                 setState(() {
                                                                   listnotifications.remove(
                                                                       listnotifications[
@@ -481,25 +556,42 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                     .showToast(
                                                                         msg:
                                                                             "Berhasil");
-                                                              } else if (hapuswishlistJson[
+                                                              } else if (tolakConfirmationJson[
                                                                       'status'] ==
                                                                   'Error') {
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Request failed with status: ${tolakConfirmation.statusCode}");
                                                               }
                                                             } else {
+                                                              setState(() {
+                                                                isAction =
+                                                                    false;
+                                                              });
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
                                                                           "Request failed with status: ${tolakConfirmation.statusCode}");
                                                             }
                                                           } on TimeoutException catch (_) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Timed out, Try again");
                                                           } catch (e) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "${e.toString()}");
                                                             print(e);
                                                           }
                                                         },
@@ -531,6 +623,9 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                         onPressed: () async {
                                                           Navigator.pop(
                                                               context);
+                                                          setState(() {
+                                                            isAction = true;
+                                                          });
                                                           try {
                                                             Fluttertoast.showToast(
                                                                 msg:
@@ -552,13 +647,17 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                             if (removeConfirmation
                                                                     .statusCode ==
                                                                 200) {
-                                                              var hapuswishlistJson =
+                                                              var removeConfirmationJson =
                                                                   json.decode(
                                                                       removeConfirmation
                                                                           .body);
-                                                              if (hapuswishlistJson[
+                                                              if (removeConfirmationJson[
                                                                       'status'] ==
                                                                   'success') {
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
                                                                 setState(() {
                                                                   listnotifications.remove(
                                                                       listnotifications[
@@ -568,25 +667,42 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                     .showToast(
                                                                         msg:
                                                                             "Berhasil");
-                                                              } else if (hapuswishlistJson[
+                                                              } else if (removeConfirmationJson[
                                                                       'status'] ==
                                                                   'Error') {
+                                                                setState(() {
+                                                                  isAction =
+                                                                      false;
+                                                                });
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
                                                                             "Request failed with status: ${removeConfirmation.statusCode}");
                                                               }
                                                             } else {
+                                                              setState(() {
+                                                                isAction =
+                                                                    false;
+                                                              });
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
                                                                           "Request failed with status: ${removeConfirmation.statusCode}");
                                                             }
                                                           } on TimeoutException catch (_) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Timed out, Try again");
                                                           } catch (e) {
+                                                            setState(() {
+                                                              isAction = false;
+                                                            });
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "${e.toString()}'");
                                                             print(e);
                                                           }
                                                         },
@@ -664,7 +780,21 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                           .title ==
                                                       ''
                                               ? 'Pesan Tidak Diketahui'
-                                              : listnotifications[index].title),
+                                              : listnotifications[index]
+                                                          .idmessage ==
+                                                      '2'
+                                                  ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
+                                                  : listnotifications[index]
+                                                              .idmessage ==
+                                                          '8'
+                                                      ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
+                                                      : listnotifications[index]
+                                                                  .idmessage ==
+                                                              '9'
+                                                          ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
+                                                          : listnotifications[
+                                                                  index]
+                                                              .title),
                                         ),
                                         subtitle: Padding(
                                           padding: const EdgeInsets.only(
