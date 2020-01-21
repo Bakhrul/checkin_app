@@ -1147,6 +1147,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                      return SuccesRegisteredEvent(
                                                           id: int.parse(listItemFollowing[index].id),
                                                           selfEvent: true,
+                                                          dataUser: dataUser,
                                                           creatorId:listItemFollowing[index].idcreator,
                                                         );
                                                       }
