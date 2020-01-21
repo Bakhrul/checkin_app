@@ -228,7 +228,7 @@ class RequestPost{
         }
       return dataresponse;
     }else{
-      Fluttertoast.showToast(msg:'Error Code ${data.statusCode}');
+      // Fluttertoast.showToast(msg:'Error Code ${data.statusCode}');
       return 'gagal';
     }
 

@@ -166,7 +166,6 @@ class _DashboardState extends State<Dashboard> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return eventList(1);
   }
 
@@ -194,7 +193,6 @@ class _DashboardState extends State<Dashboard> {
         }
       }
     } catch (e) {
-      print(e);
     }
   }
 
@@ -230,7 +228,7 @@ class _DashboardState extends State<Dashboard> {
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(msg: "Time out , please try again later");
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -1852,8 +1850,7 @@ class _DashboardState extends State<Dashboard> {
                                                                           .assetNetwork(
                                                                         placeholder:
                                                                             'images/noimage.jpg',
-                                                                        image: item.image != null ||
-                                                                                item.image != ''
+                                                                        image: item.image != null 
                                                                             ? url(
                                                                                 'storage/image/event/event_thumbnail/${item.image}',
                                                                               )

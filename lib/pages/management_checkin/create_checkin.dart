@@ -9,6 +9,7 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
+import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -82,6 +83,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   // }
 
   postDataCheckin() async {
+    _isLoading = true;
     dynamic body = {
       "event_id": widget.idevent.toString(),
       "checkin_keyword": _controllerGenerate.text.toString(),
@@ -95,20 +97,38 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     dynamic response =
     await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
         .sendrequest();
-    print(response);
-    if (response == "success") {
+
+    
+    if (response != 'gagal') {
       Fluttertoast.showToast(
           msg: "Success",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.green[100],
           textColor: Colors.white,
           fontSize: 16.0);
+      
+      _isLoading =false;
+      var codeQr = response['checkin'];
+      var eventName = response['event'];
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) =>
-              DashboardCheckin(idevent: widget.idevent,)));
+              GenerateScreen(idEvent: widget.idevent,codeQr: codeQr,eventName: eventName)));
+    }else{
+      _isLoading =false;
+       Fluttertoast.showToast(
+          msg: "Terjadi Kesalahan",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red[200],
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
+    setState(() {
+      _isLoading =false;
+    });
   }
 
   @override
@@ -200,17 +220,17 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       Icons.create,
                       color: Color.fromRGBO(41, 30, 47, 1),
                     ),
-                    trailing: FlatButton(
-                      child: Text("SUBMIT"),
-                      textColor: Colors.green,
-                      color: Color.fromRGBO(220, 237, 193, 99),
-                      onPressed: () {
-                        setState(() {
-                          randomNumberGenerator();
-                          _inputErrorText = null;
-                        });
-                      },
-                    ),
+                    // trailing: FlatButton(
+                    //   child: Text("SUBMIT"),
+                    //   textColor: Colors.green,
+                    //   color: Color.fromRGBO(220, 237, 193, 99),
+                    //   onPressed: () {
+                    //     setState(() {
+                    //       randomNumberGenerator();
+                    //       _inputErrorText = null;
+                    //     });
+                    //   },
+                    // ),
                     title: TextField(
                       controller: _controllerGenerate,
                       decoration: InputDecoration(
@@ -237,15 +257,21 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _isLoading == false ? FloatingActionButton(
         onPressed: () {
           setState(() => _isLoading = true);
+          randomNumberGenerator();
           postDataCheckin();
         },
         child: Icon(Icons.check),
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      ),
-    );
+      ) 
+      :  Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    
   }
 
   Widget _buildTextFieldTimeEnd() {
@@ -330,28 +356,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           )
         ],
       );
-    } else {
-      return RepaintBoundary(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 3,
-                  child: FlatButton(
-                    color: Colors.blue,
-                    textColor: Colors.white,
-                    disabledColor: Colors.grey,
-                    disabledTextColor: Colors.black,
-                    padding: EdgeInsets.all(8.0),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) =>
-                              DirectCheckin(idevent: widget.idevent)));
-                    },
-                    child: Text("Direct Checkin"),
-                  ))
-            ],
-          ));
-    }
+    } 
   }
 
 
