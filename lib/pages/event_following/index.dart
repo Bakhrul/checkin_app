@@ -171,11 +171,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
           switch(i['ep_status']){
           case 'C':
-              status = 'Ditolak';
+              status = 'Pendaftaran Ditolak';
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Pendaftaran';
               color = Colors.orange;
               break;
           case 'A':
@@ -196,7 +196,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Daftar Admin';
               color = Colors.orange;
               break;
           default:
@@ -366,11 +366,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
           switch(i['ep_status']){
           case 'C':
-              status = 'Ditolak';
+              status = 'Pendaftaran Ditolak';
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Pendaftaran';
               color = Colors.orange;
               break;
           case 'A':
@@ -391,7 +391,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Daftar Admin';
               color = Colors.orange;
               break;
           default:
@@ -503,11 +503,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
           switch(i['ep_status']){
           case 'C':
-              status = 'Ditolak';
+              status = 'Pendaftaran Ditolak';
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Pendaftaran';
               color = Colors.orange;
               break;
           case 'A':
@@ -528,7 +528,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses';
+              status = 'Proses Pendaftaran';
               color = Colors.orange;
               break;
           default:
@@ -1111,7 +1111,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          case 'Proses':
+                                          case 'Proses Pendaftaran':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1119,6 +1119,21 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                      return WaitingEvent(
                                                           id: int.parse(listItemFollowing[index].id),
                                                           selfEvent: true,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
+                                          case 'Proses Daftar Admin':
+                                               return Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          dataUser: dataUser,
                                                           creatorId:listItemFollowing[index].idcreator,
                                                         );
                                                       }
@@ -1139,7 +1154,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          case 'Ditolak':
+                                          case 'Pendaftaran Ditolak':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(

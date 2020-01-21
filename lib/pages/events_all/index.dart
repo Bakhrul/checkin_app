@@ -724,7 +724,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                               children: <Widget>[
                                                 Container(
                                                     decoration: new BoxDecoration(
-                                                      color: userId == _event[x].userEvent ? Colors.blue:_event[x].color,
+                                                      color: _event[x].statusRegistered == 'Event Selesai' ? _event[x].color:userId == _event[x].userEvent ? Colors.blue:_event[x].color,
                                                       borderRadius: new BorderRadius.only(
                                                           topLeft:
                                                               const Radius.circular(5.0),
@@ -738,7 +738,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                     padding: EdgeInsets.all(5.0),
                                                     width: 120.0,
                                                     child: Text(
-                                                      userId == _event[x].userEvent ? "Event Saya":_event[x].statusRegistered,
+                                                      _event[x].statusRegistered == 'Event Selesai' ? _event[x].statusRegistered:userId == _event[x].userEvent ? "Event Saya":_event[x].statusRegistered,
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 12,
@@ -801,14 +801,22 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                             selfEvent: userId == _event[x].userEvent ? true:false
                                           );
                                           break;
-                                      case 'Proses':
+                                      case 'Proses Pendaftaran':
                                           return WaitingEvent(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,
                                             selfEvent: userId == _event[x].userEvent ? true:false,
                                           );
                                           break;
-                                      case 'Ditolak':
+                                      case 'Proses Daftar Admin':
+                                          return RegisterEvents(
+                                            id:_event[x].id,
+                                            creatorId:_event[x].userEvent,
+                                            selfEvent: true,
+                                            dataUser:dataUser
+                                            );
+                                          break;
+                                      case 'Pendaftaran Ditolak':
                                           return RegisterEvents(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,

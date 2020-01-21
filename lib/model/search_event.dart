@@ -69,11 +69,11 @@ class SearchEvent{
 
         switch(map['ep_status']){
         case 'C':
-             status = 'Ditolak';
+             status = 'Pendaftaran Ditolak';
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses';
+             status = 'Proses Pendaftaran';
              color = Colors.orange;
              break;
         case 'A':
@@ -94,7 +94,7 @@ class SearchEvent{
              color = Colors.grey;
              break;
         case 'P':
-             status = 'Proses';
+             status = 'Proses Daftar Admin';
              color = Colors.orange;
              break;
         default:
