@@ -437,16 +437,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     Icons.search,
     color: Colors.white,
   );
-  _onSelect(PageEnum value) {
-    switch (value) {
-      case PageEnum.kelolaRegisterPage:
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (BuildContext context) => RegisterEvents()));
-        break;
-      default:
-        break;
-    }
-  }
 
   @override
   void dispose() {

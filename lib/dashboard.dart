@@ -13,9 +13,7 @@ import 'pages/register_event/step_register_six.dart';
 import 'pages/register_event/step_register_three.dart';
 import 'pages/profile/profile_akun.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'pages/register_event/detail_event_afterregist.dart';
 import 'pages/management_checkin/dashboard_checkin.dart';
-import 'pages/management_checkin/create_checkin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -134,24 +132,6 @@ class _DashboardState extends State<Dashboard> {
       } else {
         pastheight = 0.0;
       }
-    });
-  }
-
-  void _handleSearchEnd() {
-    setState(() {
-      // ignore: new_with_non_type
-      // this.actionIcon = new Icon(
-      //   Icons.search,
-      //   color: Colors.white,
-      // );
-      this.appBarTitle = new Text(
-        "Dashboard",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      );
-      _searchQuery.clear();
     });
   }
 
@@ -421,15 +401,11 @@ class _DashboardState extends State<Dashboard> {
     emailprofile = await storage.getDataString('email');
   }
 
-  int _count = 0;
-  String _username;
+
   Future<Null> removeSharedPrefs() async {
     DataStore dataStore = new DataStore();
     dataStore.clearData();
-    _username = await dataStore.getDataString("name");
   }
-
-  final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
     "Dashboard",
@@ -1104,6 +1080,7 @@ class _DashboardState extends State<Dashboard> {
                                                                             Column(
                                                                           crossAxisAlignment:
                                                                               CrossAxisAlignment.start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
                                                                           children: <
                                                                               Widget>[
                                                                             Text(listWish[x].title,
@@ -2150,11 +2127,11 @@ class _DashboardState extends State<Dashboard> {
           ));
     }
   }
-  Widget linkToPageDetail(types,categories){
+  void linkToPageDetail(types,categories){
     var type = types != null ? types:1;
     Navigator.push(context, MaterialPageRoute(builder: (context) => DetailList(type:type, typeCategory: categories) ));
   }
-  Widget linkToPage(status, cratorId, eventId) {
+  void linkToPage(status, cratorId, eventId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       switch (status) {
         case 'Sudah Terdaftar':
@@ -2194,15 +2171,5 @@ class _DashboardState extends State<Dashboard> {
           break;
       }
     }));
-  }
-
-  Future<Null> _handleRefresh() async {
-    await new Future.delayed(new Duration(seconds: 3));
-
-    setState(() {
-      _count += 5;
-    });
-
-    return null;
   }
 }

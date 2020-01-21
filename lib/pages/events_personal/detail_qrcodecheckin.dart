@@ -32,9 +32,6 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
     _dataString = widget.checkin.toString();
   }
 
-  static const double _topSectionTopPadding = 50.0;
-  static const double _topSectionBottomPadding = 20.0;
-  static const double _topSectionHeight = 50.0;
 
   @override
   Widget build(BuildContext context) {
