@@ -206,7 +206,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
           }
 
         }
-
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),

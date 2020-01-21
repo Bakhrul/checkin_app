@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'dart:ui';
 import 'dart:core';
-import 'dart:async';
 
 class CountDown extends StatefulWidget{
   CountDown({Key key}) : super(key : key);

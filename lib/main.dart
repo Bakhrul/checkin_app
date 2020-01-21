@@ -39,13 +39,10 @@ class MyApp extends StatefulWidget{
     return _MyApp();
   }
 }
-
+String _message;
 class _MyApp extends State<MyApp> {
-  
-  String _message = '';
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   NotificationLocal notif = new NotificationLocal();
-  bool _isConfigured = false;
 
 
   // This widget is the root of your application.
@@ -53,6 +50,7 @@ class _MyApp extends State<MyApp> {
   @override
   void initState(){
     notif.mustInit(); 
+    _message = '';
     getMessage();
     register();
     super.initState();
@@ -68,13 +66,19 @@ class _MyApp extends State<MyApp> {
       onMessage: (Map<String, dynamic> message) async {
           notif.showNotificationWithSound(message["notification"]["title"],message["notification"]["body"]);
           print('on message $message');
-          setState(() => _message = message["notification"]["title"]);
+          setState(() {
+            _message = message["notification"]["title"];
+          });
     }, onResume: (Map<String, dynamic> message) async {
           print('on resume $message');
-          setState(() => _message = message["notification"]["title"]);
+          setState(() {
+            _message = message["notification"]["title"];
+          });
     }, onLaunch: (Map<String, dynamic> message) async {
           print('on launch $message');
-          setState(() => _message = message["notification"]["title"]);
+          setState(() {
+            _message = message["notification"]["title"];
+          });
     });
 
   }

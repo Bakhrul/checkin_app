@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:checkin_app/model/search_event.dart';
+import 'package:checkin_app/pages/events_all/model.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:checkin_app/pages/register_event/step_register_one.dart';
 import 'package:flutter/rendering.dart';
@@ -11,9 +13,13 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/pages/profile/profile_organizer.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'dart:async';
+import 'package:checkin_app/pages/register_event/step_register_six.dart';
+import 'package:checkin_app/pages/register_event/step_register_three.dart';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
+List<ListRekomEvent> listRekomendasiEvent = [];
 
 class RegisterEvents extends StatefulWidget {
   final int id;
@@ -97,7 +103,31 @@ class _RegisterEvent extends State<RegisterEvents> {
           creatorEmail = rawData['creator_email'];
           creatorName = rawData['creator_name'];
         });
+
+        var listRekomendasis = rawData['rekomendasi'];
+        print(listRekomendasis);
+        listRekomendasiEvent = [];
+        for (var i in listRekomendasis) {
+          ListRekomEvent willcomex = ListRekomEvent(
+            id: i['ev_id'].toString(),
+            image: i['ev_image'],
+            title: i['ev_title'],
+            waktuawal: DateFormat('dd MMM yyyy')
+                .format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: DateFormat('dd MMM yyyy')
+                .format(DateTime.parse(i['ev_time_end'])),
+            wishlist: i['ew_event'].toString(),
+            idcreator: i['ev_create_user'].toString(),
+            posisi: i['ep_position'].toString(),
+            status: DateTime.parse(i['ev_time_end']).difference(DateTime.now()).inSeconds <= 0 ? 'selesai' : i['ep_status'],
+          );
+          listRekomendasiEvent.add(willcomex);
+        }
       } else {
+        setState(() {
+          _isLoading = false;
+          _isDisconnect = true;
+        });
       }
     } on SocketException catch (_) {
       setState(() {
@@ -163,13 +193,15 @@ class _RegisterEvent extends State<RegisterEvents> {
                               padding: EdgeInsets.only(top: offset),
                               child: FadeInImage.assetNetwork(
                                 placeholder: 'images/noimage.jpg',
-                                image: dataEvent.image == null || dataEvent.image == '' || dataEvent.image == 'null'
-                                    ? 
-                                      'images/noimage.jpg'
-                                    : url('storage/image/event/event_original/${dataEvent.image}'),
+                                image: dataEvent.image == null ||
+                                        dataEvent.image == '' ||
+                                        dataEvent.image == 'null'
+                                    ? 'images/noimage.jpg'
+                                    : url(
+                                        'storage/image/event/event_original/${dataEvent.image}'),
                                 height: 300,
                                 width: double.infinity,
-                                fit: BoxFit.none,
+                                fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
                               ),
                             ),
@@ -242,10 +274,14 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ])),
-                                        Divider(),
+                                    Divider(),
                                     Padding(
-                                      padding: const EdgeInsets.only(top:10.0,bottom:10.0),
-                                      child: Text('Tentang Event', style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600)),
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0, bottom: 10.0),
+                                      child: Text('Tentang Event',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600)),
                                     ),
                                     Container(
                                         width: double.infinity,
@@ -256,10 +292,12 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 height: 1.5))),
                                     Divider(),
                                     Container(
-                                        margin: EdgeInsets.only(bottom: 20.0,top: 10.0),
+                                        margin: EdgeInsets.only(
+                                            bottom: 20.0, top: 10.0),
                                         child: Text("Organizer",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w500,fontSize: 18))),
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 18))),
                                     InkWell(
                                       onTap: () async {
                                         Navigator.push(
@@ -272,8 +310,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                                       },
                                       child: Container(
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Container(
                                                 margin: EdgeInsets.only(
@@ -291,7 +331,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 )),
                                             Container(
                                                 margin: EdgeInsets.only(
-                                                    bottom: 20.0,left: 10.0),
+                                                    bottom: 20.0, left: 10.0),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -304,14 +344,338 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                 FontWeight.bold,
                                                             fontSize: 16)),
                                                     Padding(
-                                                      padding: const EdgeInsets.only(top:10.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0),
                                                       child: Text(creatorEmail,
                                                           textAlign:
                                                               TextAlign.left),
                                                     )
                                                   ],
                                                 )),
-                                                Divider(),
+                                            Divider(),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 10.0),
+                                        child: Text("Event Lainnya",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 18))),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10.0,
+                                      ),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                              children: listRekomendasiEvent
+                                                  .map(
+                                                      (ListRekomEvent item) =>
+                                                          Container(
+                                                            child: InkWell(
+                                                                child: Container(
+                                                                    width: 300.0,
+                                                                    child: Card(
+                                                                      elevation:
+                                                                          1,
+                                                                      child:
+                                                                          Column(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(10.0),
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: <Widget>[
+                                                                                Expanded(
+                                                                                  flex: 5,
+                                                                                  child: Container(
+                                                                                    height: 80.0,
+                                                                                    width: 80.0,
+                                                                                    child: FadeInImage.assetNetwork(
+                                                                                      placeholder: 'images/noimage.jpg',
+                                                                                      image: item.image == null || item.image == '' || item.image == 'null' ? 'images/noimage.jpg' : url('storage/image/event/event_thumbnail/${item.image}'),
+                                                                                      fit: BoxFit.cover,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                Expanded(
+                                                                                  flex: 7,
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.only(left: 15.0, right: 5.0),
+                                                                                    child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: <Widget>[
+                                                                                        Text(
+                                                                                          '${item.waktuawal}',
+                                                                                          style: TextStyle(color: Colors.blue, fontSize: 13, fontWeight: FontWeight.bold),
+                                                                                        ),
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.only(top: 5.0),
+                                                                                          child: Text(
+                                                                                            item.title == null || item.title == '' ? 'Event Tidak Diketahui' : item.title,
+                                                                                            style: TextStyle(
+                                                                                              color: Colors.black,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                              fontSize: 16,
+                                                                                            ),
+                                                                                            overflow: TextOverflow.ellipsis,
+                                                                                            maxLines: 2,
+                                                                                            softWrap: true,
+                                                                                          ),
+                                                                                        ),
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.only(top: 10.0),
+                                                                                          child: Text(
+                                                                                            creatorName == null || creatorName == '' ? 'Organizer Tidak Diketahui' : creatorName,
+                                                                                            style: TextStyle(color: Colors.grey),
+                                                                                            overflow: TextOverflow.ellipsis,
+                                                                                            softWrap: true,
+                                                                                          ),
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          item.idcreator == userId
+                                                                              ? Container()
+                                                                              : Column(children: <Widget>[
+                                                                                  Container(padding: EdgeInsets.only(left: 10.0, right: 10.0), child: Divider()),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                                                                                    child: Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                      children: <Widget>[
+                                                                                        Container(
+                                                                                            decoration: new BoxDecoration(
+                                                                                              color: item.status == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : widget.dataUser['us_code'] == item.idcreator ? Colors.blue : item.status == null ? Colors.grey : item.status == 'P' ? Colors.orange : item.status == 'C' ? Colors.red : item.status == 'A' ? Colors.green : Colors.blue,
+                                                                                              borderRadius: new BorderRadius.only(topLeft: const Radius.circular(5.0), topRight: const Radius.circular(5.0), bottomLeft: const Radius.circular(5.0), bottomRight: const Radius.circular(5.0)),
+                                                                                            ),
+                                                                                            padding: EdgeInsets.all(5.0),
+                                                                                            width: 120.0,
+                                                                                            child: Text(
+                                                                                              item.status == 'selesai' ? 'Event Selesai' : widget.dataUser['us_code'] == item.idcreator ? 'Event Saya' : item.status == null ? 'Belum Terdaftar' : item.status == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.status == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.status == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.status == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.status == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.status == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                              style: TextStyle(
+                                                                                                color: Colors.white,
+                                                                                                fontSize: 12,
+                                                                                                fontWeight: FontWeight.w500,
+                                                                                              ),
+                                                                                              textAlign: TextAlign.center,
+                                                                                            )),
+                                                                                        widget.dataUser['us_code'] == item.idcreator ?
+                                                                                        Container():
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.only(right: 0),
+                                                                                          child: ButtonTheme(
+                                                                                            minWidth: 0, //wraps child's width
+                                                                                            height: 0,
+                                                                                            child: FlatButton(
+                                                                                              child: Row(
+                                                                                                children: <Widget>[
+                                                                                                  Icon(
+                                                                                                    Icons.favorite,
+                                                                                                    color: item.wishlist == null || item.wishlist == 'null' || item.wishlist == '0' ? Colors.grey : Colors.pink,
+                                                                                                    size: 18,
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                              color: Colors.white,
+                                                                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                              padding: EdgeInsets.only(left: 15, right: 15.0),
+                                                                                              onPressed: () async {
+                                                                                                try {
+                                                                                                  final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
+                                                                                                    'event': item.id,
+                                                                                                  });
+
+                                                                                                  if (hapuswishlist.statusCode == 200) {
+                                                                                                    var hapuswishlistJson = json.decode(hapuswishlist.body);
+                                                                                                    if (hapuswishlistJson['status'] == 'tambah') {
+                                                                                                      setState(() {
+                                                                                                        item.wishlist = item.id;
+                                                                                                      });
+                                                                                                    } else if (hapuswishlistJson['status'] == 'hapus') {
+                                                                                                      setState(() {
+                                                                                                        item.wishlist = null;
+                                                                                                      });
+                                                                                                    }
+                                                                                                  } else {
+                                                                                                    print(hapuswishlist.body);
+                                                                                                    Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                                  }
+                                                                                                } on TimeoutException catch (_) {
+                                                                                                  Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                                                } catch (e) {
+                                                                                                  print(e);
+                                                                                                }
+                                                                                              },
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ])
+                                                                        ],
+                                                                      ),
+                                                                    )),
+                                                                onTap: () async {
+                                                                  switch (item
+                                                                      .status) {
+                                                                    case 'P':
+                                                                      if (item.posisi ==
+                                                                          '2') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      RegisterEvents(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    true,
+                                                                                dataUser:
+                                                                                    widget.dataUser,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else if (item
+                                                                              .posisi ==
+                                                                          '3') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      WaitingEvent(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    true,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else {}
+                                                                      break;
+                                                                    case 'C':
+                                                                      if (item.posisi ==
+                                                                          '2') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      RegisterEvents(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    false,
+                                                                                dataUser:
+                                                                                    widget.dataUser,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else if (item
+                                                                              .posisi ==
+                                                                          '3') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      RegisterEvents(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    false,
+                                                                                dataUser:
+                                                                                    widget.dataUser,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else {}
+                                                                      break;
+                                                                    case 'A':
+                                                                      if (item.posisi ==
+                                                                          '2') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      RegisterEvents(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    true,
+                                                                                dataUser:
+                                                                                    widget.dataUser,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else if (item
+                                                                              .posisi ==
+                                                                          '3') {
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder:
+                                                                                  (context) =>
+                                                                                      SuccesRegisteredEvent(
+                                                                                id: int.parse(
+                                                                                    item.id),
+                                                                                selfEvent:
+                                                                                    true,
+                                                                                dataUser:widget.dataUser,
+                                                                                creatorId:
+                                                                                    item.idcreator,
+                                                                              ),
+                                                                            ));
+                                                                      } else {}
+                                                                      break;
+                                                                    default:
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                            builder:
+                                                                                (context) =>
+                                                                                    RegisterEvents(
+                                                                              id: int.parse(
+                                                                                  item.id),
+                                                                              selfEvent:  widget.dataUser['us_code'] == item.idcreator
+                                                                                  ? true
+                                                                                  : false,
+                                                                              dataUser:
+                                                                                  widget.dataUser,
+                                                                              creatorId:
+                                                                                  item.idcreator,
+                                                                            ),
+                                                                          ));
+                                                                      break;
+                                                                  }
+                                                                }),
+                                                          ))
+                                                  .toList(),
+                                            )
                                           ],
                                         ),
                                       ),

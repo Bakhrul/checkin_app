@@ -106,45 +106,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
               setState(() {
                 isDelete = true;
               });
-              try {
-                Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                final deleteEvent = await http.post(url('api/deleteevent'),
-                    headers: requestHeaders,
-                    body: {
-                      'event': idevent,
-                    });
-
-                if (deleteEvent.statusCode == 200) {
-                  var deleteEventJson = json.decode(deleteEvent.body);
-                  if (deleteEventJson['status'] == 'success') {
-                    Navigator.pop(context);
-                    setState(() {
-                      isDelete = false;
-                    });
-                    listOngoingEvent();
-                    Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
-                  }
-                } else {
-                  setState(() {
-                    isDelete = false;
-                  });
-                  print(deleteEvent.body);
-                  Fluttertoast.showToast(
-                      msg:
-                          "Request failed with status: ${deleteEvent.statusCode}");
-                }
-              } on TimeoutException catch (_) {
-                setState(() {
-                  isDelete = false;
-                });
-                Fluttertoast.showToast(msg: "Timed out, Try again");
-              } catch (e) {
-                setState(() {
-                  isDelete = false;
-                });
-                Fluttertoast.showToast(msg: "${e.toString()}");
-                print(e);
-              }
+              Navigator.pop(context);
+              _deleteEvent(idevent);
             },
           )
         ],
@@ -507,6 +470,19 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
+                        isDelete == true
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Container(
+                                      width: 15.0,
+                                      margin: EdgeInsets.only(
+                                          top: 10.0, right: 15.0,bottom: 20.0),
+                                      height: 15.0,
+                                      child: CircularProgressIndicator()),
+                                ],
+                              )
+                            : Container(),
                         RefreshIndicator(
                             onRefresh: () => listOngoingEvent(),
                             child: Column(
@@ -1245,5 +1221,44 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                   ),
                 ),
     );
+  }
+
+  void _deleteEvent(idevent) async {
+    try {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      final deleteEvent = await http
+          .post(url('api/deleteevent'), headers: requestHeaders, body: {
+        'event': idevent,
+      });
+
+      if (deleteEvent.statusCode == 200) {
+        var deleteEventJson = json.decode(deleteEvent.body);
+        if (deleteEventJson['status'] == 'success') {
+          setState(() {
+            isDelete = false;
+          });
+          listOngoingEvent();
+          Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
+        }
+      } else {
+        setState(() {
+          isDelete = false;
+        });
+        print(deleteEvent.body);
+        Fluttertoast.showToast(
+            msg: "Request failed with status: ${deleteEvent.statusCode}");
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isDelete = false;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isDelete = false;
+      });
+      Fluttertoast.showToast(msg: "${e.toString()}");
+      print(e);
+    }
   }
 }

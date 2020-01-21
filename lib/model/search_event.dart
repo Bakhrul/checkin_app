@@ -56,7 +56,6 @@ class SearchEvent{
       String dateStart = DateFormat(format).format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
-      String image = map['ev_image'];
       String status;
       Color color;
 
@@ -69,11 +68,11 @@ class SearchEvent{
 
         switch(map['ep_status']){
         case 'C':
-             status = 'Ditolak';
+             status = 'Pendaftarn Ditolak';
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses';
+             status = 'Proses Pendaftaran';
              color = Colors.orange;
              break;
         case 'A':
@@ -94,7 +93,7 @@ class SearchEvent{
              color = Colors.grey;
              break;
         case 'P':
-             status = 'Proses';
+             status = 'Proses Daftar Admin';
              color = Colors.orange;
              break;
         default:
