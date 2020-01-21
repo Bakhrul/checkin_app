@@ -40,7 +40,7 @@ class NotificationLocal{
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-      id++,
+      id,
       title,
       body,
       platformChannelSpecifics,

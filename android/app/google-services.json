@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1089447344821:android:973022a95d1462c4469cfc",
+        "android_client_info": {
+          "package_name": "com.bisniskita.checkin_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089447344821-ega88pstjajmtc7855nk7ptkhvuv4buv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6f4bdPbh8EQKoNOMzmE8sXz1Kj_l6cAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089447344821-ega88pstjajmtc7855nk7ptkhvuv4buv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1089447344821:android:cc91b4c2f1b47fd4469cfc",
         "android_client_info": {
           "package_name": "com.example.checkin_app"
