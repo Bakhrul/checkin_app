@@ -45,6 +45,7 @@ enum PageEnum {
 }
 
 Map<String, String> requestHeaders = Map();
+String usernameprofile, emailprofile;
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key, this.title}) : super(key: key);
@@ -391,7 +392,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  String usernameprofile, emailprofile;
+  
   Future<void> dataProfile() async {
     var storage = new DataStore();
 
