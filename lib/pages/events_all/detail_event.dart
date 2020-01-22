@@ -53,6 +53,7 @@ class _RegisterEvent extends State<RegisterEvents> {
     _getAll();
     scrollPage.addListener(_parallax);
     super.initState();
+    print('testing' + widget.dataUser['us_code'].toString());
   }
 
   _parallax() {
@@ -456,9 +457,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                               ],
                                                                             ),
                                                                           ),
-                                                                          item.idcreator == userId
-                                                                              ? Container()
-                                                                              : Column(children: <Widget>[
+                                                                           Column(children: <Widget>[
                                                                                   Container(padding: EdgeInsets.only(left: 10.0, right: 10.0), child: Divider()),
                                                                                   Padding(
                                                                                     padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
@@ -467,13 +466,13 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                                       children: <Widget>[
                                                                                         Container(
                                                                                             decoration: new BoxDecoration(
-                                                                                              color: item.status == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : widget.dataUser['us_code'] == item.idcreator ? Colors.blue : item.status == null ? Colors.grey : item.status == 'P' ? Colors.orange : item.status == 'C' ? Colors.red : item.status == 'A' ? Colors.green : Colors.blue,
+                                                                                              color: item.status == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : widget.dataUser['us_code'].toString() == item.idcreator ? Colors.blue : item.status == null ? Colors.grey : item.status == 'P' ? Colors.orange : item.status == 'C' ? Colors.red : item.status == 'A' ? Colors.green : Colors.blue,
                                                                                               borderRadius: new BorderRadius.only(topLeft: const Radius.circular(5.0), topRight: const Radius.circular(5.0), bottomLeft: const Radius.circular(5.0), bottomRight: const Radius.circular(5.0)),
                                                                                             ),
                                                                                             padding: EdgeInsets.all(5.0),
                                                                                             width: 120.0,
                                                                                             child: Text(
-                                                                                              item.status == 'selesai' ? 'Event Selesai' : widget.dataUser['us_code'] == item.idcreator ? 'Event Saya' : item.status == null ? 'Belum Terdaftar' : item.status == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.status == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.status == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.status == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.status == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.status == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                              item.status == 'selesai' ? 'Event Selesai' : widget.dataUser['us_code'].toString() == item.idcreator ? 'Event Saya' : item.status == null ? 'Belum Terdaftar' : item.status == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.status == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.status == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.status == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.status == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.status == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
                                                                                               style: TextStyle(
                                                                                                 color: Colors.white,
                                                                                                 fontSize: 12,
@@ -481,7 +480,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                                               ),
                                                                                               textAlign: TextAlign.center,
                                                                                             )),
-                                                                                        widget.dataUser['us_code'] == item.idcreator ?
+                                                                                        widget.dataUser['us_code'].toString() == item.idcreator ?
                                                                                         Container():
                                                                                         Padding(
                                                                                           padding: const EdgeInsets.only(right: 0),
@@ -667,7 +666,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                                     RegisterEvents(
                                                                               id: int.parse(
                                                                                   item.id),
-                                                                              selfEvent:  widget.dataUser['us_code'] == item.idcreator
+                                                                              selfEvent:  widget.dataUser['us_code'].toString() == item.idcreator
                                                                                   ? true
                                                                                   : false,
                                                                               dataUser:
