@@ -15,7 +15,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:core';
 import 'manage_absenpeserta.dart';
 
-bool isLoading, isError;
+bool isLoading, isError, isDelete;
 String tokenType, accessToken;
 List<ListCheckinEvent> listcheckinevent = [];
 Map<String, String> requestHeaders = Map();
@@ -40,7 +40,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
   @override
   void initState() {
     super.initState();
-    namaeventX  = '';
+    namaeventX = '';
+    isDelete = false;
+    isError = false;
+    isLoading = true;
     getHeaderHTTP();
   }
 
@@ -245,6 +248,18 @@ class _ManageCheckinState extends State<ManageCheckin> {
                       padding: const EdgeInsets.only(top: 20.0),
                       child: Column(
                         children: <Widget>[
+                          isDelete == true
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                        width: 20.0,
+                                        margin: EdgeInsets.all(15.0),
+                                        height: 20.0,
+                                        child: CircularProgressIndicator()),
+                                  ],
+                                )
+                              : Container(),
                           Expanded(
                             child: Scrollbar(
                               child: ListView.builder(
@@ -278,7 +293,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                         ),
                                       ),
                                       trailing: PopupMenuButton<PageEnum>(
-                                        onSelected: (PageEnum value) async {
+                                        onSelected: isDelete == true ? null : (PageEnum value) async {
                                           switch (value) {
                                             case PageEnum.editCheckinPage:
                                               Navigator.of(context).push(
@@ -316,7 +331,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                     .timeend,
                                                           )));
                                               break;
-                                              case PageEnum.detailQrCodePage:
+                                            case PageEnum.detailQrCodePage:
                                               Navigator.of(context).push(
                                                   CupertinoPageRoute(
                                                       builder: (BuildContext
@@ -359,6 +374,9 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                       child: Text('Ya'),
                                                       onPressed: () async {
                                                         Navigator.pop(context);
+                                                        setState(() {
+                                                          isDelete = true;
+                                                        });
                                                         try {
                                                           final removeCheckin =
                                                               await http.post(
@@ -390,6 +408,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                       msg:
                                                                           "Berhasil Menghapus Checkin Event");
                                                               setState(() {
+                                                                isDelete =
+                                                                    false;
+                                                              });
+                                                              setState(() {
                                                                 listcheckinevent.remove(
                                                                     listcheckinevent[
                                                                         index]);
@@ -397,6 +419,10 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                             } else if (removeCheckinJson[
                                                                     'status'] ==
                                                                 'Error') {
+                                                              setState(() {
+                                                                isDelete =
+                                                                    false;
+                                                              });
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
@@ -405,15 +431,27 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                           } else {
                                                             print(removeCheckin
                                                                 .body);
+                                                            setState(() {
+                                                              isDelete = false;
+                                                            });
                                                             Fluttertoast.showToast(
                                                                 msg:
                                                                     "Request failed with status: ${removeCheckin.statusCode}");
                                                           }
                                                         } on TimeoutException catch (_) {
+                                                          setState(() {
+                                                            isDelete = false;
+                                                          });
                                                           Fluttertoast.showToast(
                                                               msg:
                                                                   "Timed out, Try again");
                                                         } catch (e) {
+                                                          setState(() {
+                                                            isDelete = false;
+                                                          });
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "${e.toString()}");
                                                           print(e);
                                                         }
                                                       },
@@ -453,16 +491,28 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                             value: PageEnum.detailQrCodePage,
                                             child: Text('Download QRImage'),
                                           ),
-                                          listcheckinevent[index].checkin == null || listcheckinevent[index].checkin == '' ?
-                                          PopupMenuItem(
-                                            value: PageEnum.editCheckinPage,
-                                            child: Text("Edit"),
-                                          ): null,
-                                          listcheckinevent[index].checkin == null || listcheckinevent[index].checkin == '' ?
-                                          PopupMenuItem(
-                                            value: PageEnum.deleteCheckinPage,
-                                            child: Text("Delete"),
-                                          ): null,
+                                          listcheckinevent[index].checkin ==
+                                                      null ||
+                                                  listcheckinevent[index]
+                                                          .checkin ==
+                                                      ''
+                                              ? PopupMenuItem(
+                                                  value:
+                                                      PageEnum.editCheckinPage,
+                                                  child: Text("Edit"),
+                                                )
+                                              : null,
+                                          listcheckinevent[index].checkin ==
+                                                      null ||
+                                                  listcheckinevent[index]
+                                                          .checkin ==
+                                                      ''
+                                              ? PopupMenuItem(
+                                                  value: PageEnum
+                                                      .deleteCheckinPage,
+                                                  child: Text("Delete"),
+                                                )
+                                              : null,
                                         ],
                                       ),
                                       title: Text(
@@ -472,8 +522,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                           fontSize: 13,
                                         ),
                                       ),
-                                      subtitle:
-                                          Text('$timestart - $timeend'),
+                                      subtitle: Text('$timestart - $timeend'),
                                     ),
                                   );
                                 },

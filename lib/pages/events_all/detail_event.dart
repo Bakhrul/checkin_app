@@ -358,13 +358,19 @@ class _RegisterEvent extends State<RegisterEvents> {
                                         ),
                                       ),
                                     ),
+                                     listRekomendasiEvent.length == 0 ?
+                                    Container():
                                     Divider(),
+                                     listRekomendasiEvent.length == 0 ?
+                                    Container():
                                     Container(
                                         margin: EdgeInsets.only(top: 10.0),
                                         child: Text("Event Lainnya",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 18))),
+                                    listRekomendasiEvent.length == 0 ?
+                                    Container():
                                     Container(
                                       margin: EdgeInsets.only(
                                         top: 10.0,
