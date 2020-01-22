@@ -167,7 +167,6 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
               isUpdate = false;
             });
             Navigator.pop(context);
-            Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

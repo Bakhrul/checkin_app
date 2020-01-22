@@ -15,6 +15,7 @@ String tokenType, accessToken;
 List<ListNotifications> listnotifications = [];
 bool isLoading, isError, isAction;
 Map<String, String> requestHeaders = Map();
+Map dataUser;
 enum PageEnum {
   detailEvent,
   setujuiConfirmation,
@@ -39,6 +40,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
     isError = false;
     isAction = false;
     getHeaderHTTP();
+    _getUserData();
   }
 
   Future<void> getHeaderHTTP() async {
@@ -54,6 +56,44 @@ class _NotificationsState extends State<ManajemenNotifications> {
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
     return listNotif();
+  }
+
+  _getUserData() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    try {
+      final ongoingevent =
+          await http.get(url('api/user'), headers: requestHeaders);
+
+      if (ongoingevent.statusCode == 200) {
+        Map rawData = json.decode(ongoingevent.body);
+
+        if (mounted) {
+          setState(() {
+            dataUser = rawData;
+          });
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      print(e);
+    }
   }
 
   Future<List<List>> listNotif() async {
@@ -176,14 +216,16 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                 try {
                                   Fluttertoast.showToast(
                                       msg: "Mohon Tunggu Sebentar");
-                                  final removeAllNotifications = await http.post(
+                                  final removeAllNotifications =
+                                      await http.post(
                                     url('api/removeall_notification'),
                                     headers: requestHeaders,
                                   );
                                   print(removeAllNotifications);
-                                  if (removeAllNotifications.statusCode == 200) {
-                                    var removeAllNotificationsJson =
-                                        json.decode(removeAllNotifications.body);
+                                  if (removeAllNotifications.statusCode ==
+                                      200) {
+                                    var removeAllNotificationsJson = json
+                                        .decode(removeAllNotifications.body);
                                     if (removeAllNotificationsJson['status'] ==
                                         'success') {
                                       setState(() {
@@ -191,7 +233,8 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                       });
                                       getHeaderHTTP();
                                       Fluttertoast.showToast(msg: "Berhasil");
-                                    } else if (removeAllNotificationsJson['status'] ==
+                                    } else if (removeAllNotificationsJson[
+                                            'status'] ==
                                         'Error') {
                                       setState(() {
                                         isAction = false;
@@ -357,6 +400,8 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                   listnotifications[
                                                                           index]
                                                                       .idcreator,
+                                                              dataUser:
+                                                                  dataUser,
                                                               selfEvent: true,
                                                             )));
                                                 break;
@@ -773,28 +818,32 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                         title: Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 10.0),
-                                          child: Text(listnotifications[index]
+                                          child: Text(listnotifications[
+                                                              index]
                                                           .title ==
                                                       null ||
-                                                  listnotifications[index]
+                                                  listnotifications[
+                                                              index]
                                                           .title ==
                                                       ''
                                               ? 'Pesan Tidak Diketahui'
-                                              : listnotifications[index]
-                                                          .idmessage ==
-                                                      '2'
+                                              : listnotifications[
+                                                                  index]
+                                                              .idmessage ==
+                                                          '2' ||
+                                                      listnotifications[
+                                                                  index]
+                                                              .idmessage ==
+                                                          '8' ||
+                                                      listnotifications[index]
+                                                              .idmessage ==
+                                                          '9' ||
+                                                      listnotifications[index]
+                                                              .idmessage ==
+                                                          '11'
                                                   ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
                                                   : listnotifications[index]
-                                                              .idmessage ==
-                                                          '8'
-                                                      ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
-                                                      : listnotifications[index]
-                                                                  .idmessage ==
-                                                              '9'
-                                                          ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
-                                                          : listnotifications[
-                                                                  index]
-                                                              .title),
+                                                      .title),
                                         ),
                                         subtitle: Padding(
                                           padding: const EdgeInsets.only(
