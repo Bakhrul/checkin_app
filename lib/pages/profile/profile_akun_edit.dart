@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfileUserEdit extends StatefulWidget{
 
@@ -18,6 +20,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
   String email;
   String phone;
   String location;
+  File profileImage;
   TextEditingController _controllerNama = new TextEditingController();
   TextEditingController _controllerEmail = new TextEditingController();
   TextEditingController _controllerPhone = new TextEditingController();
@@ -75,6 +78,15 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
      _controllerPhone.text = '08123456789';
      _controllerLocation.text = 'Indonesia , Jawa Timur';
   });
+
+  }
+
+  Future openGallery() async {
+     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+     
+     setState((){
+        profileImage = image;
+     });
   }
 
   @override
@@ -100,21 +112,24 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                   Container(
                       child: Column(
                       children: <Widget>[
-                          Container(
-                                margin: EdgeInsets.only(top:20),
-                                height: 90,
-                                width: 90,
-                                decoration : BoxDecoration(
-                                  border: Border.all(color:Colors.white,width:2),
-                                  color: Colors.transparent,
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: AssetImage(
-                                      'images/imgavatar.png'
-                                    )
-                                  )
-                                ),
+                              GestureDetector(
+                                onTap: openGallery,
+                                child: Container(
+                                      margin: EdgeInsets.only(top:20),
+                                      height: 90,
+                                      width: 90,
+                                      decoration : BoxDecoration(
+                                        border: Border.all(color:Colors.white,width:2),
+                                        color: Colors.transparent,
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: profileImage == null ? AssetImage(
+                                            'images/imgavatar.png'
+                                          ): FileImage(profileImage)
+                                        )
+                                      ),
+                                    ),
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 5.0,top: 10.0),
