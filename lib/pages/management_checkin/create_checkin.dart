@@ -32,19 +32,11 @@ class ManajemeCreateCheckin extends StatefulWidget {
 
 class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   bool _isLoading = false;
-  // UserCheckinService _checkinService = UserCheckinService();
-  // static const double _topSectionTopPadding = 50.0;
-  // static const double _topSectionBottomPadding = 20.0;
-  // static const double _topSectionHeight = 50.0;
   GlobalKey globalKey = new GlobalKey();
   String _dataString;
   String _inputErrorText;
-  // bool _isFieldDateValid;
-  // bool _isFieldTimeStartlValid;
-  // bool _isFieldTimeEndValid;
   final TextEditingController _controllerGenerate = TextEditingController();
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
-  // TextEditingController _controllerDate = TextEditingController();
   TextEditingController _controllerTimeStart = TextEditingController();
   TextEditingController _controllerTimeEnd = TextEditingController();
   TextEditingController _controllerSessionname = TextEditingController();
@@ -228,19 +220,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                               fontSize: 13, color: Colors.black)),
                     ),
                   )),
-              Container(
-                padding: EdgeInsets.all(20.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: _builderGenerate(bodyHeight),
-                      ),
-                    ),
-                  ],
-                ),
-              )
+             
             ],
           ),
         ),
@@ -316,36 +296,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     );
   }
 
-  Widget _builderGenerate(bodyHeight) {
-    if (_dataString != null) {
-      return Column(
-        children: <Widget>[
-          RepaintBoundary(
-            key: globalKey,
-            child: QrImage(
-              data: _dataString,
-              version: 10,
-              backgroundColor: Colors.white,
-              size: 0.5 * bodyHeight,
-              // onError: (ex) {
-              //   print("[QR] ERROR - $ex");
-              //   setState((){
-              //     _inputErrorText = "Error! Maybe your input value is too long?";
-              //   });
-              // },
-            ),
-
-          ),
-          RaisedButton(
-            child: Text("shared"),
-            onPressed: () {
-              _saveScreen();
-            },
-          )
-        ],
-      );
-    } 
-  }
+ 
 
 
 
