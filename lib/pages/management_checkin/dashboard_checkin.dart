@@ -128,7 +128,7 @@ var childButtons = List<UnicornButton>();
       setState(() {});
 
       Fluttertoast.showToast(
-          msg: "Data Berhasil Terhapus",
+          msg: "Peserta Telah Dikeluarkan",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,
@@ -178,7 +178,7 @@ var childButtons = List<UnicornButton>();
           backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-      getDataCheckin();
+      // getDataCheckin();
     } else {
       Fluttertoast.showToast(
           msg: "Terjadi Kesalahan",
