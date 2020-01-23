@@ -579,7 +579,7 @@ class _DashboardState extends State<Dashboard> {
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
           onRefresh: () async {
-            eventList(1);
+            eventList(types != null ? types : 1);
           },
           child: _builderBody(),
         )
@@ -2093,7 +2093,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             textAlign: TextAlign.center,
           ));
-    } else if (status == "Proses") {
+    } else if (status == "Proses Pendaftaran") {
       return Container(
           decoration: new BoxDecoration(
             color: Colors.orange,
@@ -2106,7 +2106,28 @@ class _DashboardState extends State<Dashboard> {
           padding: EdgeInsets.all(5.0),
           width: 120.0,
           child: Text(
-            'Proses ',
+            'Proses Pendaftaran ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ));
+          } else if (status == "Event Selesai") {
+      return Container(
+          decoration: new BoxDecoration(
+            color: Color.fromRGBO(255, 191, 128,1),
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(5.0),
+                topRight: const Radius.circular(5.0),
+                bottomLeft: const Radius.circular(5.0),
+                bottomRight: const Radius.circular(5.0)),
+          ),
+          padding: EdgeInsets.all(5.0),
+          width: 120.0,
+          child: Text(
+            'Event Selesai',
             style: TextStyle(
               color: Colors.white,
               fontSize: 12,
@@ -2153,7 +2174,7 @@ class _DashboardState extends State<Dashboard> {
               dataUser: dataUser,
               selfEvent: userId == cratorId ? true : false);
           break;
-        case 'Proses':
+        case 'Proses Pendaftaran':
           return WaitingEvent(
             id: eventId,
             creatorId: cratorId,
@@ -2174,6 +2195,12 @@ class _DashboardState extends State<Dashboard> {
               dataUser: dataUser,
               selfEvent: true);
           break;
+          case 'Proses Daftar Admin':
+          return RegisterEvents(
+              id: eventId,
+              creatorId: cratorId,
+              dataUser: dataUser,
+              selfEvent: userId == cratorId ? true : false);
         default:
           return RegisterEvents(
               id: eventId,
