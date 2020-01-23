@@ -45,7 +45,7 @@ enum PageEnum {
 }
 
 Map<String, String> requestHeaders = Map();
-String usernameprofile, emailprofile;
+String usernameprofile, emailprofile, imageprofile;
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key, this.title}) : super(key: key);
@@ -398,6 +398,7 @@ class _DashboardState extends State<Dashboard> {
 
     usernameprofile = await storage.getDataString("name");
     emailprofile = await storage.getDataString('email');
+    imageprofile = await storage.getDataString('image');
   }
 
 
@@ -445,13 +446,26 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       currentAccountPicture: CircleAvatar(
                         backgroundColor: Colors.white,
-                        child: Text(
+                        child: imageprofile == '-' ? Text(
                           "A",
                           style: TextStyle(
                             fontSize: 40.0,
                             color: Color.fromRGBO(41, 30, 47, 1),
                           ),
-                        ),
+                        ):Container(
+                                height: 90,
+                                width: 90,
+                                decoration : BoxDecoration(
+                                  color: Colors.transparent,
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: image == '-' ? AssetImage(
+                                      'images/imgavatar.png'
+                                    ): NetworkImage(url('storage/image/profile/'+imageprofile))
+                                  )
+                                ),
+                              ),
                       ),
                     ),
                     //  Menu Section Here

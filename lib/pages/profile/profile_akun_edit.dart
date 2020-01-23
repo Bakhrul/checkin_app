@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:checkin_app/pages/profile/profile_akun.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
@@ -25,11 +26,12 @@ class ProfileUserEdit extends StatefulWidget{
 class _ProfileUserEdit extends State<ProfileUserEdit> {
 
   
-  String nama;
-  String email;
-  String phone;
-  String location;
-  File profileImage;
+  String namaData;
+  String emailData;
+  String phoneData;
+  String locationData;
+  File profileImageData;
+  String imageData = image;
   var storageApp = new DataStore();
   TextEditingController _controllerNama = new TextEditingController();
   TextEditingController _controllerEmail = new TextEditingController();
@@ -53,25 +55,25 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
 
   nameEdit(){
     setState((){
-        nama = _controllerNama.text;
+        namaData = _controllerNama.text;
     });
   }
 
   emailEdit(){
     setState((){
-        email = _controllerEmail.text;
+        emailData = _controllerEmail.text;
     });
   }
 
   phoneEdit(){
     setState((){
-        phone = _controllerPhone.text;
+        phoneData = _controllerPhone.text;
     });
   }
 
   locationEdit(){
     setState((){
-        location = _controllerLocation.text;
+        locationData = _controllerLocation.text;
     });
   }
 
@@ -92,16 +94,18 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
   DataStore user =  new DataStore();
   String namaUser = await user.getDataString('name');
   String emailUser = await user.getDataString('email');
+  String phoneUser = await user.getDataString('phone');
+  String locationUser = await user.getDataString('location');
 
   setState(() {
-    nama = namaUser;
-    email = emailUser;
-    phone = '08123456789';
-    location = 'Indonesia , Jawa Timur';
+    namaData = namaUser;
+    emailData = emailUser;
+    phoneData = phoneUser;
+    locationData = locationUser;
      _controllerNama.text = namaUser;
      _controllerEmail.text = emailUser;
-     _controllerPhone.text = '08123456789';
-     _controllerLocation.text = 'Indonesia , Jawa Timur';
+     _controllerPhone.text = phoneUser;
+     _controllerLocation.text = locationUser;
   });
 
   }
@@ -111,14 +115,21 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
      String base64image = '';
      String imageName = '';
 
-    if (profileImage != null) {
+    if (profileImageData != null) {
 
-    base64image = base64Encode(profileImage.readAsBytesSync());
-    imageName = profileImage.path.split('/').last;
+    base64image = base64Encode(profileImageData.readAsBytesSync());
+    imageName = profileImageData.path.split('/').last;
 
     }
 
-    Map body = {"image":base64image,"name_image":imageName,"name":nama,"email":email};
+    Map body = {
+      "image":base64image,
+      "name_image":imageName,
+      "name":namaData,
+      "email":emailData,
+      "phone":phoneData != '-' ? phoneData:'',
+      "location": locationData != '-' ? locationData:''
+      };
 
     try{
 
@@ -126,17 +137,33 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
       url('api/userUpdate'),headers:requestHeaders,body:body,encoding: Encoding.getByName("utf-8")
     );
 
+      print(data.body);
+
       if(data.statusCode == 200){
+
+        var rawData = json.decode(data.body);
 
           storageApp.setDataString("name",body['name']);
           storageApp.setDataString("email",body['email']);
+          storageApp.setDataString("image",rawData['data']);
+          storageApp.setDataString("phone",body['phone']);
+          storageApp.setDataString("location",body['location']);
 
           setState((){
             usernameprofile = body['name'];
             emailprofile = body['email'];
+            nama = namaData;
+            email = emailData;
+            image = rawData['data'];
+            phone = body['phone'];
+            location = body['location'];
+            imageprofile = rawData['data'];
           });
-
+          
         Fluttertoast.showToast(msg: "success");
+
+        Navigator.pop(context);
+
       }else{
         Fluttertoast.showToast(msg: "error: gagal update");
       }
@@ -152,10 +179,11 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
   }
 
   Future openGallery() async {
-     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+     var imageGallery = await ImagePicker.pickImage(source: ImageSource.gallery);
      
      setState((){
-        profileImage = image;
+        imageData = '-';
+        profileImageData = imageGallery;
      });
   }
 
@@ -194,16 +222,16 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
                                           fit: BoxFit.fill,
-                                          image: profileImage == null ? AssetImage(
+                                          image: imageData != '-' ? NetworkImage(url('storage/image/profile/'+image)):profileImageData == null ? AssetImage(
                                             'images/imgavatar.png'
-                                          ): FileImage(profileImage)
+                                          ): FileImage(profileImageData)
                                         )
                                       ),
                                     ),
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 5.0,top: 10.0),
-                                    child: Text(nama == null ? 'memuat..':nama,
+                                    child: Text(namaData == null ? 'memuat..':namaData,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                         color: Colors.white,
@@ -212,7 +240,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 50.0),
-                                    child: Text(location == null ? 'memuat..':location,
+                                    child: Text(locationData == null ? 'memuat..':locationData,
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.white,
