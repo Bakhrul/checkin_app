@@ -52,20 +52,6 @@ class _DetailListState extends State<DetailList> {
   bool _isPageDisconnect = false;
   bool _isGetAllDisconnect = false;
 
-  @override
-  void initState() {
-    _getUserData();
-    getHeaderHTTP();
-    // _getCategory();
-    _getAll(0,_searchQuery);
-    super.initState();
-
-    pageScroll.addListener(() async {
-       if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
-         _getPage(categoryNow,_searchQuery);
-       }
-    });
-  }
 
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
@@ -140,7 +126,6 @@ class _DetailListState extends State<DetailList> {
         // body:body
       );
 
-      
 
       if (ongoingevent.statusCode == 200) {
 
@@ -273,65 +258,7 @@ class _DetailListState extends State<DetailList> {
     return _event;
   }
 
-  // _getCategory() async {
-
-  //   var storage = new DataStore();
-  //   var tokenTypeStorage = await storage.getDataString('token_type');
-  //   var accessTokenStorage = await storage.getDataString('access_token');
-
-  //   tokenType = tokenTypeStorage;
-  //   accessToken = accessTokenStorage;
-  //   requestHeaders['Accept'] = 'application/json';
-  //   requestHeaders['Authorization'] = '$tokenType $accessToken';
   
-  //   try{
-
-  //     final ongoingevent = await http.get(
-  //         url('api/listkategorievent'),
-  //         headers: requestHeaders,
-  //     );
-
-  
-  //     if (ongoingevent.statusCode == 200) {
-  //       listCategory.clear();
-  //       var dataRaw = json.decode(ongoingevent.body);
-  //       listCategory.add({'c_name':'Semua','c_id':0});
-  //       for(var x in dataRaw['kategori']){
-  //           listCategory.add(x);
-  //       }
-  //       setState((){
-  //         _isLoadingCategory = false;
-  //       });
-  //     } else if (ongoingevent.statusCode == 401){
-  //       setState((){
-  //         _isLoadingCategory = false;
-  //       });
-  //     } else {
-  //       setState((){
-  //         _isLoadingCategory = false;
-  //       });
-  //     }
-  //   } on TimeoutException catch(_) {
-  //     Fluttertoast.showToast(msg: "Timed out, Try again");
-  //     setState((){
-  //       _isLoadingCategory = false;
-  //       _isDisconnect = true;
-  //     });
-  //   } on SocketException catch(_){
-  //     setState(() {
-  //       _isLoadingCategory = false;
-  //       _isDisconnect = true;
-  //     });
-  //     Fluttertoast.showToast(msg: "No Internet Connection");
-  //   } catch(e) {
-  //     setState((){
-  //       _isLoadingCategory = false;
-  //     });
-  //     // print(e);
-  //   }
-   
-
-  // }
 
   Future<dynamic> _wish(String wish,int eventId,int index) async {
     var storage = new DataStore();
@@ -431,6 +358,20 @@ class _DetailListState extends State<DetailList> {
   //   color: Colors.white,
   // );
 
+  @override
+  void initState() {
+    _getUserData();
+    getHeaderHTTP();
+    // _getCategory();
+    _getAll(0,_searchQuery);
+    super.initState();
+
+    pageScroll.addListener(() async {
+       if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
+         _getPage(categoryNow,_searchQuery);
+       }
+    });
+  }
   @override
   void dispose() {
     pageScroll?.dispose();

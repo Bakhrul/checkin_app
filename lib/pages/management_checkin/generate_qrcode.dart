@@ -38,38 +38,6 @@ class GenerateScreenState extends State<GenerateScreen> {
     _codeQr = widget.codeQr;
   }
 
-// getDataMember() async {
-//     setState(() {
-//       isLoading = true;
-//     });
-//     // listPeserta = [];
-//     try {
-
-//       dynamic response =
-//           await RequestGet(name: "event/getdata/participant/", customrequest: "${widget.idevent}")
-//               .getdata();
-//       // for (var i = 0; i < response.length; i++) {
-//         Checkin peserta = Checkin(
-//           // id: response["id"].toString(),
-//           eventName: response["eventName"],
-//           checkinKey: response["checkinId"],
-//           eventId: response["eventId"].toString(),
-//         );
-
-//         // listPeserta.add(peserta);
-//       // }
-//       setState(() {
-//         isLoading = false;
-//         isError = false;
-//       });
-//     } catch (e) {
-//       setState(() {
-//         isLoading = false;
-//         isError = true;
-//       });
-//       debugPrint('$e');
-//     }
-//   }
 
    @override
   void initState() {
@@ -77,7 +45,6 @@ class GenerateScreenState extends State<GenerateScreen> {
     super.initState();
   }
 
-  // GlobalKey globalKey = new GlobalKey();
   final TextEditingController _textController = TextEditingController();
 
   @override
@@ -100,28 +67,23 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _contentWidget() {
-            print(_codeQr);
     final bodyHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).viewInsets.bottom;
     return Container(
       color: const Color(0xFFFFFFFF),
       child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: Container(
-                child: RepaintBoundary(
-                  
+                child: RepaintBoundary(                
                   key: globalKey,
                   child: QrImage(
+                    backgroundColor: Colors.white,
                     data: widget.codeQr,
                     size: 0.5 * bodyHeight,
-                    // onError: (ex) {
-                    //   print("[QR] ERROR - $ex");
-                    //   setState((){
-                    //     _inputErrorText = "Error! Maybe your input value is too long?";
-                    //   });
-                    // },
+                   
                   ),
                 ),
               ),
@@ -132,11 +94,11 @@ class GenerateScreenState extends State<GenerateScreen> {
                   Container(
                     width: double.infinity,
                     child: FlatButton(
-                      color: Colors.blue,
+                      color: Colors.orange,
                       onPressed: () {
                         _saveScreen();
                       },
-                      child: Text("Unduh",style: TextStyle(color: Colors.white),),
+                      child: Text("Unduh",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
                     ),
                   ),
                   Container(
@@ -147,12 +109,13 @@ class GenerateScreenState extends State<GenerateScreen> {
                         Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idEvent) ));
                         
                       },
-                      child: Text("Kembali"),
+                      child: Text("Kembali",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
               ),
-            )
+            ),
+        
           ],
         ),
       ),
@@ -180,6 +143,7 @@ class GenerateScreenState extends State<GenerateScreen> {
           File('${tes.path}/${widget.idEvent}.png').delete();
           final file = await new File('${tes.path}/${widget.eventName}-${widget.idEvent}.png').create();
           await file.writeAsBytes(pngBytes);
+
           Fluttertoast.showToast(msg: "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file ${widget.eventName}-${widget.idEvent}.png",
            toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,

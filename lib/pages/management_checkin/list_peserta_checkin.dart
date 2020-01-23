@@ -32,10 +32,11 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     dynamic response =
         await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id.toString() }/${widget.eventid.toString() }")
             .getdata();
+            print(response);
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
-       name: response[i]["name"],
-        email: response[i]["email"],
+       name: response[i]["name"].toString(),
+        email: response[i]["email"].toString(),
         // position: response[i]["position"].toString(),
         // picProfile: response[i]["pic_profile"],
         // eventId: response[i]["event_id"],
