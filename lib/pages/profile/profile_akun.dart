@@ -89,7 +89,7 @@ class _ProfileUser extends State<ProfileUser> {
                                     fit: BoxFit.fill,
                                     image: image == '-' ? AssetImage(
                                       'images/imgavatar.png'
-                                    ): NetworkImage(url('storage/image/profile/'+image))
+                                    ): NetworkImage(url('storage/image/profile/$image'))
                                   )
                                 ),
                               ),

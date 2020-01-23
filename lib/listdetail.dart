@@ -555,11 +555,11 @@ class _DetailListState extends State<DetailList> {
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
                                                                                 'images/noimage.jpg',
-                                                                            image: _event[x].image != null || _event[x].image != ''
-                                                                                ? url(
+                                                                            image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
+                                                                                ?url('assets/images/noimage.jpg')
+                                                                                :  url(
                                                                                     'storage/image/event/event_thumbnail/${_event[x].image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                                  ),
                                                                                 
                                                                             fit:
                                                                                 BoxFit.cover,
@@ -595,7 +595,6 @@ class _DetailListState extends State<DetailList> {
                                                                     color: Colors.black,
                                                                     fontWeight:
                                                                         FontWeight.w500,
-                                                                    fontSize: 16,
                                                                   ),
                                                                   overflow:TextOverflow.ellipsis,
                                                                   softWrap:true,

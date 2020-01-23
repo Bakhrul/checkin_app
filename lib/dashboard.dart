@@ -479,7 +479,7 @@ class _DashboardState extends State<Dashboard> {
                                     fit: BoxFit.fill,
                                     image: image == '-' ? AssetImage(
                                       'images/imgavatar.png'
-                                    ): NetworkImage(url('storage/image/profile/'+imageprofile))
+                                    ): NetworkImage(url('storage/image/profile/$imageprofile'))
                                   )
                                 ),
                               ),
@@ -759,7 +759,7 @@ class _DashboardState extends State<Dashboard> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(('Organizer diIkuti').toUpperCase(),
+                                          Text(('Organizer diikuti').toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
