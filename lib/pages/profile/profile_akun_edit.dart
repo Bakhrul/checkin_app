@@ -138,6 +138,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
 
         Fluttertoast.showToast(msg: "success");
       }else{
+        print(data.body);
         Fluttertoast.showToast(msg: "error: gagal update");
       }
 

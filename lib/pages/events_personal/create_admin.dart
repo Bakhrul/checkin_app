@@ -98,6 +98,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
             id: '${i['us_code']}',
             nama: i['us_name'],
             email: i['us_email'],
+            image: i['us_image'],
           );
           listUserItem.add(willcomex);
         }
@@ -167,6 +168,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
             id: '${i['us_code']}',
             nama: i['us_name'],
             email: i['us_email'],
+            image: i['us_image'],
           );
           listUserItem.add(willcomex);
         }
@@ -392,19 +394,34 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                                                 child: Card(
                                                     child: ListTile(
                                                   leading: Container(
-                                                      width: 40.0,
-                                                      height: 40.0,
-                                                      decoration:
-                                                          new BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        image:
-                                                            new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: AssetImage(
-                                                            'images/imgavatar.png',
-                                                          ),
-                                                        ),
-                                                      )),
+                                                    width: 40.0,
+                                                    height: 40.0,
+                                                    child: ClipOval(
+                                                      child: FadeInImage
+                                                          .assetNetwork(
+                                                        placeholder:
+                                                            'images/loading.gif',
+                                                        image: listUserItem[index]
+                                                                        .image ==
+                                                                    null ||
+                                                                listUserItem[
+                                                                            index]
+                                                                        .image ==
+                                                                    '' ||
+                                                                listUserItem[
+                                                                            index]
+                                                                        .image ==
+                                                                    'null'
+                                                            ? url('assets/images/imgavatar.png')
+                                                            : url(
+                                                                'storage/image/profile/${listUserItem[index].image}'),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
                                                   title: Text(
                                                       listUserItem[index]
                                                                   .nama ==

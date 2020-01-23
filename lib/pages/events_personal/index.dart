@@ -1245,8 +1245,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isDelete = false;
         });
         print(deleteEvent.body);
-        Fluttertoast.showToast(
-            msg: "Request failed with status: ${deleteEvent.statusCode}");
+   Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
       setState(() {

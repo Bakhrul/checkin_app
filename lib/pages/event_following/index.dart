@@ -806,10 +806,10 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                           child:
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
-                                                                                'images/noimage.jpg',
+                                                                                'images/loading-event.png',
                                                                             image: listItemFollowing[index].image == null || listItemFollowing[index].image == '' || listItemFollowing[index].image == 'null'
                                                                                 ? 
-                                                                                  'images/noimage.jpg'
+                                                                                  url('assets/images/noimage.jpg')
                                                                                 : url('storage/image/event/event_thumbnail/${listItemFollowing[index].image}'),
                                                                                 
                                                                             fit:
@@ -867,8 +867,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                                               Colors.black,
                                                                           fontWeight:
                                                                               FontWeight.w500,
-                                                                          fontSize:
-                                                                              16,
                                                                         )),
                                                                   ),
                                                                   Padding(

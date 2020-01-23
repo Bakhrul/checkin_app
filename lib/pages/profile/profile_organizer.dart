@@ -21,6 +21,7 @@ String tokenType,
     eventakandatangX,
     eventselesaiX,
     namaOrganizerX,
+    imageorganizerX,
     userId;
 Map<String, String> requestHeaders = Map();
 String getNowfilter, cekfollowX;
@@ -57,6 +58,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
     eventberlangsungX = '0';
     eventakandatangX = '0';
     namaOrganizerX = 'Loading...';
+    imageorganizerX = null;
     eventselesaiX = '0';
     getNowfilter = 'berlangsung';
   }
@@ -155,19 +157,21 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         String cekfollow = eventfollowingJson['cekfollow'].toString();
         print('cek follow $cekfollow');
         String usersorganizer = eventfollowingJson['namaorganizer'];
+        String imageorganizer = eventfollowingJson['imageorganizer'];
         setState(() {
           eventberlangsungX = jumlaheventberlangsung;
           eventakandatangX = jumlaheventakandatang;
           eventselesaiX = jumlaheventselesai;
           namaOrganizerX = usersorganizer;
           cekfollowX = cekfollow;
+          imageorganizerX = imageorganizer;
         });
         listItemFollowing = [];
         for (var i in followevents) {
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
-            creatorName:  i['us_name'],
+            creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
             waktuawal: DateFormat("dd MMM yyyy")
@@ -177,7 +181,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            statusdaftar: i['ep_status'],
+            statusdaftar:  DateTime.parse(i['ev_time_end']).difference(DateTime.now()).inSeconds <= 0 ? 'selesai' : i['ep_status'],
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -268,7 +272,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
-            creatorName:  i['us_name'],
+            creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
             waktuawal: DateFormat("dd MMM yyyy")
@@ -278,7 +282,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            statusdaftar: i['ep_status'],
+            statusdaftar:  DateTime.parse(i['ev_time_end']).difference(DateTime.now()).inSeconds <= 0 ? 'selesai' : i['ep_status'],
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -484,21 +488,32 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 0.0),
                                       child: Container(
-                                          width: 80.0,
-                                          height: 80.0,
-                                          decoration: new BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 2.0,
-                                            ),
-                                            shape: BoxShape.circle,
-                                            image: new DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: AssetImage(
-                                                'images/imgavatar.png',
-                                              ),
-                                            ),
-                                          )),
+                                        width: 80.0,
+                                        height: 80.0,
+                                        child: ClipOval(
+                                          child: FadeInImage.assetNetwork(
+                                            placeholder: 'images/loading.gif',
+                                            image: imageorganizerX ==
+                                                        null ||
+                                                    imageorganizerX ==
+                                                        '' ||
+                                                    imageorganizerX ==
+                                                        'null'
+                                                ? url(
+                                                    'assets/images/noimage.jpg')
+                                                : url(
+                                                    'storage/image/profile/$imageorganizerX'),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Padding(
@@ -941,8 +956,12 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               .all(
                                                                           10.0),
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
                                                                     children: <
                                                                         Widget>[
                                                                       Expanded(
@@ -956,15 +975,12 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                           child:
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
-                                                                                'images/noimage.jpg',
+                                                                                'images/loading-event.png',
                                                                             image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                ? 
-                                                                                 'images/noimage.jpg'  
+                                                                                ? url('assets/images/noimage.jpg')
                                                                                 : url('storage/image/event/event_thumbnail/${item.image}'),
-                                                                                
                                                                             fit:
                                                                                 BoxFit.cover,
-
                                                                           ),
                                                                         ),
                                                                       ),
@@ -988,23 +1004,24 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               ),
                                                                               Padding(
                                                                                 padding: const EdgeInsets.only(top: 5.0),
-                                                                                child: Text(item.title == null || item.title == '' ? 'Event Tidak Diketahui' : item.title,
-                                                                                    style: TextStyle(
-                                                                                      color: Colors.black,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      fontSize: 16,
-                                                                                    ),
-                                                                                    overflow:TextOverflow.ellipsis,
-                                                                                    maxLines: 2,
-                                                                                    softWrap:true,),
+                                                                                child: Text(
+                                                                                  item.title == null || item.title == '' ? 'Event Tidak Diketahui' : item.title,
+                                                                                  style: TextStyle(
+                                                                                    color: Colors.black,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  maxLines: 2,
+                                                                                  softWrap: true,
+                                                                                ),
                                                                               ),
                                                                               Padding(
                                                                                 padding: const EdgeInsets.only(top: 10.0),
                                                                                 child: Text(
                                                                                   item.creatorName == null || item.creatorName == '' ? 'Organizer Tidak Diketahui' : item.creatorName,
                                                                                   style: TextStyle(color: Colors.grey),
-                                                                                  overflow:TextOverflow.ellipsis,
-                                                                                  softWrap:true,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  softWrap: true,
                                                                                 ),
                                                                               )
                                                                             ],
@@ -1030,13 +1047,13 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                                 children: <Widget>[
                                                                                   Container(
                                                                                       decoration: new BoxDecoration(
-                                                                                        color: item.statusdaftar == null ? Colors.grey : item.statusdaftar == 'P' ? Colors.orange : item.statusdaftar == 'C' ? Colors.red : item.statusdaftar == 'A' ? Colors.green : Colors.blue,
+                                                                                        color: item.statusdaftar == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : item.statusdaftar == null ? Colors.grey : item.statusdaftar == 'P' ? Colors.orange : item.statusdaftar == 'C' ? Colors.red : item.statusdaftar == 'A' ? Colors.green : Colors.blue,
                                                                                         borderRadius: new BorderRadius.only(topLeft: const Radius.circular(5.0), topRight: const Radius.circular(5.0), bottomLeft: const Radius.circular(5.0), bottomRight: const Radius.circular(5.0)),
                                                                                       ),
                                                                                       padding: EdgeInsets.all(5.0),
                                                                                       width: 120.0,
                                                                                       child: Text(
-                                                                                        item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                        item.statusdaftar == 'selesai' ?'Event Selesai' :item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
                                                                                         style: TextStyle(
                                                                                           color: Colors.white,
                                                                                           fontSize: 12,
