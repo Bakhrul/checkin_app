@@ -127,6 +127,10 @@ class _LoginPageState extends State<LoginPage> {
             store.setDataString("id", datauser['us_code'].toString());
             store.setDataString("email", datauser['us_email']);
             store.setDataString("name", datauser['us_name']);
+            store.setDataString("image",datauser['us_image'] == null ? '-':datauser['us_image']);
+            store.setDataString("phone",datauser['us_phone'] == null ? '-':datauser['us_phone']);
+            store.setDataString("location",datauser['us_location'] == null ? '-':datauser['us_location']);
+
               try{
 
                 Map body = {'id':datauser['us_code'].toString(),'token':fcmToken.toString()};

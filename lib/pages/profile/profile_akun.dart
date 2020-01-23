@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/pages/profile/profile_akun_edit.dart';
+import 'package:checkin_app/routes/env.dart';
+
+String nama,email,phone,location,image;
 
 class ProfileUser extends StatefulWidget{
 
@@ -15,8 +18,7 @@ class ProfileUser extends StatefulWidget{
 class _ProfileUser extends State<ProfileUser> {
 
   
-  String nama;
-  String email;
+  
 
   @override
   void initState() {
@@ -28,11 +30,18 @@ class _ProfileUser extends State<ProfileUser> {
   DataStore user =  new DataStore();
   String namaUser = await user.getDataString('name');
   String emailUser = await user.getDataString('email');
+  String phoneUser = await user.getDataString('phone');
+  String imageUser = await user.getDataString('image');
+  String locationUser = await user.getDataString('location');
 
-  setState(() {
+  setState((){
     nama = namaUser;
     email = emailUser;
+    phone = phoneUser;
+    image = imageUser;
+    location = locationUser;
   });
+
   }
 
   @override
@@ -78,9 +87,9 @@ class _ProfileUser extends State<ProfileUser> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: AssetImage(
+                                    image: image == '-' ? AssetImage(
                                       'images/imgavatar.png'
-                                    )
+                                    ): NetworkImage(url('storage/image/profile/'+image))
                                   )
                                 ),
                               ),
@@ -151,7 +160,7 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text('0812345678',
+                                    child: Text(phone == null ? '-':phone,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
@@ -166,7 +175,7 @@ class _ProfileUser extends State<ProfileUser> {
                                     ),
                                   ),
                                   Container(
-                                    child: Text('Jawa timur',
+                                    child: Text(location == null ? '-':location,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
