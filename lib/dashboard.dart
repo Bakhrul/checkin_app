@@ -57,10 +57,10 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
-      GlobalKey<ScaffoldState>();
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
+  //     GlobalKey<ScaffoldState>();
+  // final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  //     new GlobalKey<RefreshIndicatorState>();
 
   var height;
   var futureheight;
@@ -88,8 +88,7 @@ class _DashboardState extends State<Dashboard> {
     wishlistfive = true;
     isLoading = true;
     isError = false;
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+    
   }
 
   void dispose() {
@@ -425,7 +424,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        key: _scaffoldKeyDashboard,
+        // key: _scaffoldKeyDashboard,
         appBar: buildBar(context),
         drawer: Drawer(
           child: GestureDetector(
@@ -577,7 +576,7 @@ class _DashboardState extends State<Dashboard> {
               )),
         ),
         body: RefreshIndicator(
-          key: _refreshIndicatorKey,
+          // key: _refreshIndicatorKey,
           onRefresh: () async {
             eventList(types != null ? types : 1);
           },

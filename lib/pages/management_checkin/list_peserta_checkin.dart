@@ -3,14 +3,9 @@ import 'package:checkin_app/model/user_checkin.dart';
 
 import 'package:flutter/material.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeyListCheckin;
 List<UserCheckin> listPeserta;
 
-void showInSnackBar(String value) {
-  _scaffoldKeyListCheckin.currentState.showSnackBar(new SnackBar(
-    content: new Text(value),
-  ));
-}
+
 
 class ListPesertaCheckin extends StatefulWidget {
   final String id;
@@ -32,7 +27,6 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     dynamic response =
         await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id.toString() }/${widget.eventid.toString() }")
             .getdata();
-            print(response);
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
        name: response[i]["name"].toString(),
@@ -50,7 +44,6 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
   void initState() {
     getData();
     super.initState();
-    _scaffoldKeyListCheckin = GlobalKey<ScaffoldState>();
   }
 
   @override
@@ -64,14 +57,13 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     this.context = context;
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeyListCheckin,
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(41, 30, 47, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
         title: new Text(
-          "List User Checkin",
+          "List User ",
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ),
@@ -80,30 +72,59 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
         child: SingleChildScrollView(
             child: Column(
           children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-              ),
-              child: TextField(
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Color.fromRGBO(41, 30, 47, 1),
-                    ),
-                    hintText: " Berdasarkan Nama Lengkap",
-                    border: InputBorder.none,
-                  )),
-            ),
+            // Container(
+            //   margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            //   ),
+            //   child: TextField(
+            //       style: TextStyle(
+            //         fontSize: 14.0,
+            //         color: Colors.black,
+            //       ),
+            //       decoration: InputDecoration(
+            //         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            //         prefixIcon: Icon(
+            //           Icons.search,
+            //           color: Color.fromRGBO(41, 30, 47, 1),
+            //         ),
+            //         hintText: " Berdasarkan Nama Lengkap",
+            //         border: InputBorder.none,
+            //       )
+            //       ),
+            // ),
 
             SafeArea(
-              child: listPeserta.length > 0 ? _builderListView() :  Text("Tidak Ada Data"),
+              child: listPeserta.length > 0 ? _builderListView() :  Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Column(children: <Widget>[
+                                        new Container(
+                                          width: 100.0,
+                                          height: 100.0,
+                                          child: Image.asset(
+                                              "images/empty-white-box.png"),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 30.0,
+                                            left: 15.0,
+                                            right: 15.0,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Belum Ada Peserta yang Checkin",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black45,
+                                                height: 1.5,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                    ),
            
             )
           ],
