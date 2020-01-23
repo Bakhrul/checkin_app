@@ -4,7 +4,7 @@
 
 
   // String host = 'http://alamraya.club/';
-    String host = 'http://192.168.100.11/alamraya/myocin/';
+    // String host = 'http://192.168.100.11/alamraya/myocin/';
 
   //  String host = 'http://alamraya.club/';
   // //  String host = 'http://192.168.100.11/alamraya/myocin/';
@@ -12,13 +12,8 @@
   //  String host = 'http://alamraya.club/';
   
 
-<<<<<<< HEAD
-  //  String host = 'http://192.168.43.115/bisniskita_myocin/';
+   String host = 'http://192.168.43.115/bisniskita_myocin/';
   // String host = 'http://192.168.100.12/order/myocin/';
-=======
-  //  String host = 'http://192.168.137.1/bisniskita_myocin/';
-  String host = 'http://192.168.137.1/order/myocin/';
->>>>>>> 35047f4035e33a816ef96d41141951897778a8d8
   //  String host = 'http://192.168.43.115/myocin/public/';
    
 
