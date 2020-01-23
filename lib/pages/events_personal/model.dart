@@ -63,11 +63,13 @@ class ListUser {
    String id;
    String nama;
    String email;
+   String image;
   
   ListUser(
       {this.id,
       this.nama,
       this.email,
+      this.image,
       });
 }
 
@@ -145,6 +147,7 @@ class ListPesertaEvent {
    String idevent;
    String idpeserta;
    String nama;
+   String image;
    String email;
    String posisi;
    String status;
@@ -157,6 +160,7 @@ class ListPesertaEvent {
       this.email,
       this.posisi,
       this.status,
+      this.image,
       });
 }
 
@@ -167,6 +171,7 @@ class ListAdminEvent {
    String email;
    String posisi;
    String status;
+   String image;
    
   
   ListAdminEvent(
@@ -176,6 +181,7 @@ class ListAdminEvent {
       this.email,
       this.posisi,
       this.status,
+      this.image,
       });
 }
 
@@ -209,6 +215,7 @@ class ListEditKategoriEvent {
 
 class ListPointCheckin {
    String namapeserta;
+   String image;
    String jumlahcheckinevent;
    String jumlahcheckinpeserta;
    String persencheckin;
@@ -218,6 +225,7 @@ class ListPointCheckin {
       this.jumlahcheckinevent,
       this.jumlahcheckinpeserta,
       this.persencheckin,
+      this.image,
       });
 }
 

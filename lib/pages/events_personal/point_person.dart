@@ -94,6 +94,7 @@ class _PointEventsState extends State<PointEvents> {
         for (var i in listuserJson) {
           ListPointCheckin willcomex = ListPointCheckin(
             namapeserta: i['name'],
+            image: i['image'],
             jumlahcheckinevent: i['of_checkin'].toString(),
             jumlahcheckinpeserta: i['total_checkin'].toString(),
             persencheckin: i['percentage'].toString(),
@@ -165,6 +166,7 @@ class _PointEventsState extends State<PointEvents> {
         for (var i in listuserJson) {
           ListPointCheckin willcomex = ListPointCheckin(
             namapeserta: i['name'],
+            image: i['image'],
             jumlahcheckinevent: i['of_checkin'].toString(),
             jumlahcheckinpeserta: i['total_checkin'].toString(),
             persencheckin: i['percentage'].toString(),
@@ -399,17 +401,28 @@ class _PointEventsState extends State<PointEvents> {
                                                 leading: Container(
                                                     width: 40.0,
                                                     height: 40.0,
-                                                    decoration:
-                                                        new BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image:
-                                                          new DecorationImage(
-                                                        fit: BoxFit.fill,
-                                                        image: AssetImage(
-                                                          'images/imgavatar.png',
-                                                        ),
+                                                  child: ClipOval(
+                                                      child: FadeInImage
+                                                          .assetNetwork(
+                                                        placeholder:
+                                                            'images/loading.gif',
+                                                        image: listpointcheckin[index]
+                                                                        .image ==
+                                                                    null ||
+                                                                listpointcheckin[
+                                                                            index]
+                                                                        .image ==
+                                                                    '' ||
+                                                                listpointcheckin[
+                                                                            index]
+                                                                        .image ==
+                                                                    'null'
+                                                            ? url('assets/images/imgavatar.png')
+                                                            : url(
+                                                                'storage/image/profile/${listpointcheckin[index].image}'),
+                                                        fit: BoxFit.cover,
                                                       ),
-                                                    )),
+                                                    ),),
                                                 title: Text(listpointcheckin[
                                                                     index]
                                                                 .namapeserta ==

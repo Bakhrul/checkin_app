@@ -165,6 +165,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
         Navigator.pop(context);
 
       }else{
+        print(data.body);
         Fluttertoast.showToast(msg: "error: gagal update");
       }
 

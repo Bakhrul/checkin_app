@@ -112,7 +112,7 @@ class _CheckinManualState extends State<CheckinManual>
           print('response decoded $responseJson');
         } else {
           print('${response.body}');
-          Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+            Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
           setState(() {
             isCheckin = false;
           });
