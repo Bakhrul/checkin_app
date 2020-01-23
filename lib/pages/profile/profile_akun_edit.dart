@@ -146,8 +146,8 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
           storageApp.setDataString("name",body['name']);
           storageApp.setDataString("email",body['email']);
           storageApp.setDataString("image",rawData['data']);
-          storageApp.setDataString("phone",body['phone']);
-          storageApp.setDataString("location",body['location']);
+          storageApp.setDataString("phone",body['phone'] == '' ? '-':body['phone']);
+          storageApp.setDataString("location",body['location'] == '' ? '-':body['location']);
 
           setState((){
             usernameprofile = body['name'];
@@ -155,8 +155,8 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
             nama = namaData;
             email = emailData;
             image = rawData['data'];
-            phone = body['phone'];
-            location = body['location'];
+            phone = body['phone'] == '' ? '-':body['phone'];
+            location = body['location'] == '' ? '-':body['location'];
             imageprofile = rawData['data'];
           });
           
