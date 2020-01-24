@@ -11,6 +11,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'model.dart';
 import 'dart:core';
+import 'package:draggable_fab/draggable_fab.dart';
 
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
@@ -931,17 +932,23 @@ class _ManagePesertaState extends State<ManagePeserta> {
                 ),
       floatingActionButton: widget.eventEnd == true
           ? null
-          : FloatingActionButton(
-              onPressed: () async {
-                Navigator.push(
+          :
+           DraggableFab(
+            child: FloatingActionButton(
+                shape: StadiumBorder(),
+                onPressed: () async {
+                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
                             ManajemeCreatePeserta(event: widget.event)));
-              },
-              child: Icon(Icons.add),
-              backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-            ),
+                },
+                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                child: Icon(
+                  Icons.add,
+                  size: 20.0,
+                )))
+
     );
   }
 

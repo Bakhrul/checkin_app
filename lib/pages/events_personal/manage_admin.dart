@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'tambah_admin.dart';
+import 'package:draggable_fab/draggable_fab.dart';
 import 'model.dart';
 import 'dart:core';
 
@@ -600,17 +601,22 @@ class _ManageAdminState extends State<ManageAdmin> {
                             ],
                           ),
                         ),
-      floatingActionButton: widget.eventEnd == true ? null : FloatingActionButton(
-        onPressed: () async {
-          Navigator.push(
+      floatingActionButton: widget.eventEnd == true ? null :
+      DraggableFab(
+            child: FloatingActionButton(
+                shape: StadiumBorder(),
+                onPressed: () async {
+                 Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ManajemenTambahAdmin(event: widget.event)));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      ),
+                },
+                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                child: Icon(
+                  Icons.add,
+                  size: 20.0,
+                )))
     );
   }
 
