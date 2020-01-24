@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/pages/profile/profile_akun.dart';
+import 'package:checkin_app/pages/profile/image_edit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
@@ -12,6 +12,7 @@ import 'dart:async';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
+File imageProfileEdit;
 
 class ProfileUserEdit extends StatefulWidget{
 
@@ -31,7 +32,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
   String phoneData;
   String locationData;
   File profileImageData;
-  String imageData = image;
+  bool load = false;
   var storageApp = new DataStore();
   TextEditingController _controllerNama = new TextEditingController();
   TextEditingController _controllerEmail = new TextEditingController();
@@ -112,19 +113,15 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
 
   editData() async {
 
-     String base64image = '';
-     String imageName = '';
-
-    if (profileImageData != null) {
-
-    base64image = base64Encode(profileImageData.readAsBytesSync());
-    imageName = profileImageData.path.split('/').last;
-
+    if(load){
+      return false;
     }
 
+    setState((){
+      load = true;
+    });
+
     Map body = {
-      "image":base64image,
-      "name_image":imageName,
       "name":namaData,
       "email":emailData,
       "phone":phoneData != '-' ? phoneData:'',
@@ -141,23 +138,19 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
 
       if(data.statusCode == 200){
 
-        var rawData = json.decode(data.body);
-
           storageApp.setDataString("name",body['name']);
           storageApp.setDataString("email",body['email']);
-          storageApp.setDataString("image",rawData['data']);
           storageApp.setDataString("phone",body['phone'] == '' ? '-':body['phone']);
           storageApp.setDataString("location",body['location'] == '' ? '-':body['location']);
 
           setState((){
             usernameprofile = body['name'];
             emailprofile = body['email'];
-            nama = namaData;
-            email = emailData;
-            image = rawData['data'];
-            phone = body['phone'] == '' ? '-':body['phone'];
-            location = body['location'] == '' ? '-':body['location'];
-            imageprofile = rawData['data'];
+            namaStore = namaData;
+            emailStore = emailData;
+            phoneStore = body['phone'] == '' ? '-':body['phone'];
+            locationStore = body['location'] == '' ? '-':body['location'];
+            load = false;
           });
           
         Fluttertoast.showToast(msg: "success");
@@ -165,27 +158,29 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
         Navigator.pop(context);
 
       }else{
-        print(data.body);
+        setState((){
+        load = false;
+        });
         Fluttertoast.showToast(msg: "error: gagal update");
       }
 
     } on TimeoutException catch (_) {
+      setState((){
+        load = false;
+      });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } on SocketException catch(_){
+      setState((){
+        load = false;
+      });
       Fluttertoast.showToast(msg: "No Internet Connection");
     } catch (e) {
+      setState((){
+        load = false;
+      });
       Fluttertoast.showToast(msg: "$e");
     }
 
-  }
-
-  Future openGallery() async {
-     var imageGallery = await ImagePicker.pickImage(source: ImageSource.gallery);
-     
-     setState((){
-        imageData = '-';
-        profileImageData = imageGallery;
-     });
   }
 
   @override
@@ -212,22 +207,32 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                       child: Column(
                       children: <Widget>[
                               GestureDetector(
-                                onTap: openGallery,
-                                child: Container(
+                                onTap: (){
+                                  Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => ImageEdit())
+                                  );
+                                },
+                                child: 
+                                imageStore == '-' ?
+                                Container(
+                                  margin: EdgeInsets.only(top:20),
+                                  height: 90,
+                                  width: 90,
+                                  child : ClipOval(
+                                    child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                  )
+                                ):
+                                Container(
                                       margin: EdgeInsets.only(top:20),
                                       height: 90,
                                       width: 90,
-                                      decoration : BoxDecoration(
-                                        border: Border.all(color:Colors.white,width:2),
-                                        color: Colors.transparent,
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: imageData != '-' ? NetworkImage(url('storage/image/profile/'+image)):profileImageData == null ? AssetImage(
-                                            'images/imgavatar.png'
-                                          ): FileImage(profileImageData)
-                                        )
-                                      ),
+                                      child:ClipOval(
+                                        child: imageProfileEdit == null ? FadeInImage.assetNetwork(
+                                          fit: BoxFit.cover,
+                                          placeholder : 'images/imgavatar.png',
+                                          image:url('storage/image/profile/$imageStore')
+                                        ):Image.file(imageProfileEdit)
+                                      )
                                     ),
                               ),
                               Container(
@@ -317,8 +322,8 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                                         onPressed: (){
                                           editData();
                                         },
-                                        color: Color.fromRGBO(41, 30, 47, 1),
-                                        child: Text("Save",
+                                        color: load ? Colors.brown:Color.fromRGBO(41, 30, 47, 1),
+                                        child: Text( load ? "menyimpan...":"Save",
                                            style:TextStyle(
                                              color: Colors.white
                                            )

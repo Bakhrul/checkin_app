@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/pages/profile/profile_akun_edit.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/dashboard.dart';
+import 'dart:io';
 
-String nama,email,phone,location,image;
+
+File imageProfile;
 
 class ProfileUser extends StatefulWidget{
 
@@ -22,26 +24,7 @@ class _ProfileUser extends State<ProfileUser> {
 
   @override
   void initState() {
-    _getUser();
     super.initState();
-  }
-
-  _getUser() async {
-  DataStore user =  new DataStore();
-  String namaUser = await user.getDataString('name');
-  String emailUser = await user.getDataString('email');
-  String phoneUser = await user.getDataString('phone');
-  String imageUser = await user.getDataString('image');
-  String locationUser = await user.getDataString('location');
-
-  setState((){
-    nama = namaUser;
-    email = emailUser;
-    phone = phoneUser;
-    image = imageUser;
-    location = locationUser;
-  });
-
   }
 
   @override
@@ -77,25 +60,32 @@ class _ProfileUser extends State<ProfileUser> {
                   Container(
                       child: Column(
                       children: <Widget>[
+                          imageStore == '-' ?
                           Container(
                                 margin: EdgeInsets.only(top:20),
                                 height: 90,
                                 width: 90,
-                                decoration : BoxDecoration(
-                                  border: Border.all(color:Colors.white,width:2),
-                                  color: Colors.transparent,
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: image == '-' ? AssetImage(
-                                      'images/imgavatar.png'
-                                    ): NetworkImage(url('storage/image/profile/$image'))
-                                  )
-                                ),
+                                child : ClipOval(
+                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                )
+                              ):
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 90,
+                                width: 90,
+                                child : ClipOval(
+                                  child: imageProfile == null ? 
+                                  FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder : 'images/imgavatar.png',
+                                    image:url('storage/image/profile/$imageStore')
+                                  ):
+                                  Image.file(imageProfile)
+                                )
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 5.0,top: 10.0),
-                                    child: Text(nama == null ? 'memuat..':nama,
+                                    child: Text(namaStore == null ? 'memuat..':namaStore,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                         color: Colors.white,
@@ -128,7 +118,7 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(nama == null ? 'memuat..':nama,
+                                    child: Text(namaStore == null ? 'memuat..':namaStore,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
@@ -144,7 +134,7 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(email == null ? 'memuat..':email,
+                                    child: Text(emailStore == null ? 'memuat..':emailStore,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
@@ -160,7 +150,7 @@ class _ProfileUser extends State<ProfileUser> {
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(phone == null ? '-':phone,
+                                    child: Text(phoneStore == null ? '-':phoneStore,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
@@ -175,7 +165,7 @@ class _ProfileUser extends State<ProfileUser> {
                                     ),
                                   ),
                                   Container(
-                                    child: Text(location == null ? '-':location,
+                                    child: Text(locationStore == null ? '-':locationStore,
                                     style: TextStyle(
                                         fontSize: 20.0,
                                       )
