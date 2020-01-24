@@ -130,6 +130,11 @@ class _LoginPageState extends State<LoginPage> {
             store.setDataString("image",datauser['us_image'] == null ? '-':datauser['us_image']);
             store.setDataString("phone",datauser['us_phone'] == null ? '-':datauser['us_phone']);
             store.setDataString("location",datauser['us_location'] == null ? '-':datauser['us_location']);
+            
+            // var dir = await getApplicationDocumentsDirectory().path;
+            // var type_image = datauser['us_image'].split('.').last;
+            //     print(type_image);
+            // File profileImageDownload = File('$dir/profile.$type_image');
 
               try{
 
