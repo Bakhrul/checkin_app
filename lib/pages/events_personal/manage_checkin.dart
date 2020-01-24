@@ -423,10 +423,8 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                 isDelete =
                                                                     false;
                                                               });
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${removeCheckin.statusCode}");
+                                                         Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
                                                             }
                                                           } else {
                                                             print(removeCheckin
@@ -434,9 +432,8 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                             setState(() {
                                                               isDelete = false;
                                                             });
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Request failed with status: ${removeCheckin.statusCode}");
+                                                             Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
                                                           }
                                                         } on TimeoutException catch (_) {
                                                           setState(() {
@@ -450,8 +447,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                             isDelete = false;
                                                           });
                                                           Fluttertoast.showToast(
-                                                              msg:
-                                                                  "${e.toString()}");
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
                                                           print(e);
                                                         }
                                                       },

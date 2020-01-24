@@ -102,6 +102,7 @@ class _ManageAdminState extends State<ManageAdmin> {
             posisi: i['ep_position'].toString(),
             status: i['ep_status'],
             email: i['us_email'],
+            image: i['us_image'],
           );
           listadminevent.add(willcomex);
         }
@@ -174,6 +175,7 @@ class _ManageAdminState extends State<ManageAdmin> {
             posisi: i['ep_position'].toString(),
             status: i['ep_status'],
             email: i['us_email'],
+            image: i['us_image'],
           );
           listadminevent.add(willcomex);
         }
@@ -408,15 +410,24 @@ class _ManageAdminState extends State<ManageAdmin> {
                                         leading: Container(
                                             width: 40.0,
                                             height: 40.0,
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: new DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: AssetImage(
-                                                  'images/imgavatar.png',
-                                                ),
-                                              ),
-                                            )),
+                                             child: ClipOval(
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder: 'images/loading.gif',
+                                      image: listadminevent[index].image ==
+                                                  null ||
+                                              listadminevent[index].image ==
+                                                  '' ||
+                                              listadminevent[index].image ==
+                                                  'null'
+                                          ? url('assets/images/imgavatar.png')
+                                          : url(
+                                              'storage/image/profile/${listadminevent[index].image}'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),),
                                         title: Text(
                                             listadminevent[index].nama ==
                                                         null ||

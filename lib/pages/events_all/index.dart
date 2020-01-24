@@ -620,9 +620,9 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                           child:
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
-                                                                                'images/noimage.jpg',
+                                                                                'images/loading-event.png',
                                                                             image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
-                                                                                ? 'images/noimage.jpg'
+                                                                                ? url('assets/images/noimage.jpg')
                                                                                 : url('storage/image/event/event_thumbnail/${_event[x].image}'),
                                                                                 
                                                                             fit:
@@ -659,7 +659,6 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                     color: Colors.black,
                                                                     fontWeight:
                                                                         FontWeight.w500,
-                                                                    fontSize: 16,
                                                                   ),
                                                                   overflow:TextOverflow.ellipsis,
                                                                   softWrap:true,
@@ -934,7 +933,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                           EdgeInsets.fromLTRB(20.0, 15.0, 10.0, 15.0),
                       border: InputBorder.none,
                       prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Berdasarkan Nama, Kategori , Tempat",
+                      hintText: "Cari Berdasarkan Nama Event",
                       hintStyle: TextStyle(
                         color: Colors.white,
                         fontSize: 14,

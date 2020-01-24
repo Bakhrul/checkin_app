@@ -144,7 +144,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           });
           print('${response.body}');
           Fluttertoast.showToast(
-              msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
+              msg: "Gagal Menambahkan Checkin, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
         setState(() {

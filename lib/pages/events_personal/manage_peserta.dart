@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import 'create_peserta.dart';
+import 'package:checkin_app/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -113,6 +114,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
             posisi: i['ep_position'].toString(),
             status: i['ep_status'],
             email: i['us_email'],
+            image: i['us_image'],
           );
           listpesertaevent.add(willcomex);
         }
@@ -447,17 +449,27 @@ class _ManagePesertaState extends State<ManagePeserta> {
                               return Card(
                                   child: ListTile(
                                 leading: Container(
-                                    width: 40.0,
-                                    height: 40.0,
-                                    decoration: new BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: new DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage(
-                                          'images/imgavatar.png',
-                                        ),
-                                      ),
-                                    )),
+                                  width: 40.0,
+                                  height: 40.0,
+                                  child: ClipOval(
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder: 'images/loading.gif',
+                                      image: listpesertaevent[index].image ==
+                                                  null ||
+                                              listpesertaevent[index].image ==
+                                                  '' ||
+                                              listpesertaevent[index].image ==
+                                                  'null'
+                                          ? url('assets/images/imgavatar.png')
+                                          : url(
+                                              'storage/image/profile/${listpesertaevent[index].image}'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                                 title: Text(
                                     listpesertaevent[index].nama == null ||
                                             listpesertaevent[index].nama == ''
@@ -503,122 +515,132 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                               color: Colors.white,
                                               textColor: Colors.red,
                                               disabledColor: Colors.white,
-                                              disabledTextColor: Colors.red[400],
+                                              disabledTextColor:
+                                                  Colors.red[400],
                                               padding: EdgeInsets.all(0.0),
                                               splashColor: Colors.blueAccent,
                                               child: Icon(
                                                 Icons.close,
                                               ),
-                                              onPressed: isDelete || isAccept || isDenied == true ? null : () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title: Text('Peringatan!'),
-                                                    content: Text(
-                                                        'Apakah Anda Ingin Menolak Pendaftaran Event?'),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        child: Text('Tidak'),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
+                                              onPressed:
+                                                  isDelete ||
+                                                          isAccept ||
+                                                          isDenied == true
+                                                      ? null
+                                                      : () async {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                AlertDialog(
+                                                              title: Text(
+                                                                  'Peringatan!'),
+                                                              content: Text(
+                                                                  'Apakah Anda Ingin Menolak Pendaftaran Event?'),
+                                                              actions: <Widget>[
+                                                                FlatButton(
+                                                                  child: Text(
+                                                                      'Tidak'),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                                FlatButton(
+                                                                  textColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  child: Text(
+                                                                      'Ya'),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Mohon Tunggu Sebentar");
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    setState(
+                                                                        () {
+                                                                      isDenied =
+                                                                          true;
+                                                                    });
+                                                                    try {
+                                                                      final deniedParticipantEvent = await http.post(
+                                                                          url(
+                                                                              'api/tolakpeserta_event'),
+                                                                          headers:
+                                                                              requestHeaders,
+                                                                          body: {
+                                                                            'peserta':
+                                                                                listpesertaevent[index].idpeserta,
+                                                                            'event':
+                                                                                listpesertaevent[index].idevent
+                                                                          });
+                                                                      print(
+                                                                          deniedParticipantEvent);
+                                                                      if (deniedParticipantEvent
+                                                                              .statusCode ==
+                                                                          200) {
+                                                                        var deniedParticipantEventJson =
+                                                                            json.decode(deniedParticipantEvent.body);
+                                                                        if (deniedParticipantEventJson['status'] ==
+                                                                            'success') {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Berhasil");
+                                                                          setState(
+                                                                              () {
+                                                                            isDenied =
+                                                                                false;
+                                                                          });
+                                                                          setState(
+                                                                              () {
+                                                                            listpesertaevent[index].status = 'C';
+                                                                            jumlahnotifX = deniedParticipantEventJson['jumlahnotif'].toString();
+                                                                          });
+                                                                        } else if (deniedParticipantEventJson['status'] ==
+                                                                            'error') {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                          setState(
+                                                                              () {
+                                                                            isDenied =
+                                                                                false;
+                                                                          });
+                                                                        }
+                                                                      } else {
+                                                                        Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                        setState(
+                                                                            () {
+                                                                          isDenied =
+                                                                              false;
+                                                                        });
+                                                                      }
+                                                                    } on TimeoutException catch (_) {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Timed out, Try again");
+                                                                      setState(
+                                                                          () {
+                                                                        isDenied =
+                                                                            false;
+                                                                      });
+                                                                    } catch (e) {
+                                                                      setState(
+                                                                          () {
+                                                                        isDenied =
+                                                                            false;
+                                                                      });
+                                                                      print(e);
+                                                                    }
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
                                                         },
-                                                      ),
-                                                      FlatButton(
-                                                        textColor: Colors.green,
-                                                        child: Text('Ya'),
-                                                        onPressed: () async {
-                                                          Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Mohon Tunggu Sebentar");
-                                                          Navigator.pop(
-                                                              context);
-                                                          setState(() {
-                                                            isDenied = true;
-                                                          });
-                                                          try {
-                                                            final deniedParticipantEvent =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/tolakpeserta_event'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'peserta': listpesertaevent[
-                                                                          index]
-                                                                      .idpeserta,
-                                                                  'event': listpesertaevent[
-                                                                          index]
-                                                                      .idevent
-                                                                });
-                                                            print(
-                                                                deniedParticipantEvent);
-                                                            if (deniedParticipantEvent
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var deniedParticipantEventJson =
-                                                                  json.decode(
-                                                                      deniedParticipantEvent
-                                                                          .body);
-                                                              if (deniedParticipantEventJson[
-                                                                      'status'] ==
-                                                                  'success') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Berhasil");
-                                                                setState(() {
-                                                                  isDenied =
-                                                                      false;
-                                                                });
-                                                                setState(() {
-                                                                  listpesertaevent[
-                                                                          index]
-                                                                      .status = 'C';
-                                                                });
-                                                              } else if (deniedParticipantEventJson[
-                                                                      'status'] ==
-                                                                  'Error') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Request failed with status: ${deniedParticipantEvent.statusCode}");
-                                                                setState(() {
-                                                                  isDenied =
-                                                                      false;
-                                                                });
-                                                              }
-                                                            } else {
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${deniedParticipantEvent.statusCode}");
-                                                              setState(() {
-                                                                isDenied =
-                                                                    false;
-                                                              });
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                            setState(() {
-                                                              isDenied = false;
-                                                            });
-                                                          } catch (e) {
-                                                            setState(() {
-                                                              isDenied = false;
-                                                            });
-                                                            print(e);
-                                                          }
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
                                             ))
                                         : ButtonTheme(
                                             minWidth: 0.0,
@@ -626,122 +648,131 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                               color: Colors.white,
                                               textColor: Colors.red,
                                               disabledColor: Colors.white,
-                                              disabledTextColor: Colors.red[400],
+                                              disabledTextColor:
+                                                  Colors.red[400],
                                               padding: EdgeInsets.all(0.0),
                                               splashColor: Colors.blueAccent,
                                               child: Icon(
                                                 Icons.delete,
                                               ),
-                                              onPressed: isDelete || isAccept || isDenied == true ? null : () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title: Text('Peringatan!'),
-                                                    content: Text(
-                                                        'Apakah Anda Ingin Menghapus Secara Permanen?'),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        child: Text('Tidak'),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
+                                              onPressed:
+                                                  isDelete ||
+                                                          isAccept ||
+                                                          isDenied == true
+                                                      ? null
+                                                      : () async {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                AlertDialog(
+                                                              title: Text(
+                                                                  'Peringatan!'),
+                                                              content: Text(
+                                                                  'Apakah Anda Ingin Menghapus Secara Permanen?'),
+                                                              actions: <Widget>[
+                                                                FlatButton(
+                                                                  child: Text(
+                                                                      'Tidak'),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                                FlatButton(
+                                                                  textColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  child: Text(
+                                                                      'Ya'),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    setState(
+                                                                        () {
+                                                                      isDelete =
+                                                                          true;
+                                                                    });
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Mohon Tunggu Sebentar");
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    try {
+                                                                      final deletePesertaEvent = await http.post(
+                                                                          url(
+                                                                              'api/deletepeserta_event'),
+                                                                          headers:
+                                                                              requestHeaders,
+                                                                          body: {
+                                                                            'peserta':
+                                                                                listpesertaevent[index].idpeserta,
+                                                                            'event':
+                                                                                listpesertaevent[index].idevent
+                                                                          });
+                                                                      print(
+                                                                          deletePesertaEvent);
+                                                                      if (deletePesertaEvent
+                                                                              .statusCode ==
+                                                                          200) {
+                                                                        var deletePesertaEventJson =
+                                                                            json.decode(deletePesertaEvent.body);
+                                                                        if (deletePesertaEventJson['status'] ==
+                                                                            'success') {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Berhasil");
+                                                                          setState(
+                                                                              () {
+                                                                            isDelete =
+                                                                                false;
+                                                                          });
+                                                                          setState(
+                                                                              () {
+                                                                            listpesertaevent.remove(listpesertaevent[index]);
+                                                                          });
+                                                                        } else if (deletePesertaEventJson['status'] ==
+                                                                            'error') {
+                                                                      Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                          setState(
+                                                                              () {
+                                                                            isDelete =
+                                                                                false;
+                                                                          });
+                                                                        }
+                                                                      } else {
+                                                                     Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                        setState(
+                                                                            () {
+                                                                          isDelete =
+                                                                              false;
+                                                                        });
+                                                                      }
+                                                                    } on TimeoutException catch (_) {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Timed out, Try again");
+                                                                      setState(
+                                                                          () {
+                                                                        isDelete =
+                                                                            false;
+                                                                      });
+                                                                    } catch (e) {
+                                                                      setState(
+                                                                          () {
+                                                                        isDelete =
+                                                                            false;
+                                                                      });
+                                                                      print(e);
+                                                                    }
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
                                                         },
-                                                      ),
-                                                      FlatButton(
-                                                        textColor: Colors.green,
-                                                        child: Text('Ya'),
-                                                        onPressed: () async {
-                                                          setState(() {
-                                                            isDelete = true;
-                                                          });
-                                                          Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Mohon Tunggu Sebentar");
-                                                          Navigator.pop(
-                                                              context);
-                                                          try {
-                                                            final hapuswishlist =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/deletepeserta_event'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'peserta': listpesertaevent[
-                                                                          index]
-                                                                      .idpeserta,
-                                                                  'event': listpesertaevent[
-                                                                          index]
-                                                                      .idevent
-                                                                });
-                                                            print(
-                                                                hapuswishlist);
-                                                            if (hapuswishlist
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var hapuswishlistJson =
-                                                                  json.decode(
-                                                                      hapuswishlist
-                                                                          .body);
-                                                              if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'success') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Berhasil");
-                                                                setState(() {
-                                                                  isDelete =
-                                                                      false;
-                                                                });
-                                                                setState(() {
-                                                                  listpesertaevent.remove(
-                                                                      listpesertaevent[
-                                                                          index]);
-                                                                });
-                                                              } else if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'Error') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                setState(() {
-                                                                  isDelete =
-                                                                      false;
-                                                                });
-                                                              }
-                                                            } else {
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${hapuswishlist.statusCode}");
-                                                              setState(() {
-                                                                isDelete =
-                                                                    false;
-                                                              });
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                            setState(() {
-                                                              isDelete = false;
-                                                            });
-                                                          } catch (e) {
-                                                            setState(() {
-                                                              isDelete = false;
-                                                            });
-                                                            print(e);
-                                                          }
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
                                             )),
                                     listpesertaevent[index].status == 'P'
                                         ? ButtonTheme(
@@ -749,124 +780,134 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                             child: FlatButton(
                                               color: Colors.white,
                                               textColor: Colors.green,
-                                              disabledColor:Colors.white,
-                                              disabledTextColor: Colors.green[400],
+                                              disabledColor: Colors.white,
+                                              disabledTextColor:
+                                                  Colors.green[400],
                                               padding: EdgeInsets.all(0.0),
                                               splashColor: Colors.blueAccent,
                                               child: Icon(
                                                 Icons.check,
                                               ),
-                                              onPressed: isDelete || isAccept || isDenied == true ? null : () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                    title: Text('Peringatan!'),
-                                                    content: Text(
-                                                        'Apakah Anda Ingin Menerima Pendaftaran Event?'),
-                                                    actions: <Widget>[
-                                                      FlatButton(
-                                                        child: Text('Tidak'),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      ),
-                                                      FlatButton(
-                                                        textColor: Colors.green,
-                                                        child: Text('Ya'),
-                                                        onPressed: () async {
-                                                          Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Mohon Tunggu Sebentar");
-                                                          Navigator.pop(
-                                                              context);
-                                                          setState(() {
-                                                            isAccept = true;
-                                                          });
-                                                          try {
-                                                            final accpeserta =
-                                                                await http.post(
-                                                                    url(
-                                                                        'api/accpeserta_event'),
-                                                                    headers:
-                                                                        requestHeaders,
-                                                                    body: {
-                                                                  'peserta': listpesertaevent[
-                                                                          index]
-                                                                      .idpeserta,
-                                                                  'event': listpesertaevent[
-                                                                          index]
-                                                                      .idevent
-                                                                });
+                                              onPressed:
+                                                  isDelete ||
+                                                          isAccept ||
+                                                          isDenied == true
+                                                      ? null
+                                                      : () async {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                AlertDialog(
+                                                              title: Text(
+                                                                  'Peringatan!'),
+                                                              content: Text(
+                                                                  'Apakah Anda Ingin Menerima Pendaftaran Event?'),
+                                                              actions: <Widget>[
+                                                                FlatButton(
+                                                                  child: Text(
+                                                                      'Tidak'),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                                FlatButton(
+                                                                  textColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  child: Text(
+                                                                      'Ya'),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    Fluttertoast
+                                                                        .showToast(
+                                                                            msg:
+                                                                                "Mohon Tunggu Sebentar");
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    setState(
+                                                                        () {
+                                                                      isAccept =
+                                                                          true;
+                                                                    });
+                                                                    try {
+                                                                      final accpeserta = await http.post(
+                                                                          url(
+                                                                              'api/accpeserta_event'),
+                                                                          headers:
+                                                                              requestHeaders,
+                                                                          body: {
+                                                                            'peserta':
+                                                                                listpesertaevent[index].idpeserta,
+                                                                            'event':
+                                                                                listpesertaevent[index].idevent
+                                                                          });
 
-                                                            if (accpeserta
-                                                                    .statusCode ==
-                                                                200) {
-                                                              var hapuswishlistJson =
-                                                                  json.decode(
-                                                                      accpeserta
-                                                                          .body);
-                                                              print(
-                                                                  hapuswishlistJson);
-                                                              if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'success') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Berhasil");
-                                                                setState(() {
-                                                                  isAccept =
-                                                                      false;
-                                                                });
-                                                                setState(() {
-                                                                  listpesertaevent[
-                                                                          index]
-                                                                      .status = 'A';
-                                                                });
-                                                              } else if (hapuswishlistJson[
-                                                                      'status'] ==
-                                                                  'Error') {
-                                                                Fluttertoast
-                                                                    .showToast(
-                                                                        msg:
-                                                                            "Request failed with status: ${accpeserta.statusCode}");
-                                                                setState(() {
-                                                                  isAccept =
-                                                                      false;
-                                                                });
-                                                              }
-                                                            } else {
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                      msg:
-                                                                          "Request failed with status: ${accpeserta.statusCode}");
-                                                              setState(() {
-                                                                isAccept =
-                                                                    false;
-                                                              });
-                                                            }
-                                                          } on TimeoutException catch (_) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    "Timed out, Try again");
-                                                            setState(() {
-                                                              isAccept = false;
-                                                            });
-                                                          } catch (e) {
-                                                            setState(() {
-                                                              isAccept = false;
-                                                            });
-                                                            print(e);
-                                                          }
+                                                                      if (accpeserta
+                                                                              .statusCode ==
+                                                                          200) {
+                                                                        var accPesertaJson =
+                                                                            json.decode(accpeserta.body);
+                                                                        print(
+                                                                            accPesertaJson);
+                                                                        if (accPesertaJson['status'] ==
+                                                                            'success') {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Berhasil");
+                                                                          setState(
+                                                                              () {
+                                                                            isAccept =
+                                                                                false;
+                                                                          });
+                                                                          setState(
+                                                                              () {
+                                                                            listpesertaevent[index].status = 'A';
+                                                                            jumlahnotifX = accPesertaJson['jumlahnotif'].toString();
+                                                                          });
+                                                                        } else if (accPesertaJson['status'] ==
+                                                                            'Error') {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                          setState(
+                                                                              () {
+                                                                            isAccept =
+                                                                                false;
+                                                                          });
+                                                                        }
+                                                                      } else {
+                                                                        Fluttertoast.showToast(
+                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                        setState(
+                                                                            () {
+                                                                          isAccept =
+                                                                              false;
+                                                                        });
+                                                                      }
+                                                                    } on TimeoutException catch (_) {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                              msg: "Timed out, Try again");
+                                                                      setState(
+                                                                          () {
+                                                                        isAccept =
+                                                                            false;
+                                                                      });
+                                                                    } catch (e) {
+                                                                      setState(
+                                                                          () {
+                                                                        isAccept =
+                                                                            false;
+                                                                      });
+                                                                      print(e);
+                                                                    }
+                                                                  },
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
                                                         },
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
                                             ))
                                         : Container(),
                                   ],

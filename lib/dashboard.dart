@@ -60,10 +60,10 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
-      GlobalKey<ScaffoldState>();
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
+  //     GlobalKey<ScaffoldState>();
+  // final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  //     new GlobalKey<RefreshIndicatorState>();
 
   var height;
   var futureheight;
@@ -79,7 +79,6 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     eventList(1);
-    getvaluenotif();
     dataProfile();
     getHeaderHTTP();
     _getUserData();
@@ -92,8 +91,7 @@ class _DashboardState extends State<Dashboard> {
     wishlistfive = true;
     isLoading = true;
     isError = false;
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+    
   }
 
   void dispose() {
@@ -196,8 +194,7 @@ class _DashboardState extends State<Dashboard> {
           });
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<dynamic> _wish(String wish, eventId, index) async {
@@ -349,6 +346,7 @@ class _DashboardState extends State<Dashboard> {
           isLoading = false;
           isError = false;
         });
+        getvaluenotif();
         // listDoneEvent();
       } else if (eventList.statusCode == 401) {
         Fluttertoast.showToast(
@@ -382,6 +380,9 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> getvaluenotif() async {
+    setState(() {
+      isLoading = true;
+    });
     var storage = new DataStore();
 
     var tokenTypeStorage = await storage.getDataString('token_type');
@@ -404,18 +405,39 @@ class _DashboardState extends State<Dashboard> {
 
         setState(() {
           jumlahnotifX = notifvalue;
+          isLoading = false;
+          isError = false;
         });
       } else if (response.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
       } else {
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
         // print(response.body);
         return null;
       }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      print('Error : $e');
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
     }
   }
 
-  
   Future<void> dataProfile() async {
     var storage = new DataStore();
 
@@ -423,7 +445,6 @@ class _DashboardState extends State<Dashboard> {
     emailprofile = await storage.getDataString('email');
     imageprofile = await storage.getDataString('image');
   }
-
 
   Future<Null> removeSharedPrefs() async {
     DataStore dataStore = new DataStore();
@@ -434,11 +455,6 @@ class _DashboardState extends State<Dashboard> {
     "Dashboard",
     style: TextStyle(fontSize: 16),
   );
-  // Icon actionIcon = Icon(
-  //   Icons.search,
-  //   color: Colors.white,
-  // );
-
   Icon notifIcon = Icon(
     Icons.more_vert,
     color: Colors.white,
@@ -448,7 +464,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        key: _scaffoldKeyDashboard,
+        // key: _scaffoldKeyDashboard,
         appBar: buildBar(context),
         drawer: Drawer(
           child: GestureDetector(
@@ -599,7 +615,7 @@ class _DashboardState extends State<Dashboard> {
               )),
         ),
         body: RefreshIndicator(
-          key: _refreshIndicatorKey,
+          // key: _refreshIndicatorKey,
           onRefresh: () async {
             eventList(types != null ? types : 1);
           },
@@ -628,7 +644,7 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 10.0, bottom: 10.0),
+              margin: EdgeInsets.only(left: 10.0),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(children: <Widget>[
@@ -743,7 +759,7 @@ class _DashboardState extends State<Dashboard> {
                               padding: EdgeInsets.only(
                                   left: 10.0,
                                   right: 10.0,
-                                  top: 15.0,
+          
                                   bottom: 0.0),
                               child: Divider(),
                             ),
@@ -764,23 +780,22 @@ class _DashboardState extends State<Dashboard> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(('Event diIkuti').toUpperCase(),
+                                          Text(('Organizer diikuti').toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
                                           InkWell(
-                                              child: Container(
-                                                  child: Row(
-                                            children: <Widget>[
-                                              Text("Lihat Lainnya"),
-                                              Icon(Icons.chevron_right)
-                                            ],
-                                          )),
-                                          onTap: () async{
-                                           linkToPageDetail(types,'follow');
-
-                                          },
+                                            child: Container(
+                                                child: Row(
+                                              children: <Widget>[
+                                                Text("Lihat Lainnya"),
+                                                Icon(Icons.chevron_right)
+                                              ],
+                                            )),
+                                            onTap: () async {
+                                              linkToPageDetail(types, 'follow');
+                                            },
                                           ),
 //                                          Text(
 //                                              ('Lihat Lainnya'),
@@ -794,6 +809,7 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   )),
                               Container(
+                                alignment: Alignment.topLeft,
                                   child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -804,7 +820,7 @@ class _DashboardState extends State<Dashboard> {
                                             (Event item) => Container(
                                               child: InkWell(
                                                   child: Container(
-                                                      width: 300,
+                                                      width: 280,
                                                       margin: EdgeInsets.only(
 //                                                    top: 5.0,
                                                           bottom: 5.0,
@@ -821,24 +837,24 @@ class _DashboardState extends State<Dashboard> {
                                                                   padding:
                                                                       const EdgeInsets
                                                                               .all(
-                                                                          10.0),
+                                                                          0.0),
                                                                   child: Column(
                                                                     children: <
                                                                         Widget>[
                                                                       Container(
                                                                         height:
-                                                                            100.0,
-                                                                        width:
                                                                             250.0,
+                                                                        width:
+                                                                            double.infinity,
                                                                         child: FadeInImage
                                                                             .assetNetwork(
                                                                           placeholder:
-                                                                              'images/noimage.jpg',
-                                                                          image: item.image != null || item.image != ''
-                                                                              ? url(
+                                                                              'images/loading-event.png',
+                                                                          image: item.image == null || item.image == '' || item.image == 'null'
+                                                                              ? url('assets/images/noimage.jpg')
+                                                                              : url(
                                                                                   'storage/image/event/event_thumbnail/${item.image}',
-                                                                                )
-                                                                              : 'images/noimage.jpg',
+                                                                                ),
                                                                           fit: BoxFit
                                                                               .cover,
                                                                         ),
@@ -849,11 +865,14 @@ class _DashboardState extends State<Dashboard> {
                                                                                 10),
                                                                         child:
                                                                             Row(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
                                                                           children: <
                                                                               Widget>[
                                                                             Expanded(
                                                                                 flex: 2,
                                                                                 child: Card(
+                                                                                  margin: EdgeInsets.only(left: 5.0),
                                                                                     elevation: 0.5,
                                                                                     child: Padding(
                                                                                       padding: const EdgeInsets.all(7.0),
@@ -879,10 +898,16 @@ class _DashboardState extends State<Dashboard> {
                                                                                 child: Column(
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: <Widget>[
-                                                                                    Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                    Text(
-                                                                                      "${item.location}",
-                                                                                      style: TextStyle(color: Colors.grey),
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
+                                                                                      child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsets.only(left:5.0,right:5.0,top:5.0),
+                                                                                      child: Text(
+                                                                                        "${item.location}",
+                                                                                        style: TextStyle(color: Colors.grey),
+                                                                                      ),
                                                                                     )
                                                                                   ],
                                                                                 ))
@@ -965,10 +990,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async{
-                                           linkToPageDetail(types,'follow');
-
-                                          },
+                                              onTap: () async {
+                                                linkToPageDetail(
+                                                    types, 'follow');
+                                              },
                                             ),
                                           )
                                         : Container(),
@@ -989,10 +1014,9 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () async{
-                                           linkToPageDetail(types,'wish');
-
-                                          },
+                                  onTap: () async {
+                                    linkToPageDetail(types, 'wish');
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1007,7 +1031,7 @@ class _DashboardState extends State<Dashboard> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
-                                              ('Event yang di sukai')
+                                              ('Event yang disukai')
                                                   .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 14,
@@ -1033,6 +1057,7 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   )),
                               Container(
+                                alignment: Alignment.topLeft,
                                   child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -1041,7 +1066,7 @@ class _DashboardState extends State<Dashboard> {
                                       Container(
                                         child: InkWell(
                                           child: Container(
-                                              width: 300,
+                                              width: 280,
                                               margin: EdgeInsets.only(
 //                                                    top: 5.0,
                                                   bottom: 5.0,
@@ -1056,24 +1081,27 @@ class _DashboardState extends State<Dashboard> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(10.0),
+                                                                  .all(0.0),
                                                           child: Column(
                                                             children: <Widget>[
                                                               Container(
-                                                                height: 100.0,
-                                                                width: 250.0,
+                                                                height: 250.0,
+                                                                width: double.infinity,
                                                                 child: FadeInImage
                                                                     .assetNetwork(
                                                                   placeholder:
-                                                                      'images/noimage.jpg',
-                                                                  image: listWish[x].image !=
-                                                                              null ||
-                                                                          listWish[x].image !=
-                                                                              ''
+                                                                      'images/loading-event.png',
+                                                                  image: listWish[x].image == null ||
+                                                                          listWish[x].image ==
+                                                                              '' ||
+                                                                          listWish[x].image ==
+                                                                              'null'
                                                                       ? url(
+                                                                          'assets/images/noimage.jpg')
+                                                                      : 
+                                                                          url(
                                                                           'storage/image/event/event_thumbnail/${listWish[x].image}',
-                                                                        )
-                                                                      : 'images/noimage.jpg',
+                                                                        ),
                                                                   fit: BoxFit
                                                                       .cover,
                                                                 ),
@@ -1084,11 +1112,14 @@ class _DashboardState extends State<Dashboard> {
                                                                         top:
                                                                             10),
                                                                 child: Row(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                                   children: <
                                                                       Widget>[
                                                                     Expanded(
                                                                         flex: 2,
                                                                         child: Card(
+                                                                          margin: EdgeInsets.only(left:10.0),
                                                                             elevation: 0.5,
                                                                             child: Padding(
                                                                               padding: const EdgeInsets.all(7.0),
@@ -1115,17 +1146,24 @@ class _DashboardState extends State<Dashboard> {
                                                                             Column(
                                                                           crossAxisAlignment:
                                                                               CrossAxisAlignment.start,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
                                                                           children: <
                                                                               Widget>[
-                                                                            Text(listWish[x].title,
-                                                                                style: TextStyle(fontWeight: FontWeight.bold),
-                                                                                maxLines: 2,
-                                                                                softWrap: true,
-                                                                                overflow: TextOverflow.ellipsis),
-                                                                            Text(
-                                                                              listWish[x].location,
-                                                                              style: TextStyle(color: Colors.grey),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left:5.0,right:5.0,top:5.0),
+                                                                              child: Text(listWish[x].title,
+                                                                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                                                                  maxLines: 2,
+                                                                                  softWrap: true,
+                                                                                  overflow: TextOverflow.ellipsis),
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left:5.0,right:5.0,top:5.0),
+                                                                              child: Text(
+                                                                                listWish[x].location,
+                                                                                style: TextStyle(color: Colors.grey),
+                                                                              ),
                                                                             )
                                                                           ],
                                                                         ))
@@ -1229,10 +1267,9 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                             onTap: () async{
-                                           linkToPageDetail(types,'wish');
-
-                                          },
+                                              onTap: () async {
+                                                linkToPageDetail(types, 'wish');
+                                              },
                                             ),
                                           )
                                         : Container(),
@@ -1254,10 +1291,9 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () async{
-                                           linkToPageDetail(types,'participant');
-
-                                          },
+                                  onTap: () async {
+                                    linkToPageDetail(types, 'participant');
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1298,6 +1334,7 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   )),
                               Container(
+                                alignment: Alignment.topLeft,
                                   child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -1307,7 +1344,7 @@ class _DashboardState extends State<Dashboard> {
                                             .map((Event item) => Container(
                                                   child: InkWell(
                                                     child: Container(
-                                                        width: 300,
+                                                        width: 280,
                                                         margin: EdgeInsets.only(
 //                                                    top: 5.0,
                                                             bottom: 5.0,
@@ -1323,25 +1360,27 @@ class _DashboardState extends State<Dashboard> {
                                                                   Padding(
                                                                     padding: const EdgeInsets
                                                                             .all(
-                                                                        10.0),
+                                                                        0.0),
                                                                     child:
                                                                         Column(
                                                                       children: <
                                                                           Widget>[
                                                                         Container(
                                                                           height:
-                                                                              100.0,
-                                                                          width:
                                                                               250.0,
+                                                                              margin: EdgeInsets.only(bottom: 10.0),
+                                                                          width:
+                                                                             double.infinity,
                                                                           child:
                                                                               FadeInImage.assetNetwork(
                                                                             placeholder:
-                                                                                'images/noimage.jpg',
-                                                                            image: item.image != null || item.image != ''
-                                                                                ? url(
+                                                                                'images/loading-event.png',
+                                                                            image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                ? url('assets/images/noimage.jpg')
+                                                                                : 
+                                                                                url(
                                                                                     'storage/image/event/event_thumbnail/${item.image}',
-                                                                                  )
-                                                                                : 'images/noimage.jpg',
+                                                                                  ),
                                                                             fit:
                                                                                 BoxFit.cover,
                                                                           ),
@@ -1351,10 +1390,13 @@ class _DashboardState extends State<Dashboard> {
                                                                               EdgeInsets.only(top: 10),
                                                                           child:
                                                                               Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                             children: <Widget>[
                                                                               Expanded(
                                                                                   flex: 2,
                                                                                   child: Card(
+                                                                                     margin: EdgeInsets.only(left:10.0),
                                                                                       elevation: 0.5,
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsets.all(7.0),
@@ -1379,11 +1421,18 @@ class _DashboardState extends State<Dashboard> {
                                                                                   flex: 6,
                                                                                   child: Column(
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
                                                                                     children: <Widget>[
-                                                                                      Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                      Text(
-                                                                                        "${item.location}",
-                                                                                        style: TextStyle(color: Colors.grey),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left:5.0,right:5.0),
+                                                                                        child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left:5.0,right: 5.0,top: 5.0),
+                                                                                        child: Text(
+                                                                                          "${item.location}",
+                                                                                          style: TextStyle(color: Colors.grey),
+                                                                                        ),
                                                                                       )
                                                                                     ],
                                                                                   ))
@@ -1486,10 +1535,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async{
-                                           linkToPageDetail(types,'participant');
-
-                                          },
+                                              onTap: () async {
+                                                linkToPageDetail(
+                                                    types, 'participant');
+                                              },
                                             ),
                                           )
                                         : Container(),
@@ -1510,10 +1559,9 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () async{
-                                           linkToPageDetail(types,'admin');
-
-                                          },
+                                  onTap: () async {
+                                    linkToPageDetail(types, 'admin');
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1554,6 +1602,7 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   )),
                               Container(
+                                alignment: Alignment.topLeft,
                                   child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -1564,7 +1613,7 @@ class _DashboardState extends State<Dashboard> {
                                             (Event item) => Container(
                                               child: InkWell(
                                                 child: Container(
-                                                    width: 300,
+                                                    width: 280,
                                                     margin: EdgeInsets.only(
 //                                                    top: 5.0,
                                                         bottom: 5.0,
@@ -1580,25 +1629,27 @@ class _DashboardState extends State<Dashboard> {
                                                                 padding:
                                                                     const EdgeInsets
                                                                             .all(
-                                                                        10.0),
+                                                                        0.0),
                                                                 child: Column(
                                                                   children: <
                                                                       Widget>[
                                                                     Container(
                                                                       height:
-                                                                          100.0,
-                                                                      width:
                                                                           250.0,
+                                                                      width:
+                                                                          double.infinity,
                                                                       child: FadeInImage
                                                                           .assetNetwork(
                                                                         placeholder:
-                                                                            'images/noimage.jpg',
-                                                                        image: item.image != null ||
-                                                                                item.image != ''
-                                                                            ? url(
+                                                                            'images/loading-event.png',
+                                                                        image: item.image == null ||
+                                                                                item.image == '' ||
+                                                                                item.image == 'null'
+                                                                            ? url('assets/images/noimage.jpg')
+                                                                            : 
+                                                                            url(
                                                                                 'storage/image/event/event_thumbnail/${item.image}',
-                                                                              )
-                                                                            : 'images/noimage.jpg',
+                                                                              ),
                                                                         fit: BoxFit
                                                                             .cover,
                                                                       ),
@@ -1609,11 +1660,14 @@ class _DashboardState extends State<Dashboard> {
                                                                               top: 10),
                                                                       child:
                                                                           Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                                         children: <
                                                                             Widget>[
                                                                           Expanded(
                                                                               flex: 2,
                                                                               child: Card(
+                                                                                margin: EdgeInsets.only(left: 10.0),
                                                                                   elevation: 0.5,
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsets.all(7.0),
@@ -1639,10 +1693,16 @@ class _DashboardState extends State<Dashboard> {
                                                                               child: Column(
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
-                                                                                  Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                  Text(
-                                                                                    "${item.location}",
-                                                                                    style: TextStyle(color: Colors.grey),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(right:5.0,left: 5.0),
+                                                                                    child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                  ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top:5.0,left: 5.0,right: 5.0),
+                                                                                    child: Text(
+                                                                                      "${item.location}",
+                                                                                      style: TextStyle(color: Colors.grey),
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                               ))
@@ -1757,10 +1817,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async{
-                                           linkToPageDetail(types,'admin');
-
-                                          },
+                                              onTap: () async {
+                                                linkToPageDetail(
+                                                    types, 'admin');
+                                              },
                                             ),
                                           )
                                         : Container(),
@@ -1781,10 +1841,9 @@ class _DashboardState extends State<Dashboard> {
                             Column(children: <Widget>[
 //
                               InkWell(
-                                  onTap: () async{
-                                           linkToPageDetail(types,'creator');
-
-                                          },
+                                  onTap: () async {
+                                    linkToPageDetail(types, 'creator');
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     width: double.infinity,
@@ -1825,6 +1884,7 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   )),
                               Container(
+                                alignment: Alignment.topLeft,
                                   child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -1835,7 +1895,7 @@ class _DashboardState extends State<Dashboard> {
                                             (Event item) => Container(
                                               child: InkWell(
                                                 child: Container(
-                                                    width: 300,
+                                                    width: 280,
                                                     margin: EdgeInsets.only(
 //                                                    top: 5.0,
                                                         bottom: 5.0,
@@ -1851,24 +1911,27 @@ class _DashboardState extends State<Dashboard> {
                                                                 padding:
                                                                     const EdgeInsets
                                                                             .all(
-                                                                        10.0),
+                                                                        0.0),
                                                                 child: Column(
                                                                   children: <
                                                                       Widget>[
                                                                     Container(
                                                                       height:
-                                                                          100.0,
-                                                                      width:
                                                                           250.0,
+                                                                      width:
+                                                                          double.infinity,
                                                                       child: FadeInImage
                                                                           .assetNetwork(
                                                                         placeholder:
-                                                                            'images/noimage.jpg',
-                                                                        image: item.image != null 
-                                                                            ? url(
+                                                                            'images/loading-event.png',
+                                                                        image: item.image == null ||
+                                                                                item.image == '' ||
+                                                                                item.image == 'null'
+                                                                            ? url('assets/images/noimage.jpg')
+                                                                            
+                                                                            : url(
                                                                                 'storage/image/event/event_thumbnail/${item.image}',
-                                                                              )
-                                                                            : 'images/noimage.jpg',
+                                                                              ),
                                                                         fit: BoxFit
                                                                             .cover,
                                                                       ),
@@ -1879,11 +1942,14 @@ class _DashboardState extends State<Dashboard> {
                                                                               top: 10),
                                                                       child:
                                                                           Row(
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            mainAxisAlignment: MainAxisAlignment.start,
                                                                         children: <
                                                                             Widget>[
                                                                           Expanded(
                                                                               flex: 2,
                                                                               child: Card(
+                                                                                margin: EdgeInsets.only(left: 10.0),
                                                                                   elevation: 0.5,
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsets.all(7.0),
@@ -1909,10 +1975,16 @@ class _DashboardState extends State<Dashboard> {
                                                                               child: Column(
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
-                                                                                  Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                  Text(
-                                                                                    "${item.location}",
-                                                                                    style: TextStyle(color: Colors.grey),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top:5.0,right:5.0,left:5.0),
+                                                                                    child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                  ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top:5.0,left: 5.0,right: 5.0),
+                                                                                    child: Text(
+                                                                                      "${item.location}",
+                                                                                      style: TextStyle(color: Colors.grey),
+                                                                                    ),
                                                                                   )
                                                                                 ],
                                                                               ))
@@ -2031,10 +2103,10 @@ class _DashboardState extends State<Dashboard> {
                                                       ],
                                                     ),
                                                   )),
-                                              onTap: () async{
-                                           linkToPageDetail(types,'creator');
-
-                                          },
+                                              onTap: () async {
+                                                linkToPageDetail(
+                                                    types, 'creator');
+                                              },
                                             ),
                                           )
                                         : Container(),
@@ -2182,10 +2254,16 @@ class _DashboardState extends State<Dashboard> {
           ));
     }
   }
-  void linkToPageDetail(types,categories){
-    var type = types != null ? types:1;
-    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailList(type:type, typeCategory: categories) ));
+
+  void linkToPageDetail(types, categories) {
+    var type = types != null ? types : 1;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                DetailList(type: type, typeCategory: categories)));
   }
+
   void linkToPage(status, cratorId, eventId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       switch (status) {

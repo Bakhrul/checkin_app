@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
+import 'package:checkin_app/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -118,6 +119,10 @@ class _NotificationsState extends State<ManajemenNotifications> {
       if (notification.statusCode == 200) {
         var listNotificationJson = json.decode(notification.body);
         var listNotifications = listNotificationJson['notifikasi'];
+        String jumlahnotifGet = listNotificationJson['jumlahnotif'].toString();
+        setState(() {
+          jumlahnotifX = jumlahnotifGet;
+        });
         listnotifications = [];
         for (var i in listNotifications) {
           ListNotifications willcomex = ListNotifications(
@@ -230,8 +235,14 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                         'success') {
                                       setState(() {
                                         isAction = false;
+                                        listnotifications = [];
                                       });
-                                      getHeaderHTTP();
+                                      int notifterbarucount =
+                                          listnotifications.length;
+                                          setState(() {
+                                        jumlahnotifX =
+                                            notifterbarucount.toString();
+                                      });
                                       Fluttertoast.showToast(msg: "Berhasil");
                                     } else if (removeAllNotificationsJson[
                                             'status'] ==
@@ -241,7 +252,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                       });
                                       Fluttertoast.showToast(
                                           msg:
-                                              "Request failed with status: ${removeAllNotifications.statusCode}");
+                                              "Gagal Menghapus Semua pesan, Silahkan Coba Lagi");
                                     }
                                   } else {
                                     setState(() {
@@ -249,7 +260,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                     });
                                     Fluttertoast.showToast(
                                         msg:
-                                            "Request failed with status: ${removeAllNotifications.statusCode}");
+                                            "Gagal Menghapus Semua pesan, Silahkan Coba Lagi");
                                   }
                                 } on TimeoutException catch (_) {
                                   setState(() {
@@ -474,6 +485,14 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                       listnotifications[
                                                                           index]);
                                                                 });
+                                                                int notifterbarucount =
+                                                                    listnotifications
+                                                                        .length;
+                                                                setState(() {
+                                                                  jumlahnotifX =
+                                                                      notifterbarucount
+                                                                          .toString();
+                                                                });
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
@@ -491,9 +510,13 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
-                                                                            "Request failed with status: ${accConfirmation.statusCode}");
+                                                                            "Gagal, Silahkan Coba Lagi");
                                                               }
                                                             } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                      msg:
+                                                                          "Gagal, Silahkan Coba Lagi");
                                                               setState(() {
                                                                 isAction =
                                                                     false;
@@ -504,7 +527,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${accConfirmation.statusCode}");
+                                                                          "Gagal, Silahkan Coba Lagi");
                                                             }
                                                           } on TimeoutException catch (_) {
                                                             setState(() {
@@ -597,6 +620,14 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                       listnotifications[
                                                                           index]);
                                                                 });
+                                                                int notifterbarucount =
+                                                                    listnotifications
+                                                                        .length;
+                                                                setState(() {
+                                                                  jumlahnotifX =
+                                                                      notifterbarucount
+                                                                          .toString();
+                                                                });
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
@@ -611,7 +642,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
-                                                                            "Request failed with status: ${tolakConfirmation.statusCode}");
+                                                                            "Gagal, Silahkan Coba Lagi");
                                                               }
                                                             } else {
                                                               setState(() {
@@ -621,7 +652,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${tolakConfirmation.statusCode}");
+                                                                          "Gagal, Silahkan Coba Lagi");
                                                             }
                                                           } on TimeoutException catch (_) {
                                                             setState(() {
@@ -708,6 +739,14 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                       listnotifications[
                                                                           index]);
                                                                 });
+                                                                 int notifterbarucount =
+                                                                    listnotifications
+                                                                        .length;
+                                                                setState(() {
+                                                                  jumlahnotifX =
+                                                                      notifterbarucount
+                                                                          .toString();
+                                                                });
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
@@ -722,7 +761,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                                 Fluttertoast
                                                                     .showToast(
                                                                         msg:
-                                                                            "Request failed with status: ${removeConfirmation.statusCode}");
+                                                                            "Gagal, Silahkan Coba Lagi");
                                                               }
                                                             } else {
                                                               setState(() {
@@ -732,7 +771,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          "Request failed with status: ${removeConfirmation.statusCode}");
+                                                                          "Gagal, Silahkan Coba Lagi");
                                                             }
                                                           } on TimeoutException catch (_) {
                                                             setState(() {

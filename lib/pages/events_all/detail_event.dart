@@ -409,8 +409,8 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                                     height: 80.0,
                                                                                     width: 80.0,
                                                                                     child: FadeInImage.assetNetwork(
-                                                                                      placeholder: 'images/noimage.jpg',
-                                                                                      image: item.image == null || item.image == '' || item.image == 'null' ? 'images/noimage.jpg' : url('storage/image/event/event_thumbnail/${item.image}'),
+                                                                                      placeholder: 'images/loading-event.png',
+                                                                                      image: item.image == null || item.image == '' || item.image == 'null' ? url('assets/images/noimage.jpg') : url('storage/image/event/event_thumbnail/${item.image}'),
                                                                                       fit: BoxFit.cover,
                                                                                     ),
                                                                                   ),

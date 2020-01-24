@@ -126,7 +126,7 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
         print('response decoded $responseJson');
       } else {
         print('${response.body}');
-        Fluttertoast.showToast(msg: "Gagal Melakukan Checkin");
+        Fluttertoast.showToast(msg: "Gagal Melakukan Checkin, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;
           gagalCheckin = true;
