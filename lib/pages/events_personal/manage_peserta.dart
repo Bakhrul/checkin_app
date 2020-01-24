@@ -19,8 +19,10 @@ bool isLoading, isError, isFilter, isErrorfilter, isDelete, isDenied, isAccept;
 Map<String, String> requestHeaders = Map();
 
 class ManagePeserta extends StatefulWidget {
-  ManagePeserta({Key key, this.title, this.event}) : super(key: key);
+  ManagePeserta({Key key, this.title, this.event, this.eventEnd})
+      : super(key: key);
   final String title, event;
+  final bool eventEnd;
   @override
   State<StatefulWidget> createState() {
     return _ManagePesertaState();
@@ -509,7 +511,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     listpesertaevent[index].status == 'P'
-                                        ? ButtonTheme(
+                                        ? widget.eventEnd == true ? Container() : ButtonTheme(
                                             minWidth: 0.0,
                                             child: FlatButton(
                                               color: Colors.white,
@@ -596,8 +598,10 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           });
                                                                           setState(
                                                                               () {
-                                                                            listpesertaevent[index].status = 'C';
-                                                                            jumlahnotifX = deniedParticipantEventJson['jumlahnotif'].toString();
+                                                                            listpesertaevent[index].status =
+                                                                                'C';
+                                                                            jumlahnotifX =
+                                                                                deniedParticipantEventJson['jumlahnotif'].toString();
                                                                           });
                                                                         } else if (deniedParticipantEventJson['status'] ==
                                                                             'error') {
@@ -611,7 +615,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         }
                                                                       } else {
                                                                         Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                            msg:
+                                                                                "Gagal, Silahkan Coba Kembali");
                                                                         setState(
                                                                             () {
                                                                           isDenied =
@@ -642,7 +647,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                           );
                                                         },
                                             ))
-                                        : ButtonTheme(
+                                        : widget.eventEnd == true ? Container(): ButtonTheme(
                                             minWidth: 0.0,
                                             child: FlatButton(
                                               color: Colors.white,
@@ -733,7 +738,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           });
                                                                         } else if (deletePesertaEventJson['status'] ==
                                                                             'error') {
-                                                                      Fluttertoast.showToast(
+                                                                          Fluttertoast.showToast(
                                                                               msg: "Gagal, Silahkan Coba Kembali");
                                                                           setState(
                                                                               () {
@@ -742,8 +747,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           });
                                                                         }
                                                                       } else {
-                                                                     Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                        Fluttertoast.showToast(
+                                                                            msg:
+                                                                                "Gagal, Silahkan Coba Kembali");
                                                                         setState(
                                                                             () {
                                                                           isDelete =
@@ -775,7 +781,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                         },
                                             )),
                                     listpesertaevent[index].status == 'P'
-                                        ? ButtonTheme(
+                                        ? widget.eventEnd == true ? Container() : ButtonTheme(
                                             minWidth: 0.0,
                                             child: FlatButton(
                                               color: Colors.white,
@@ -863,8 +869,10 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                           });
                                                                           setState(
                                                                               () {
-                                                                            listpesertaevent[index].status = 'A';
-                                                                            jumlahnotifX = accPesertaJson['jumlahnotif'].toString();
+                                                                            listpesertaevent[index].status =
+                                                                                'A';
+                                                                            jumlahnotifX =
+                                                                                accPesertaJson['jumlahnotif'].toString();
                                                                           });
                                                                         } else if (accPesertaJson['status'] ==
                                                                             'Error') {
@@ -878,7 +886,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                         }
                                                                       } else {
                                                                         Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
+                                                                            msg:
+                                                                                "Gagal, Silahkan Coba Kembali");
                                                                         setState(
                                                                             () {
                                                                           isAccept =
@@ -920,17 +929,19 @@ class _ManagePesertaState extends State<ManagePeserta> {
                     ],
                   ),
                 ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ManajemeCreatePeserta(event: widget.event)));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      ),
+      floatingActionButton: widget.eventEnd == true
+          ? null
+          : FloatingActionButton(
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ManajemeCreatePeserta(event: widget.event)));
+              },
+              child: Icon(Icons.add),
+              backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+            ),
     );
   }
 

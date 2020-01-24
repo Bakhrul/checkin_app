@@ -28,8 +28,9 @@ enum PageEnum {
 }
 
 class ManageCheckin extends StatefulWidget {
-  ManageCheckin({Key key, this.title, this.event}) : super(key: key);
+  ManageCheckin({Key key, this.title, this.event, this.eventEnd}) : super(key: key);
   final String title, event;
+  final bool eventEnd;
   @override
   State<StatefulWidget> createState() {
     return _ManageCheckinState();
@@ -487,12 +488,9 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                             value: PageEnum.detailQrCodePage,
                                             child: Text('Download QRImage'),
                                           ),
-                                          listcheckinevent[index].checkin ==
-                                                      null ||
-                                                  listcheckinevent[index]
-                                                          .checkin ==
-                                                      ''
-                                              ? PopupMenuItem(
+                                          listcheckinevent[index].checkin == null ||
+                                                  listcheckinevent[index] .checkin == ''
+                                              ? widget.eventEnd == true ? null : PopupMenuItem(
                                                   value:
                                                       PageEnum.editCheckinPage,
                                                   child: Text("Edit"),
@@ -503,7 +501,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                   listcheckinevent[index]
                                                           .checkin ==
                                                       ''
-                                              ? PopupMenuItem(
+                                              ? widget.eventEnd == true ? null : PopupMenuItem(
                                                   value: PageEnum
                                                       .deleteCheckinPage,
                                                   child: Text("Delete"),
@@ -528,7 +526,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                         ],
                       ),
                     ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: widget.eventEnd == true ? null : FloatingActionButton(
         onPressed: () async {
           Navigator.push(
               context,
@@ -548,38 +546,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
       title: appBarTitle,
       backgroundColor: Color.fromRGBO(41, 30, 47, 1),
       actions: <Widget>[
-        // IconButton(
-        //   icon: actionIcon,
-        //   onPressed: () {
-        //     setState(() {
-        //       if (this.actionIcon.icon == Icons.search) {
-        //         // ignore: new_with_non_type
-        //         this.actionIcon = new Icon(
-        //           Icons.close,
-        //           color: Colors.white,
-        //         );
-        //         this.appBarTitle = TextField(
-        //           controller: _searchQuery,
-        //           style: TextStyle(
-        //             color: Colors.white,
-        //           ),
-        //           decoration: InputDecoration(
-        //               contentPadding:
-        //                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        //               border: InputBorder.none,
-        //               prefixIcon: new Icon(Icons.search, color: Colors.white),
-        //               hintText: "Cari Kode Checkin Event",
-        //               hintStyle: TextStyle(
-        //                 color: Colors.white,
-        //                 fontSize: 14,
-        //               )),
-        //         );
-        //       } else {
-        //         _handleSearchEnd();
-        //       }
-        //     });
-        //   },
-        // ),
       ],
     );
   }

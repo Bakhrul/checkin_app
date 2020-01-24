@@ -189,6 +189,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
           "Notifikasi",
           style: TextStyle(
             color: Colors.white,
+            fontSize: 14,
           ),
         ),
         actions: <Widget>[

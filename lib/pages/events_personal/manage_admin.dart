@@ -33,8 +33,9 @@ class Debouncer {
 }
 
 class ManageAdmin extends StatefulWidget {
-  ManageAdmin({Key key, this.title, this.event}) : super(key: key);
+  ManageAdmin({Key key, this.title, this.event,this.eventEnd}) : super(key: key);
   final String title, event;
+  final bool eventEnd;
   @override
   State<StatefulWidget> createState() {
     return _ManageAdminState();
@@ -488,7 +489,10 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                             .status ==
                                                         'C'
                                                 ? Container()
-                                                : ButtonTheme(
+                                                :
+                                                widget.eventEnd == true ?
+                                                Container():
+                                                 ButtonTheme(
                                                     minWidth: 0.0,
                                                     child: FlatButton(
                                                       color: Colors.white,
@@ -596,7 +600,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                             ],
                           ),
                         ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: widget.eventEnd == true ? null : FloatingActionButton(
         onPressed: () async {
           Navigator.push(
               context,

@@ -500,7 +500,7 @@ class _DashboardState extends State<Dashboard> {
                                   child: imageDashboardProfile == null ? FadeInImage.assetNetwork(
                                       fit: BoxFit.cover,
                                       placeholder: 'images/imgavatar.png',
-                                      image: url('storage/image/profile/'+imageprofile)
+                                      image: url('storage/image/profile/$imageprofile')
                                   ): Image.file(imageDashboardProfile)
                                 )
                               ),

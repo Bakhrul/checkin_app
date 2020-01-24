@@ -7,6 +7,7 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:email_validator/email_validator.dart';
 
 Map<String, dynamic> formSerialize;
 Map<String, String> requestHeaders = Map();
@@ -69,7 +70,8 @@ class _Register extends State<Register> {
           setState(() {
             isRegister = false;
           });
-          Navigator.push(
+          Navigator.pop(context);
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
         } else if (responseJson['status'] == 'emailnotavailable') {
           Fluttertoast.showToast(
@@ -193,6 +195,10 @@ class _Register extends State<Register> {
           setState(() {
             isLoading = true;
           });
+          String emailValid = email.text;
+          final bool isValid = EmailValidator.validate(emailValid);
+
+          print('Email is valid? ' + (isValid ? 'yes' : 'no'));
           if (namalengkap.text == null || namalengkap.text == '') {
             setState(() {
               isLoading = false;
@@ -208,6 +214,8 @@ class _Register extends State<Register> {
               isLoading = false;
             });
             Fluttertoast.showToast(msg: "Password Tidak Boleh Kosong");
+          }else if(!isValid){
+            Fluttertoast.showToast(msg: "Masukkan Email Yang Valid");
           } else {
             register();
           }
