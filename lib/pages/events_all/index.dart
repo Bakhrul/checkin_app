@@ -186,6 +186,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
       setState(() {
         _isLoading = false;
       });
+      _isGetAllDisconnect = true;
       print('$e');
     }
   }
@@ -456,36 +457,59 @@ class _ManajemenEventState extends State<ManajemenEvent> {
           child:CircularProgressIndicator()
         ):
         _isDisconnect ? 
-        Center(
-          child:GestureDetector(
-            onTap:_reload,
-            child:Container(
-              padding: EdgeInsets.all(5.0),
-              child:Icon(
-              Icons.refresh,
-              color: Colors.blueAccent,
-              size: 25
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:BorderRadius.only(
-                  topLeft : Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomLeft : Radius.circular(20.0),
-                  bottomRight : Radius.circular(20.0)
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
-                  ),
-                ]
-              )
-            ) 
-          )
-        ):
+        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: RefreshIndicator(
+                            onRefresh: () => getHeaderHTTP(),
+                            child: Column(children: <Widget>[
+                              new Container(
+                                width: 100.0,
+                                height: 100.0,
+                                child: Image.asset("images/system-eror.png"),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 30.0,
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                      height: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0, left: 15.0, right: 15.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    textColor: Color.fromRGBO(41, 30, 47, 1),
+                                    disabledColor: Colors.grey,
+                                    disabledTextColor: Colors.black,
+                                    padding: EdgeInsets.all(15.0),
+                                    splashColor: Colors.blueAccent,
+                                    onPressed: () async {
+                                      _reload();
+                                    },
+                                    child: Text(
+                                      "Muat Ulang Halaman",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                          ),
+                        ):
       RefreshIndicator(
         onRefresh: () async {
          await  _getUserData();
@@ -546,43 +570,61 @@ class _ManajemenEventState extends State<ManajemenEvent> {
               Expanded(
                     child:
                     _isGetAllDisconnect ?
-                        Container(
-                          height: 50,
-                          child:Center(
-                              child:GestureDetector(
-                                onTap:(){
-                                  setState((){
-                                    _isLoading = true;
-                                  });
-                                  _getAll(categoryNow,_searchQuery);
-                                },
-                                child:Container(
-                                  padding: EdgeInsets.all(5.0),
-                                  child:Icon(
-                                  Icons.refresh,
-                                  color: Colors.blueAccent,
-                                  size: 25
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:BorderRadius.only(
-                                      topLeft : Radius.circular(20.0),
-                                      topRight: Radius.circular(20.0),
-                                      bottomLeft : Radius.circular(20.0),
-                                      bottomRight : Radius.circular(20.0)
+                    Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: RefreshIndicator(
+                            onRefresh: () => getHeaderHTTP(),
+                            child: Column(children: <Widget>[
+                              new Container(
+                                width: 100.0,
+                                height: 100.0,
+                                child: Image.asset("images/system-eror.png"),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 30.0,
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                      height: 1.5,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 1,
-                                        offset: Offset(0, 1), // changes position of shadow
-                                      ),
-                                    ]
-                                  )
-                                ) 
-                              )
-                            )
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0, left: 15.0, right: 15.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    textColor: Color.fromRGBO(41, 30, 47, 1),
+                                    disabledColor: Colors.grey,
+                                    disabledTextColor: Colors.black,
+                                    padding: EdgeInsets.all(15.0),
+                                    splashColor: Colors.blueAccent,
+                                    onPressed: () async {
+                                     setState((){
+                                        _isLoading = true;
+                                      });
+                                      _getAll(categoryNow,_searchQuery);
+                                    },
+                                    child: Text(
+                                      "Muat Ulang Halaman",
+                                      style: TextStyle(fontSize: 14.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                          ),
                         ):
                       _isLoading ? 
                       Center(

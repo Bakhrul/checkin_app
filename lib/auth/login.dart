@@ -31,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   // String indexIki;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcmToken;
+  bool validateEmail = false;
+  bool validatePassword = false;
 
   void initState() {
     _isLoading = false;
@@ -74,7 +76,31 @@ class _LoginPageState extends State<LoginPage> {
   _login() async {
     setState(() {
       _isLoading = true;
+      validatePassword = false;
+      validateEmail = false;
     });
+
+    if(password.text == '' && username.text == ''){
+      setState((){
+        validatePassword = true;
+        validateEmail = true;
+        _isLoading = false;
+      });
+      return false;
+    } else if(username.text == ''){
+      setState((){
+        validateEmail = true;
+        _isLoading = false;
+      });
+      return false;
+    }else if(password.text == ''){
+      setState((){
+        validatePassword = true;
+        _isLoading = false;
+      });
+      return false;
+    }
+
     try {
       final getToken = await http.post(url('oauth/token'), body: {
         'grant_type': grantType,
@@ -259,6 +285,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Alamat Email",
+          errorText: validateEmail ? "email tidak boleh kosong":null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -284,6 +311,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Kata Sandi",
+          errorText: validatePassword ? "password tidak boleh kosong":null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(

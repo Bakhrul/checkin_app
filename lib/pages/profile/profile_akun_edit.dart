@@ -283,7 +283,13 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
                                     child:TextField(
+                                       enabled: false,
                                        controller:_controllerEmail,
+                                       decoration: InputDecoration(
+                                         suffixIcon: Icon(Icons.lock,
+                                           size: 20.0
+                                         )
+                                       ),
                                     )
                                   ),
                                   Container(
@@ -297,6 +303,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                                   Container(
                                     margin: EdgeInsets.only(bottom: 20.0),
                                     child:TextField(
+                                       keyboardType: TextInputType.number,
                                        controller:_controllerPhone,
                                     )
                                   ),
