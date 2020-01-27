@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
+import 'package:checkin_app/routes/env.dart';
 
 import 'package:flutter/material.dart';
 
@@ -8,6 +11,7 @@ List<UserCheckin> listPeserta;
 class ListPesertaCheckin extends StatefulWidget {
   final String id;
   final String eventid;
+
   ListPesertaCheckin({Key key, @required this.id, @required this.eventid})
       : super(key: key);
   @override
@@ -18,6 +22,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   BuildContext context;
+  File imageProfile;
 
   getData() async {
     listPeserta = [];
@@ -32,7 +37,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
         name: response[i]["name"].toString(),
         email: response[i]["email"].toString(),
         // position: response[i]["position"].toString(),
-        // picProfile: response[i]["pic_profile"],
+        picProfile: response[i]["pic_profile"],
         // eventId: response[i]["event_id"],
       );
 
@@ -127,16 +132,30 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Card(
                               child: ListTile(
-                                leading: Container(
-                                  width: 40.0,
-                                  height: 40.0,
-                                  // decoration: new BoxDecoration(
-                                  //     shape: BoxShape.circle,
-                                  //     image: new DecorationImage(
-                                  //         fit: BoxFit.fill,
-                                  //         image:
-                                  //             new NetworkImage(f.picProfile))),
-                                ),
+                                leading: 
+                                f.picProfile == '-' ?
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                )
+                              ):
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: imageProfile == null ? 
+                                  FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder : 'images/imgavatar.png',
+                                    image:url('storage/image/profile/${f.picProfile}')
+                                  ):
+                                  Image.file(imageProfile)
+                                )
+                              ),
                                 title: Text(f.name),
                                 onTap: () async {
                                   // Navigator.push(

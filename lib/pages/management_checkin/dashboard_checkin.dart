@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
+import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
@@ -39,6 +42,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   bool isLoading, isError;
   String tokenType, accessToken;
   TabController _tabController;
+  File imageProfile;
   static const List<IconData> icons = const [
     Icons.sms,
     Icons.mail,
@@ -338,16 +342,30 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                             padding: const EdgeInsets.only(top: 2.0),
                             child: Card(
                               child: ListTile(
-                                leading: Container(
-                                  width: 40.0,
-                                  height: 40.0,
-                                  decoration: new BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: new DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image:
-                                              new NetworkImage(f.picProfile))),
-                                ),
+                                leading: 
+                             f.picProfile == '-' ?
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                )
+                              ):
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: imageProfile == null ? 
+                                  FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder : 'images/imgavatar.png',
+                                    image:url('storage/image/profile/${f.picProfile}')
+                                  ):
+                                  Image.file(imageProfile)
+                                )
+                              ),
                                 trailing: FlatButton(
                                   child: Icon(Icons.exit_to_app),
                                   onPressed: () async {
@@ -550,7 +568,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                           ],
                                                         );
                                                       });
-                                                 break;     
+                                                  break;
 
                                                 default:
                                               }

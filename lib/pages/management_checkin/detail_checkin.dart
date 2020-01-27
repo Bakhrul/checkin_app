@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/list_peserta_checkin.dart';
+import 'package:checkin_app/routes/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -52,6 +53,8 @@ class DetailCheckin extends StatefulWidget {
 class _DetailCheckinState extends State<DetailCheckin>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  File imageProfile;
+
   String id,
       eventId,
       keyword,
@@ -220,15 +223,30 @@ class _DetailCheckinState extends State<DetailCheckin>
                                       right: 8.0, bottom: 2.0, left: 8.0),
                                   color: Colors.grey[50],
                                   child: ListTile(
-                                    leading: Container(
-                                      width: 40.0,
-                                      height: 40.0,
-                                      decoration: new BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: new DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: new NetworkImage(""))),
-                                    ),
+                                    leading:
+                                    item.picProfile == '-' ?
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                )
+                              ):
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: imageProfile == null ? 
+                                  FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder : 'images/imgavatar.png',
+                                    image:url('storage/image/profile/${item.picProfile}')
+                                  ):
+                                  Image.file(imageProfile)
+                                )
+                              ),
                                     // trailing: FlatButton(
                                     //   child: Icon(Icons.exit_to_app),
                                     //   onPressed: () async {
