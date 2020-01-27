@@ -2,6 +2,8 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
+import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,6 +21,7 @@ String tipe = 'Public';
 var datepicker;
 List<UserParticipant> listPeserta;
 List<Checkin> listCheckin;
+enum PageEnum { detailCheckin, deleteCheckin }
 
 class DashboardCheckin extends StatefulWidget {
   DashboardCheckin({Key key, this.idevent}) : super(key: key);
@@ -41,19 +44,19 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     Icons.mail,
     Icons.phone
   ];
-var childButtons = List<UnicornButton>();
 
-    
+  var childButtons = List<UnicornButton>();
+
   getDataMember() async {
     setState(() {
       isLoading = true;
     });
     listPeserta = [];
     try {
-
-      dynamic response =
-          await RequestGet(name: "event/getdata/participant/", customrequest: "${widget.idevent}")
-              .getdata();
+      dynamic response = await RequestGet(
+              name: "event/getdata/participant/",
+              customrequest: "${widget.idevent}")
+          .getdata();
       for (var i = 0; i < response.length; i++) {
         UserParticipant peserta = UserParticipant(
           id: response[i]["id"].toString(),
@@ -85,9 +88,10 @@ var childButtons = List<UnicornButton>();
     });
     try {
       listCheckin = [];
-      dynamic response =
-          await RequestGet(name: "checkin/getdata/checkin/", customrequest: "${widget.idevent}")
-              .getdata();
+      dynamic response = await RequestGet(
+              name: "checkin/getdata/checkin/",
+              customrequest: "${widget.idevent}")
+          .getdata();
       for (var i = 0; i < response.length; i++) {
         Checkin checkin = Checkin(
           id: response[i]["id"].toString(),
@@ -111,46 +115,46 @@ var childButtons = List<UnicornButton>();
       debugPrint('$e');
     }
   }
-  deleteParticipant(id,eventId) async{
+
+  deleteParticipant(id, eventId) async {
     setState(() {
       isLoading = true;
     });
     try {
-    dynamic body = {
-      "peserta": id.toString(),
-      "event": eventId.toString(),
-    };
-    dynamic response =
-        await RequestPost(name: "deletepeserta_event", body: body)
-            .sendrequest();
-            print(response['status']);
-    if (response['status'] == "success") {
-      setState(() {});
+      dynamic body = {
+        "peserta": id.toString(),
+        "event": eventId.toString(),
+      };
+      dynamic response =
+          await RequestPost(name: "deletepeserta_event", body: body)
+              .sendrequest();
+      print(response['status']);
+      if (response['status'] == "success") {
+        setState(() {});
 
-      Fluttertoast.showToast(
-          msg: "Peserta Telah Dikeluarkan",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        Fluttertoast.showToast(
+            msg: "Peserta Telah Dikeluarkan",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
         isLoading = false;
 
-      // getDataCheckin();
-    } else {
-      Fluttertoast.showToast(
-          msg: "Terjadi Kesalahan",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        // getDataCheckin();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Terjadi Kesalahan",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
         isLoading = false;
-
-    }
-    }catch (e) {
+      }
+    } catch (e) {
       setState(() {
         isLoading = false;
         isError = true;
@@ -158,6 +162,7 @@ var childButtons = List<UnicornButton>();
       debugPrint('$e');
     }
   }
+
   deleteCheckin(id, eventId) async {
     dynamic body = {
       "event_id": eventId.toString(),
@@ -230,7 +235,6 @@ var childButtons = List<UnicornButton>();
 
   @override
   Widget build(BuildContext context) {
-             
     this.context = context;
     String jumlahPeserta = listPeserta.length.toString();
     return SafeArea(
@@ -358,11 +362,10 @@ var childButtons = List<UnicornButton>();
                                               FlatButton(
                                                 child: Text("Yes"),
                                                 onPressed: () {
-                                                  deleteParticipant(
-                                                      f.id, f.eventId.toString());
-                                                      listPeserta.remove(f);
-                                                      Navigator.pop(context);
-
+                                                  deleteParticipant(f.id,
+                                                      f.eventId.toString());
+                                                  listPeserta.remove(f);
+                                                  Navigator.pop(context);
                                                 },
                                               ),
                                               FlatButton(
@@ -451,20 +454,68 @@ var childButtons = List<UnicornButton>();
                                                                 .eventId
                                                                 .toString())));
                                           },
-                                          trailing: ButtonTheme(
-                                              minWidth: 0.0,
-                                              child: FlatButton(
-                                                color: Colors.white,
-                                                textColor: Colors.red,
-                                                disabledColor:
-                                                    Colors.green[400],
-                                                disabledTextColor: Colors.white,
-                                                padding: EdgeInsets.all(15.0),
-                                                splashColor: Colors.blueAccent,
-                                                child: Icon(
-                                                  Icons.close,
-                                                ),
-                                                onPressed: () async {
+                                          // trailing: ButtonTheme(
+                                          //     minWidth: 0.0,
+                                          //     child: FlatButton(
+                                          //       color: Colors.white,
+                                          //       textColor: Colors.red,
+                                          //       disabledColor:
+                                          //           Colors.green[400],
+                                          //       disabledTextColor: Colors.white,
+                                          //       padding: EdgeInsets.all(15.0),
+                                          //       splashColor: Colors.blueAccent,
+                                          //       child: Icon(
+                                          //         Icons.close,
+                                          //       ),
+                                          //       onPressed: () async {
+                                          //         showDialog(
+                                          //             context: context,
+                                          //             builder: (context) {
+                                          //               return AlertDialog(
+                                          //                 title:
+                                          //                     Text("Warning"),
+                                          //                 content: Text(
+                                          //                     "Are you sure want to delete data?"),
+                                          //                 actions: <Widget>[
+                                          //                   FlatButton(
+                                          //                     child:
+                                          //                         Text("Yes"),
+                                          //                     onPressed: () {
+                                          //                       deleteCheckin(
+                                          //                           data.id,
+                                          //                           data.eventId);
+
+                                          //                      listCheckin.remove(data);
+                                          //                      Navigator.pop(context);
+                                          //                     },
+                                          //                   ),
+                                          //                   FlatButton(
+                                          //                     child: Text("No"),
+                                          //                     onPressed: () {
+                                          //                       Navigator.pop(
+                                          //                           context);
+                                          //                     },
+                                          //                   )
+                                          //                 ],
+                                          //               );
+                                          //             });
+                                          //       },
+                                          //     )),
+                                          trailing: PopupMenuButton<PageEnum>(
+                                            onSelected: (PageEnum value) {
+                                              switch (value) {
+                                                case PageEnum.detailCheckin:
+                                                  Navigator.of(context).push(
+                                                      CupertinoPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              DetailCheckin(
+                                                                  idEvent: data
+                                                                      .eventId,
+                                                                  idCheckin:
+                                                                      data.id)));
+                                                  break;
+                                                case PageEnum.deleteCheckin:
                                                   showDialog(
                                                       context: context,
                                                       builder: (context) {
@@ -482,8 +533,11 @@ var childButtons = List<UnicornButton>();
                                                                     data.id,
                                                                     data.eventId);
 
-                                                               listCheckin.remove(data);
-                                                               Navigator.pop(context);
+                                                                listCheckin
+                                                                    .remove(
+                                                                        data);
+                                                                Navigator.pop(
+                                                                    context);
                                                               },
                                                             ),
                                                             FlatButton(
@@ -496,8 +550,23 @@ var childButtons = List<UnicornButton>();
                                                           ],
                                                         );
                                                       });
-                                                },
-                                              )),
+                                                 break;     
+
+                                                default:
+                                              }
+                                            },
+                                            icon: Icon(Icons.more_vert),
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value: PageEnum.detailCheckin,
+                                                child: Text("Detail Checkin"),
+                                              ),
+                                              PopupMenuItem(
+                                                value: PageEnum.deleteCheckin,
+                                                child: Text("Delete"),
+                                              )
+                                            ],
+                                          ),
                                           subtitle: Text(DateFormat('HH:mm:dd')
                                                   .format(DateTime.parse(
                                                       data.startTime))
@@ -519,10 +588,11 @@ var childButtons = List<UnicornButton>();
     );
   }
 
+  Widget _deleteCheckin() {}
+
   Widget _bottomButtons() {
     return _tabController.index == 1
-        ? 
-        DraggableFab(
+        ? DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
                 onPressed: () async {
@@ -538,7 +608,6 @@ var childButtons = List<UnicornButton>();
                   Icons.add,
                   size: 20.0,
                 )))
-
         : DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
