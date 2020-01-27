@@ -18,9 +18,11 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
 bool isLoading, isError;
+String emailStore,imageStore,namaStore,phoneStore,locationStore;
 String tokenType, accessToken;
 String jumlahnotifX;
 String userId;
@@ -46,6 +48,7 @@ enum PageEnum {
 
 Map<String, String> requestHeaders = Map();
 String usernameprofile, emailprofile, imageprofile;
+File imageDashboardProfile;
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key, this.title}) : super(key: key);
@@ -79,6 +82,7 @@ class _DashboardState extends State<Dashboard> {
     dataProfile();
     getHeaderHTTP();
     _getUserData();
+    _getStoreData();
     emailprofile = 'Email Anda';
     usernameprofile = 'Username';
     jumlahnotifX = '0';
@@ -92,6 +96,25 @@ class _DashboardState extends State<Dashboard> {
 
   void dispose() {
     super.dispose();
+  }
+
+   _getStoreData() async {
+  DataStore user =  new DataStore();
+  String namaRawUser = await user.getDataString('name');
+  String emailRawUser = await user.getDataString('email');
+  String phoneRawUser = await user.getDataString('phone');
+  String imageRawUser = await user.getDataString('image');
+  String locationRawUser = await user.getDataString('location');
+
+  setState((){
+    imageDashboardProfile = null;
+    namaStore = namaRawUser;
+    emailStore = emailRawUser;
+    phoneStore = phoneRawUser;
+    imageStore = imageRawUser;
+    locationStore = locationRawUser;
+  });
+
   }
 
   void currentEvent() {
@@ -462,25 +485,24 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       currentAccountPicture: CircleAvatar(
                         backgroundColor: Colors.white,
-                        child: imageprofile == '-' ? Text(
-                          "A",
-                          style: TextStyle(
-                            fontSize: 40.0,
-                            color: Color.fromRGBO(41, 30, 47, 1),
-                          ),
+                        child: imageStore == '-' ? Container(
+                          height: 90,
+                          width: 90,
+                          child:ClipOval(
+                            child: Image.asset('images/imgavatar.png',
+                                fit:BoxFit.fill
+                              )
+                            )
                         ):Container(
                                 height: 90,
                                 width: 90,
-                                decoration : BoxDecoration(
-                                  color: Colors.transparent,
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: image == '-' ? AssetImage(
-                                      'images/imgavatar.png'
-                                    ): NetworkImage(url('storage/image/profile/$imageprofile'))
-                                  )
-                                ),
+                                child: ClipOval(
+                                  child: imageDashboardProfile == null ? FadeInImage.assetNetwork(
+                                      fit: BoxFit.cover,
+                                      placeholder: 'images/imgavatar.png',
+                                      image: url('storage/image/profile/$imageprofile')
+                                  ): Image.file(imageDashboardProfile)
+                                )
                               ),
                       ),
                     ),

@@ -181,7 +181,12 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            statusdaftar:  DateTime.parse(i['ev_time_end']).difference(DateTime.now()).inSeconds <= 0 ? 'selesai' : i['ep_status'],
+            statusdaftar: DateTime.parse(i['ev_time_end'])
+                        .difference(DateTime.now())
+                        .inSeconds <=
+                    0
+                ? 'selesai'
+                : i['ep_status'],
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -282,7 +287,12 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            statusdaftar:  DateTime.parse(i['ev_time_end']).difference(DateTime.now()).inSeconds <= 0 ? 'selesai' : i['ep_status'],
+            statusdaftar: DateTime.parse(i['ev_time_end'])
+                        .difference(DateTime.now())
+                        .inSeconds <=
+                    0
+                ? 'selesai'
+                : i['ep_status'],
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -493,12 +503,9 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                         child: ClipOval(
                                           child: FadeInImage.assetNetwork(
                                             placeholder: 'images/loading.gif',
-                                            image: imageorganizerX ==
-                                                        null ||
-                                                    imageorganizerX ==
-                                                        '' ||
-                                                    imageorganizerX ==
-                                                        'null'
+                                            image: imageorganizerX == null ||
+                                                    imageorganizerX == '' ||
+                                                    imageorganizerX == 'null'
                                                 ? url(
                                                     'assets/images/noimage.jpg')
                                                 : url(
@@ -1053,7 +1060,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                                       padding: EdgeInsets.all(5.0),
                                                                                       width: 120.0,
                                                                                       child: Text(
-                                                                                        item.statusdaftar == 'selesai' ?'Event Selesai' :item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                        item.statusdaftar == 'selesai' ? 'Event Selesai' : item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
                                                                                         style: TextStyle(
                                                                                           color: Colors.white,
                                                                                           fontSize: 12,
@@ -1229,6 +1236,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               item.id),
                                                                           selfEvent:
                                                                               true,
+                                                                          dataUser:
+                                                                              dataUser,
                                                                           creatorId:
                                                                               item.idcreator,
                                                                         ),

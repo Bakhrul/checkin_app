@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'tambah_admin.dart';
+import 'package:draggable_fab/draggable_fab.dart';
 import 'model.dart';
 import 'dart:core';
 
@@ -33,8 +34,9 @@ class Debouncer {
 }
 
 class ManageAdmin extends StatefulWidget {
-  ManageAdmin({Key key, this.title, this.event}) : super(key: key);
+  ManageAdmin({Key key, this.title, this.event,this.eventEnd}) : super(key: key);
   final String title, event;
+  final bool eventEnd;
   @override
   State<StatefulWidget> createState() {
     return _ManageAdminState();
@@ -488,7 +490,10 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                             .status ==
                                                         'C'
                                                 ? Container()
-                                                : ButtonTheme(
+                                                :
+                                                widget.eventEnd == true ?
+                                                Container():
+                                                 ButtonTheme(
                                                     minWidth: 0.0,
                                                     child: FlatButton(
                                                       color: Colors.white,
@@ -596,17 +601,22 @@ class _ManageAdminState extends State<ManageAdmin> {
                             ],
                           ),
                         ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Navigator.push(
+      floatingActionButton: widget.eventEnd == true ? null :
+      DraggableFab(
+            child: FloatingActionButton(
+                shape: StadiumBorder(),
+                onPressed: () async {
+                 Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ManajemenTambahAdmin(event: widget.event)));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-      ),
+                },
+                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                child: Icon(
+                  Icons.add,
+                  size: 20.0,
+                )))
     );
   }
 

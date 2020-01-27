@@ -434,7 +434,6 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                                                             style: TextStyle(
                                                                                               color: Colors.black,
                                                                                               fontWeight: FontWeight.w500,
-                                                                                              fontSize: 16,
                                                                                             ),
                                                                                             overflow: TextOverflow.ellipsis,
                                                                                             maxLines: 2,

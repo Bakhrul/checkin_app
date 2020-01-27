@@ -315,7 +315,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                                   : gambarX == null || gambarX == ''
                                       ? Text('Tidak ada gambar yang dipilih.')
                                       : FadeInImage.assetNetwork(
-                                          placeholder: 'images/noimage.jpg',
+                                          placeholder: 'images/loading-event.png',
                                           image:
                                               gambarX != null || gambarX != ''
                                                   ? url(

@@ -230,3 +230,17 @@ class ListPointCheckin {
 }
 
 
+class LisMultiCheckinUser {
+   String email;
+   String nama;
+   String image;
+   List listcheckin;
+  LisMultiCheckinUser(
+      {this.email,
+      this.nama,
+      this.image,
+      this.listcheckin,
+      });
+}
+
+

@@ -619,7 +619,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       ManageAdmin(
                                                                           event:
-                                                                              item.id)));
+                                                                              item.id,
+                                                                              eventEnd: false,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
@@ -628,7 +629,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManagePeserta(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          eventEnd: false,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaWaktuCheckinPage:
@@ -637,7 +639,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManageCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          eventEnd: false,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
@@ -645,7 +648,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin()));
+                                                                      ListMultiCheckin(event:item.id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -670,14 +673,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     },
                                                     icon: Icon(Icons.more_vert),
                                                     itemBuilder: (context) => [
-                                                      item.status == 'creator'
-                                                          ? PopupMenuItem(
-                                                              value: PageEnum
-                                                                  .kelolaeditEventPage,
-                                                              child: Text(
-                                                                  "Edit Data Event"),
-                                                            )
-                                                          : null,
+                                                      // item.status == 'creator'
+                                                      //     ? PopupMenuItem(
+                                                      //         value: PageEnum
+                                                      //             .kelolaeditEventPage,
+                                                      //         child: Text(
+                                                      //             "Edit Data Event"),
+                                                      //       )
+                                                      //     : null,
                                                       item.status == 'creator'
                                                           ? PopupMenuItem(
                                                               value: PageEnum
@@ -698,26 +701,26 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         child: Text(
                                                             "Kelola waktu checkin"),
                                                       ),
-                                                      // PopupMenuItem(
-                                                      //   value: PageEnum
-                                                      //       .kelolaCheckinPesertaPage,
-                                                      //   child: Text(
-                                                      //       "Kelola checkin peserta"),
-                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaCheckinPesertaPage,
+                                                        child: Text(
+                                                            "Kelola checkin peserta"),
+                                                      ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
                                                             "Hasil akhir checkin peserta"),
                                                       ),
-                                                      item.status == 'creator'
-                                                          ? PopupMenuItem(
-                                                              value: PageEnum
-                                                                  .deleteEvent,
-                                                              child: Text(
-                                                                  "Hapus Event"),
-                                                            )
-                                                          : null,
+                                                      // item.status == 'creator'
+                                                      //     ? PopupMenuItem(
+                                                      //         value: PageEnum
+                                                      //             .deleteEvent,
+                                                      //         child: Text(
+                                                      //             "Hapus Event"),
+                                                      //       )
+                                                      //     : null,
                                                     ],
                                                   ),
                                                 ),
@@ -867,7 +870,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       ManageAdmin(
                                                                           event:
-                                                                              item.id)));
+                                                                              item.id,
+                                                                              eventEnd: false)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
@@ -876,7 +880,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManagePeserta(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          eventEnd: false,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaWaktuCheckinPage:
@@ -885,7 +890,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManageCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          eventEnd:  false,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
@@ -893,7 +899,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin()));
+                                                                      ListMultiCheckin(event:item.id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -946,12 +952,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         child: Text(
                                                             "Kelola waktu checkin"),
                                                       ),
-                                                      // PopupMenuItem(
-                                                      //   value: PageEnum
-                                                      //       .kelolaCheckinPesertaPage,
-                                                      //   child: Text(
-                                                      //       "Kelola checkin peserta"),
-                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaCheckinPesertaPage,
+                                                        child: Text(
+                                                            "Kelola checkin peserta"),
+                                                      ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
@@ -1107,7 +1113,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       ManageAdmin(
                                                                           event:
-                                                                              item.id)));
+                                                                              item.id,
+                                                                              eventEnd: true,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
@@ -1116,7 +1123,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManagePeserta(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                      eventEnd: true,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaWaktuCheckinPage:
@@ -1125,7 +1133,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ManageCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          eventEnd : true)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
@@ -1133,7 +1142,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin()));
+                                                                      ListMultiCheckin(event:item.id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -1158,14 +1167,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     },
                                                     icon: Icon(Icons.more_vert),
                                                     itemBuilder: (context) => [
-                                                      item.status == 'creator'
-                                                          ? PopupMenuItem(
-                                                              value: PageEnum
-                                                                  .kelolaeditEventPage,
-                                                              child: Text(
-                                                                  "Edit Data Event"),
-                                                            )
-                                                          : null,
+                                                      // item.status == 'creator'
+                                                      //     ? PopupMenuItem(
+                                                      //         value: PageEnum
+                                                      //             .kelolaeditEventPage,
+                                                      //         child: Text(
+                                                      //             "Edit Data Event"),
+                                                      //       )
+                                                      //     : null,
                                                       item.status == 'creator'
                                                           ? PopupMenuItem(
                                                               value: PageEnum
@@ -1186,12 +1195,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         child: Text(
                                                             "Kelola waktu checkin"),
                                                       ),
-                                                      // PopupMenuItem(
-                                                      //   value: PageEnum
-                                                      //       .kelolaCheckinPesertaPage,
-                                                      //   child: Text(
-                                                      //       "Kelola checkin peserta"),
-                                                      // ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .kelolaCheckinPesertaPage,
+                                                        child: Text(
+                                                            "Kelola checkin peserta"),
+                                                      ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
