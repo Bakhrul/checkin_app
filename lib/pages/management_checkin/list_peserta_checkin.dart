@@ -1,38 +1,43 @@
+import 'dart:io';
+
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
+import 'package:checkin_app/routes/env.dart';
 
 import 'package:flutter/material.dart';
 
 List<UserCheckin> listPeserta;
 
-
-
 class ListPesertaCheckin extends StatefulWidget {
   final String id;
   final String eventid;
-  ListPesertaCheckin({Key key, @required this.id, @required this.eventid}) : super(key: key);
+
+  ListPesertaCheckin({Key key, @required this.id, @required this.eventid})
+      : super(key: key);
   @override
   _ListPesertaCheckinState createState() => _ListPesertaCheckinState();
 }
 
-class _ListPesertaCheckinState extends State<ListPesertaCheckin> 
-  with SingleTickerProviderStateMixin {
-  
+class _ListPesertaCheckinState extends State<ListPesertaCheckin>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   BuildContext context;
+  File imageProfile;
 
-   getData() async {
+  getData() async {
     listPeserta = [];
 
-    dynamic response =
-        await RequestGet(name: "checkin/getdata/usercheckin/", customrequest: "${widget.id.toString() }/${widget.eventid.toString() }")
-            .getdata();
+    dynamic response = await RequestGet(
+            name: "checkin/getdata/usercheckin/",
+            customrequest:
+                "${widget.id.toString()}/${widget.eventid.toString()}")
+        .getdata();
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
-       name: response[i]["name"].toString(),
+        name: response[i]["name"].toString(),
         email: response[i]["email"].toString(),
         // position: response[i]["position"].toString(),
-        // picProfile: response[i]["pic_profile"],
+        picProfile: response[i]["pic_profile"],
         // eventId: response[i]["event_id"],
       );
 
@@ -40,6 +45,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     }
     setState(() {});
   }
+
   @override
   void initState() {
     getData();
@@ -72,63 +78,42 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
         child: SingleChildScrollView(
             child: Column(
           children: <Widget>[
-            // Container(
-            //   margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-            //   decoration: BoxDecoration(
-            //     color: Colors.white,
-            //     borderRadius: BorderRadius.all(Radius.circular(25.0)),
-            //   ),
-            //   child: TextField(
-            //       style: TextStyle(
-            //         fontSize: 14.0,
-            //         color: Colors.black,
-            //       ),
-            //       decoration: InputDecoration(
-            //         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-            //         prefixIcon: Icon(
-            //           Icons.search,
-            //           color: Color.fromRGBO(41, 30, 47, 1),
-            //         ),
-            //         hintText: " Berdasarkan Nama Lengkap",
-            //         border: InputBorder.none,
-            //       )
-            //       ),
-            // ),
-
             SafeArea(
-              child: listPeserta.length > 0 ? _builderListView() :  Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Column(children: <Widget>[
-                                        new Container(
-                                          width: 100.0,
-                                          height: 100.0,
-                                          child: Image.asset(
-                                              "images/empty-white-box.png"),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 30.0,
-                                            left: 15.0,
-                                            right: 15.0,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Belum Ada Peserta yang Checkin",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black45,
-                                                height: 1.5,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                    ),
-           
+              child: listPeserta.length > 0
+                  ? _builderListView()
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Column(children: <Widget>[
+                        new Container(
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image.asset(
+                              "images/empty-white-box.png"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 30.0,
+                            left: 15.0,
+                            right: 15.0,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Belum Ada Peserta yang Checkin",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black45,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
             )
           ],
-        )),
+        )
+        ),
       ),
     );
   }
@@ -140,37 +125,50 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
         Container(
           child: Expanded(
             child: SizedBox(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: listPeserta.map((UserCheckin f) => Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Card(
-                          child: ListTile(
-                            leading: Container(
-                              width: 40.0,
-                              height: 40.0,
-                              decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: new DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: new NetworkImage(
-                                        f.picProfile
-                                      ))),
+                child: SingleChildScrollView(
+              child: Column(
+                  children: listPeserta
+                      .map((UserCheckin f) => Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Card(
+                              child: ListTile(
+                                leading: 
+                                f.picProfile == '-' ?
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
+                                )
+                              ):
+                          Container(
+                                margin: EdgeInsets.only(top:20),
+                                height: 50,
+                                width: 50,
+                                child : ClipOval(
+                                  child: imageProfile == null ? 
+                                  FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    placeholder : 'images/imgavatar.png',
+                                    image:url('storage/image/profile/${f.picProfile}')
+                                  ):
+                                  Image.file(imageProfile)
+                                )
+                              ),
+                                title: Text(f.name),
+                                onTap: () async {
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => HomeScreen()));
+                                },
+                                subtitle: Text(f.name.toString()),
+                              ),
                             ),
-                            title: Text(f.name),
-                            onTap: () async {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => HomeScreen()));
-                            },
-                            subtitle: Text(f.name.toString()),
-                          ),
-                        ),
-                      )).toList()
-                    ),
-                  )
-            ),
+                          ))
+                      .toList()),
+            )),
           ),
         ),
       ],
