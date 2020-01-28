@@ -222,7 +222,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                             return AlertDialog(
                                               title: Text("Warning"),
                                               content: Text(
-                                                  "Are you sure want to delete data?"),
+                                                  "Apakah Anda Yakin Akan Keluar Dari Event ini?"),
                                               actions: <Widget>[
                                                 FlatButton(
                                                   child: Text("No"),
