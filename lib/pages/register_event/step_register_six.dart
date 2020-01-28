@@ -54,7 +54,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
       dynamic body = {
         "peserta": widget.dataUser['us_code'].toString(),
         "event": widget.id.toString(),
-        "admin": widget.creatorId.toString(),
+        "creator": widget.creatorId.toString(),
         "notif": 'keluar dari event',
       };
       dynamic response =
