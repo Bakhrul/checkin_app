@@ -94,7 +94,7 @@ class _ProfileUser extends State<ProfileUser> {
                               ),
                               Container(
                                     margin: EdgeInsets.only(bottom: 50.0),
-                                    child: Text('Indonesia, Jawa Timur',
+                                    child: Text(locationStore == null ? 'memuat..':locationStore,
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.white,

@@ -10,10 +10,12 @@ class Checkin {
   String titleEvent;
   String locationEvent;
   String eventName;
+  String checkinType;
 
   Checkin({this.id,this.eventId ,this.titleEvent,this.locationEvent, 
   this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName,
-  this.eventName
+  this.eventName,
+  this.checkinType
   });
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {

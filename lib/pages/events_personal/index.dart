@@ -698,7 +698,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               child: Text(
                                                                   "Kelola Admin / Co - Host"),
                                                             )
-                                                          : null,
+                                                          : null, 
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
