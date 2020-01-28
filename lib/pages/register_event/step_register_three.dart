@@ -24,7 +24,7 @@ class WaitingEvent extends StatefulWidget {
 class _WaitingEvent extends State<WaitingEvent> {
 
   bool _isLoading = false;
-
+  bool _isLoadingReminder = false;
   Future _cancelRegisterEvent() async {
     setState((){
       _isLoading = true;
@@ -69,6 +69,56 @@ class _WaitingEvent extends State<WaitingEvent> {
         Fluttertoast.showToast(msg:"$e");
         setState((){
           _isLoading = false;
+        });
+    }
+  }
+
+  Future _sendnotificationsevent() async {
+    setState((){
+      _isLoadingReminder = true;
+    });
+
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
+    Map body = {'event_id':widget.id.toString()};
+
+    try{
+      final ongoingevent = await http.post(
+        url('event/reminder_notifications'),
+        headers: requestHeaders,
+        body:body
+      );
+
+      if(ongoingevent.statusCode == 200){
+        Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event");
+      } else if (ongoingevent.statusCode == 401){
+        Fluttertoast.showToast(msg:"Gagal Mengirim Notifikasi");
+        setState((){
+          _isLoadingReminder = false;
+        });
+      }else{
+          Fluttertoast.showToast(msg:"Gagal Mengirim Notifikasi");
+        setState((){
+          _isLoadingReminder = false;
+        });
+      }
+
+    } on TimeoutException catch(_) {
+        Fluttertoast.showToast(msg:"Time out, silahkan coba lagi nanti");
+        setState((){
+          _isLoadingReminder = false;
+        });
+    } catch(e) {
+        Fluttertoast.showToast(msg:"$e");
+        setState((){
+          _isLoadingReminder = false;
         });
     }
   }
@@ -137,18 +187,19 @@ class _WaitingEvent extends State<WaitingEvent> {
                       width:double.infinity,
                       child:Column(
                         children: <Widget>[
-                          // Container(
-                          //   width: double.infinity,
-                          //   child:RaisedButton(
-                          //         color:Color.fromRGBO(54, 55, 84, 1),
-                          //         child:Text("Kirim Notifikasi Konfirmasi",style:TextStyle(
-                          //           color:Colors.white
-                          //         )),
-                          //         onPressed: (){
-                          //           Fluttertoast.showToast(msg:"Berhasil Mengirimkan Notifikasi kepada Pembuat Event");
-                          //         }
-                          //       )
-                          // ),
+                          Container(
+                            width: double.infinity,
+                            child:RaisedButton(
+                                  color:Color.fromRGBO(54, 55, 84, 1),
+                                  child:Text(_isLoadingReminder == true ? 'Loading...' : "Kirim Notifikasi Pembuat Event",style:TextStyle(
+                                    color:Colors.white
+                                  )),
+                                  onPressed: _isLoadingReminder == true ? null : (){
+                                    _sendnotificationsevent();
+                                    
+                                  }
+                                )
+                          ),
                           Container(
                             width: double.infinity,
                             child:RaisedButton(
@@ -156,7 +207,7 @@ class _WaitingEvent extends State<WaitingEvent> {
                                   child:Text(_isLoading ? "mengirim Data....":"Batal Mendaftar Event",style:TextStyle(
                                     color:Colors.black
                                   )),
-                                  onPressed: (){
+                                  onPressed: _isLoading == true ? null : (){
                                     _cancelRegisterEvent();
                                   }
                                 )
