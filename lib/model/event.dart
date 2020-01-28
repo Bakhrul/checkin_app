@@ -10,6 +10,8 @@ class Event {
   String image;
   String userStatus;
   String eventCreator;
+  String creatorName;
+  String userPosition;
   Event(
       {
       this.id = 0,
@@ -20,6 +22,8 @@ class Event {
       this.location,
       this.image,
       this.userStatus,
-      this.eventCreator
+      this.eventCreator,
+      this.creatorName,
+      this.userPosition,
       });
 }

@@ -146,12 +146,12 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildEventCapture() {
+  Widget buildEventCapture() {
     if (_captureText != null ||
         _captureText != "" ||
         _captureText != "Arahkan ke Kode Qr") {
       _captureController.pause();
-      postDataCheckin(_captureText);
+      return postDataCheckin(_captureText);
     } else {
       return Text(_captureText != '' ? _captureText : "Coba Lagi");
     }

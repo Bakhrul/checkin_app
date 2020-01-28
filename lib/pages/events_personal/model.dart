@@ -18,6 +18,26 @@ class ListOngoingEvent {
       this.status});
 }
 
+class ListMoreMyEvent {
+   String id;
+   String title;
+   String waktuawal;
+   String waktuakhir;
+   String fullday;  
+   String deskripsi;
+   String lokasi;
+   String status;
+  ListMoreMyEvent(
+      {this.id,
+      this.title,
+      this.waktuawal,
+      this.waktuakhir,
+      this.deskripsi,
+      this.lokasi,
+      this.fullday,
+      this.status});
+}
+
 class ListWillComeEvent {
    String id;
    String title;

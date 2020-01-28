@@ -197,7 +197,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                 image: dataEvent.image == null ||
                                         dataEvent.image == '' ||
                                         dataEvent.image == 'null'
-                                    ? 'images/noimage.jpg'
+                                    ? url('assets/images/noimage.jpg')
                                     : url(
                                         'storage/image/event/event_original/${dataEvent.image}'),
                                 height: 300,

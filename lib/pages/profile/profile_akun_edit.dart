@@ -3,7 +3,6 @@ import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/dashboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:checkin_app/pages/profile/profile_akun.dart';
 import 'package:checkin_app/pages/profile/image_edit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';

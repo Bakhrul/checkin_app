@@ -116,25 +116,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
     return null;
   }
 
-  void _handleSearchEnd() {
-    setState(() {
-      // ignore: new_with_non_type
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Daftar Checkin Peserta",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      );
-      _searchQuery.clear();
-    });
-  }
-
-  final TextEditingController _searchQuery = new TextEditingController();
+  
 
   Widget appBarTitle = Text(
     "Daftar Checkin Peserta",

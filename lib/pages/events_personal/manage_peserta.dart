@@ -262,694 +262,588 @@ class _ManagePesertaState extends State<ManagePeserta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: buildBar(context),
-      body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : isError == true
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => getHeaderHTTP(),
-                    child: Column(children: <Widget>[
-                      new Container(
-                        width: 100.0,
-                        height: 100.0,
-                        child: Image.asset("images/system-eror.png"),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 30.0,
-                          left: 15.0,
-                          right: 15.0,
+        backgroundColor: Colors.white,
+        appBar: buildBar(context),
+        body: isLoading == true
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : isError == true
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: RefreshIndicator(
+                      onRefresh: () => getHeaderHTTP(),
+                      child: Column(children: <Widget>[
+                        new Container(
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image.asset("images/system-eror.png"),
                         ),
-                        child: Center(
-                          child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 30.0,
+                            left: 15.0,
+                            right: 15.0,
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 15.0, right: 15.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Colors.white,
-                            textColor: Color.fromRGBO(41, 30, 47, 1),
-                            disabledColor: Colors.grey,
-                            disabledTextColor: Colors.black,
-                            padding: EdgeInsets.all(15.0),
-                            splashColor: Colors.blueAccent,
-                            onPressed: () async {
-                              getHeaderHTTP();
-                            },
+                          child: Center(
                             child: Text(
-                              "Muat Ulang Halaman",
-                              style: TextStyle(fontSize: 14.0),
+                              "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                      ),
-                    ]),
-                  ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
-                  child: Column(
-                    children: <Widget>[
-                      isFilter == true
-                          ? Center(
-                              child: Container(
-                                padding: EdgeInsets.only(top: 20.0),
-                                child: CircularProgressIndicator(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, left: 15.0, right: 15.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              color: Colors.white,
+                              textColor: Color.fromRGBO(41, 30, 47, 1),
+                              disabledColor: Colors.grey,
+                              disabledTextColor: Colors.black,
+                              padding: EdgeInsets.all(15.0),
+                              splashColor: Colors.blueAccent,
+                              onPressed: () async {
+                                getHeaderHTTP();
+                              },
+                              child: Text(
+                                "Muat Ulang Halaman",
+                                style: TextStyle(fontSize: 14.0),
                               ),
-                            )
-                          : listpesertaevent.length == 0
-                              ? Padding(
-                                  padding: const EdgeInsets.only(top: 20.0),
-                                  child: Column(children: <Widget>[
-                                    new Container(
-                                      width: 100.0,
-                                      height: 100.0,
-                                      child: Image.asset(
-                                          "images/empty-white-box.png"),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 30.0,
-                                        left: 15.0,
-                                        right: 15.0,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Event Belum Memiliki Peserta Sama Sekali",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black45,
-                                            height: 1.5,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                )
-                              : listpesertaevent.length == 0
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Column(children: <Widget>[
-                                        new Container(
-                                          width: 100.0,
-                                          height: 100.0,
-                                          child: Image.asset(
-                                              "images/empty-white-box.png"),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 20.0,
-                                            left: 15.0,
-                                            right: 15.0,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "User Tidak ada / tidak ditemukan",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black45,
-                                                height: 1.5,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                    )
-                                  : isErrorfilter == true
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 20.0),
-                                          child: RefreshIndicator(
-                                            onRefresh: () =>
-                                                filterlistpeserta(),
-                                            child: Column(children: <Widget>[
-                                              new Container(
-                                                width: 80.0,
-                                                height: 80.0,
-                                                child: Image.asset(
-                                                    "images/system-eror.png"),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 10.0,
-                                                  left: 15.0,
-                                                  right: 15.0,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Gagal Memuat Data, Silahkan Coba Kembali",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.black54,
-                                                      height: 1.5,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ]),
-                                          ),
-                                        )
-                                      : isDelete || isDenied || isAccept == true
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: <Widget>[
-                                                Container(
-                                                    width: 15.0,
-                                                    margin: EdgeInsets.only(
-                                                        top: 10.0, right: 15.0),
-                                                    height: 15.0,
-                                                    child:
-                                                        CircularProgressIndicator()),
-                                              ],
-                                            )
-                                          : Container(),
-                      Expanded(
-                        child: Scrollbar(
-                          child: ListView.builder(
-                            // scrollDirection: Axis.horizontal,
-                            itemCount: listpesertaevent.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                  child: ListTile(
-                                leading: Container(
-                                  width: 40.0,
-                                  height: 40.0,
-                                  child: ClipOval(
-                                    child: FadeInImage.assetNetwork(
-                                      placeholder: 'images/loading.gif',
-                                      image: listpesertaevent[index].image ==
-                                                  null ||
-                                              listpesertaevent[index].image ==
-                                                  '' ||
-                                              listpesertaevent[index].image ==
-                                                  'null'
-                                          ? url('assets/images/imgavatar.png')
-                                          : url(
-                                              'storage/image/profile/${listpesertaevent[index].image}'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                title: Text(
-                                    listpesertaevent[index].nama == null ||
-                                            listpesertaevent[index].nama == ''
-                                        ? 'Nama Tidak Diketahui'
-                                        : listpesertaevent[index].nama,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500)),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 15.0),
-                                  child: Text(
-                                    listpesertaevent[index].status == 'P'
-                                        ? 'Menunggu Konfirmasi'
-                                        : listpesertaevent[index].status == 'C'
-                                            ? 'Pendaftaran Ditolak'
-                                            : listpesertaevent[index].status ==
-                                                    'A'
-                                                ? 'Pendaftaran Diterima'
-                                                : 'Status Tidak Diketahui',
-                                    style: listpesertaevent[index].status == 'P'
-                                        ? TextStyle(fontWeight: FontWeight.w500)
-                                        : listpesertaevent[index].status == 'C'
-                                            ? TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.red)
-                                            : listpesertaevent[index].status ==
-                                                    'A'
-                                                ? TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.green)
-                                                : TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    listpesertaevent[index].status == 'P'
-                                        ? widget.eventEnd == true ? Container() : ButtonTheme(
-                                            minWidth: 0.0,
-                                            child: FlatButton(
-                                              color: Colors.white,
-                                              textColor: Colors.red,
-                                              disabledColor: Colors.white,
-                                              disabledTextColor:
-                                                  Colors.red[400],
-                                              padding: EdgeInsets.all(0.0),
-                                              splashColor: Colors.blueAccent,
-                                              child: Icon(
-                                                Icons.close,
-                                              ),
-                                              onPressed:
-                                                  isDelete ||
-                                                          isAccept ||
-                                                          isDenied == true
-                                                      ? null
-                                                      : () async {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                AlertDialog(
-                                                              title: Text(
-                                                                  'Peringatan!'),
-                                                              content: Text(
-                                                                  'Apakah Anda Ingin Menolak Pendaftaran Event?'),
-                                                              actions: <Widget>[
-                                                                FlatButton(
-                                                                  child: Text(
-                                                                      'Tidak'),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                FlatButton(
-                                                                  textColor:
-                                                                      Colors
-                                                                          .green,
-                                                                  child: Text(
-                                                                      'Ya'),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Mohon Tunggu Sebentar");
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    setState(
-                                                                        () {
-                                                                      isDenied =
-                                                                          true;
-                                                                    });
-                                                                    try {
-                                                                      final deniedParticipantEvent = await http.post(
-                                                                          url(
-                                                                              'api/tolakpeserta_event'),
-                                                                          headers:
-                                                                              requestHeaders,
-                                                                          body: {
-                                                                            'peserta':
-                                                                                listpesertaevent[index].idpeserta,
-                                                                            'event':
-                                                                                listpesertaevent[index].idevent
-                                                                          });
-                                                                      print(
-                                                                          deniedParticipantEvent);
-                                                                      if (deniedParticipantEvent
-                                                                              .statusCode ==
-                                                                          200) {
-                                                                        var deniedParticipantEventJson =
-                                                                            json.decode(deniedParticipantEvent.body);
-                                                                        if (deniedParticipantEventJson['status'] ==
-                                                                            'success') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Berhasil");
-                                                                          setState(
-                                                                              () {
-                                                                            isDenied =
-                                                                                false;
-                                                                          });
-                                                                          setState(
-                                                                              () {
-                                                                            listpesertaevent[index].status =
-                                                                                'C';
-                                                                            jumlahnotifX =
-                                                                                deniedParticipantEventJson['jumlahnotif'].toString();
-                                                                          });
-                                                                        } else if (deniedParticipantEventJson['status'] ==
-                                                                            'error') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
-                                                                          setState(
-                                                                              () {
-                                                                            isDenied =
-                                                                                false;
-                                                                          });
-                                                                        }
-                                                                      } else {
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                "Gagal, Silahkan Coba Kembali");
-                                                                        setState(
-                                                                            () {
-                                                                          isDenied =
-                                                                              false;
-                                                                        });
-                                                                      }
-                                                                    } on TimeoutException catch (_) {
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Timed out, Try again");
-                                                                      setState(
-                                                                          () {
-                                                                        isDenied =
-                                                                            false;
-                                                                      });
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isDenied =
-                                                                            false;
-                                                                      });
-                                                                      print(e);
-                                                                    }
-                                                                  },
-                                                                )
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                            ))
-                                        : widget.eventEnd == true ? Container(): ButtonTheme(
-                                            minWidth: 0.0,
-                                            child: FlatButton(
-                                              color: Colors.white,
-                                              textColor: Colors.red,
-                                              disabledColor: Colors.white,
-                                              disabledTextColor:
-                                                  Colors.red[400],
-                                              padding: EdgeInsets.all(0.0),
-                                              splashColor: Colors.blueAccent,
-                                              child: Icon(
-                                                Icons.delete,
-                                              ),
-                                              onPressed:
-                                                  isDelete ||
-                                                          isAccept ||
-                                                          isDenied == true
-                                                      ? null
-                                                      : () async {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                AlertDialog(
-                                                              title: Text(
-                                                                  'Peringatan!'),
-                                                              content: Text(
-                                                                  'Apakah Anda Ingin Menghapus Secara Permanen?'),
-                                                              actions: <Widget>[
-                                                                FlatButton(
-                                                                  child: Text(
-                                                                      'Tidak'),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                FlatButton(
-                                                                  textColor:
-                                                                      Colors
-                                                                          .green,
-                                                                  child: Text(
-                                                                      'Ya'),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    setState(
-                                                                        () {
-                                                                      isDelete =
-                                                                          true;
-                                                                    });
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Mohon Tunggu Sebentar");
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    try {
-                                                                      final deletePesertaEvent = await http.post(
-                                                                          url(
-                                                                              'api/deletepeserta_event'),
-                                                                          headers:
-                                                                              requestHeaders,
-                                                                          body: {
-                                                                            'peserta':
-                                                                                listpesertaevent[index].idpeserta,
-                                                                            'event':
-                                                                                listpesertaevent[index].idevent
-                                                                          });
-                                                                      print(
-                                                                          deletePesertaEvent);
-                                                                      if (deletePesertaEvent
-                                                                              .statusCode ==
-                                                                          200) {
-                                                                        var deletePesertaEventJson =
-                                                                            json.decode(deletePesertaEvent.body);
-                                                                        if (deletePesertaEventJson['status'] ==
-                                                                            'success') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Berhasil");
-                                                                          setState(
-                                                                              () {
-                                                                            isDelete =
-                                                                                false;
-                                                                          });
-                                                                          setState(
-                                                                              () {
-                                                                            listpesertaevent.remove(listpesertaevent[index]);
-                                                                          });
-                                                                        } else if (deletePesertaEventJson['status'] ==
-                                                                            'error') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
-                                                                          setState(
-                                                                              () {
-                                                                            isDelete =
-                                                                                false;
-                                                                          });
-                                                                        }
-                                                                      } else {
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                "Gagal, Silahkan Coba Kembali");
-                                                                        setState(
-                                                                            () {
-                                                                          isDelete =
-                                                                              false;
-                                                                        });
-                                                                      }
-                                                                    } on TimeoutException catch (_) {
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Timed out, Try again");
-                                                                      setState(
-                                                                          () {
-                                                                        isDelete =
-                                                                            false;
-                                                                      });
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isDelete =
-                                                                            false;
-                                                                      });
-                                                                      print(e);
-                                                                    }
-                                                                  },
-                                                                )
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                            )),
-                                    listpesertaevent[index].status == 'P'
-                                        ? widget.eventEnd == true ? Container() : ButtonTheme(
-                                            minWidth: 0.0,
-                                            child: FlatButton(
-                                              color: Colors.white,
-                                              textColor: Colors.green,
-                                              disabledColor: Colors.white,
-                                              disabledTextColor:
-                                                  Colors.green[400],
-                                              padding: EdgeInsets.all(0.0),
-                                              splashColor: Colors.blueAccent,
-                                              child: Icon(
-                                                Icons.check,
-                                              ),
-                                              onPressed:
-                                                  isDelete ||
-                                                          isAccept ||
-                                                          isDenied == true
-                                                      ? null
-                                                      : () async {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                AlertDialog(
-                                                              title: Text(
-                                                                  'Peringatan!'),
-                                                              content: Text(
-                                                                  'Apakah Anda Ingin Menerima Pendaftaran Event?'),
-                                                              actions: <Widget>[
-                                                                FlatButton(
-                                                                  child: Text(
-                                                                      'Tidak'),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                FlatButton(
-                                                                  textColor:
-                                                                      Colors
-                                                                          .green,
-                                                                  child: Text(
-                                                                      'Ya'),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Mohon Tunggu Sebentar");
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    setState(
-                                                                        () {
-                                                                      isAccept =
-                                                                          true;
-                                                                    });
-                                                                    try {
-                                                                      final accpeserta = await http.post(
-                                                                          url(
-                                                                              'api/accpeserta_event'),
-                                                                          headers:
-                                                                              requestHeaders,
-                                                                          body: {
-                                                                            'peserta':
-                                                                                listpesertaevent[index].idpeserta,
-                                                                            'event':
-                                                                                listpesertaevent[index].idevent
-                                                                          });
-
-                                                                      if (accpeserta
-                                                                              .statusCode ==
-                                                                          200) {
-                                                                        var accPesertaJson =
-                                                                            json.decode(accpeserta.body);
-                                                                        print(
-                                                                            accPesertaJson);
-                                                                        if (accPesertaJson['status'] ==
-                                                                            'success') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Berhasil");
-                                                                          setState(
-                                                                              () {
-                                                                            isAccept =
-                                                                                false;
-                                                                          });
-                                                                          setState(
-                                                                              () {
-                                                                            listpesertaevent[index].status =
-                                                                                'A';
-                                                                            jumlahnotifX =
-                                                                                accPesertaJson['jumlahnotif'].toString();
-                                                                          });
-                                                                        } else if (accPesertaJson['status'] ==
-                                                                            'Error') {
-                                                                          Fluttertoast.showToast(
-                                                                              msg: "Gagal, Silahkan Coba Kembali");
-                                                                          setState(
-                                                                              () {
-                                                                            isAccept =
-                                                                                false;
-                                                                          });
-                                                                        }
-                                                                      } else {
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                "Gagal, Silahkan Coba Kembali");
-                                                                        setState(
-                                                                            () {
-                                                                          isAccept =
-                                                                              false;
-                                                                        });
-                                                                      }
-                                                                    } on TimeoutException catch (_) {
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Timed out, Try again");
-                                                                      setState(
-                                                                          () {
-                                                                        isAccept =
-                                                                            false;
-                                                                      });
-                                                                    } catch (e) {
-                                                                      setState(
-                                                                          () {
-                                                                        isAccept =
-                                                                            false;
-                                                                      });
-                                                                      print(e);
-                                                                    }
-                                                                  },
-                                                                )
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
-                                            ))
-                                        : Container(),
-                                  ],
-                                ),
-                              ));
-                            },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-      floatingActionButton: widget.eventEnd == true
-          ? null
-          :
-           DraggableFab(
-            child: FloatingActionButton(
-                shape: StadiumBorder(),
-                onPressed: () async {
-                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ManajemeCreatePeserta(event: widget.event)));
-                },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
-                child: Icon(
-                  Icons.add,
-                  size: 20.0,
-                )))
+                      ]),
+                    ),
+                  )
+                : isFilter == true
+                            ? Center(
+                                child: Container(
+                                  padding: EdgeInsets.only(top: 20.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
+                            :Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Column(
+                      children: <Widget>[
+                         listpesertaevent.length == 0
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 20.0),
+                                    child: Column(children: <Widget>[
+                                      new Container(
+                                        width: 100.0,
+                                        height: 100.0,
+                                        child: Image.asset(
+                                            "images/empty-white-box.png"),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 20.0,
+                                          left: 15.0,
+                                          right: 15.0,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Peserta Tidak ada / tidak ditemukan",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black45,
+                                              height: 1.5,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                  )
+                                : isErrorfilter == true
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 20.0),
+                                        child: RefreshIndicator(
+                                          onRefresh: () => filterlistpeserta(),
+                                          child: Column(children: <Widget>[
+                                            new Container(
+                                              width: 80.0,
+                                              height: 80.0,
+                                              child: Image.asset(
+                                                  "images/system-eror.png"),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 10.0,
+                                                left: 15.0,
+                                                right: 15.0,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Gagal Memuat Data, Silahkan Coba Kembali",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black54,
+                                                    height: 1.5,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                        ),
+                                      )
+                                    : isDelete || isDenied || isAccept == true
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              Container(
+                                                  width: 15.0,
+                                                  margin: EdgeInsets.only(
+                                                      top: 10.0, right: 15.0),
+                                                  height: 15.0,
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                            ],
+                                          )
+                                        : Container(),
+                        Expanded(
+                          child: Scrollbar(
+                            child: ListView.builder(
+                              // scrollDirection: Axis.horizontal,
+                              itemCount: listpesertaevent.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                    child: ListTile(
+                                  leading: Container(
+                                    width: 40.0,
+                                    height: 40.0,
+                                    child: ClipOval(
+                                      child: FadeInImage.assetNetwork(
+                                        placeholder: 'images/loading.gif',
+                                        image: listpesertaevent[index].image ==
+                                                    null ||
+                                                listpesertaevent[index].image ==
+                                                    '' ||
+                                                listpesertaevent[index].image ==
+                                                    'null'
+                                            ? url('assets/images/imgavatar.png')
+                                            : url(
+                                                'storage/image/profile/${listpesertaevent[index].image}'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  title: Text(
+                                      listpesertaevent[index].nama == null ||
+                                              listpesertaevent[index].nama == ''
+                                          ? 'Nama Tidak Diketahui'
+                                          : listpesertaevent[index].nama,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500)),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 15.0),
+                                    child: Text(
+                                      listpesertaevent[index].status == 'P'
+                                          ? 'Menunggu Konfirmasi'
+                                          : listpesertaevent[index].status ==
+                                                  'C'
+                                              ? 'Pendaftaran Ditolak'
+                                              : listpesertaevent[index]
+                                                          .status ==
+                                                      'A'
+                                                  ? 'Pendaftaran Diterima'
+                                                  : 'Status Tidak Diketahui',
+                                      style: listpesertaevent[index].status ==
+                                              'P'
+                                          ? TextStyle(
+                                              fontWeight: FontWeight.w500)
+                                          : listpesertaevent[index].status ==
+                                                  'C'
+                                              ? TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.red)
+                                              : listpesertaevent[index]
+                                                          .status ==
+                                                      'A'
+                                                  ? TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.green)
+                                                  : TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      listpesertaevent[index].status == 'P'
+                                          ? widget.eventEnd == true
+                                              ? Container()
+                                              : ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.red,
+                                                    disabledColor: Colors.white,
+                                                    disabledTextColor:
+                                                        Colors.red[400],
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed:
+                                                        isDelete ||
+                                                                isAccept ||
+                                                                isDenied == true
+                                                            ? null
+                                                            : () async {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      AlertDialog(
+                                                                    title: Text(
+                                                                        'Peringatan!'),
+                                                                    content: Text(
+                                                                        'Apakah Anda Ingin Menolak Pendaftaran Event?'),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'Tidak'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        textColor:
+                                                                            Colors.green,
+                                                                        child: Text(
+                                                                            'Ya'),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Mohon Tunggu Sebentar");
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          setState(
+                                                                              () {
+                                                                            isDenied =
+                                                                                true;
+                                                                          });
+                                                                          try {
+                                                                            final deniedParticipantEvent =
+                                                                                await http.post(url('api/tolakpeserta_event'), headers: requestHeaders, body: {
+                                                                              'peserta': listpesertaevent[index].idpeserta,
+                                                                              'event': listpesertaevent[index].idevent
+                                                                            });
+                                                                            print(deniedParticipantEvent);
+                                                                            if (deniedParticipantEvent.statusCode ==
+                                                                                200) {
+                                                                              var deniedParticipantEventJson = json.decode(deniedParticipantEvent.body);
+                                                                              if (deniedParticipantEventJson['status'] == 'success') {
+                                                                                Fluttertoast.showToast(msg: "Berhasil");
+                                                                                setState(() {
+                                                                                  isDenied = false;
+                                                                                });
+                                                                                setState(() {
+                                                                                  listpesertaevent[index].status = 'C';
+                                                                                  jumlahnotifX = deniedParticipantEventJson['jumlahnotif'].toString();
+                                                                                });
+                                                                              } else if (deniedParticipantEventJson['status'] == 'error') {
+                                                                                Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                setState(() {
+                                                                                  isDenied = false;
+                                                                                });
+                                                                              }
+                                                                            } else {
+                                                                              Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                              setState(() {
+                                                                                isDenied = false;
+                                                                              });
+                                                                            }
+                                                                          } on TimeoutException catch (_) {
+                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                            setState(() {
+                                                                              isDenied = false;
+                                                                            });
+                                                                          } catch (e) {
+                                                                            setState(() {
+                                                                              isDenied = false;
+                                                                            });
+                                                                            print(e);
+                                                                          }
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              },
+                                                  ))
+                                          : widget.eventEnd == true
+                                              ? Container()
+                                              : ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.red,
+                                                    disabledColor: Colors.white,
+                                                    disabledTextColor:
+                                                        Colors.red[400],
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                    ),
+                                                    onPressed:
+                                                        isDelete ||
+                                                                isAccept ||
+                                                                isDenied == true
+                                                            ? null
+                                                            : () async {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      AlertDialog(
+                                                                    title: Text(
+                                                                        'Peringatan!'),
+                                                                    content: Text(
+                                                                        'Apakah Anda Ingin Menghapus Secara Permanen?'),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'Tidak'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        textColor:
+                                                                            Colors.green,
+                                                                        child: Text(
+                                                                            'Ya'),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          setState(
+                                                                              () {
+                                                                            isDelete =
+                                                                                true;
+                                                                          });
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Mohon Tunggu Sebentar");
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          try {
+                                                                            final deletePesertaEvent =
+                                                                                await http.post(url('api/deletepeserta_event'), headers: requestHeaders, body: {
+                                                                              'peserta': listpesertaevent[index].idpeserta,
+                                                                              'event': listpesertaevent[index].idevent
+                                                                            });
+                                                                            print(deletePesertaEvent);
+                                                                            if (deletePesertaEvent.statusCode ==
+                                                                                200) {
+                                                                              var deletePesertaEventJson = json.decode(deletePesertaEvent.body);
+                                                                              if (deletePesertaEventJson['status'] == 'success') {
+                                                                                Fluttertoast.showToast(msg: "Berhasil");
+                                                                                setState(() {
+                                                                                  isDelete = false;
+                                                                                });
+                                                                                setState(() {
+                                                                                  listpesertaevent.remove(listpesertaevent[index]);
+                                                                                });
+                                                                              } else if (deletePesertaEventJson['status'] == 'error') {
+                                                                                Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                setState(() {
+                                                                                  isDelete = false;
+                                                                                });
+                                                                              }
+                                                                            } else {
+                                                                              Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                              setState(() {
+                                                                                isDelete = false;
+                                                                              });
+                                                                            }
+                                                                          } on TimeoutException catch (_) {
+                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                            setState(() {
+                                                                              isDelete = false;
+                                                                            });
+                                                                          } catch (e) {
+                                                                            setState(() {
+                                                                              isDelete = false;
+                                                                            });
+                                                                            print(e);
+                                                                          }
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              },
+                                                  )),
+                                      listpesertaevent[index].status == 'P'
+                                          ? widget.eventEnd == true
+                                              ? Container()
+                                              : ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.green,
+                                                    disabledColor: Colors.white,
+                                                    disabledTextColor:
+                                                        Colors.green[400],
+                                                    padding:
+                                                        EdgeInsets.all(0.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.check,
+                                                    ),
+                                                    onPressed:
+                                                        isDelete ||
+                                                                isAccept ||
+                                                                isDenied == true
+                                                            ? null
+                                                            : () async {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      AlertDialog(
+                                                                    title: Text(
+                                                                        'Peringatan!'),
+                                                                    content: Text(
+                                                                        'Apakah Anda Ingin Menerima Pendaftaran Event?'),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'Tidak'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        textColor:
+                                                                            Colors.green,
+                                                                        child: Text(
+                                                                            'Ya'),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Mohon Tunggu Sebentar");
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          setState(
+                                                                              () {
+                                                                            isAccept =
+                                                                                true;
+                                                                          });
+                                                                          try {
+                                                                            final accpeserta =
+                                                                                await http.post(url('api/accpeserta_event'), headers: requestHeaders, body: {
+                                                                              'peserta': listpesertaevent[index].idpeserta,
+                                                                              'event': listpesertaevent[index].idevent
+                                                                            });
 
-    );
+                                                                            if (accpeserta.statusCode ==
+                                                                                200) {
+                                                                              var accPesertaJson = json.decode(accpeserta.body);
+                                                                              print(accPesertaJson);
+                                                                              if (accPesertaJson['status'] == 'success') {
+                                                                                Fluttertoast.showToast(msg: "Berhasil");
+                                                                                setState(() {
+                                                                                  isAccept = false;
+                                                                                });
+                                                                                setState(() {
+                                                                                  listpesertaevent[index].status = 'A';
+                                                                                  jumlahnotifX = accPesertaJson['jumlahnotif'].toString();
+                                                                                });
+                                                                              } else if (accPesertaJson['status'] == 'Error') {
+                                                                                Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                setState(() {
+                                                                                  isAccept = false;
+                                                                                });
+                                                                              }
+                                                                            } else {
+                                                                              Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                              setState(() {
+                                                                                isAccept = false;
+                                                                              });
+                                                                            }
+                                                                          } on TimeoutException catch (_) {
+                                                                            Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                            setState(() {
+                                                                              isAccept = false;
+                                                                            });
+                                                                          } catch (e) {
+                                                                            setState(() {
+                                                                              isAccept = false;
+                                                                            });
+                                                                            print(e);
+                                                                          }
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              },
+                                                  ))
+                                          : Container(),
+                                    ],
+                                  ),
+                                ));
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+        floatingActionButton: widget.eventEnd == true
+            ? null
+            : DraggableFab(
+                child: FloatingActionButton(
+                    shape: StadiumBorder(),
+                    onPressed: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ManajemeCreatePeserta(event: widget.event)));
+                    },
+                    backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                    child: Icon(
+                      Icons.add,
+                      size: 20.0,
+                    ))));
   }
 
   Widget buildBar(BuildContext context) {
