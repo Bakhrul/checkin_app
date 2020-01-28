@@ -8,6 +8,8 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 TextEditingController _filtercontroller = new TextEditingController();
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
@@ -212,7 +214,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor:primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

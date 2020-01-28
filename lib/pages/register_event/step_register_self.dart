@@ -220,12 +220,12 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     color: Color.fromRGBO(241,241,241,1),
                     margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
                     child:TextFormField(
-                      initialValue: 'Kec.driyorejo Kab. Gresik',
+                      initialValue: widget.dataUser['us_location'],
                       enabled: false,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
                         border: OutlineInputBorder(),
-                        hintText: 'Alamat',
+                        hintText: null,
                       ),
                     )
                   )
@@ -247,12 +247,12 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     color: Color.fromRGBO(241,241,241,1),
                     margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
                     child:TextFormField(
-                      initialValue: '0823456789',
+                      initialValue: widget.dataUser['us_phone'],
                       enabled: false,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
                         border: OutlineInputBorder(),
-                        hintText: 'Password',
                       ),
                     )
                   )

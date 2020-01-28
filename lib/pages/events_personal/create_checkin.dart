@@ -6,6 +6,8 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'model.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
 bool isSame;
 TextEditingController _namacheckinController = new TextEditingController();
@@ -50,7 +52,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -71,7 +73,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.create,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: TextField(
                   controller: _namacheckinController,
@@ -85,7 +86,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.access_time,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: DateTimeField(
                   decoration: InputDecoration(
@@ -124,7 +124,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                       leading: Icon(
                         Icons.access_time,
-                        color: Color.fromRGBO(41, 30, 47, 1),
                       ),
                       title: DateTimeField(
                         decoration: InputDecoration(
@@ -164,7 +163,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.create,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: TextField(
                   controller: _kodecheckinController,
@@ -226,7 +224,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           }
         },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryButtonColor,
       ),
     );
   }

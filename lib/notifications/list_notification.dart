@@ -880,7 +880,9 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                           '9' ||
                                                       listnotifications[index]
                                                               .idmessage ==
-                                                          '11'
+                                                          '11' || listnotifications[index]
+                                                              .idmessage ==
+                                                          '12'
                                                   ? '${listnotifications[index].namaupdateperson} - ${listnotifications[index].title}'
                                                   : listnotifications[index]
                                                       .title),

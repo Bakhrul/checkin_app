@@ -16,6 +16,8 @@ import 'dart:io';
 import 'index.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 String tokenType, accessToken;
 Map<String, dynamic> formSerialize;
 File _image;
@@ -104,7 +106,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
           title: Text('Buat Event Baru', style: TextStyle(fontSize: 14)),
           bottom: TabBar(
             controller: _tabController,
@@ -235,7 +237,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     child: ListTile(
                   leading: Icon(
                     Icons.assignment_ind,
-                    color: Color.fromRGBO(41, 30, 47, 1),
                   ),
                   title: TextField(
                     controller: _namaeventController,
@@ -250,7 +251,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     child: ListTile(
                         leading: Icon(
                           Icons.access_time,
-                          color: Color.fromRGBO(41, 30, 47, 1),
                         ),
                         title: DateTimeField(
                           decoration: InputDecoration(
@@ -290,7 +290,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     child: ListTile(
                         leading: Icon(
                           Icons.access_time,
-                          color: Color.fromRGBO(41, 30, 47, 1),
                         ),
                         title: DateTimeField(
                           decoration: InputDecoration(
@@ -330,7 +329,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     child: ListTile(
                   leading: Icon(
                     Icons.create,
-                    color: Color.fromRGBO(41, 30, 47, 1),
                   ),
                   title: TextField(
                     controller: _deskripsieventController,
@@ -346,7 +344,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     child: ListTile(
                   leading: Icon(
                     Icons.location_on,
-                    color: Color.fromRGBO(41, 30, 47, 1),
                   ),
                   title: TextField(
                     controller: _alamateventController,
@@ -649,7 +646,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             listKategoriadd: ListKategoriEventAdd),
                       ));
                 },
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryButtonColor,
           child: Icon(
             Icons.add,
             size: 20.0,
@@ -667,7 +664,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                             ManajemeCreateAdmin(listUseradd: ListUserAdd),
                       ));
                 },
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryButtonColor,
           child: Icon(
             Icons.add,
             size: 20.0,
@@ -684,7 +681,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                         builder: (context) => ManajemeCreateCheckin(),
                       ));
                 },
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryButtonColor,
           child: Icon(
             Icons.add,
             size: 20.0,

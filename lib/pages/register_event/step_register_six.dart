@@ -60,7 +60,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
               .sendrequest();
-      // print(response['status']);
+      print(response['status']);
       if (response['status'] == "success") {
         setState(() {
           _buttonUndo == false;

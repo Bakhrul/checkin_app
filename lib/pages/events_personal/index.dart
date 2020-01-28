@@ -17,6 +17,7 @@ import 'model.dart';
 import 'detail_index.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
+import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isDelete;
 String tokenType, accessToken;
@@ -380,7 +381,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
