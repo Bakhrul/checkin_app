@@ -491,6 +491,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                     onTap: currentEvent,
                                     child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white, Colors.orange]
+                                        )
+                                        
+                                      ),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -767,6 +775,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                   onTap: futureEvent,
                                   child: Container(
+                                     decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white, Colors.orange]
+                                        )
+                                        
+                                      ),
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -1044,6 +1060,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                     onTap: pastEvent,
                                     child: Container(
+                                       decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white, Colors.orange]
+                                        )
+                                        
+                                      ),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(

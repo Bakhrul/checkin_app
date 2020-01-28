@@ -91,7 +91,7 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
           ) );
         },
         child: Icon(Icons.arrow_forward_ios),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: Color.fromRGBO(254, 86, 14, 1),
       ),
     );
   }

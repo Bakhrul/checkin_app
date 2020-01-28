@@ -536,7 +536,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                           minWidth: 0.0,
                           height: 0,
                           child: RaisedButton(
-                            color: categoryNow == x['c_id'] ? Color.fromRGBO(41, 30, 47, 1):Colors.transparent,
+                            color: categoryNow == x['c_id'] ? Color.fromRGBO(254, 86, 14, 1):Colors.transparent,
                             elevation: 0.0,
                             highlightColor: Colors.transparent,
                             highlightElevation: 0.0,
@@ -560,7 +560,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(
-                                  color: Color.fromRGBO(41, 30, 47, 1),
+                                  color: Color.fromRGBO(254, 86, 14,1),
                                 )),
                           ),
                         )),
@@ -630,306 +630,308 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                       Center(
                         child:CircularProgressIndicator()
                       ):
-                      SingleChildScrollView(
-                        controller: pageScroll,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child:Column(
-                      children:<Widget>[
-                        for(var x = 0;x < _event.length; ++x)
-                       new InkWell(
-                            child: Container(
-                                margin: EdgeInsets.only(
-                                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Card(
-                                      elevation: 1,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                Expanded(
-                                                  flex: 5,
-                                                  child:Container(
-                                                                          height:
-                                                                              80.0,
-                                                                          width:
-                                                                              80.0,
-                                                                          child:
-                                                                              FadeInImage.assetNetwork(
-                                                                            placeholder:
-                                                                                'images/loading-event.png',
-                                                                            image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
-                                                                                ? url('assets/images/noimage.jpg')
-                                                                                : url('storage/image/event/event_thumbnail/${_event[x].image}'),
-                                                                                
-                                                                            fit:
-                                                                                BoxFit.cover,
+                      Container(
+                        child: SingleChildScrollView(
+                          controller: pageScroll,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child:Column(
+                        children:<Widget>[
+                          for(var x = 0;x < _event.length; ++x)
+                         new InkWell(
+                              child: Container(
+                                  margin: EdgeInsets.only(
+                                      top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Card(
+                                        elevation: 1,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(10.0),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    flex: 5,
+                                                    child:Container(
+                                                                            height:
+                                                                                80.0,
+                                                                            width:
+                                                                                80.0,
+                                                                            child:
+                                                                                FadeInImage.assetNetwork(
+                                                                              placeholder:
+                                                                                  'images/loading-event.png',
+                                                                              image: _event[x].image == null || _event[x].image == '' || _event[x].image == 'null'
+                                                                                  ? url('assets/images/noimage.jpg')
+                                                                                  : url('storage/image/event/event_thumbnail/${_event[x].image}'),
+                                                                                  
+                                                                              fit:
+                                                                                  BoxFit.cover,
 
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                ),
-                                                Expanded(
-                                                  flex: 7,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(
-                                                        left: 15.0, right: 5.0),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                      children: <Widget>[
-                                                        Text(_event[x].start == null ? 'memuat':
-                                                          _event[x].start+' - '+_event[x].end,
-                                                          style: TextStyle(
-                                                              color: Colors.blue,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight.bold),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(
-                                                              top: 5.0),
-                                                          child:
-                                                              Text(_event[x].title == null ? 'memuat':_event[x].title,
-                                                                  style: TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontWeight:
-                                                                        FontWeight.w500,
-                                                                  ),
-                                                                  overflow:TextOverflow.ellipsis,
-                                                                  softWrap:true,
-                                                                  maxLines: 2
-                                                                  ),           
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(
-                                                              top: 10.0),
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              if(_event[x].follow == "Y")
-                                                              Container(
-                                                                   width:50,
-                                                                   padding: EdgeInsets.only(top:2.0,bottom:2.0,left:3.0,right:3.0),
-                                                                   margin:EdgeInsets.only(left:1.0,right:2.0),
-                                                                   child: Text(
-                                                                    'Di ikuti',
-                                                                    textAlign: TextAlign.center,
-                                                                      style: TextStyle(
-                                                                          fontSize: 12,
-                                                                          color: Colors.blue)
-                                                                    ),
-                                                                    decoration: BoxDecoration(
-                                                                      border: Border.all(color:Colors.lightBlueAccent),
-                                                                      borderRadius: BorderRadius.circular(10)
-                                                                    )
-                                                                 ),
-                                                              Expanded(
-                                                                child:Container(
-                                                                   padding: EdgeInsets.only(left:3.0,right:3.0),
-                                                                   child: Text(
-                                                                    _event[x].creatorName == null ? 'memuat':_event[x].creatorName,
+                                                  ),
+                                                  Expanded(
+                                                    flex: 7,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(
+                                                          left: 15.0, right: 5.0),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          Text(_event[x].start == null ? 'memuat':
+                                                            _event[x].start+' - '+_event[x].end,
+                                                            style: TextStyle(
+                                                                color: Colors.blue,
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight.bold),
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(
+                                                                top: 5.0),
+                                                            child:
+                                                                Text(_event[x].title == null ? 'memuat':_event[x].title,
                                                                     style: TextStyle(
-                                                                        color: Colors.grey),
+                                                                      color: Colors.black,
+                                                                      fontWeight:
+                                                                          FontWeight.w500,
+                                                                    ),
                                                                     overflow:TextOverflow.ellipsis,
                                                                     softWrap:true,
-                                                                  )
-                                                                 )
-                                                              )
-                                                            ],
-                                                          )
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Column(
-                                            children:<Widget>[Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 10.0, right: 10.0),
-                                              child: Divider()),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10.0, right: 10.0, bottom: 10.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Container(
-                                                    decoration: new BoxDecoration(
-                                                      color:_event[x].statusRegistered == 'Event Selesai' ? _event[x].color :  userId == _event[x].userEvent ? Colors.blue:_event[x].color,
-                                                      borderRadius: new BorderRadius.only(
-                                                          topLeft:
-                                                              const Radius.circular(5.0),
-                                                          topRight:
-                                                              const Radius.circular(5.0),
-                                                          bottomLeft:
-                                                              const Radius.circular(5.0),
-                                                          bottomRight:
-                                                              const Radius.circular(5.0)),
-                                                    ),
-                                                    padding: EdgeInsets.all(5.0),
-                                                    width: 120.0,
-                                                    child: Text(
-                                                      _event[x].statusRegistered == 'Event Selesai' ? _event[x].statusRegistered :  userId == _event[x].userEvent ? "Event Saya":_event[x].statusRegistered,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                      textAlign: TextAlign.center,
-                                                    )),
-                                                _event[x].userEvent == userId ?
-                                                Container():
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(right: 0),
-                                                      
-                                                  child: ButtonTheme(
-                                                    minWidth: 0, //wraps child's width
-                                                    height: 0,
-                                                    child: FlatButton(
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.favorite,
-                                                            color: _event[x].wish == '1'
-                                                                ? Colors.pink
-                                                                : Colors.grey,
-                                                            size: 18,
+                                                                    maxLines: 2
+                                                                    ),           
                                                           ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(
+                                                                top: 10.0),
+                                                            child: Row(
+                                                              children: <Widget>[
+                                                                if(_event[x].follow == "Y")
+                                                                Container(
+                                                                     width:50,
+                                                                     padding: EdgeInsets.only(top:2.0,bottom:2.0,left:3.0,right:3.0),
+                                                                     margin:EdgeInsets.only(left:1.0,right:2.0),
+                                                                     child: Text(
+                                                                      'Di ikuti',
+                                                                      textAlign: TextAlign.center,
+                                                                        style: TextStyle(
+                                                                            fontSize: 12,
+                                                                            color: Colors.blue)
+                                                                      ),
+                                                                      decoration: BoxDecoration(
+                                                                        border: Border.all(color:Colors.lightBlueAccent),
+                                                                        borderRadius: BorderRadius.circular(10)
+                                                                      )
+                                                                   ),
+                                                                Expanded(
+                                                                  child:Container(
+                                                                     padding: EdgeInsets.only(left:3.0,right:3.0),
+                                                                     child: Text(
+                                                                      _event[x].creatorName == null ? 'memuat':_event[x].creatorName,
+                                                                      style: TextStyle(
+                                                                          color: Colors.grey),
+                                                                      overflow:TextOverflow.ellipsis,
+                                                                      softWrap:true,
+                                                                    )
+                                                                   )
+                                                                )
+                                                              ],
+                                                            )
+                                                          )
                                                         ],
                                                       ),
-                                                      color: Colors.white,
-                                                      materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                      padding: EdgeInsets.all(5.0),
-                                                      onPressed:() async {
-                                                        _wish(_event[x].wish,_event[x].id,x);
-                                                      } 
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                            ])
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            onTap: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      switch(_event[x].statusRegistered){
-                                      case 'Sudah Terdaftar':
-                                          return SuccesRegisteredEvent(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: userId == _event[x].userEvent ? true:false
-                                          );
-                                          break;
-                                      case 'Proses Pendaftaran':
-                                          return WaitingEvent(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            selfEvent: userId == _event[x].userEvent ? true:false,
-                                          );
-                                          break;
-                                      case 'Proses Daftar Admin':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            selfEvent: true,
-                                            dataUser:dataUser
-                                            );
-                                          break;
-                                      case 'Pendaftaran Ditolak':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            selfEvent: userId == _event[x].userEvent ? true:false,
-                                            dataUser:dataUser
-                                            );
-                                          break;
-                                      case 'Admin / Co-Host':
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: true
-                                            );
-                                          break;
-                                      default:
-                                          return RegisterEvents(
-                                            id:_event[x].id,
-                                            creatorId:_event[x].userEvent,
-                                            dataUser:dataUser,
-                                            selfEvent: userId == _event[x].userEvent ? true:false
-                                            );
-                                          break;
-                                    }
-                                    }
-                                  ));
-                              }
-                            ),
-                            _isPageDisconnect ?
-                            Container(
-                              height: 50,
-                              child:Center(
-                                child:GestureDetector(
-                                  onTap:(){
-                                    _getPage(categoryNow,_searchQuery);
-                                  },
-                                  child:Container(
-                                    padding: EdgeInsets.all(5.0),
-                                    child:Icon(
-                                    Icons.refresh,
-                                    color: Colors.blueAccent,
-                                    size: 25
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:BorderRadius.only(
-                                        topLeft : Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0),
-                                        bottomLeft : Radius.circular(20.0),
-                                        bottomRight : Radius.circular(20.0)
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          spreadRadius: 1,
-                                          blurRadius: 1,
-                                          offset: Offset(0, 1), // changes position of shadow
+                                            Column(
+                                              children:<Widget>[Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 10.0, right: 10.0),
+                                                child: Divider()),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0, right: 10.0, bottom: 10.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Container(
+                                                      decoration: new BoxDecoration(
+                                                        color:_event[x].statusRegistered == 'Event Selesai' ? _event[x].color :  userId == _event[x].userEvent ? Colors.blue:_event[x].color,
+                                                        borderRadius: new BorderRadius.only(
+                                                            topLeft:
+                                                                const Radius.circular(5.0),
+                                                            topRight:
+                                                                const Radius.circular(5.0),
+                                                            bottomLeft:
+                                                                const Radius.circular(5.0),
+                                                            bottomRight:
+                                                                const Radius.circular(5.0)),
+                                                      ),
+                                                      padding: EdgeInsets.all(5.0),
+                                                      width: 120.0,
+                                                      child: Text(
+                                                        _event[x].statusRegistered == 'Event Selesai' ? _event[x].statusRegistered :  userId == _event[x].userEvent ? "Event Saya":_event[x].statusRegistered,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
+                                                        textAlign: TextAlign.center,
+                                                      )),
+                                                  _event[x].userEvent == userId ?
+                                                  Container():
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(right: 0),
+                                                        
+                                                    child: ButtonTheme(
+                                                      minWidth: 0, //wraps child's width
+                                                      height: 0,
+                                                      child: FlatButton(
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Icon(
+                                                              Icons.favorite,
+                                                              color: _event[x].wish == '1'
+                                                                  ? Colors.pink
+                                                                  : Colors.grey,
+                                                              size: 18,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        color: Colors.white,
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                        padding: EdgeInsets.all(5.0),
+                                                        onPressed:() async {
+                                                          _wish(_event[x].wish,_event[x].id,x);
+                                                        } 
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                              ])
+                                          ],
                                         ),
-                                      ]
-                                    )
-                                  ) 
+                                      ),
+                                    ],
+                                  )),
+                              onTap: () async {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        switch(_event[x].statusRegistered){
+                                        case 'Sudah Terdaftar':
+                                            return SuccesRegisteredEvent(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              dataUser:dataUser,
+                                              selfEvent: userId == _event[x].userEvent ? true:false
+                                            );
+                                            break;
+                                        case 'Proses Pendaftaran':
+                                            return WaitingEvent(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              selfEvent: userId == _event[x].userEvent ? true:false,
+                                            );
+                                            break;
+                                        case 'Proses Daftar Admin':
+                                            return RegisterEvents(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              selfEvent: true,
+                                              dataUser:dataUser
+                                              );
+                                            break;
+                                        case 'Pendaftaran Ditolak':
+                                            return RegisterEvents(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              selfEvent: userId == _event[x].userEvent ? true:false,
+                                              dataUser:dataUser
+                                              );
+                                            break;
+                                        case 'Admin / Co-Host':
+                                            return RegisterEvents(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              dataUser:dataUser,
+                                              selfEvent: true
+                                              );
+                                            break;
+                                        default:
+                                            return RegisterEvents(
+                                              id:_event[x].id,
+                                              creatorId:_event[x].userEvent,
+                                              dataUser:dataUser,
+                                              selfEvent: userId == _event[x].userEvent ? true:false
+                                              );
+                                            break;
+                                      }
+                                      }
+                                    ));
+                                }
+                              ),
+                              _isPageDisconnect ?
+                              Container(
+                                height: 50,
+                                child:Center(
+                                  child:GestureDetector(
+                                    onTap:(){
+                                      _getPage(categoryNow,_searchQuery);
+                                    },
+                                    child:Container(
+                                      padding: EdgeInsets.all(5.0),
+                                      child:Icon(
+                                      Icons.refresh,
+                                      color: Colors.blueAccent,
+                                      size: 25
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:BorderRadius.only(
+                                          topLeft : Radius.circular(20.0),
+                                          topRight: Radius.circular(20.0),
+                                          bottomLeft : Radius.circular(20.0),
+                                          bottomRight : Radius.circular(20.0)
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 1,
+                                            offset: Offset(0, 1), // changes position of shadow
+                                          ),
+                                        ]
+                                      )
+                                    ) 
+                                  )
+                                )
+                              ):
+                              Container(
+                                height:_isLoadingPagination ? 50:0,
+                                child:Center(
+                                  child:CircularProgressIndicator()
                                 )
                               )
-                            ):
-                            Container(
-                              height:_isLoadingPagination ? 50:0,
-                              child:Center(
-                                child:CircularProgressIndicator()
-                              )
-                            )
-                          ] 
-                        )
+                            ] 
+                          )
+                        ),
                       )
                   )
             ],
@@ -943,7 +945,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: Color.fromRGBO(254, 86, 14, 1),
       actions: <Widget>[
         IconButton(
           icon: actionIcon,

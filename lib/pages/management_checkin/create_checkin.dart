@@ -232,7 +232,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           postDataCheckin();
         },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: Color.fromRGBO(254, 86, 14, 1),
       ) 
       :  Align(
           alignment: FractionalOffset.bottomCenter,

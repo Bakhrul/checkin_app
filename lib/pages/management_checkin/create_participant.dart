@@ -99,6 +99,15 @@ Future<void> getHeaderHTTP() async {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+    }else if(response == 2000){
+      Fluttertoast.showToast(
+          msg: "Anda Tidak Dapat Mendaftarkan Diri Sendiri",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
   
@@ -130,7 +139,7 @@ Future<void> getHeaderHTTP() async {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: Color.fromRGBO(254, 86, 14, 1),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
