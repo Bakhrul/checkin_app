@@ -4,6 +4,7 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -139,7 +140,7 @@ Future<void> getHeaderHTTP() async {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -194,7 +195,7 @@ Future<void> getHeaderHTTP() async {
           postDataParticipant();
         },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
     );
   }

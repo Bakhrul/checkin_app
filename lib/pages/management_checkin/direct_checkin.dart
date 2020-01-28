@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/pages/management_checkin/create_checkin.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -206,7 +207,7 @@ postDataCheckin() async {
       backgroundColor: Colors.white,
       // key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

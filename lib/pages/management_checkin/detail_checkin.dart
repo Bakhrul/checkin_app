@@ -6,6 +6,7 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/list_peserta_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -133,7 +134,7 @@ class _DetailCheckinState extends State<DetailCheckin>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 
 import 'package:flutter/material.dart';
 
@@ -64,7 +65,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

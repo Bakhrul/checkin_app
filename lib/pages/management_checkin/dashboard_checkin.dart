@@ -6,6 +6,7 @@ import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
@@ -250,7 +251,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+          backgroundColor: primaryAppBarColor,
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
           actions: <Widget>[
             
