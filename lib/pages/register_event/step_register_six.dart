@@ -1,6 +1,8 @@
+import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/pages/management_checkin/checkin_manual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../event_following/count_down.dart';
 import 'package:checkin_app/pages/events_all/detail_event.dart';
 
@@ -25,6 +27,83 @@ class SuccesRegisteredEvent extends StatefulWidget {
 }
 
 class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
+  bool _buttonUndo = false;
+
+  _setUndo() {
+    setState(() {
+      _buttonUndo = false;
+    });
+  }
+
+  _checkoutFromEvent() async {
+    setState(() {
+      _buttonUndo = true;
+    });
+    await new Future.delayed(const Duration(seconds: 5));
+    if (_buttonUndo == true) {
+      _deleteParticipant();
+    } else {
+      setState(() {
+        _buttonUndo == false;
+      });
+    }
+  }
+
+  _deleteParticipant() async {
+    try {
+      dynamic body = {
+        "peserta": widget.dataUser['us_code'].toString(),
+        "event": widget.id.toString(),
+        "admin": widget.creatorId.toString(),
+        "notif": 'keluar dari event',
+      };
+      dynamic response =
+          await RequestPost(name: "deletepeserta_event", body: body)
+              .sendrequest();
+      // print(response['status']);
+      if (response['status'] == "success") {
+        setState(() {
+          _buttonUndo == false;
+        });
+
+        Fluttertoast.showToast(
+            msg: "Berhasil Keluar",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        // isLoading = false;
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RegisterEvents(
+                    id: widget.id,
+                    creatorId: widget.creatorId,
+                    dataUser: widget.dataUser,
+                    selfEvent: false)));
+        // getDataCheckin();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Terjadi Kesalahan",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        // isLoading = false;
+      }
+    } catch (e) {
+      setState(() {
+        // isLoading = false;
+        // isError = true;
+      });
+      debugPrint('$e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +141,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                 Container(
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 5.0),
-                    child: Text("Selamat Anda Terdaftar !",
+                    child: Text("Selamat Anda Terdaftar ! ",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             height: 1.5,
@@ -117,7 +196,52 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                               creatorId: widget.creatorId,
                                               dataUser: widget.dataUser,
                                               selfEvent: true)));
-                                }))
+                                })),
+                        _buttonUndo == true
+                            ? Container(
+                                child: Column(
+                                children: <Widget>[
+                                  CircularProgressIndicator(),
+                                  FlatButton(
+                                      child: Text("Batalkan"),
+                                      onPressed: () async {
+                                        _setUndo();
+                                      }),
+                                ],
+                              ))
+                            : Container(
+                                width: double.infinity,
+                                child: FlatButton(
+                                    // color: Colors.redAccent[700],
+                                    child: Text("Keluar Dari Event",
+                                        style: TextStyle(color: Colors.red)),
+                                    onPressed: () async {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text("Warning"),
+                                              content: Text(
+                                                  "Apakah Anda Yakin Akan Keluar Dari Event ini?"),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text("No"),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                FlatButton(
+                                                  child: Text("Yes"),
+                                                  onPressed: () {
+                                                    _checkoutFromEvent();
+
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    }))
                       ],
                     ))
               ],

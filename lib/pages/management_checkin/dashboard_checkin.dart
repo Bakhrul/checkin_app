@@ -132,7 +132,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
               .sendrequest();
-      print(response['status']);
+      // print(response['status']);
       if (response['status'] == "success") {
         setState(() {});
 
@@ -472,53 +472,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                                 .eventId
                                                                 .toString())));
                                           },
-                                          // trailing: ButtonTheme(
-                                          //     minWidth: 0.0,
-                                          //     child: FlatButton(
-                                          //       color: Colors.white,
-                                          //       textColor: Colors.red,
-                                          //       disabledColor:
-                                          //           Colors.green[400],
-                                          //       disabledTextColor: Colors.white,
-                                          //       padding: EdgeInsets.all(15.0),
-                                          //       splashColor: Colors.blueAccent,
-                                          //       child: Icon(
-                                          //         Icons.close,
-                                          //       ),
-                                          //       onPressed: () async {
-                                          //         showDialog(
-                                          //             context: context,
-                                          //             builder: (context) {
-                                          //               return AlertDialog(
-                                          //                 title:
-                                          //                     Text("Warning"),
-                                          //                 content: Text(
-                                          //                     "Are you sure want to delete data?"),
-                                          //                 actions: <Widget>[
-                                          //                   FlatButton(
-                                          //                     child:
-                                          //                         Text("Yes"),
-                                          //                     onPressed: () {
-                                          //                       deleteCheckin(
-                                          //                           data.id,
-                                          //                           data.eventId);
-
-                                          //                      listCheckin.remove(data);
-                                          //                      Navigator.pop(context);
-                                          //                     },
-                                          //                   ),
-                                          //                   FlatButton(
-                                          //                     child: Text("No"),
-                                          //                     onPressed: () {
-                                          //                       Navigator.pop(
-                                          //                           context);
-                                          //                     },
-                                          //                   )
-                                          //                 ],
-                                          //               );
-                                          //             });
-                                          //       },
-                                          //     )),
+                                        
                                           trailing: PopupMenuButton<PageEnum>(
                                             onSelected: (PageEnum value) {
                                               switch (value) {
