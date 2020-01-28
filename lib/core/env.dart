@@ -1,9 +1,9 @@
 // String url = 'http://alamraya.club/api/';
-String url = 'http://alamraya.club/api/';
+String url = 'http://192.168.43.115/bisniskita_myocin/api/';
 // String url = 'http://192.168.43.115/bisniskita_myocin/api/';
 //  String url = 'http://192.168.100.11/alamraya/myocin/api/';
 
-String noapiurl = 'http://alamraya.club/';
+String noapiurl = 'http://192.168.43.115/bisniskita_myocin/';
 // String noapiurl = 'http://192.168.43.115/bisniskita_myocin/';
 
 // Custom api / Laravel Passport
