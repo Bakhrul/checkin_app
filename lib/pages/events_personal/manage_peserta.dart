@@ -13,6 +13,8 @@ import 'model.dart';
 import 'dart:core';
 import 'package:draggable_fab/draggable_fab.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
 List<ListPesertaEvent> listpesertaevent = [];
@@ -839,7 +841,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                               builder: (context) =>
                                   ManajemeCreatePeserta(event: widget.event)));
                     },
-                    backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                    backgroundColor: primaryButtonColor,
                     child: Icon(
                       Icons.add,
                       size: 20.0,
@@ -850,7 +852,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         IconButton(
           icon: actionIcon,

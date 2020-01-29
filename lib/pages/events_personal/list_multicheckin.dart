@@ -7,6 +7,8 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 var list = ['one', 'two', 'three', 'four'];
 bool isLoading, isError, isFilter, isErrorfilter;
 String tokenType, accessToken, ideventget;
@@ -418,7 +420,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
       ],
     );

@@ -7,6 +7,8 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 bool isLoading, isError, isFilter, isErrorfilter;
 String tokenType, accessToken, ideventget;
 TextEditingController _filtercontroller = new TextEditingController();
@@ -464,7 +466,7 @@ class _PointEventsState extends State<PointEvents> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
       ],
     );

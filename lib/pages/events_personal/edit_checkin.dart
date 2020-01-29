@@ -10,6 +10,8 @@ import 'dart:convert';
 import 'manage_checkin.dart';
 import 'package:checkin_app/storage/storage.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 GlobalKey<ScaffoldState> _scaffoldKeyeditcheckin;
 Map<String, dynamic> formSerialize;
 TextEditingController _namacheckinController = new TextEditingController();
@@ -208,7 +210,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeyeditcheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -344,9 +346,9 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 child: SizedBox(
                   width: double.infinity,
                   child: RaisedButton(
-                    color: Color.fromRGBO(41, 30, 47, 1),
+                    color: primaryButtonColor,
                     textColor: Colors.white,
-                    disabledColor: Color.fromRGBO(41, 30, 47, 0.7),
+                    disabledColor: primaryButtonColor,
                     disabledTextColor: Colors.white,
                     padding: EdgeInsets.all(15.0),
                     splashColor: Colors.blueAccent,

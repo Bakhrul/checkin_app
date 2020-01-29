@@ -12,6 +12,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:core';
 import 'model.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 bool isLoading, isError;
 String jumlahhadirX, jumlahtidakhadirX, jumlahpesertaX, percentX;
 List<ListCheckinUsers> listuserscheckin = [];
@@ -428,7 +430,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
       ],
     );

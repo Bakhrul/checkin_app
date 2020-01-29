@@ -17,6 +17,7 @@ import 'model.dart';
 import 'detail_index.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
+
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isDelete;

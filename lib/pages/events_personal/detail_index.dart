@@ -16,6 +16,8 @@ import 'model.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 bool isLoading, isError, isDelete;
 String tokenType, accessToken;
 String jumlahongoingX, jumlahwillcomeX, jumlahdoneeventX;
@@ -192,7 +194,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
