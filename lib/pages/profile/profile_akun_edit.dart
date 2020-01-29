@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -191,7 +192,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
              iconTheme: IconThemeData(
                 color: Colors.white,
               ),
-             backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+             backgroundColor: primaryAppBarColor,
              elevation: 0.0,
            ),
            body:SingleChildScrollView(
@@ -200,7 +201,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                   Container(
                     height: 200,
                     width: double.infinity,
-                    color: Color.fromRGBO(41, 30, 47, 1),
+                    color: primaryAppBarColor,
                   ),
                   Container(
                       child: Column(
@@ -328,8 +329,8 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
                                         onPressed: (){
                                           editData();
                                         },
-                                        color: load ? Colors.brown:Color.fromRGBO(41, 30, 47, 1),
-                                        child: Text( load ? "menyimpan...":"Save",
+                                        color: load ? Colors.green[100]:Colors.green,
+                                        child: Text( load ? "menyimpan...":"Simpan",
                                            style:TextStyle(
                                              color: Colors.white
                                            )

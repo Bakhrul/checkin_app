@@ -1,4 +1,5 @@
 import 'package:checkin_app/pages/event_following/detail.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
@@ -720,8 +721,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                 child: RaisedButton(
                                   color:
                                       categoryNow == listkategoriEvent[index].id
-                                          ? Color.fromRGBO(41, 30, 47, 1)
-                                          : Colors.white,
+                                          ? primaryAppBarColor
+                                          : Colors.grey[100],
                                   elevation: 0.0,
                                   highlightColor: Colors.transparent,
                                   highlightElevation: 0.0,
@@ -744,7 +745,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         color: categoryNow ==
                                                 listkategoriEvent[index].id
                                             ? Colors.white
-                                            : Color.fromRGBO(41, 30, 47, 1),
+                                            : Colors.black54,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -753,8 +754,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                       side: BorderSide(
                                         color: listkategoriEvent[index].color ==
                                                 true
-                                            ? Color.fromRGBO(41, 30, 47, 1)
-                                            : Color.fromRGBO(41, 30, 47, 1),
+                                            ? Colors.transparent
+                                            : Colors.transparent,
                                       )),
                                 ),
                               ));
@@ -1388,7 +1389,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         IconButton(
           icon: actionIcon,

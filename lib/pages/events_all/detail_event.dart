@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:checkin_app/model/search_event.dart';
 import 'package:checkin_app/pages/events_all/model.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
@@ -154,7 +155,7 @@ class _RegisterEvent extends State<RegisterEvents> {
             fontSize: 16,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -720,7 +721,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                             width: double.infinity,
                                             child: RaisedButton(
                                               color:
-                                                  Color.fromRGBO(41, 30, 47, 1),
+                                                  primaryAppBarColor,
                                               textColor: Colors.white,
                                               disabledColor: Colors.green[400],
                                               disabledTextColor: Colors.white,

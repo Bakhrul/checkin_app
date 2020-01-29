@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/rendering.dart';
@@ -136,7 +137,7 @@ class _WaitingEvent extends State<WaitingEvent> {
               fontSize: 16,
             ),
           ),
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
         ),
         body: SingleChildScrollView(
             child: Stack(
@@ -179,7 +180,7 @@ class _WaitingEvent extends State<WaitingEvent> {
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
-                                color: Color.fromRGBO(54, 55, 84, 1),
+                                color: Colors.green,
                                 child: _isLoadingReminder == true
                                     ? Container(
                                         height: 25.0,

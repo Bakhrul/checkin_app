@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import 'register.dart';
@@ -329,7 +330,7 @@ class _LoginPageState extends State<LoginPage> {
     final loginButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(3.0),
-      color: Color.fromRGBO(54, 55, 84, 1),
+      color: primaryAppBarColor,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -620,7 +621,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           'Daftar Sekarang',
                           style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 102, 1),
+                            color: primaryAppBarColor,
                           ),
                         ),
                         color: Colors.white,

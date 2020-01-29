@@ -497,7 +497,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         gradient: LinearGradient(
                                           begin:Alignment.topLeft,
                                           end:Alignment.bottomRight,
-                                          colors: [Colors.white, Colors.orange]
+                                          colors: [Colors.white,Colors.grey[50]]
                                         )
                                         
                                       ),
@@ -781,7 +781,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         gradient: LinearGradient(
                                           begin:Alignment.topLeft,
                                           end:Alignment.bottomRight,
-                                          colors: [Colors.white, Colors.orange]
+                                          colors: [Colors.white,Colors.grey[50]]
                                         )
                                         
                                       ),
@@ -1066,7 +1066,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         gradient: LinearGradient(
                                           begin:Alignment.topLeft,
                                           end:Alignment.bottomRight,
-                                          colors: [Colors.white, Colors.orange]
+                                          colors: [Colors.white,Colors.grey[50]]
                                         )
                                         
                                       ),

@@ -1,5 +1,6 @@
 import 'package:checkin_app/model/search_event.dart';
 import 'package:checkin_app/pages/profile/model.dart';
+import 'package:checkin_app/utils/utils.dart';
 import '../events_all/detail_event.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -445,7 +446,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
         ),
         body: isLoading == true
             ? Center(
@@ -492,7 +493,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                     height: 200.0,
                                     padding: EdgeInsets.only(
                                         left: 40.0, right: 40.0),
-                                    color: Color.fromRGBO(41, 30, 47, 1),
+                                    color: primaryAppBarColor,
                                   ),
                                   Center(
                                     child: Padding(
@@ -771,7 +772,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           top: 10.0,
-                                                          bottom: 10.0),
+                                                          bottom: 5.0),
                                                   child: Text(
                                                     'Sedang Berlangsung',
                                                     style: TextStyle(

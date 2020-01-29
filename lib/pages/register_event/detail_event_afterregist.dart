@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -26,7 +27,7 @@ class _AfterRegisterEvents extends State<AfterRegisterEvents> {
             fontSize: 16,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body: SingleChildScrollView(
           child:Column(children: <Widget>[

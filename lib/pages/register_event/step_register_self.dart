@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'step_register_three.dart';
 import 'package:http/http.dart' as http;
@@ -109,7 +110,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
             fontSize: 16,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body:SingleChildScrollView(
         child: Container(
@@ -323,7 +324,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     margin: EdgeInsets.only(top:20,bottom:20,left:15,right:15),
                     width: double.infinity,
                     child:RaisedButton(
-                      color: Colors.black,
+                      color: Colors.green,
                       padding: EdgeInsets.all(15.0),
                       child:Text(_isLoading ? 'Mengirim Data....':'Selanjutnya',style:TextStyle(
                         color:Colors.white

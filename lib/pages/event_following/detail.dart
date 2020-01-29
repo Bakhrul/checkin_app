@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 GlobalKey<ScaffoldState> _scaffoldKeyEventDetail;
@@ -31,7 +32,7 @@ class _ManajemenEventDetailFollowingState
       key: _scaffoldKeyEventDetail,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         title: Text(
           "Detail History Event",
           style: TextStyle(

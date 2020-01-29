@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'step_register_self.dart';
 import 'step_register_someone.dart';
@@ -35,7 +36,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
             fontSize: 16,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body:SingleChildScrollView(
         child:Stack(
@@ -73,7 +74,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                       Container(
                         width: double.infinity,
                         child:RaisedButton(
-                              color:Color.fromRGBO(54, 55, 84, 1),
+                              color:Colors.green,
                               child:Text("Daftar Untuk Sendiri",style:TextStyle(
                                 color:Colors.white
                               )),

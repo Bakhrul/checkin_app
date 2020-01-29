@@ -554,13 +554,15 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                             child: Text(
                               x['c_name'] == null ? 'memuat':x['c_name'],
                               style: TextStyle(
-                                  color: categoryNow == x['c_id'] ? Colors.white:Color.fromRGBO(41, 30, 47, 1),
+                                  color: categoryNow == x['c_id'] 
+                                  ? Colors.white
+                                  : Colors.black54,
                                   fontWeight: FontWeight.w500),
                             ),
                             shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(
-                                  color: Color.fromRGBO(254, 86, 14,1),
+                                  color: Colors.transparent,
                                 )),
                           ),
                         )),

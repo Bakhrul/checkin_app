@@ -1,4 +1,5 @@
 import 'package:checkin_app/auth/login.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'login.dart';
@@ -187,7 +188,7 @@ class _Register extends State<Register> {
     final loginButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(3.0),
-      color: Color.fromRGBO(54, 55, 84, 1),
+      color: primaryAppBarColor,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -320,7 +321,7 @@ class _Register extends State<Register> {
                     width: double.infinity,
                     child: RaisedButton(
                       color: Colors.white,
-                      textColor: Color.fromRGBO(41, 30, 47, 1),
+                      textColor: primaryAppBarColor,
                       disabledColor: Colors.green[400],
                       disabledTextColor: Colors.white,
                       padding: EdgeInsets.all(15.0),
