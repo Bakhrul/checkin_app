@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:checkin_app/utils/utils.dart';
 
 var datepicker;
 
@@ -141,7 +142,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       backgroundColor: Colors.white,
       // key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -232,7 +233,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           postDataCheckin();
         },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ) 
       :  Align(
           alignment: FractionalOffset.bottomCenter,

@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:qrcode/qrcode.dart';
 import 'checkin_qrcode.dart';
@@ -112,7 +113,7 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body: Stack(
         alignment: Alignment.center,

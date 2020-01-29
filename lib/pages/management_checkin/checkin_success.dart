@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:checkin_app/dashboard.dart';
@@ -27,7 +28,7 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
               fontSize: 16,
             ),
           ),
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
         ),
         body: SingleChildScrollView(
             child: Stack(

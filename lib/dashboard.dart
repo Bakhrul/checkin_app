@@ -1,4 +1,5 @@
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -520,7 +521,7 @@ class _DashboardState extends State<Dashboard> {
                       accountName: Text(usernameprofile),
                       accountEmail: Text(emailprofile),
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(41, 30, 47, 1),
+                        color: primaryAppBarColor,
                       ),
                       currentAccountPicture: CircleAvatar(
                         backgroundColor: Colors.white,
@@ -694,8 +695,8 @@ class _DashboardState extends State<Dashboard> {
                           height: 0,
                           child: RaisedButton(
                             color: categoryNow == x['index']
-                                ? Color.fromRGBO(41, 30, 47, 1)
-                                : Colors.transparent,
+                                ? primaryAppBarColor
+                                : Colors.grey[100],
                             elevation: 0.0,
                             highlightColor: Colors.transparent,
                             highlightElevation: 0.0,
@@ -716,13 +717,13 @@ class _DashboardState extends State<Dashboard> {
                               style: TextStyle(
                                   color: categoryNow == x['index']
                                       ? Colors.white
-                                      : Color.fromRGBO(41, 30, 47, 1),
+                                      : Colors.black54,
                                   fontWeight: FontWeight.w500),
                             ),
                             shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(
-                                  color: Color.fromRGBO(41, 30, 47, 1),
+                                  color: Colors.transparent,
                                 )),
                           ),
                         )),
@@ -1906,7 +1907,7 @@ class _DashboardState extends State<Dashboard> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         new Stack(
           children: <Widget>[
@@ -1923,7 +1924,7 @@ class _DashboardState extends State<Dashboard> {
                 alignment: Alignment.center,
                 width: 20.0,
                 decoration: new BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.yellow,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 constraints: BoxConstraints(),
@@ -1932,7 +1933,7 @@ class _DashboardState extends State<Dashboard> {
                       ? '0'
                       : jumlahnotifX,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 8,
                   ),
                   textAlign: TextAlign.center,

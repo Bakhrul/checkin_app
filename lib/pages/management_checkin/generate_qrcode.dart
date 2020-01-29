@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -60,7 +61,7 @@ class GenerateScreenState extends State<GenerateScreen> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
       ),
       body: _contentWidget(),
     );
@@ -94,11 +95,11 @@ class GenerateScreenState extends State<GenerateScreen> {
                   Container(
                     width: double.infinity,
                     child: FlatButton(
-                      color: Colors.orange,
+                      color: Colors.blue,
                       onPressed: () {
                         _saveScreen();
                       },
-                      child: Text("Unduh",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                      child: Text("Unduh",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                     ),
                   ),
                   Container(

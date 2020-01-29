@@ -6,6 +6,7 @@ import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
@@ -104,7 +105,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           startTime: response[i]["start_time"],
           endTime: response[i]["end_time"],
           checkinDate: response[i]["checkin_date"],
+          totalUsers: response[i]["total_users"],
         );
+
         listCheckin.add(checkin);
       }
       setState(() {
@@ -125,9 +128,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       isLoading = true;
     });
     try {
+
       dynamic body = {
         "peserta": id.toString(),
         "event": eventId.toString(),
+        
       };
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
@@ -246,17 +251,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
           actions: <Widget>[
-            // new IconButton(
-            //   icon: new Icon(Icons.notifications_none),
-            //   tooltip: 'Air it',
-            //   onPressed: () {
-            //     Navigator.push(context,
-            //         MaterialPageRoute(builder: (context) => ListApproval()));
-            //   },
-            // ),
+            
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -277,6 +275,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                     margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
+                      // border: Color.fromRGBO(r, g, b, opacity),
                       borderRadius: BorderRadius.all(Radius.circular(25.0)),
                     ),
                     // child: TextField(
@@ -495,7 +494,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                           title:
                                                               Text("Warning"),
                                                           content: Text(
-                                                              "Are you sure want to delete data?"),
+                                                              "Apakah Anda Yakin Akan Menghapus Checkin ini?"),
                                                           actions: <Widget>[
                                                             FlatButton(
                                                               child:
@@ -533,10 +532,11 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                 value: PageEnum.detailCheckin,
                                                 child: Text("Detail Checkin"),
                                               ),
+                                              data.totalUsers < 1 ?
                                               PopupMenuItem(
                                                 value: PageEnum.deleteCheckin,
                                                 child: Text("Delete"),
-                                              )
+                                              ) : null
                                             ],
                                           ),
                                           subtitle: Text(DateFormat('HH:mm:dd')
@@ -560,7 +560,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     );
   }
 
-  Widget _deleteCheckin() {}
+
 
   Widget _bottomButtons() {
     return _tabController.index == 1
@@ -575,7 +575,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                             ChoiceCheckin(idevent: widget.idevent),
                       ));
                 },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                backgroundColor: Color.fromRGBO(254, 86, 14, 1),
                 child: Icon(
                   Icons.add,
                   size: 20.0,
@@ -591,7 +591,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                             CreateParticipant(idevent: widget.idevent),
                       ));
                 },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                backgroundColor: Color.fromRGBO(254, 86, 14, 1),
                 child: Icon(
                   Icons.add,
                   size: 20.0,
