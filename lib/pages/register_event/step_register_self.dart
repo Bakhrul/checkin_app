@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'step_register_three.dart';
@@ -25,6 +27,10 @@ class ConfirmEvent extends StatefulWidget{
 class _ConfirmEvent extends State<ConfirmEvent> {
 
   bool _isLoading = false;
+  // final emailController = TextEditingController();
+  // final addressController = TextEditingController();
+  // final numberPhoneController = TextEditingController();
+  // final nameController = TextEditingController();
 
   @override
   void initState(){
@@ -38,6 +44,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
       _isLoading = true;
     });
 
+
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
@@ -47,7 +54,14 @@ class _ConfirmEvent extends State<ConfirmEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'event_id':widget.id.toString(),'creator_id':widget.creatorId.toString(),'position':'3','status':'P'};
+    Map<String, dynamic> body = {
+      'event_id':widget.id.toString(),
+      'creator_id':widget.creatorId.toString(),
+      'email': widget.dataUser['us_email'],
+      // 'email':emailController.text.toString(),
+      // 'namalengkap':nameController.text.toString(),
+      'position':'3',
+      'status':'P'};
 
   try{
     final ongoingevent = await http.post(
@@ -56,7 +70,9 @@ class _ConfirmEvent extends State<ConfirmEvent> {
         body:body
       );
       
-
+    var datasToJson = json.decode(ongoingevent.body);
+    String idUser = datasToJson['data']['user_id'].toString();
+       
      if (ongoingevent.statusCode == 200) {
      setState((){
         _isLoading = false;
@@ -67,7 +83,8 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                           builder: (context) => WaitingEvent(
                             id:widget.id,
                             creatorId:widget.creatorId,
-                            selfEvent: false
+                            selfEvent: false,
+                            userId: idUser,
                           ),
                         ));
     }else if(ongoingevent.statusCode == 401){
@@ -92,7 +109,19 @@ class _ConfirmEvent extends State<ConfirmEvent> {
         _isLoading = false;
       });
   }
+
+  
   }
+
+  // @override
+  // void dispose() {
+  //   // Clean up the controller when the widget is disposed.
+  //   emailController.dispose();
+  //   addressController.dispose();
+  //   numberPhoneController.dispose();
+  //   nameController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context){
@@ -136,6 +165,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                           margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
                           child:TextFormField(
                             enabled: false,
+                            // controller: nameController,
                             initialValue: widget.dataUser['us_name'],
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
@@ -195,6 +225,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     margin: EdgeInsets.only(top:5,bottom:5,left:15,right:15),
                     child:TextFormField(
                       initialValue: widget.dataUser['us_email'],
+                      // controller: emailController,
                       enabled: false,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
@@ -223,6 +254,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     child:TextFormField(
                       initialValue: widget.dataUser['us_location'],
                       enabled: false,
+                      // controller: addressController,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),
                         border: OutlineInputBorder(),
@@ -250,6 +282,7 @@ class _ConfirmEvent extends State<ConfirmEvent> {
                     child:TextFormField(
                       initialValue: widget.dataUser['us_phone'],
                       enabled: false,
+                      // controller: numberPhoneController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top:5,bottom:5,left:10,right:10),

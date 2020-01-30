@@ -99,10 +99,14 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.black
                               )),
                               onPressed: (){
-                                 Navigator.push(
+                                  Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ConfirmEventGuest(),
+                          builder: (context) => ConfirmEventGuest(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
                         ));
                               }
                             )

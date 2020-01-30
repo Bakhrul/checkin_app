@@ -12,10 +12,11 @@ String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 
 class WaitingEvent extends StatefulWidget {
-  WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent})
+  WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent,this.userId})
       : super(key: key);
   final int id;
   final String creatorId;
+  final String userId;
   final bool selfEvent;
   State<StatefulWidget> createState() {
     return _WaitingEvent();
@@ -38,8 +39,8 @@ class _WaitingEvent extends State<WaitingEvent> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-
-    Map body = {'event_id': widget.id.toString()};
+    print("ID"+widget.userId.toString());
+    Map body = {'event_id': widget.id.toString(),'user_id' : widget.userId.toString()};
 
     try {
       final ongoingevent = await http.post(url('api/event/cancelregisterevent'),

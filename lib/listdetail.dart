@@ -1,6 +1,7 @@
 import 'package:checkin_app/pages/events_all/detail_event.dart';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
@@ -829,7 +830,7 @@ class _DetailListState extends State<DetailList> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         // IconButton(
         //   icon: actionIcon,
