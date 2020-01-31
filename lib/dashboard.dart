@@ -23,7 +23,7 @@ import 'dart:core';
 import 'dart:io';
 
 bool wishlistone, wishlisttwo, wishlistthree, wishlistfour, wishlistfive;
-bool isLoading, isError;
+bool isLoading, isError,isLoadingCategory;
 String emailStore, imageStore, namaStore, phoneStore, locationStore;
 String tokenType, accessToken;
 String jumlahnotifX;
@@ -87,6 +87,7 @@ class _DashboardState extends State<Dashboard> {
     wishlistthree = true;
     wishlistfive = true;
     isLoading = true;
+    isLoadingCategory=true;
     isError = false;
   }
 
@@ -378,6 +379,7 @@ class _DashboardState extends State<Dashboard> {
         }
 
         setState(() {
+          isLoadingCategory =false;
           isLoading = false;
           isError = false;
         });
@@ -387,12 +389,14 @@ class _DashboardState extends State<Dashboard> {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
         setState(() {
+          isLoadingCategory =false;
           isLoading = false;
           isError = true;
         });
       } else {
         print(eventList.body);
         setState(() {
+          isLoadingCategory =false;
           isLoading = false;
           isError = true;
         });
@@ -400,12 +404,14 @@ class _DashboardState extends State<Dashboard> {
       }
     } on TimeoutException catch (_) {
       setState(() {
+        isLoadingCategory =false;
         isLoading = false;
         isError = true;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
+        isLoadingCategory =false;
         isLoading = false;
         isError = true;
       });
@@ -574,7 +580,6 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.pushNamed(context, "/personal_event");
                               },
                             ),
-                            
                             ListTile(
                               title: Text(
                                 'Event Yang di Ikuti',
@@ -679,7 +684,36 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            
+          isLoadingCategory != false 
+          ?
+          Column(
+              children: <Widget>[
+                Container(
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300],
+                            highlightColor: Colors.grey[100],
+                            child: Row(
+                              children: [0, 1, 2, 3, 4]
+                                  .map((_) => Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)),
+                                        ),
+                                        margin: EdgeInsets.only(right: 15.0),
+                                        width: 120.0,
+                                        height: 20.0,
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        )))]) 
+          :
             Container(
               margin: EdgeInsets.only(left: 10.0),
               child: SingleChildScrollView(
@@ -730,10 +764,9 @@ class _DashboardState extends State<Dashboard> {
             ),
             SafeArea(
               child: isLoading == true
-                  ? Container(
-                      child: listLoading()
+                  ? Container(child: listLoading()
                       // size: 50.0,
-                    )
+                      )
                   : isError == true
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -2298,192 +2331,82 @@ class _DashboardState extends State<Dashboard> {
     }));
   }
 
-  Widget listLoading()
-  {
-
-    // Container(
-    //   padding: EdgeInsets.only(
-    //       left: 10.0,
-    //       right: 10.0,
-    //       top: 15.0,
-    //       bottom: 0.0),
-    //   child: Divider(),
-    // ),
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Column(children: <Widget>[
-//
-        InkWell(
-            onTap: () async {
-            },
+  Widget listLoading() {
+    return Container(
+        margin: EdgeInsets.only(top: 20.0),
+        child: SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.only(bottom: 10.0),
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 10.0,
-                    right: 10.0,
-                    top: 5.0,
-                    bottom: 5.0),
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 50,
-                      height: 14,
-                    child:Shimmer.fromColors(
-                      baseColor: Colors.grey[100],
-                      highlightColor: Colors.grey[300],
-                      child:Card(
-                        
-                      )
-                     
-
-                    ),
-                    )
-                    
-                  ],
-                ),
-              ),
-            )),
-        Container(
-          margin: EdgeInsets.only(
-            top: 0.0,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: listCreator
-                .map((Event item) => InkWell(
-                    child: Container(
-                        margin: EdgeInsets.only(
-                            top: 5.0,
-                            bottom: 5.0,
-                            left: 5.0,
-                            right: 5.0),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300],
+            highlightColor: Colors.grey[100],
+            child: Column(
+              children: [0, 1,2,3,4]
+                  .map((_) => Padding(
+                        padding: const EdgeInsets.only(bottom: 25.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Card(
-                              elevation: 1,
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets
-                                            .all(10.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .start,
-                                      children: <Widget>[
-                                        Expanded(
-                                          flex: 5,
-                                            child : Container(
-                                            height: 80.0,
-                                            width: 80.0,
-                                            child:SizedBox(
-                                              child: Shimmer.fromColors(
-                                              baseColor: Colors.grey[100],
-                                              highlightColor: Colors.grey[300], child: Card(),
-                                                
-                                              ),
-                                            ),  
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 7,
-                                          child: Padding(
-                                            padding: const EdgeInsets
-                                                    .only(
-                                                left:
-                                                    15.0,
-                                                right:
-                                                    5.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                              children: <
-                                                  Widget>[
-                                                
-                                                Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top:
-                                                          5.0,
-                                                      right:
-                                                          5.0),
-                                                  child:
-                                                      Text(
-                                                    "${item.location}",
-                                                    style:
-                                                        TextStyle(
-                                                      color:
-                                                          Colors.grey,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    softWrap:
-                                                        true,
-                                                    maxLines:
-                                                        2,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            Container(
+                                  width: 150.0,
+                                  height: 13.0,
+                                  color: Colors.white,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 120.0,
+                                  height: 70.0,
+                                  color: Colors.white,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8.0),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0),
+                                      ),
+                                      Container(
+                                        width: 40.0,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                    ],
                                   ),
-                                  Column(
-                                      children: <Widget>[
-                                        Container(
-                                            padding: EdgeInsets.only(
-                                                left:
-                                                    10.0,
-                                                right:
-                                                    10.0),
-                                            child:
-                                                Divider()),
-                                      ])
-                                ],
-                              ),
+                                )
+                              ],
                             ),
                           ],
-                        )),
-                    onTap: () async {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DashboardCheckin(
-                                    idevent: item.id
-                                        .toString()),
-                          ));
-                    }))
-                .toList(),
+                        ),
+                      ))
+                  .toList(),
+            ),
           ),
-        ),
-        listCreator.length == 5
-            ? Container(
-                height: height,
-                child: FlatButton(
-                  onPressed: () async {
-                    linkToPageDetail(types, 'creator');
-                  },
-                  color: Colors.transparent,
-                  textColor: Colors.black,
-                  child: Text('Lihat Semua'),
-                ),
-              )
-            : Container(),
-      ]),
-    );
+        )));
   }
 }
