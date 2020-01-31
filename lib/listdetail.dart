@@ -741,6 +741,7 @@ class _DetailListState extends State<DetailList> {
                                           return WaitingEvent(
                                             id:_event[x].id,
                                             creatorId:_event[x].userEvent,
+                                            dataUser: dataUser,
                                             selfEvent: userId == _event[x].userEvent ? true:false,
                                           );
                                           break;

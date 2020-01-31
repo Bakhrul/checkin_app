@@ -1242,6 +1242,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               true,
                                                                           creatorId:
                                                                               item.idcreator,
+                                                                              dataUser:
+                                                                    dataUser,
                                                                         ),
                                                                       ));
                                                                 } else {}

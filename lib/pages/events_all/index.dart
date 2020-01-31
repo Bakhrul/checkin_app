@@ -984,6 +984,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                               creatorId: _event[
                                                                       x]
                                                                   .userEvent,
+                                                              dataUser:
+                                                                    dataUser,
                                                               selfEvent: userId ==
                                                                       _event[x]
                                                                           .userEvent

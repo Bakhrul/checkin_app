@@ -41,12 +41,6 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
       body:SingleChildScrollView(
         child:Stack(
           children: <Widget>[
-            // Positioned.fill(  //
-            //     child: Image(
-            //       image: AssetImage('images/party.jpg'),
-            //       fit : BoxFit.,
-            //   )
-            // ),
             Column(
               children: <Widget>[
                 Container(
