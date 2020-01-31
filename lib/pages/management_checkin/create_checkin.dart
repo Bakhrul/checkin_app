@@ -93,9 +93,10 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       _isLoading =false;
       var codeQr = response['checkin'];
       var eventName = response['event'];
+      var checkinCode = response['keyword'];
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) =>
-              GenerateScreen(idEvent: widget.idevent,codeQr: codeQr,eventName: eventName)));
+              GenerateScreen(idEvent: widget.idevent,codeQr: codeQr,eventName: eventName, checkinKeyword: checkinCode)));
     }else if(response == "tanggal kurang"){
       _isLoading =false;
        Fluttertoast.showToast(
@@ -140,14 +141,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyHeight = MediaQuery
-        .of(context)
-        .size
-        .height -
-        MediaQuery
-            .of(context)
-            .viewInsets
-            .bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       // key: _scaffoldKeycreatecheckin,
@@ -184,13 +177,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                               fontSize: 13, color: Colors.black)),
                     ),
                   )),
-              // Card(
-              //     child: ListTile(
-              //         leading: Icon(
-              //           Icons.date_range,
-              //           color: Color.fromRGBO(41, 30, 47, 1),
-              //         ),
-              //         title: _buildTextFieldDateCheckin())),
               Card(
                   child: ListTile(
                       leading: Icon(
@@ -211,17 +197,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       Icons.create,
                       color: Color.fromRGBO(41, 30, 47, 1),
                     ),
-                    // trailing: FlatButton(
-                    //   child: Text("SUBMIT"),
-                    //   textColor: Colors.green,
-                    //   color: Color.fromRGBO(220, 237, 193, 99),
-                    //   onPressed: () {
-                    //     setState(() {
-                    //       randomNumberGenerator();
-                    //       _inputErrorText = null;
-                    //     });
-                    //   },
-                    // ),
                     title: TextField(
                       controller: _controllerGenerate,
                       decoration: InputDecoration(
@@ -237,10 +212,38 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         ),
       ),
       floatingActionButton: _isLoading == false ? FloatingActionButton(
-        onPressed: () {
+        onPressed: _isLoading == true ? null : () {
+
           setState(() => _isLoading = true);
-          randomNumberGenerator();
-          postDataCheckin();
+          if(_controllerSessionname.text == '' || _controllerSessionname.text == null){
+            Fluttertoast.showToast(
+            msg: "Nama sesi tidak boleh kosong");
+          setState(() {
+            _isLoading = false;
+          });
+          }else if(_controllerTimeStart.text == '' || _controllerTimeStart.text == null){
+            Fluttertoast.showToast(
+            msg: "Tanggal berlangsungnya checkin tidak boleh kosong");
+            setState(() {
+            _isLoading = false;
+          });
+          }else if(_controllerTimeEnd.text == '' || _controllerTimeEnd.text == null){
+            Fluttertoast.showToast(
+            msg: "Tanggal berakhirnya checkin tidak boleh kosong");
+            setState(() {
+            _isLoading = false;
+          });
+          }else if(_controllerGenerate.text == '' || _controllerGenerate.text == null){
+            Fluttertoast.showToast(
+            msg: "Keyword checkin tidak boleh kosong");
+            setState(() {
+            _isLoading = false;
+          });
+          }else{
+            randomNumberGenerator();
+            postDataCheckin();
+          }
+          
         },
         child: Icon(Icons.check),
         backgroundColor: primaryAppBarColor,
@@ -363,18 +366,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 //    final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
 //    print(result);
 //  }
-
-  _saveScreen() async {
-    RenderRepaintBoundary boundary =
-    globalKey.currentContext.findRenderObject(
-
-    );
-    ui.Image image = await boundary.toImage(pixelRatio: 3.0 );
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png );
-
-    final result = await ImageGallerySaver.saveImage(Uint8List.view(byteData.buffer));
-    print(result);
-  }
 
 }
 

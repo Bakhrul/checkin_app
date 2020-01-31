@@ -221,7 +221,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                               height: 300.0,
                               padding: EdgeInsets.only(top: offset),
                               child: FadeInImage.assetNetwork(
-                                placeholder: 'images/noimage.jpg',
+                                placeholder: 'images/loading-event.png',
                                 image: dataEvent.image == null ||
                                         dataEvent.image == '' ||
                                         dataEvent.image == 'null'

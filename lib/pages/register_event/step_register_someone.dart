@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'step_register_three.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:email_validator/email_validator.dart';
 
 class ConfirmEventGuest extends StatefulWidget {
   ConfirmEventGuest({Key key, this.id, this.creatorId, this.dataUser})
@@ -59,7 +60,8 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
       'alamat': addressController.text.toString(),
       'nohp': phoneController.text.toString(),
       'position': '3',
-      'status': 'P'
+      'status': 'P',
+      'type' : 'someone',
     };
 
     try {
@@ -67,21 +69,30 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
           headers: requestHeaders, body: body);
 
       if (ongoingevent.statusCode == 200) {
+        
         setState(() {
           _isLoading = false;
         });
+        
         var datasToJson = json.decode(ongoingevent.body);
-        String idUser = datasToJson['data']['user_id'].toString();
-       
-        return Navigator.pushReplacement(
+        if(datasToJson['status'] == 'success'){
+            String idUser = datasToJson['user_id'].toString();
+            return Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => WaitingEvent(
-                  id: widget.id, creatorId: widget.creatorId, selfEvent: false, userId: idUser),
+                  id: widget.id, creatorId: widget.creatorId, selfEvent: false, userId: idUser, type: 'someone',dataUser: widget.dataUser,),
             ));
+        }else if(datasToJson['status'] == 'emailsudahada'){
+          Fluttertoast.showToast(msg: 'Email Sudah digunakan, mohon gunakan email lainnya');
+
+        }else if(datasToJson['status'] == 'emailsendiri'){
+          Fluttertoast.showToast(msg: 'Mohon gunakan menu daftar untuk diri sendiri');
+        }
+        
       } else if (ongoingevent.statusCode == 401) {
-        // print(widget.id.toString()+widget.creatorId.toString()+)
         Fluttertoast.showToast(msg: 'Gagal mendaftar');
+        print(ongoingevent.body);
         setState(() {
           _isLoading = false;
         });
@@ -90,6 +101,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
         setState(() {
           _isLoading = false;
         });
+        print(ongoingevent.body);
       }
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(msg: 'Time out, silahkan coba lagi nanti');
@@ -143,7 +155,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                             right: 15),
                                         child: Text("Nama Depan",
                                             style: TextStyle(
-                                              fontSize: 17,
+                                              fontSize: 14,
                                             ))),
                                     Container(
                                         margin: EdgeInsets.only(
@@ -180,7 +192,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                             right: 7),
                                         child: Text("Nama Belakang",
                                             style: TextStyle(
-                                              fontSize: 17,
+                                              fontSize: 14,
                                             ))),
                                     Container(
                                         margin: EdgeInsets.only(
@@ -213,9 +225,9 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                             Container(
                                 margin: EdgeInsets.only(
                                     top: 5, bottom: 5, left: 15, right: 15),
-                                child: Text("Alamat",
+                                child: Text("Alamat Lenkap",
                                     style: TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 14,
                                     ))),
                             Container(
                                 margin: EdgeInsets.only(
@@ -242,7 +254,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                     top: 5, bottom: 5, left: 15, right: 15),
                                 child: Text("Email",
                                     style: TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 14,
                                     ))),
                             Container(
                                 margin: EdgeInsets.only(
@@ -269,12 +281,13 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                     top: 5, bottom: 5, left: 15, right: 15),
                                 child: Text("No Telp",
                                     style: TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 14,
                                     ))),
                             Container(
                                 margin: EdgeInsets.only(
                                     top: 5, bottom: 5, left: 15, right: 15),
                                 child: TextFormField(
+                                  keyboardType: TextInputType.number,
                                   enabled: true,
                                   controller: phoneController,
                                   decoration: InputDecoration(
@@ -291,76 +304,65 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            // Container(
-                            //     margin: EdgeInsets.only(
-                            //         top: 5, bottom: 5, left: 15, right: 15),
-                            //     child: Text("Kategory",
-                            //         style: TextStyle(
-                            //           fontSize: 17,
-                            //         ))),
-                            // Container(
-                            //     margin: EdgeInsets.only(
-                            //         top: 5, bottom: 5, left: 15, right: 15),
-                            //     padding: EdgeInsets.only(left: 10, right: 10),
-                            //     decoration: BoxDecoration(
-                            //         color: Colors.white,
-                            //         border: Border.all(
-                            //             color: Color.fromRGBO(195, 195, 195, 1),
-                            //             width: 1),
-                            //         borderRadius: BorderRadius.circular(5.0)),
-                            //     child: DropdownButtonHideUnderline(
-                            //         child: DropdownButton(
-                            //             value: _valueCombo,
-                            //             isExpanded: true,
-                            //             items: _comboBox.map((val) {
-                            //               return new DropdownMenuItem(
-                            //                   value: val['value'],
-                            //                   child: new Text(val['name']));
-                            //             }).toList(),
-                            //             onChanged: (value) {
-                            //               setState(() {
-                            //                 _valueCombo = value;
-                            //               });
-                            //             }))),
-                            Container(
-                                margin: EdgeInsets.only(
-                                    top: 5, bottom: 5, left: 15, right: 15),
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _check = !_check;
-                                    });
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Checkbox(
-                                        value: _check,
-                                        onChanged: (bool value) {
-                                          setState(() {
-                                            _check = !_check;
-                                          });
-                                        },
-                                      ),
-                                      Expanded(
-                                          child: Text(
-                                              "Saya Menyetujui ketentuan & Syarat yang berlaku"))
-                                    ],
-                                  ),
-                                )),
                             Container(
                                 margin: EdgeInsets.only(
                                     top: 20, bottom: 20, left: 15, right: 15),
                                 width: double.infinity,
                                 child: RaisedButton(
                                     color: Colors.green,
+                                    disabledColor: Colors.green[400],
                                     padding: EdgeInsets.all(15.0),
-                                    child: Text(
-                                        _isLoading
-                                            ? 'Mengirim Data....'
-                                            : 'Selanjutnya',
-                                        style: TextStyle(color: Colors.white)),
-                                    onPressed: () {
-                                      postRegister();
+                                    child: _isLoading == true
+                                        ? Container(
+                                            height: 25.0,
+                                            width: 25.0,
+                                            child: CircularProgressIndicator(
+                                                valueColor:
+                                                    new AlwaysStoppedAnimation<
+                                                        Color>(Colors.white)))
+                                        : Text('Selanjutnya',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                    onPressed: _isLoading == true ? null :  () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                       String emailValid = emailController.text;
+                                       final bool isValid = EmailValidator.validate(emailValid);
+                                      if(firstNameController.text == '' || firstNameController.text == null){
+                                        Fluttertoast.showToast(msg: 'Nama depan tidak boleh kosong');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }else if(lastNameController.text == '' || lastNameController.text == null){
+                                        Fluttertoast.showToast(msg: 'Nama belakang tidak boleh kosong');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }else if(addressController.text == '' || addressController.text == null){
+                                        Fluttertoast.showToast(msg: 'Alamat lengkap tidak boleh kosong');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }else if(emailController.text == '' || emailController.text == null){
+                                        Fluttertoast.showToast(msg: 'Email tidak boleh kosong');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }else if(!isValid){
+                                        Fluttertoast.showToast(msg: 'Masukkan email yang valid');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                      else if(phoneController.text == '' || phoneController.text == null){
+                                        Fluttertoast.showToast(msg: 'No. Telp tidak boleh kosong');
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }else{
+                                        postRegister();
+                                      }
                                     }))
                           ],
                         ))

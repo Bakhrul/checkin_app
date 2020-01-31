@@ -7,25 +7,30 @@ import 'package:flutter/rendering.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
+import 'step_register_someone.dart';
 
 String tokenType, accessToken;
+String typePrimary, userPrimary;
 Map<String, String> requestHeaders = Map();
 
 class WaitingEvent extends StatefulWidget {
-  WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent,this.userId})
+  WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent,this.userId, this.type, this.dataUser})
       : super(key: key);
   final int id;
+  final Map dataUser;
+  String type;
   final String creatorId;
   final String userId;
   final bool selfEvent;
   State<StatefulWidget> createState() {
-    return _WaitingEvent();
+    return _WaitingEventState();
   }
 }
 
-class _WaitingEvent extends State<WaitingEvent> {
+class _WaitingEventState extends State<WaitingEvent> {
   bool _isLoading = false;
   bool _isLoadingReminder = false;
+
   Future _cancelRegisterEvent() async {
     setState(() {
       _isLoading = true;
@@ -39,8 +44,7 @@ class _WaitingEvent extends State<WaitingEvent> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print("ID"+widget.userId.toString());
-    Map body = {'event_id': widget.id.toString(),'user_id' : widget.userId.toString()};
+    Map body = {'event_id': widget.id.toString(),'user_id' : userPrimary, 'type' :typePrimary};
 
     try {
       final ongoingevent = await http.post(url('api/event/cancelregisterevent'),
@@ -84,8 +88,7 @@ class _WaitingEvent extends State<WaitingEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map body = {'event': widget.id.toString()};
-
+    Map body = {'event': widget.id.toString(), 'type' :typePrimary, 'peserta' : userPrimary};
     try {
       final ongoingevent = await http.post(
           url('api/event/reminder_notifications'),
@@ -121,6 +124,12 @@ class _WaitingEvent extends State<WaitingEvent> {
       });
     }
   }
+  @override
+  void initState() {
+    super.initState();
+    typePrimary = widget.type == null || widget.type == '' ? 'self' : widget.type;
+    userPrimary = widget.type == null || widget.type == '' ? widget.dataUser['us_code'].toString() : widget.userId.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,12 +152,6 @@ class _WaitingEvent extends State<WaitingEvent> {
         body: SingleChildScrollView(
             child: Stack(
           children: <Widget>[
-            // Positioned.fill(  //
-            //     child: Image(
-            //       image: AssetImage('images/party.jpg'),
-            //       fit : BoxFit.,
-            //   )
-            // ),
             Column(
               children: <Widget>[
                 Container(
@@ -178,10 +181,32 @@ class _WaitingEvent extends State<WaitingEvent> {
                     width: double.infinity,
                     child: Column(
                       children: <Widget>[
+                         Container(
+                        width: double.infinity,
+                        child:RaisedButton(
+                              color:primaryButtonColor,
+                              textColor: Colors.white,
+                              child:Text("Daftarkan Orang Lain",style:TextStyle(
+                                color:Colors.white
+                              )),
+                              onPressed: (){
+                                  Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmEventGuest(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
+                        ));
+                              }
+                            )
+                      ),
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
                                 color: Colors.green,
+                                disabledColor: Colors.green[400],
                                 child: _isLoadingReminder == true
                                     ? Container(
                                         height: 25.0,
@@ -197,6 +222,9 @@ class _WaitingEvent extends State<WaitingEvent> {
                                     : () {
                                         _sendnotificationsevent();
                                       })),
+                        typePrimary == 'someone' ?
+                        Container()
+                        :
                         Container(
                             width: double.infinity,
                             child: RaisedButton(

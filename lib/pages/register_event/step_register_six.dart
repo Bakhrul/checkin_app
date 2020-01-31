@@ -7,7 +7,7 @@ import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../event_following/count_down.dart';
+import 'step_register_someone.dart';
 import 'package:checkin_app/pages/events_all/detail_event.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -50,6 +50,7 @@ Map<String, String> requestHeaders = Map();
     super.initState();
     _isValidDate = false;
     getHeaderHTTP();
+    
   }
 
   _setUndo() {
@@ -94,10 +95,9 @@ Map<String, String> requestHeaders = Map();
 
       var isValidDate = json.decode(eventList.body);
 
-      var timesEnd = isValidDate['time_end'];
+      var timesEnd = isValidDate['times_end'];
       var boolDate = isValidDate['bool'];
-      var timeStart = isValidDate['time_start'];
-
+      var timeStart = isValidDate['times_start'];
       setState(() {
          endTime = timesEnd.toString(); 
          startTime = timeStart.toString(); 
@@ -253,31 +253,41 @@ Map<String, String> requestHeaders = Map();
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
+                                color: Colors.white,
+                                child: Text("Daftarkan Orang Lain",
+                                    style: TextStyle(color: Colors.black)),
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ConfirmEventGuest(
+                                            id: widget.id,
+                                            creatorId: widget.creatorId,
+                                            dataUser: widget.dataUser),
+                                      ));
+                                })),
+                        Container(
+                            width: double.infinity,
+                            
+                            child: RaisedButton(
                                 color: Colors.indigo,
                                 child: Text("Checkin",
                                     style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
-                                  if(_isValidDate != true){
+                                  if (_isValidDate != true) {
                                     null;
                                   }else{
-
-                                  if (widget.checkin == 0) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CheckinManual(
-                                              
-                                              idevent: widget.id.toString()),
-                                        ));
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CountDown(),
-                                        ));
+ Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CheckinManual(
+                                            idevent: widget.id.toString(),
+                                            startTime: startTime,
+                                            endTime: endTime,),
+                                            
+                                      ));
                                   }
-                                  }
-
+                                 
                                 })),
                         Container(
                             width: double.infinity,

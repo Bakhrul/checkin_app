@@ -3,10 +3,10 @@ class UserParticipant {
   String name;
   String email;
   String position;
+  String status;
   String eventId;
   String picProfile;
   String userId;
-  String status;
   String participant;
   String userName;
   String eventName;

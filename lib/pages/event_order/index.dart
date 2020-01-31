@@ -370,7 +370,7 @@ class _EventOrder extends State<EventOrder> {
                           ),
                           child: Center(
                             child: Text(
-                              "Belum Ada Event Yang Terdaftar Di Akun Kamu,${listParticipant.length}",
+                              "Anda belum  mendaftarkan orang lain ke event",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black45,
