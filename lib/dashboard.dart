@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:ui';
 import 'listdetail.dart';
 import 'model/event.dart';
@@ -61,11 +62,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  // final GlobalKey<ScaffoldState> _scaffoldKeyDashboard =
-  //     GlobalKey<ScaffoldState>();
-  // final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  //     new GlobalKey<RefreshIndicatorState>();
-
   var height;
   var futureheight;
   var pastheight, heightmyevent;
@@ -578,6 +574,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.pushNamed(context, "/personal_event");
                               },
                             ),
+                            
                             ListTile(
                               title: Text(
                                 'Event Yang di Ikuti',
@@ -682,6 +679,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
+            
             Container(
               margin: EdgeInsets.only(left: 10.0),
               child: SingleChildScrollView(
@@ -732,11 +730,10 @@ class _DashboardState extends State<Dashboard> {
             ),
             SafeArea(
               child: isLoading == true
-                  ? Center(
-                      child: SpinKitFadingCircle(
-                      color: Colors.orange,
+                  ? Container(
+                      child: listLoading()
                       // size: 50.0,
-                    ))
+                    )
                   : isError == true
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -823,16 +820,18 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               )),
-                                          listFollower.length == 5 ?
-                                          FlatButton(
-                                            padding: EdgeInsets.all(0),
-                                            onPressed: () async {
-                                              linkToPageDetail(types, 'follow');
-                                            },
-                                            color: Colors.transparent,
-                                            textColor: Colors.black,
-                                            child: Text('Lihat Semua'),
-                                          ): Container(),
+                                          listFollower.length == 5
+                                              ? FlatButton(
+                                                  padding: EdgeInsets.all(0),
+                                                  onPressed: () async {
+                                                    linkToPageDetail(
+                                                        types, 'follow');
+                                                  },
+                                                  color: Colors.transparent,
+                                                  textColor: Colors.black,
+                                                  child: Text('Lihat Semua'),
+                                                )
+                                              : Container(),
                                         ],
                                       ),
                                     ),
@@ -1181,32 +1180,35 @@ class _DashboardState extends State<Dashboard> {
                                                                         child: _buildTextStatus(
                                                                             item.userStatus,
                                                                             item.userPosition)),
-                                                                   Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.only(right: 0),
-                                                                            child:
-                                                                                ButtonTheme(
-                                                                              minWidth: 0, //wraps child's width
-                                                                              height: 0,
-                                                                              child: FlatButton(
-                                                                                  child: Row(
-                                                                                    children: <Widget>[
-                                                                                      Icon(
-                                                                                        Icons.favorite,
-                                                                                        color: item.wish == '1' ? Colors.pink : Colors.grey,
-                                                                                        size: 18,
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                  color: Colors.white,
-                                                                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                  padding: EdgeInsets.all(5.0),
-                                                                                  onPressed: () async {
-                                                                                    _wish(item.wish, item.id, item);
-                                                                                  }),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          right:
+                                                                              0),
+                                                                      child:
+                                                                          ButtonTheme(
+                                                                        minWidth:
+                                                                            0, //wraps child's width
+                                                                        height:
+                                                                            0,
+                                                                        child: FlatButton(
+                                                                            child: Row(
+                                                                              children: <Widget>[
+                                                                                Icon(
+                                                                                  Icons.favorite,
+                                                                                  color: item.wish == '1' ? Colors.pink : Colors.grey,
+                                                                                  size: 18,
+                                                                                ),
+                                                                              ],
                                                                             ),
-                                                                          ),
-                                                                    
+                                                                            color: Colors.white,
+                                                                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                            padding: EdgeInsets.all(5.0),
+                                                                            onPressed: () async {
+                                                                              _wish(item.wish, item.id, item);
+                                                                            }),
+                                                                      ),
+                                                                    ),
                                                                   ],
                                                                 ),
                                                               ),
@@ -1217,24 +1219,28 @@ class _DashboardState extends State<Dashboard> {
                                                 ],
                                               )),
                                           onTap: () async {
-                                            linkToPage(item.userStatus,item.userPosition,
-                                                item.eventCreator, item.id);
+                                            linkToPage(
+                                                item.userStatus,
+                                                item.userPosition,
+                                                item.eventCreator,
+                                                item.id);
                                           }))
                                       .toList(),
                                 ),
                               ),
-                              listWish.length == 5 ?
-                              Container(
-                                height: height,
-                                child: FlatButton(
-                                  onPressed: () async {
-                                    linkToPageDetail(types, 'wish');
-                                  },
-                                  color: Colors.transparent,
-                                  textColor: Colors.black,
-                                  child: Text('Lihat Semua'),
-                                ),
-                              ) : Container(),
+                              listWish.length == 5
+                                  ? Container(
+                                      height: height,
+                                      child: FlatButton(
+                                        onPressed: () async {
+                                          linkToPageDetail(types, 'wish');
+                                        },
+                                        color: Colors.transparent,
+                                        textColor: Colors.black,
+                                        child: Text('Lihat Semua'),
+                                      ),
+                                    )
+                                  : Container(),
                             ]),
 //====================================End===============================
 
@@ -1267,17 +1273,18 @@ class _DashboardState extends State<Dashboard> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           )),
-                                      listParticipant.length == 5 ?
-                                      FlatButton(
-                                        padding: EdgeInsets.all(0),
-                                        onPressed: () async {
-                                          linkToPageDetail(
-                                              types, 'participant');
-                                        },
-                                        color: Colors.transparent,
-                                        textColor: Colors.black,
-                                        child: Text('Lihat Semua'),
-                                      ): Container(),
+                                      listParticipant.length == 5
+                                          ? FlatButton(
+                                              padding: EdgeInsets.all(0),
+                                              onPressed: () async {
+                                                linkToPageDetail(
+                                                    types, 'participant');
+                                              },
+                                              color: Colors.transparent,
+                                              textColor: Colors.black,
+                                              child: Text('Lihat Semua'),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ),
@@ -1663,24 +1670,28 @@ class _DashboardState extends State<Dashboard> {
                                                 ],
                                               )),
                                           onTap: () async {
-                                            linkToPage(item.userStatus,item.userPosition,
-                                                item.eventCreator, item.id);
+                                            linkToPage(
+                                                item.userStatus,
+                                                item.userPosition,
+                                                item.eventCreator,
+                                                item.id);
                                           }))
                                       .toList(),
                                 ),
                               ),
-                              listAdmin.length == 5 ?
-                              Container(
-                                height: height,
-                                child: FlatButton(
-                                  onPressed: () async {
-                                    linkToPageDetail(types, 'admin');
-                                  },
-                                  color: Colors.transparent,
-                                  textColor: Colors.black,
-                                  child: Text('Lihat Semua'),
-                                ),
-                              ): Container(),
+                              listAdmin.length == 5
+                                  ? Container(
+                                      height: height,
+                                      child: FlatButton(
+                                        onPressed: () async {
+                                          linkToPageDetail(types, 'admin');
+                                        },
+                                        color: Colors.transparent,
+                                        textColor: Colors.black,
+                                        child: Text('Lihat Semua'),
+                                      ),
+                                    )
+                                  : Container(),
                             ]),
 //====================================End===============================
                             //                            ==================================Creator========================================
@@ -1882,18 +1893,19 @@ class _DashboardState extends State<Dashboard> {
                                       .toList(),
                                 ),
                               ),
-                              listCreator.length == 5 ?
-                              Container(
-                                height: height,
-                                child: FlatButton(
-                                  onPressed: () async {
-                                    linkToPageDetail(types, 'creator');
-                                  },
-                                  color: Colors.transparent,
-                                  textColor: Colors.black,
-                                  child: Text('Lihat Semua'),
-                                ),
-                              ): Container(),
+                              listCreator.length == 5
+                                  ? Container(
+                                      height: height,
+                                      child: FlatButton(
+                                        onPressed: () async {
+                                          linkToPageDetail(types, 'creator');
+                                        },
+                                        color: Colors.transparent,
+                                        textColor: Colors.black,
+                                        child: Text('Lihat Semua'),
+                                      ),
+                                    )
+                                  : Container(),
                             ]),
 //====================================End===============================
                           ],
@@ -2082,7 +2094,7 @@ class _DashboardState extends State<Dashboard> {
         break;
       case 'C':
         if (posisi == '2' || posisi == 2) {
-           return Container(
+          return Container(
               decoration: new BoxDecoration(
                 color: Colors.grey,
                 borderRadius: new BorderRadius.only(
@@ -2102,9 +2114,8 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 textAlign: TextAlign.center,
               ));
-          
         } else if (posisi == '3' || posisi == 3) {
-         return Container(
+          return Container(
               decoration: new BoxDecoration(
                 color: Colors.red,
                 borderRadius: new BorderRadius.only(
@@ -2206,84 +2217,273 @@ class _DashboardState extends State<Dashboard> {
   void linkToPage(status, posisi, cratorId, eventId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       switch (status) {
-      case 'A':
-        if (posisi == '2' || posisi == 2) {
-             return RegisterEvents(
+        case 'A':
+          if (posisi == '2' || posisi == 2) {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: true);
+          } else if (posisi == '3' || posisi == 3) {
+            return SuccesRegisteredEvent(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          } else {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          }
+          break;
+        case 'P':
+          if (posisi == '2' || posisi == 2) {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                selfEvent: true,
+                dataUser: dataUser);
+          } else if (posisi == '3' || posisi == 3) {
+            return WaitingEvent(
+              id: eventId,
+              creatorId: cratorId,
+              selfEvent: userId == cratorId ? true : false,
+            );
+          } else {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          }
+          break;
+        case 'C':
+          if (posisi == '2' || posisi == 2) {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          } else if (posisi == '3' || posisi == 3) {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          } else {
+            return RegisterEvents(
+                id: eventId,
+                creatorId: cratorId,
+                dataUser: dataUser,
+                selfEvent: userId == cratorId ? true : false);
+          }
+          break;
+        case 'selesai':
+          return RegisterEvents(
               id: eventId,
               creatorId: cratorId,
               dataUser: dataUser,
               selfEvent: true);
-        } else if (posisi == '3' || posisi == 3) {
-          return SuccesRegisteredEvent(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        } else {
-           return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        }
-        break;
-      case 'P':
-        if (posisi == '2' || posisi == 2) {
-          return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              selfEvent: true,
-              dataUser: dataUser);
-        } else if (posisi == '3' || posisi == 3) {
-          return WaitingEvent(
-            id: eventId,
-            creatorId: cratorId,
-            selfEvent: userId == cratorId ? true : false,
-          );
-        } else {
-         return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        }
-        break;
-      case 'C':
-        if (posisi == '2' || posisi == 2) {
-         return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        } else if (posisi == '3' || posisi == 3) {
+          break;
+        default:
           return RegisterEvents(
               id: eventId,
               creatorId: cratorId,
               dataUser: dataUser,
               selfEvent: userId == cratorId ? true : false);
-        } else {
-          return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        }
-        break;
-      case 'selesai':
-        return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: true);
-        break;
-      default:
-        return RegisterEvents(
-              id: eventId,
-              creatorId: cratorId,
-              dataUser: dataUser,
-              selfEvent: userId == cratorId ? true : false);
-        break;
-    }
+          break;
+      }
     }));
+  }
+
+  Widget listLoading()
+  {
+
+    // Container(
+    //   padding: EdgeInsets.only(
+    //       left: 10.0,
+    //       right: 10.0,
+    //       top: 15.0,
+    //       bottom: 0.0),
+    //   child: Divider(),
+    // ),
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Column(children: <Widget>[
+//
+        InkWell(
+            onTap: () async {
+            },
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10.0),
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 10.0,
+                    top: 5.0,
+                    bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 50,
+                      height: 14,
+                    child:Shimmer.fromColors(
+                      baseColor: Colors.grey[100],
+                      highlightColor: Colors.grey[300],
+                      child:Card(
+                        
+                      )
+                     
+
+                    ),
+                    )
+                    
+                  ],
+                ),
+              ),
+            )),
+        Container(
+          margin: EdgeInsets.only(
+            top: 0.0,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: listCreator
+                .map((Event item) => InkWell(
+                    child: Container(
+                        margin: EdgeInsets.only(
+                            top: 5.0,
+                            bottom: 5.0,
+                            left: 5.0,
+                            right: 5.0),
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              elevation: 1,
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets
+                                            .all(10.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 5,
+                                            child : Container(
+                                            height: 80.0,
+                                            width: 80.0,
+                                            child:SizedBox(
+                                              child: Shimmer.fromColors(
+                                              baseColor: Colors.grey[100],
+                                              highlightColor: Colors.grey[300], child: Card(),
+                                                
+                                              ),
+                                            ),  
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 7,
+                                          child: Padding(
+                                            padding: const EdgeInsets
+                                                    .only(
+                                                left:
+                                                    15.0,
+                                                right:
+                                                    5.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                              children: <
+                                                  Widget>[
+                                                
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top:
+                                                          5.0,
+                                                      right:
+                                                          5.0),
+                                                  child:
+                                                      Text(
+                                                    "${item.location}",
+                                                    style:
+                                                        TextStyle(
+                                                      color:
+                                                          Colors.grey,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap:
+                                                        true,
+                                                    maxLines:
+                                                        2,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                      children: <Widget>[
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    10.0,
+                                                right:
+                                                    10.0),
+                                            child:
+                                                Divider()),
+                                      ])
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DashboardCheckin(
+                                    idevent: item.id
+                                        .toString()),
+                          ));
+                    }))
+                .toList(),
+          ),
+        ),
+        listCreator.length == 5
+            ? Container(
+                height: height,
+                child: FlatButton(
+                  onPressed: () async {
+                    linkToPageDetail(types, 'creator');
+                  },
+                  color: Colors.transparent,
+                  textColor: Colors.black,
+                  child: Text('Lihat Semua'),
+                ),
+              )
+            : Container(),
+      ]),
+    );
   }
 }
