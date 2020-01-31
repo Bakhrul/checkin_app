@@ -51,9 +51,9 @@ dependencies:
   paging:
   dio:
   http:
+  shimmer: ^1.0.1
   shared_preferences:
   fluttertoast:
-  shimmer: ^1.0.1
   firebase_core: ^0.4.3+1
   firebase_auth: ^0.15.3
   image_cropper: ^1.2.0
