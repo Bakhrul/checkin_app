@@ -593,6 +593,19 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.pushNamed(context, "/follow_event");
                               },
                             ),
+                             ListTile(
+                              title: Text(
+                                'Event Order',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: 'Roboto',
+                                  color: Color(0xff25282b),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, "/event_order");
+                              },
+                            ),
                           ],
                         ),
                       ),
