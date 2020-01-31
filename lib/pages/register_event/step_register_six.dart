@@ -1,11 +1,18 @@
 import 'package:checkin_app/core/api.dart';
+import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/pages/management_checkin/checkin_manual.dart';
+import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../event_following/count_down.dart';
 import 'package:checkin_app/pages/events_all/detail_event.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:core';
 
 class SuccesRegisteredEvent extends StatefulWidget {
   final int checkin;
@@ -29,6 +36,21 @@ class SuccesRegisteredEvent extends StatefulWidget {
 
 class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
   bool _buttonUndo = false;
+bool isLoading, isError,isLoadingCategory,_isValidDate;
+String emailStore, imageStore, namaStore, phoneStore, locationStore;
+String tokenType, accessToken;
+String jumlahnotifX;
+String userId;
+String endTime;
+String startTime;
+// List<Checkin> listEventSelf = [];
+Map<String, String> requestHeaders = Map();
+@override
+  void initState() {
+    super.initState();
+    _isValidDate = false;
+    getHeaderHTTP();
+  }
 
   _setUndo() {
     setState(() {
@@ -49,6 +71,74 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
       });
     }
   }
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    return checkinDate(widget.id);
+  }
+  Future<List<Checkin>> checkinDate(eventid) async {
+    try{
+      final eventList = await http.get(
+        url('api/checkin/getdata/checkdate/$eventid'),
+        headers: requestHeaders,
+      );
+      print(eventList.statusCode);
+
+      var isValidDate = json.decode(eventList.body);
+
+      var timesEnd = isValidDate['time_end'];
+      var boolDate = isValidDate['bool'];
+      var timeStart = isValidDate['time_start'];
+
+      setState(() {
+         endTime = timesEnd.toString(); 
+         startTime = timeStart.toString(); 
+        _isValidDate =  boolDate == "TRUE" ?  true : false;
+      });
+      if (eventList.statusCode == 200) {
+      } else if (eventList.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token telah kadaluwarsa, silahkan login kembali");
+        setState(() {
+          isLoadingCategory =false;
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        print(eventList.body);
+        setState(() {
+          isLoadingCategory =false;
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoadingCategory =false;
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isLoadingCategory =false;
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+    return null;
+  }
+
 
   _deleteParticipant() async {
     try {
@@ -167,11 +257,16 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                 child: Text("Checkin",
                                     style: TextStyle(color: Colors.white)),
                                 onPressed: () async {
+                                  if(_isValidDate != true){
+                                    null;
+                                  }else{
+
                                   if (widget.checkin == 0) {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => CheckinManual(
+                                              
                                               idevent: widget.id.toString()),
                                         ));
                                   } else {
@@ -181,6 +276,8 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                           builder: (context) => CountDown(),
                                         ));
                                   }
+                                  }
+
                                 })),
                         Container(
                             width: double.infinity,

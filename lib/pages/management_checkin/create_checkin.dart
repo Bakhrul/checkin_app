@@ -96,8 +96,18 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) =>
               GenerateScreen(idEvent: widget.idevent,codeQr: codeQr,eventName: eventName)));
-    }else{
+    }else if(response == "tanggal kurang"){
       _isLoading =false;
+       Fluttertoast.showToast(
+          msg: "Tanggal/Waktu Yang Anda Inputkan Harus Melebihi Dengan Waktu Check-In Sebelumnya",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red[200],
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }else{
+       _isLoading =false;
        Fluttertoast.showToast(
           msg: "Terjadi Kesalahan",
           toastLength: Toast.LENGTH_SHORT,
