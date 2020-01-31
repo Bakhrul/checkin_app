@@ -16,6 +16,7 @@ import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
 import '../events_all/detail_event.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
@@ -692,10 +693,159 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
       backgroundColor: Colors.white,
       appBar: buildBar(context),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
+          ? Column(
+              children: <Widget>[
+                Container(
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300],
+                            highlightColor: Colors.grey[100],
+                            child: Row(
+                              children: [0, 1, 2, 3, 4]
+                                  .map((_) => Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)),
+                                        ),
+                                        margin: EdgeInsets.only(right: 15.0),
+                                        width: 120.0,
+                                        height: 20.0,
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        ))),
+                Container(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                      width: double.infinity,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300],
+                        highlightColor: Colors.grey[100],
+                        child: Column(
+                          children: [0, 1]
+                              .map((_) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 15.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 120.0,
+                                          height: 70.0,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                              ),
+                                              Container(
+                                                width: 40.0,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             )
-          : Padding(
+          :
+          isError == true ?
+           Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => listFilterFollowingEvent(),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              listFilterFollowingEvent();
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ):
+           Padding(
               padding: const EdgeInsets.only(
                   top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
               child: RefreshIndicator(
@@ -764,18 +914,91 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     ),
                     isFilter == true
                         ? Container(
-                            margin: EdgeInsets.only(top: 20.0),
-                            child: CircularProgressIndicator(),
-                          )
+                                      margin: EdgeInsets.only(top:20.0),
+                                        child: SingleChildScrollView(
+                                            child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300],
+                                          highlightColor: Colors.grey[100],
+                                          child: Column(
+                                            children: [0, 1]
+                                                .map((_) => Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 25.0),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width: 120.0,
+                                                            height: 70.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: 40.0,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                          ),
+                                        ),
+                                      )))
                         : Expanded(
                             child: Scrollbar(
                               child: ListView(
                                 controller: pageScroll,
                                 children : <Widget>[
-                                //    ListView.builder(
-                                // scrollDirection: Axis.horizontal,
-                                // itemCount: listItemFollowing.length,
-                                // itemBuilder: (BuildContext context, int index) {
                                 for(var index = 0; index < listItemFollowing.length; index++)
                                   InkWell(
                                       child: Container(
@@ -1183,133 +1406,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          // case 'P':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               WaitingEvent(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
-                                          // case 'C':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: false,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: false,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
-                                          // case 'A':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               SuccesRegisteredEvent(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
                                           default:
                                             Navigator.push(
                                                 context,

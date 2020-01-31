@@ -15,6 +15,7 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType,
     accessToken,
@@ -903,7 +904,87 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                 ),
                               ),
                               isFilter == true
-                                  ? Center(child: CircularProgressIndicator())
+                                  ?  Container(
+                                      margin: EdgeInsets.only(top:20.0),
+                                        child: SingleChildScrollView(
+                                            child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300],
+                                          highlightColor: Colors.grey[100],
+                                          child: Column(
+                                            children: [0, 1]
+                                                .map((_) => Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 25.0),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width: 120.0,
+                                                            height: 70.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: 40.0,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                          ),
+                                        ),
+                                      )))
                                   : isErrorfilter == true
                                       ? Center(
                                           child: GestureDetector(
