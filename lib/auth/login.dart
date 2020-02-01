@@ -47,14 +47,13 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-   register() {
-    _firebaseMessaging.getToken().then((token){
+  register() {
+    _firebaseMessaging.getToken().then((token) {
       setState(() {
         fcmToken = token;
       });
     });
   }
-
 
   login() async {
     // print('login');
@@ -63,8 +62,8 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
   }
-    String msg = '';
-  
+
+  String msg = '';
 
   // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -81,21 +80,21 @@ class _LoginPageState extends State<LoginPage> {
       validateEmail = false;
     });
 
-    if(password.text == '' && username.text == ''){
-      setState((){
+    if (password.text == '' && username.text == '') {
+      setState(() {
         validatePassword = true;
         validateEmail = true;
         _isLoading = false;
       });
       return false;
-    } else if(username.text == ''){
-      setState((){
+    } else if (username.text == '') {
+      setState(() {
         validateEmail = true;
         _isLoading = false;
       });
       return false;
-    }else if(password.text == ''){
-      setState((){
+    } else if (password.text == '') {
+      setState(() {
         validatePassword = true;
         _isLoading = false;
       });
@@ -114,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
       // print('getToken ' + getToken.body);
 
       var getTokenDecode = json.decode(getToken.body);
-  // print(getToken.statusCode);
+      // print(getToken.statusCode);
       if (getToken.statusCode == 200) {
         if (getTokenDecode['error'] == 'invalid_credentials') {
           Fluttertoast.showToast(msg: getTokenDecode['message']);
@@ -132,11 +131,14 @@ class _LoginPageState extends State<LoginPage> {
           DataStore()
               .setDataString('access_token', getTokenDecode['access_token']);
           DataStore().setDataString('token_type', getTokenDecode['token_type']);
-          
-          List head = ['token_type','access_token'];
-          List value = [getTokenDecode['token_type'],getTokenDecode['access_token']];
-          await Auth(nameStringsession: head , dataStringsession: value).savesession();
-         
+
+          List head = ['token_type', 'access_token'];
+          List value = [
+            getTokenDecode['token_type'],
+            getTokenDecode['access_token']
+          ];
+          await Auth(nameStringsession: head, dataStringsession: value)
+              .savesession();
         }
         dynamic tokenType = getTokenDecode['token_type'];
         dynamic accessToken = getTokenDecode['access_token'];
@@ -154,44 +156,49 @@ class _LoginPageState extends State<LoginPage> {
             store.setDataString("id", datauser['us_code'].toString());
             store.setDataString("email", datauser['us_email']);
             store.setDataString("name", datauser['us_name']);
-            store.setDataString("image",datauser['us_image'] == null ? '-':datauser['us_image']);
-            store.setDataString("phone",datauser['us_phone'] == null ? '-':datauser['us_phone']);
-            store.setDataString("location",datauser['us_location'] == null ? '-':datauser['us_location']);
-            
+            store.setDataString("image",
+                datauser['us_image'] == null ? '-' : datauser['us_image']);
+            store.setDataString("phone",
+                datauser['us_phone'] == null ? '-' : datauser['us_phone']);
+            store.setDataString(
+                "location",
+                datauser['us_location'] == null
+                    ? '-'
+                    : datauser['us_location']);
+
             // var dir = await getApplicationDocumentsDirectory().path;
             // var type_image = datauser['us_image'].split('.').last;
             //     print(type_image);
             // File profileImageDownload = File('$dir/profile.$type_image');
 
-              try{
+            try {
+              Map body = {
+                'id': datauser['us_code'].toString(),
+                'token': fcmToken.toString()
+              };
+              final getToken = await http.post(url("api/updateTokenFcm"),
+                  headers: requestHeaders, body: body);
 
-                Map body = {'id':datauser['us_code'].toString(),'token':fcmToken.toString()};
-                final getToken =
-                await http.post(url("api/updateTokenFcm"), headers: requestHeaders,body:body);
-
-                if(getToken.statusCode == 200){
-
-                  Navigator.pushReplacementNamed(context, "/dashboard");
-                  setState(() {
-                    _isLoading = false;
-                  });
-
-                } else if(getToken.statusCode != 200){
-                  Fluttertoast.showToast(msg: "error: cannot update token");
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
-
-              } catch(e) {
-                Fluttertoast.showToast(msg: "error: $e");
-                  setState(() {
-                    _isLoading = false;
-                  });
+              if (getToken.statusCode == 200) {
+                Navigator.pushReplacementNamed(context, "/dashboard");
+                setState(() {
+                  _isLoading = false;
+                });
+              } else if (getToken.statusCode != 200) {
+                Fluttertoast.showToast(msg: "error: cannot update token");
+                setState(() {
+                  _isLoading = false;
+                });
               }
-
+            } catch (e) {
+              Fluttertoast.showToast(msg: "error: $e");
+              setState(() {
+                _isLoading = false;
+              });
+            }
           } else {
-            Fluttertoast.showToast(msg: "Request failed with status: ${getUser.statusCode}");
+            Fluttertoast.showToast(
+                msg: "Request failed with status: ${getUser.statusCode}");
             setState(() {
               _isLoading = false;
             });
@@ -212,18 +219,18 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _isLoading = false;
         });
-        }else if(getToken.statusCode == 404){
+      } else if (getToken.statusCode == 404) {
         Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
         setState(() {
           _isLoading = false;
         });
       } else {
-        Fluttertoast.showToast(msg: "Request failed with status: ${getToken.statusCode}");
+        Fluttertoast.showToast(
+            msg: "Request failed with status: ${getToken.statusCode}");
         setState(() {
           _isLoading = false;
         });
       }
-
     } on SocketException catch (_) {
       Fluttertoast.showToast(msg: "Connection Timed Out");
       setState(() {
@@ -232,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       setState(() {
         _isLoading = false;
-      });      
+      });
       Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
     }
   }
@@ -286,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Alamat Email",
-          errorText: validateEmail ? "email tidak boleh kosong":null,
+          errorText: validateEmail ? "email tidak boleh kosong" : null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -312,7 +319,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Kata Sandi",
-          errorText: validatePassword ? "password tidak boleh kosong":null,
+          errorText: validatePassword ? "password tidak boleh kosong" : null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -334,13 +341,15 @@ class _LoginPageState extends State<LoginPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: _isLoading == true ? null : () async {
-          //login();
-          _login();
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => CobaApps()));
-        },
+        onPressed: _isLoading == true
+            ? null
+            : () async {
+                //login();
+                _login();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => CobaApps()));
+              },
         child: Text(
-          _isLoading == true ? "Tunggu Sebentar" :"Masuk" ,
+          _isLoading == true ? "Tunggu Sebentar" : "Masuk",
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -529,24 +538,21 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.only(top:27.0,left: 27.0,right: 27.0),
+            padding: const EdgeInsets.only(top: 27.0, left: 27.0, right: 27.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  SizedBox(
-                    height: 160.0,
-                    child: Center(
-                      child: Image.asset(
-                        "images/logo.png",
-                        height: 500.0,
-                        width: 500.0,
-                      ),
-                    ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 40.0),
+                    child: Text('EventZhee', style: TextStyle(
+                      color: Color.fromRGBO(254, 86, 14, 1),
+                      fontSize: 42.0,
+                    ),),
                   ),
-                
+
                   usernameField,
                   SizedBox(height: 15.0),
                   passwordField,
@@ -602,40 +608,67 @@ class _LoginPageState extends State<LoginPage> {
                   //   height: 15.0,
                   // ),
                   Container(
-                  padding: EdgeInsets.only(top:5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('Belum Memiliki Akun ?',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w500),),
-                      ButtonTheme(
-                      minWidth: 0.0,
-                      height: 0.0,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(5.0),
-                        onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Register()));
-                        },
-                        child: Text(
-                          'Daftar Sekarang',
+                    padding: EdgeInsets.only(top: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Belum Memiliki Akun ?',
                           style: TextStyle(
-                            color: primaryAppBarColor,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        ButtonTheme(
+                          minWidth: 0.0,
+                          height: 0.0,
+                          child: FlatButton(
+                            padding: EdgeInsets.all(5.0),
+                            onPressed: () async {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Register()));
+                            },
+                            child: Text(
+                              'Daftar Sekarang',
+                              style: TextStyle(
+                                color: primaryAppBarColor,
+                              ),
+                            ),
+                            color: Colors.white,
                           ),
                         ),
-                        color: Colors.white,
-                      ),
+                      ],
                     ),
-                    ],
-                  ),
-                )
+                  )
                   // adsSection,
                 ],
               ),
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        child: SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: Text(
+                    'Powered By :',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+                Image.asset(
+                  "images/logo.png",
+                  height: 50.0,
+                  width: 50.0,
+                ),
+              ],
+            )),
       ),
     );
   }

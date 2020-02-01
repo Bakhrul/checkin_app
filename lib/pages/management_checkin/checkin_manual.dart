@@ -184,8 +184,7 @@ bool disable = false;
                         width: 100.0,
                         height: 100.0,
                         child: Image.asset("images/checkin_flat.png"),
-                      ),
-                      Text("$_count"),
+                      ),                    
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 20.0, left: 10.0, right: 10.0),
