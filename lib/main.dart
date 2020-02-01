@@ -59,7 +59,7 @@ class _MyApp extends State<MyApp> {
   }
 
    register() {
-    _firebaseMessaging.getToken().then((token) => print(token));
+    _firebaseMessaging.getToken().then((token) => print("j"));
   }
 
   void getMessage(){

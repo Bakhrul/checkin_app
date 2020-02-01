@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   login() async {
-    print('login');
+    // print('login');
     // await Auth(username: username,password: password ,name: 'login',nameStringsession: headsession , dataStringsession: getsession).getuser();
     await Auth(username: username.text, password: password.text).process();
     Navigator.pushReplacementNamed(context, "/dashboard");
@@ -111,10 +111,10 @@ class _LoginPageState extends State<LoginPage> {
         "password": password.text,
       });
 
-      print('getToken ' + getToken.body);
+      // print('getToken ' + getToken.body);
 
       var getTokenDecode = json.decode(getToken.body);
-  print(getToken.statusCode);
+  // print(getToken.statusCode);
       if (getToken.statusCode == 200) {
         if (getTokenDecode['error'] == 'invalid_credentials') {
           Fluttertoast.showToast(msg: getTokenDecode['message']);

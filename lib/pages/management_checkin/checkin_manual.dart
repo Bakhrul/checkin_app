@@ -17,8 +17,9 @@ Map<String, dynamic> formSerialize;
 Map<String, String> requestHeaders = Map();
 
 class CheckinManual extends StatefulWidget {
-  CheckinManual({Key key, this.title, this.idevent}) : super(key: key);
+  CheckinManual({Key key, this.title, this.idevent,this.startTime,this.endTime}) : super(key: key);
   final String title, idevent;
+  final String startTime,endTime;
   @override
   State<StatefulWidget> createState() {
     return _CheckinManualState();
@@ -33,10 +34,27 @@ class _CheckinManualState extends State<CheckinManual>
   void initState() {
     super.initState();
     getHeaderHTTP();
+    getDifTime();
     _controllerCheckin.text = '';
     isCheckin = false;
   }
+DateTime _date = new DateTime.now();
+// int _minutes = 1;
+int _seconds = 0;
+var _count = '00:00';
+bool disable = false;
 
+ 
+
+  void getDifTime(){
+        DateTime _getDateExp = DateTime.parse(widget.endTime.toString());
+        DateTime _dateExp = _getDateExp.add(Duration(seconds:7200));
+        
+        _seconds = _dateExp.difference(_date).inSeconds;
+        var _time = Duration(seconds: _seconds);
+        _count = _seconds < 1 ? "00:00:00":'${(_time.inHours).toString().padLeft(2,'0')}:${(_time.inMinutes % 60).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
+        // print(_count);
+}
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -48,7 +66,7 @@ class _CheckinManualState extends State<CheckinManual>
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
+    // print(requestHeaders);
   }
 
   void checkinsekarang() async {
@@ -68,7 +86,7 @@ class _CheckinManualState extends State<CheckinManual>
       formSerialize['event'] = widget.idevent;
       formSerialize['keyword'] = _controllerCheckin.text;
 
-      print(formSerialize);
+      // print(formSerialize);
 
       Map<String, dynamic> requestHeadersX = requestHeaders;
 
@@ -167,6 +185,7 @@ class _CheckinManualState extends State<CheckinManual>
                         height: 100.0,
                         child: Image.asset("images/checkin_flat.png"),
                       ),
+                      Text("$_count"),
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 20.0, left: 10.0, right: 10.0),

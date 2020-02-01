@@ -52,6 +52,7 @@ dependencies:
   dio:
   http:
   shimmer: ^1.0.1
+  countdown: ^0.1.0
   shared_preferences:
   fluttertoast:
   firebase_core: ^0.4.3+1
