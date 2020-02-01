@@ -551,6 +551,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           MainAxisAlignment
                                                               .center,
                                                       children: <Widget>[
+                                                        
                                                         Text(
                                                           item.waktuawal == null
                                                               ? 'Unknown Date'
@@ -564,6 +565,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -849,6 +852,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -1132,6 +1137,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets

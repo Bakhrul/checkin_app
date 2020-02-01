@@ -138,6 +138,11 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           isCreate = false;
         });
             Fluttertoast.showToast(msg: "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+          }else if(responseJson['status'] == 'tanggalkurang'){
+            setState(() {
+          isCreate = false;
+        });
+            Fluttertoast.showToast(msg: "Tanggal checkin tidak boleh kurang dari waktu checkin terakhir");
           }
           print('response decoded $responseJson');
         } else {

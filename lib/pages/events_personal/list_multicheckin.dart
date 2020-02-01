@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
-
+import 'detail_user_checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 var list = ['one', 'two', 'three', 'four'];
@@ -76,6 +76,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
         listCheckinUser = [];
         for (var i in listuserJson) {
           LisMultiCheckinUser willcomex = LisMultiCheckinUser(
+            idpeserta: i['idpeserta'].toString(),
             nama: i['name'],
             image: i['image'],
             email: i['email'].toString(),
@@ -117,8 +118,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
     }
     return null;
   }
-
-  
 
   Widget appBarTitle = Text(
     "Daftar Checkin Peserta",
@@ -266,145 +265,178 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                       itemCount: listCheckinUser.length,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return Card(
-                                            child: ListTile(
-                                          leading: Container(
-                                            width: 40.0,
-                                            height: 40.0,
-                                            child: ClipOval(
-                                              child: FadeInImage.assetNetwork(
-                                                placeholder:
-                                                    'images/loading.gif',
-                                                image: listCheckinUser[
+                                        return InkWell(
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetailUserCheckin(
+                                                      idUser:
+                                                          listCheckinUser[index]
+                                                              .idpeserta,
+                                                      idevent: widget.event,
+                                                    ),
+                                                  ));
+                                            },
+                                            child: Card(
+                                                child: ListTile(
+                                              leading: Container(
+                                                width: 40.0,
+                                                height: 40.0,
+                                                child: ClipOval(
+                                                  child:
+                                                      FadeInImage.assetNetwork(
+                                                    placeholder:
+                                                        'images/loading.gif',
+                                                    image: listCheckinUser[
+                                                                        index]
+                                                                    .image ==
+                                                                null ||
+                                                            listCheckinUser[
+                                                                        index]
+                                                                    .image ==
+                                                                '' ||
+                                                            listCheckinUser[
+                                                                        index]
+                                                                    .image ==
+                                                                'null'
+                                                        ? url(
+                                                            'assets/images/imgavatar.png')
+                                                        : url(
+                                                            'storage/image/profile/${listCheckinUser[index].image}'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              title: Text(
+                                                  listCheckinUser[index].nama ==
+                                                              null ||
+                                                          listCheckinUser[index]
+                                                                  .nama ==
+                                                              ''
+                                                      ? 'Peserta tidak diketahui'
+                                                      : listCheckinUser[index]
+                                                          .nama,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500)),
+                                              subtitle: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Text(listCheckinUser[
                                                                     index]
-                                                                .image ==
+                                                                .email ==
                                                             null ||
                                                         listCheckinUser[index]
-                                                                .image ==
-                                                            '' ||
-                                                        listCheckinUser[index]
-                                                                .image ==
-                                                            'null'
-                                                    ? url(
-                                                        'assets/images/imgavatar.png')
-                                                    : url(
-                                                        'storage/image/profile/${listCheckinUser[index].image}'),
-                                                fit: BoxFit.cover,
+                                                                .email ==
+                                                            ''
+                                                    ? 'Email tidak diketahui'
+                                                    : listCheckinUser[index]
+                                                        .email),
                                               ),
-                                            ),
-                                          ),
-                                          title: Text(
-                                              listCheckinUser[index].nama ==
-                                                          null ||
-                                                      listCheckinUser[index]
-                                                              .nama ==
-                                                          ''
-                                                  ? 'Peserta tidak diketahui'
-                                                  : listCheckinUser[index].nama,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500)),
-                                          subtitle: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0),
-                                            child: Text(listCheckinUser[index]
-                                                            .email ==
-                                                        null ||
-                                                    listCheckinUser[index]
-                                                            .email ==
-                                                        ''
-                                                ? 'Email tidak diketahui'
-                                                : listCheckinUser[index].email),
-                                          ),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              listCheckinUser[index]
-                                                          .listcheckin
-                                                          .length ==
-                                                      1
-                                                  ? appendFour()
-                                                  : listCheckinUser[index]
+                                              trailing: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  listCheckinUser[index]
                                                               .listcheckin
                                                               .length ==
-                                                          2
-                                                      ? appendThree()
+                                                          1
+                                                      ? appendFour()
                                                       : listCheckinUser[index]
                                                                   .listcheckin
                                                                   .length ==
-                                                              3
-                                                          ? appendTwo()
+                                                              2
+                                                          ? appendThree()
                                                           : listCheckinUser[
                                                                           index]
                                                                       .listcheckin
                                                                       .length ==
-                                                                  4
-                                                              ? appendOne()
+                                                                  3
+                                                              ? appendTwo()
                                                               : listCheckinUser[
                                                                               index]
                                                                           .listcheckin
                                                                           .length ==
-                                                                      0
-                                                                  ? appendFive()
-                                                                  : Container(),
-                                              for (var x
-                                                  in listCheckinUser[index]
-                                                      .listcheckin)
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100.0),
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        right: 3.0),
-                                                    height: 15.0,
-                                                    alignment: Alignment.center,
-                                                    width: 15.0,
-                                                    decoration: BoxDecoration(
-                                                      border: x['uc_userid'] ==
-                                                              null
-                                                          ? Border.all(
-                                                              color:
-                                                                  Color.fromRGBO(
-                                                                      255,
-                                                                      0,
-                                                                      0,
-                                                                      1.0),
-                                                              width: 1.0)
-                                                          : Border.all(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      0,
-                                                                      204,
-                                                                      65,
-                                                                      1.0),
-                                                              width: 1.0),
+                                                                      4
+                                                                  ? appendOne()
+                                                                  : listCheckinUser[index]
+                                                                              .listcheckin
+                                                                              .length ==
+                                                                          0
+                                                                      ? appendFive()
+                                                                      : Container(),
+                                                  for (var x
+                                                      in listCheckinUser[index]
+                                                          .listcheckin)
+                                                    ClipRRect(
                                                       borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  100.0) //                 <--- border radius here
-                                                              ),
-                                                      color: x['uc_userid'] ==
-                                                              null
-                                                          ? Color.fromRGBO(
-                                                              255, 0, 0, 1.0)
-                                                          : Color.fromRGBO(
-                                                              0, 204, 65, 1.0),
+                                                          BorderRadius.circular(
+                                                              100.0),
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            right: 3.0),
+                                                        height: 15.0,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        width: 15.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: x['uc_userid'] ==
+                                                                  null
+                                                              ? Border.all(
+                                                                  color:
+                                                                      Color.fromRGBO(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          1.0),
+                                                                  width: 1.0)
+                                                              : Border.all(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          0,
+                                                                          204,
+                                                                          65,
+                                                                          1.0),
+                                                                  width: 1.0),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      100.0) //                 <--- border radius here
+                                                                  ),
+                                                          color:
+                                                              x['uc_userid'] ==
+                                                                      null
+                                                                  ? Color
+                                                                      .fromRGBO(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          1.0)
+                                                                  : Color
+                                                                      .fromRGBO(
+                                                                          0,
+                                                                          204,
+                                                                          65,
+                                                                          1.0),
+                                                        ),
+                                                        child: x['uc_userid'] ==
+                                                                null
+                                                            ? Icon(Icons.close,
+                                                                size: 10,
+                                                                color: Colors
+                                                                    .white)
+                                                            : Icon(Icons.check,
+                                                                size: 10,
+                                                                color: Colors
+                                                                    .white),
+                                                      ),
                                                     ),
-                                                    child: x['uc_userid'] ==
-                                                            null
-                                                        ? Icon(Icons.close,
-                                                            size: 10,
-                                                            color: Colors.white)
-                                                        : Icon(Icons.check,
-                                                            size: 10,
-                                                            color:
-                                                                Colors.white),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ));
+                                                ],
+                                              ),
+                                            )));
                                       },
                                     ),
                                   ),
@@ -412,7 +444,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                     ],
                   ),
                 ),
-
     );
   }
 
@@ -421,8 +452,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
       centerTitle: true,
       title: appBarTitle,
       backgroundColor: primaryAppBarColor,
-      actions: <Widget>[
-      ],
+      actions: <Widget>[],
     );
   }
 

@@ -234,6 +234,7 @@ class ListEditKategoriEvent {
 }
 
 class ListPointCheckin {
+   String idpeserta;
    String namapeserta;
    String image;
    String jumlahcheckinevent;
@@ -241,7 +242,8 @@ class ListPointCheckin {
    String persencheckin;
    
   ListPointCheckin(
-      {this.namapeserta,
+      {this.idpeserta,
+      this.namapeserta,
       this.jumlahcheckinevent,
       this.jumlahcheckinpeserta,
       this.persencheckin,
@@ -251,6 +253,7 @@ class ListPointCheckin {
 
 
 class LisMultiCheckinUser {
+   String idpeserta;
    String email;
    String nama;
    String image;
@@ -258,8 +261,22 @@ class LisMultiCheckinUser {
   LisMultiCheckinUser(
       {this.email,
       this.nama,
+      this.idpeserta,
       this.image,
       this.listcheckin,
+      });
+}
+
+class ListUserCheckins {
+   String keyword;
+   String userId;
+   String ucTime;
+   String idCheckin;
+  ListUserCheckins(
+      {this.keyword,
+      this.userId,
+      this.ucTime,
+      this.idCheckin,
       });
 }
 

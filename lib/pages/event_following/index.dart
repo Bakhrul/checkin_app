@@ -177,13 +177,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -198,9 +203,14 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Daftar Admin';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
@@ -351,10 +361,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         for (var i in followevents) {
           
           Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
-          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
-          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
-          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
+          String cekAllday = i['ev_allday'];
+          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
+          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
@@ -371,13 +384,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -392,17 +410,19 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Daftar Admin';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
             break;
           }
-
         }
-
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
@@ -488,10 +508,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         for (var i in followevents) {
           
           Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
-          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
-          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
-          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
+          String cekAllday = i['ev_allday'];
+          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
+          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
@@ -508,13 +531,17 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -529,9 +556,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
@@ -1332,7 +1363,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          case 'Proses Pendaftaran':
+                                          case 'Menunggu Verifikasi':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1347,7 +1378,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          case 'Proses Daftar Admin':
+                                          case 'Belum Konfirmasi Admin':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1407,6 +1438,21 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
+                                            case 'Dilarang Mendaftar Event':
+                                               return Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          dataUser: dataUser,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
                                           default:
                                             Navigator.push(
                                                 context,
@@ -1426,8 +1472,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             break;
                                         }
                                       }),
-                              //   },
-                              // ),
                               _isPageDisconnect ?
                         Container(
                           height: 50,

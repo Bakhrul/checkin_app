@@ -18,7 +18,7 @@ import 'dart:async';
 import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
 
-String tokenType, accessToken;
+String tokenType, accessToken, allDayEvent, eventTimeStart, eventTimeEnd;
 Map<String, String> requestHeaders = Map();
 List<ListRekomEvent> listRekomendasiEvent = [];
 
@@ -51,6 +51,9 @@ class _RegisterEvent extends State<RegisterEvents> {
 
   @override
   void initState() {
+    allDayEvent = null;
+    eventTimeStart = null;
+    eventTimeEnd = null;
     _getAll();
     scrollPage.addListener(_parallax);
     super.initState();
@@ -100,6 +103,9 @@ class _RegisterEvent extends State<RegisterEvents> {
         Map rawData = json.decode(ongoingevent.body);
         setState(() {
           dataEvent = SearchEvent.fromJson(rawData['data']);
+          allDayEvent = rawData['data']['ev_allday'];
+          eventTimeStart = rawData['data']['ev_time_start'];
+          eventTimeEnd = rawData['data']['ev_time_end'];
           _isLoading = false;
           expired = dataEvent.expired;
           creatorEmail = rawData['creator_email'];
@@ -107,7 +113,6 @@ class _RegisterEvent extends State<RegisterEvents> {
         });
 
         var listRekomendasis = rawData['rekomendasi'];
-        print(listRekomendasis);
         listRekomendasiEvent = [];
         for (var i in listRekomendasis) {
           ListRekomEvent willcomex = ListRekomEvent(
@@ -277,15 +282,22 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               child: Icon(Icons.date_range,
                                                   size: 16,
                                                   color: Colors.grey[600])),
+                                          allDayEvent == 'N' ?
                                           Text(
-                                              dataEvent.start == null
+                                              eventTimeStart == null
                                                   ? "Memuat ..."
-                                                  : dataEvent.start +
-                                                      ' - ' +
-                                                      dataEvent.end,
+                                                  : DateFormat('dd MMM yyyy').format(DateTime.parse(eventTimeStart)),
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
+                                          : Text(
+                                              eventTimeStart == null || eventTimeEnd == null 
+                                                  ? "Memuat ..."
+                                                  : DateFormat('dd MMM yyyy H:m').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('dd MMM yyyy H:m').format(DateTime.parse(eventTimeEnd)),
+                                              style: TextStyle(
+                                                  color: Colors.grey[600]))
+
                                         ])),
+                                    allDayEvent == 'N' ?
                                     Container(
                                         padding: EdgeInsets.only(bottom: 25.0),
                                         width: double.infinity,
@@ -297,12 +309,13 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 color: Colors.grey[600]),
                                           ),
                                           Text(
-                                              dataEvent.hour == null
+                                              eventTimeStart == null || eventTimeEnd == null 
                                                   ? 'Memuat ...'
-                                                  : dataEvent.hour,
+                                                  : DateFormat('H:m').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('H:m').format(DateTime.parse(eventTimeEnd)),
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
-                                        ])),
+                                        ]))
+                                        : Container(),
                                     Divider(),
                                     Padding(
                                       padding: const EdgeInsets.only(
@@ -712,20 +725,22 @@ class _RegisterEvent extends State<RegisterEvents> {
                                         ),
                                       ),
                                     ),
-                                    if (!widget.selfEvent)
-                                      if (expired == false)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 20.0),
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: RaisedButton(
+                                  ]))
+                        ],
+                      ),
+                    ]),
+                  ])),
+                   
+        bottomNavigationBar: widget.selfEvent == true ||expired == true ? null: BottomAppBar(
+        child: SizedBox(
+          width: double.infinity,
+          height: 50.0,
+          child: RaisedButton(
                                               color:
                                                   primaryAppBarColor,
                                               textColor: Colors.white,
                                               disabledColor: Colors.green[400],
                                               disabledTextColor: Colors.white,
-                                              padding: EdgeInsets.all(15.0),
                                               splashColor: Colors.blueAccent,
                                               onPressed: () async {
                                                 Navigator.pushReplacement(
@@ -746,13 +761,8 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                     TextStyle(fontSize: 14.0),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                  ]))
-                        ],
-                      ),
-                    ]),
-                  ])),
+        ),
+      ),
     );
   }
 }
