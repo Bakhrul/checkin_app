@@ -20,6 +20,98 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
   void initState() {
     super.initState();
   }
+
+  showSheet(){
+   return showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        builder: (context){
+          return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10)
+                ),
+                color: Colors.white
+              ),
+              width: double.infinity,
+              height: 150,
+              padding: EdgeInsets.only(top:20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap:(){
+                      print('tes');
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(left:10,right:10,top:15,bottom:15),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left:10,right:10),
+                            child:Icon(
+                              Icons.people,
+                            )
+                          ),
+                          Container(
+                            child:Text('Belum Memiliki Akun',
+                                style:TextStyle(
+                                  fontWeight: FontWeight.w500
+                                )
+                            )
+                          )
+                        ],
+                      )
+                        
+                    ) 
+                  ),
+                  GestureDetector(
+                    onTap:(){
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmEventGuest(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
+                        ));
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(left:10,right:10,top:15,bottom:15),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left:10,right:10),
+                            child:Icon(
+                              Icons.people
+                            )
+                          ),
+                          Container(
+                            child:Text('Sudah Memiliki Akun',
+                                style:TextStyle(
+                                  fontWeight: FontWeight.w500
+                                )
+                            )
+                          )
+                        ],
+                      )
+                        
+                    ) 
+                  ),
+                ]
+              )
+            );
+        }, 
+      );
+  }
+  
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -73,15 +165,15 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.white
                               )),
                               onPressed: (){
-                                  Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmEvent(
-                            id:widget.id,
-                            creatorId:widget.creatorId,
-                            dataUser:widget.dataUser
-                            ),
-                        ));
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ConfirmEvent(
+                                      id:widget.id,
+                                      creatorId:widget.creatorId,
+                                      dataUser:widget.dataUser
+                                      ),
+                                  ));
                               }
                             )
                       ),
@@ -93,15 +185,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                                 color:Colors.black
                               )),
                               onPressed: (){
-                                  Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmEventGuest(
-                            id:widget.id,
-                            creatorId:widget.creatorId,
-                            dataUser:widget.dataUser
-                            ),
-                        ));
+                             showSheet();
                               }
                             )
                       )
