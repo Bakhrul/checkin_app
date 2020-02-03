@@ -572,6 +572,7 @@ class _LoginPageState extends State<LoginPage> {
                         minWidth: 0.0,
                         height: 0.0,
                         child: FlatButton(
+                          padding: EdgeInsets.all(5.0),
                           onPressed: () async {
                             Navigator.push(
                                 context,

@@ -44,7 +44,15 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                 children: <Widget>[
                   InkWell(
                     onTap:(){
-                      print('tes');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmEventGuest(
+                            id:widget.id,
+                            creatorId:widget.creatorId,
+                            dataUser:widget.dataUser
+                            ),
+                        ));
                     },
                     child: Container(
                       width: double.infinity,
@@ -71,15 +79,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                   ),
                   InkWell(
                     onTap:(){
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmEventGuest(
-                            id:widget.id,
-                            creatorId:widget.creatorId,
-                            dataUser:widget.dataUser
-                            ),
-                        ));
+                      print('tes');
                     },
                     child: Container(
                       width: double.infinity,

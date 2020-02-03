@@ -14,7 +14,14 @@ String typePrimary, userPrimary;
 Map<String, String> requestHeaders = Map();
 
 class WaitingEvent extends StatefulWidget {
-  WaitingEvent({Key key, this.id, this.creatorId, this.selfEvent,this.userId, this.type, this.dataUser})
+  WaitingEvent(
+      {Key key,
+      this.id,
+      this.creatorId,
+      this.selfEvent,
+      this.userId,
+      this.type,
+      this.dataUser})
       : super(key: key);
   final int id;
   final Map dataUser;
@@ -44,7 +51,11 @@ class _WaitingEventState extends State<WaitingEvent> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    Map body = {'event_id': widget.id.toString(),'user_id' : userPrimary, 'type' :typePrimary};
+    Map body = {
+      'event_id': widget.id.toString(),
+      'user_id': userPrimary,
+      'type': typePrimary
+    };
 
     try {
       final ongoingevent = await http.post(url('api/event/cancelregisterevent'),
@@ -88,7 +99,11 @@ class _WaitingEventState extends State<WaitingEvent> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map body = {'event': widget.id.toString(), 'type' :typePrimary, 'peserta' : userPrimary};
+    Map body = {
+      'event': widget.id.toString(),
+      'type': typePrimary,
+      'peserta': userPrimary
+    };
     try {
       final ongoingevent = await http.post(
           url('api/event/reminder_notifications'),
@@ -124,11 +139,15 @@ class _WaitingEventState extends State<WaitingEvent> {
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
-    typePrimary = widget.type == null || widget.type == '' ? 'self' : widget.type;
-    userPrimary = widget.type == null || widget.type == '' ? widget.dataUser['us_code'].toString() : widget.userId.toString();
+    typePrimary =
+        widget.type == null || widget.type == '' ? 'self' : widget.type;
+    userPrimary = widget.type == null || widget.type == ''
+        ? widget.dataUser['us_code'].toString()
+        : widget.userId.toString();
   }
 
   @override
@@ -172,7 +191,7 @@ class _WaitingEventState extends State<WaitingEvent> {
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 30.0),
                     child: Text(
-                        "Pendaftaran sebagai peserta event yang anda kirimkan telah kami terima, tunggu konfirmasi dari pembuatan event apakah pendaftaran anda diterima atau ditolak.",
+                        "Pendaftaran sebagai peserta event yang anda kirimkan telah kami terima, tunggu verifikasi dari pembuat event terkait dengan pendaftaran anda.",
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.5, fontSize: 17))),
                 Container(
@@ -181,27 +200,114 @@ class _WaitingEventState extends State<WaitingEvent> {
                     width: double.infinity,
                     child: Column(
                       children: <Widget>[
-                         Container(
-                        width: double.infinity,
-                        child:RaisedButton(
-                              color:primaryButtonColor,
-                              textColor: Colors.white,
-                              child:Text("Daftarkan Orang Lain",style:TextStyle(
-                                color:Colors.white
-                              )),
-                              onPressed: (){
-                                  Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmEventGuest(
-                            id:widget.id,
-                            creatorId:widget.creatorId,
-                            dataUser:widget.dataUser
-                            ),
-                        ));
-                              }
-                            )
-                      ),
+                        Container(
+                            width: double.infinity,
+                            child: RaisedButton(
+                                color: Colors.white,
+                                textColor: Colors.white,
+                                child: Text("Daftarkan Orang Lain",
+                                    style: TextStyle(color: Colors.black)),
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    builder: (context) {
+                                      return Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight:
+                                                      Radius.circular(10)),
+                                              color: Colors.white),
+                                          width: double.infinity,
+                                          height: 150,
+                                          padding: EdgeInsets.only(top: 20),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                InkWell(
+                                                    onTap: () {
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ConfirmEventGuest(
+                                                                    id:
+                                                                        widget
+                                                                            .id,
+                                                                    creatorId:
+                                                                        widget
+                                                                            .creatorId,
+                                                                    dataUser: widget
+                                                                        .dataUser),
+                                                          ));
+                                                    },
+                                                    child: Container(
+                                                        width: double.infinity,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 10,
+                                                                top: 15,
+                                                                bottom: 15),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10),
+                                                                child: Icon(
+                                                                  Icons.people,
+                                                                )),
+                                                            Container(
+                                                                child: Text(
+                                                                    'Belum Memiliki Akun',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w500)))
+                                                          ],
+                                                        ))),
+                                                InkWell(
+                                                    onTap: () {
+                                                      print('tes');
+                                                    },
+                                                    child: Container(
+                                                        width: double.infinity,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 10,
+                                                                top: 15,
+                                                                bottom: 15),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10),
+                                                                child: Icon(Icons
+                                                                    .people)),
+                                                            Container(
+                                                                child: Text(
+                                                                    'Sudah Memiliki Akun',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w500)))
+                                                          ],
+                                                        ))),
+                                              ]));
+                                    },
+                                  );
+                                })),
                         Container(
                             width: double.infinity,
                             child: RaisedButton(
@@ -217,34 +323,36 @@ class _WaitingEventState extends State<WaitingEvent> {
                                                     Color>(Colors.white)))
                                     : Text("Kirim Notifikasi Pembuat Event",
                                         style: TextStyle(color: Colors.white)),
-                                onPressed: _isLoading == true || _isLoadingReminder == true
+                                onPressed: _isLoading == true ||
+                                        _isLoadingReminder == true
                                     ? null
                                     : () {
                                         _sendnotificationsevent();
                                       })),
-                        typePrimary == 'someone' ?
-                        Container()
-                        :
-                        Container(
-                            width: double.infinity,
-                            child: RaisedButton(
-                                color: Colors.white,
-                                disabledColor: Colors.white,
-                                child: _isLoading == true
-                                    ? Container(
-                                        height: 25.0,
-                                        width: 25.0,
-                                        child: CircularProgressIndicator(
-                                            valueColor:
-                                                new AlwaysStoppedAnimation<
-                                                    Color>(Colors.blue)))
-                                    : Text("Batal Mendaftar Event",
-                                        style: TextStyle(color: Colors.black)),
-                                onPressed: _isLoading == true || _isLoadingReminder == true
-                                    ? null
-                                    : () {
-                                        _cancelRegisterEvent();
-                                      }))
+                        typePrimary == 'someone'
+                            ? Container()
+                            : Container(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                    color: Colors.red,
+                                    disabledColor: Colors.red[400],
+                                    child: _isLoading == true
+                                        ? Container(
+                                            height: 25.0,
+                                            width: 25.0,
+                                            child: CircularProgressIndicator(
+                                                valueColor:
+                                                    new AlwaysStoppedAnimation<
+                                                        Color>(Colors.blue)))
+                                        : Text("Batal Mendaftar Event",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                    onPressed: _isLoading == true ||
+                                            _isLoadingReminder == true
+                                        ? null
+                                        : () {
+                                            _cancelRegisterEvent();
+                                          }))
                       ],
                     ))
               ],

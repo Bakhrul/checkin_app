@@ -66,7 +66,7 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                             child: RaisedButton(
                                 padding: EdgeInsets.all(15.0),
                                 color: Colors.indigo,
-                                child: Text("Kembali Ke Beranda",
+                                child: Text("Kembali Ke Dashboard",
                                     style: TextStyle(color: Colors.white,fontSize: 14)),
                                 onPressed: () async {
                                   Navigator.pushReplacement(

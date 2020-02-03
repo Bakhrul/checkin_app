@@ -425,7 +425,7 @@ class _EventOrder extends State<EventOrder> {
                                                                       .creatorId,
                                                               dataUser:
                                                                   dataUser,
-                                                              selfEvent: false,
+                                                              selfEvent: true,
                                                             )));
                                                 break;
                                               case PageEnum.batalkanEvent:

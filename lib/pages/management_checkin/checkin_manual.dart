@@ -17,9 +17,11 @@ Map<String, dynamic> formSerialize;
 Map<String, String> requestHeaders = Map();
 
 class CheckinManual extends StatefulWidget {
-  CheckinManual({Key key, this.title, this.idevent,this.startTime,this.endTime}) : super(key: key);
+  CheckinManual(
+      {Key key, this.title, this.idevent, this.startTime, this.endTime})
+      : super(key: key);
   final String title, idevent;
-  final String startTime,endTime;
+  final String startTime, endTime;
   @override
   State<StatefulWidget> createState() {
     return _CheckinManualState();
@@ -40,41 +42,44 @@ class _CheckinManualState extends State<CheckinManual>
     isCheckin = false;
   }
 
-DateTime _date = new DateTime.now();
-int _seconds = 0;
-var _count = '00:00';
-bool disable = false;
+  DateTime _date = new DateTime.now();
+  int _seconds = 0;
+  var _count = '00:00';
+  bool disable = false;
 
- 
-  void startTimer(){
-      Duration minusDuration = Duration(seconds: 1);
+  void startTimer() {
+    Duration minusDuration = Duration(seconds: 1);
 
-      Timer.periodic(minusDuration,(Timer timer){
-        if(mounted){
-            setState((){
-              if(_seconds < 1){
-                timer.cancel();
-                disable = true;
-                Fluttertoast.showToast(msg: "Waktu Checkin telah Habis");
-              }else{
-                _seconds = _seconds - 1;
-                var _time = Duration(seconds: _seconds);
-                _count = _seconds < 1 ? "00:00:00":'${(_time.inHours).toString().padLeft(2,'0')}:${(_time.inMinutes % 60).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
-              }
-          });
-        }
-      });
+    Timer.periodic(minusDuration, (Timer timer) {
+      if (mounted) {
+        setState(() {
+          if (_seconds < 1) {
+            timer.cancel();
+            disable = true;
+            Fluttertoast.showToast(msg: "Waktu Checkin telah Habis");
+          } else {
+            _seconds = _seconds - 1;
+            var _time = Duration(seconds: _seconds);
+            _count = _seconds < 1
+                ? "00:00:00"
+                : '${(_time.inHours).toString().padLeft(2, '0')}:${(_time.inMinutes % 60).toString().padLeft(2, '0')}:${(_time.inSeconds % 60).toString().padLeft(2, '0')}';
+          }
+        });
+      }
+    });
   }
-  
-  void getDifTime(){
-        DateTime _getDateExp = DateTime.parse(widget.endTime.toString());
-        
-        _seconds = _getDateExp.difference(_date).inSeconds;
-        var _time = Duration(seconds: _seconds);
-        _count = _seconds < 1 ? "00:00:00":'${(_time.inHours).toString().padLeft(2,'0')}:${(_time.inMinutes % 60).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
-        // print(_count);
-        
-}
+
+  void getDifTime() {
+    DateTime _getDateExp = DateTime.parse(widget.endTime.toString());
+
+    _seconds = _getDateExp.difference(_date).inSeconds;
+    var _time = Duration(seconds: _seconds);
+    _count = _seconds < 1
+        ? "00:00:00"
+        : '${(_time.inHours).toString().padLeft(2, '0')}:${(_time.inMinutes % 60).toString().padLeft(2, '0')}:${(_time.inSeconds % 60).toString().padLeft(2, '0')}';
+    // print(_count);
+  }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -150,7 +155,7 @@ bool disable = false;
           print('response decoded $responseJson');
         } else {
           print('${response.body}');
-            Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+          Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
           setState(() {
             isCheckin = false;
           });
@@ -200,20 +205,21 @@ bool disable = false;
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Container(
-                        width: 100.0,
-                        height: 100.0,
-                        child: Image.asset("images/checkin_flat.png"),
-                      ),  
-                      Container(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 10.0, right: 10.0),
-                        child:Text(_count,
-                            style:TextStyle(
-                              fontSize : 20.0
-                            )
-                        )
-                      ),                 
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                        Container(
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image.asset("images/checkin_flat.png"),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.only(
+                                right: 10.0),
+                            child:
+                                Text(_count, style: TextStyle(fontSize: 24.0,fontWeight: FontWeight.w500))),
+                      ]),
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 15.0, left: 10.0, right: 10.0),
@@ -273,13 +279,15 @@ bool disable = false;
           child: RaisedButton(
             color: Colors.green,
             textColor: Colors.white,
-            disabledColor: disable ? Colors.grey:Colors.green[400],
+            disabledColor: disable ? Colors.grey : Colors.green[400],
             disabledTextColor: Colors.white,
             padding: EdgeInsets.all(15.0),
             splashColor: Colors.blueAccent,
-            onPressed: disable ? null:() async {
-              checkinsekarang();
-            },
+            onPressed: disable
+                ? null
+                : () async {
+                    checkinsekarang();
+                  },
             child: isCheckin == true
                 ? Container(
                     height: 25.0,
