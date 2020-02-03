@@ -1,14 +1,19 @@
-import 'package:checkin_app/auth/login.dart';
+// import 'package:checkin_app/auth/login.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'login.dart';
+import '../core/api.dart';
+// import 'login.dart';
 import 'dart:convert';
+import 'dart:io';
 import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:checkin_app/storage/storage.dart';
+
 
 Map<String, dynamic> formSerialize;
 Map<String, String> requestHeaders = Map();
@@ -16,6 +21,9 @@ TextEditingController namalengkap = TextEditingController();
 TextEditingController email = TextEditingController();
 TextEditingController password = TextEditingController();
 bool isLoading, isRegister;
+FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+String fcmToken;
+String msg = '';
 
 class Register extends StatefulWidget {
   @override
@@ -30,8 +38,151 @@ class _Register extends State<Register> {
     namalengkap.text = '';
     email.text = '';
     password.text = '';
+    registerToken();
   }
 
+  registerToken() {
+    _firebaseMessaging.getToken().then((token) {
+      setState(() {
+        fcmToken = token;
+      });
+    });
+  }
+
+  _login() async {
+    try {
+      final getToken = await http.post(url('oauth/token'), body: {
+        'grant_type': grantType,
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        "username": email.text,
+        "password": password.text,
+      });
+
+
+      var getTokenDecode = json.decode(getToken.body);
+      if (getToken.statusCode == 200) {
+        if (getTokenDecode['error'] == 'invalid_credentials') {
+          Fluttertoast.showToast(msg: getTokenDecode['message']);
+          msg = getTokenDecode['message'];
+          setState(() {
+            isRegister = false;
+          });
+        } else if (getTokenDecode['error'] == 'invalid_request') {
+          Fluttertoast.showToast(msg: getTokenDecode['hint']);
+          msg = getTokenDecode['hint'];
+          setState(() {
+            isRegister = false;
+          });
+        } else if (getTokenDecode['token_type'] == 'Bearer') {
+          DataStore()
+              .setDataString('access_token', getTokenDecode['access_token']);
+          DataStore().setDataString('token_type', getTokenDecode['token_type']);
+
+          List head = ['token_type', 'access_token'];
+          List value = [
+            getTokenDecode['token_type'],
+            getTokenDecode['access_token']
+          ];
+          await Auth(nameStringsession: head, dataStringsession: value)
+              .savesession();
+        }
+        dynamic tokenType = getTokenDecode['token_type'];
+        dynamic accessToken = getTokenDecode['access_token'];
+        requestHeaders['Accept'] = 'application/json';
+        requestHeaders['Authorization'] = '$tokenType $accessToken';
+        try {
+          final getUser =
+              await http.get(url("api/user"), headers: requestHeaders);
+
+          if (getUser.statusCode == 200) {
+            dynamic datauser = json.decode(getUser.body);
+
+            DataStore store = new DataStore();
+            store.setDataString("id", datauser['us_code'].toString());
+            store.setDataString("email", datauser['us_email']);
+            store.setDataString("name", datauser['us_name']);
+            store.setDataString("image",
+                datauser['us_image'] == null ? '-' : datauser['us_image']);
+            store.setDataString("phone",
+                datauser['us_phone'] == null ? '-' : datauser['us_phone']);
+            store.setDataString(
+                "location",
+                datauser['us_location'] == null
+                    ? '-'
+                    : datauser['us_location']);
+            try {
+              Map body = {
+                'id': datauser['us_code'].toString(),
+                'token': fcmToken.toString()
+              };
+              final getToken = await http.post(url("api/updateTokenFcm"),
+                  headers: requestHeaders, body: body);
+
+              if (getToken.statusCode == 200) {
+                Navigator.pushReplacementNamed(context, "/dashboard");
+                setState(() {
+                  isRegister = false;
+                });
+              } else if (getToken.statusCode != 200) {
+                Fluttertoast.showToast(msg: "error: cannot update token");
+                setState(() {
+                  isRegister = false;
+                });
+              }
+            } catch (e) {
+              Fluttertoast.showToast(msg: "error: $e");
+              setState(() {
+                isRegister = false;
+              });
+            }
+          } else {
+            Fluttertoast.showToast(
+                msg: "Request failed with status: ${getUser.statusCode}");
+            setState(() {
+              isRegister = false;
+            });
+          }
+        } on SocketException catch (_) {
+          Fluttertoast.showToast(msg: "Connection Timed Out");
+          setState(() {
+            isRegister = false;
+          });
+        } catch (e) {
+          print(e);
+          setState(() {
+            isRegister = false;
+          });
+        }
+      } else if (getToken.statusCode == 401) {
+        Fluttertoast.showToast(msg: "Username atau Password salah");
+        setState(() {
+          isRegister = false;
+        });
+      } else if (getToken.statusCode == 404) {
+        Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
+        setState(() {
+          isRegister = false;
+        });
+      } else {
+        Fluttertoast.showToast(
+            msg: "Request failed with status: ${getToken.statusCode}");
+        setState(() {
+          isRegister = false;
+        });
+      }
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(msg: "Connection Timed Out");
+      setState(() {
+        isRegister = false;
+      });
+    } catch (e) {
+      setState(() {
+        isRegister = false;
+      });
+      Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
+    }
+  }
   void dispose() {
     super.dispose();
   }
@@ -56,7 +207,6 @@ class _Register extends State<Register> {
     try {
       final response = await http.post(
         url('api/registeruser'),
-        // headers: requestHeadersX,
         body: {
           'type_platform': 'android',
           'data': jsonEncode(formSerialize),
@@ -67,13 +217,7 @@ class _Register extends State<Register> {
       if (response.statusCode == 200) {
         dynamic responseJson = jsonDecode(response.body);
         if (responseJson['status'] == 'success') {
-          Fluttertoast.showToast(msg: "Berhasil Mendaftarkan Akun");
-          setState(() {
-            isRegister = false;
-          });
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+         _login();
         } else if (responseJson['status'] == 'emailnotavailable') {
           Fluttertoast.showToast(
               msg: "Email telah digunakan, mohon gunakan email lainnya");
@@ -92,7 +236,7 @@ class _Register extends State<Register> {
       }
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(
-          msg: "Gagal Mendaftarkan Akun, Silahkan Coba Kembali");
+          msg: "Time Out, Silahkan Coba Kembali");
       setState(() {
         isRegister = false;
       });
@@ -109,6 +253,7 @@ class _Register extends State<Register> {
   @override
   Widget build(BuildContext context) {
     final namaField = TextField(
+      enabled: isRegister == true ? false : true,
       controller: namalengkap,
       autofocus: true,
       obscureText: false,
@@ -136,6 +281,7 @@ class _Register extends State<Register> {
     );
 
     final emailField = TextField(
+      enabled: isRegister == true ? false : true,
       controller: email,
       style: TextStyle(
         fontFamily: 'Roboto',
@@ -163,6 +309,7 @@ class _Register extends State<Register> {
     final passwordField = TextField(
       controller: password,
       obscureText: true,
+      enabled: isRegister == true ? false : true,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,
