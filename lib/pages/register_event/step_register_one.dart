@@ -42,7 +42,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  GestureDetector(
+                  InkWell(
                     onTap:(){
                       print('tes');
                     },
@@ -69,7 +69,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                         
                     ) 
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap:(){
                       Navigator.pushReplacement(
                         context,

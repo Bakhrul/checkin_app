@@ -1,3 +1,4 @@
+import 'package:checkin_app/auth/reset_password.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import '../core/api.dart';
@@ -547,78 +548,47 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(bottom: 40.0),
-                    child: Text('EventZhee', style: TextStyle(
-                      color: Color.fromRGBO(254, 86, 14, 1),
-                      fontSize: 42.0,
-                    ),),
+                    child: Text(
+                      'EventZhee',
+                      style: TextStyle(
+                        color: Color.fromRGBO(254, 86, 14, 1),
+                        fontSize: 42.0,
+                      ),
+                    ),
                   ),
 
                   usernameField,
                   SizedBox(height: 15.0),
+
                   passwordField,
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  loginButton,
-                  // Container(
-                  //   margin: EdgeInsets.only(top: 20.0),
-                  //   width: double.infinity,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     crossAxisAlignment: CrossAxisAlignment.center,
-                  //     children: <Widget>[
-                  //       Expanded(
-                  //         flex: 3,
-                  //         child: Container(
-                  //           decoration: BoxDecoration(
-                  //               border: BorderDirectional(
-                  //             bottom:
-                  //                 BorderSide(width: 1 / 2, color: Colors.grey),
-                  //           )),
-                  //         ),
-                  //       ),
-                  //       Expanded(
-                  //         flex: 6,
-                  //         child: Center(
-                  //           child: Text(
-                  //             'Login Dengan',
-                  //             textAlign: TextAlign.center,
-                  //             style: TextStyle(
-                  //                 fontFamily: 'Roboto',
-                  //                 color: Colors.grey,
-                  //                 fontWeight: FontWeight.w600,
-                  //                 fontSize: 12),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       Expanded(
-                  //         flex: 3,
-                  //         child: Container(
-                  //           decoration: BoxDecoration(
-                  //               border: BorderDirectional(
-                  //             bottom:
-                  //                 BorderSide(width: 1 / 2, color: Colors.grey),
-                  //           )),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   // SizedBox(
-                  //   height: 15.0,
+                  //   height: 10.0,
                   // ),
-                  Container(
-                    padding: EdgeInsets.only(top: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Belum Memiliki Akun ?',
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      
+                      ButtonTheme(
+                        minWidth: 0.0,
+                        height: 0.0,
+                        child: FlatButton(
+                          onPressed: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ResetPassword()));
+                          },
+                          child: Text(
+                            'Lupa Password ?',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 12
+                            ),
+                          ),
+                          color: Colors.white,
                         ),
-                        ButtonTheme(
+                      ),
+                       ButtonTheme(
                           minWidth: 0.0,
                           height: 0.0,
                           child: FlatButton(
@@ -633,14 +603,51 @@ class _LoginPageState extends State<LoginPage> {
                               'Daftar Sekarang',
                               style: TextStyle(
                                 color: primaryAppBarColor,
+                                fontSize: 12
                               ),
                             ),
                             color: Colors.white,
                           ),
                         ),
-                      ],
-                    ),
-                  )
+                    ],
+                  ),
+                  loginButton,
+                 
+
+                  // Container(
+                  //   padding: EdgeInsets.only(top: 2.0),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: <Widget>[
+                  //       Text(
+                  //         'Belum Memiliki Akun ?',
+                  //         style: TextStyle(
+                  //             color: Colors.black54,
+                  //             fontWeight: FontWeight.w500),
+                  //       ),
+                  //       ButtonTheme(
+                  //         minWidth: 0.0,
+                  //         height: 0.0,
+                  //         child: FlatButton(
+                  //           padding: EdgeInsets.all(5.0),
+                  //           onPressed: () async {
+                  //             Navigator.push(
+                  //                 context,
+                  //                 MaterialPageRoute(
+                  //                     builder: (context) => Register()));
+                  //           },
+                  //           child: Text(
+                  //             'Daftar Sekarang',
+                  //             style: TextStyle(
+                  //               color: primaryAppBarColor,
+                  //             ),
+                  //           ),
+                  //           color: Colors.white,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // )
                   // adsSection,
                 ],
               ),
