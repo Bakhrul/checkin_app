@@ -2,6 +2,7 @@ import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'step_register_self.dart';
 import 'step_register_someone.dart';
+import 'step_not_register.dart';
 
 class RegisterEventMethod extends StatefulWidget{
   final int id;
@@ -44,7 +45,11 @@ class _RegisterEventMethod extends State<RegisterEventMethod>{
                 children: <Widget>[
                   InkWell(
                     onTap:(){
-                      print('tes');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GuestNotRegistered(),
+                        ));
                     },
                     child: Container(
                       width: double.infinity,
