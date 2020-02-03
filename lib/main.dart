@@ -30,6 +30,7 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/follow_event" : (BuildContext context) => ManajemenEventFollowing(),
   "/notifications" : (BuildContext context) => ManajemenNotifications(),
 };
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget{
