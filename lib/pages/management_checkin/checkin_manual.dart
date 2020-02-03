@@ -35,25 +35,45 @@ class _CheckinManualState extends State<CheckinManual>
     super.initState();
     getHeaderHTTP();
     getDifTime();
+    startTimer();
     _controllerCheckin.text = '';
     isCheckin = false;
   }
+
 DateTime _date = new DateTime.now();
-// int _minutes = 1;
 int _seconds = 0;
 var _count = '00:00';
 bool disable = false;
 
  
+  void startTimer(){
+      Duration minusDuration = Duration(seconds: 1);
 
+      Timer.periodic(minusDuration,(Timer timer){
+        if(mounted){
+            setState((){
+              if(_seconds < 1){
+                timer.cancel();
+                disable = true;
+                Fluttertoast.showToast(msg: "Waktu Checkin telah Habis");
+              }else{
+                _seconds = _seconds - 1;
+                var _time = Duration(seconds: _seconds);
+                _count = _seconds < 1 ? "00:00:00":'${(_time.inHours).toString().padLeft(2,'0')}:${(_time.inMinutes % 60).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
+              }
+          });
+        }
+      });
+  }
+  
   void getDifTime(){
         DateTime _getDateExp = DateTime.parse(widget.endTime.toString());
-        DateTime _dateExp = _getDateExp.add(Duration(seconds:7200));
         
-        _seconds = _dateExp.difference(_date).inSeconds;
+        _seconds = _getDateExp.difference(_date).inSeconds;
         var _time = Duration(seconds: _seconds);
         _count = _seconds < 1 ? "00:00:00":'${(_time.inHours).toString().padLeft(2,'0')}:${(_time.inMinutes % 60).toString().padLeft(2,'0')}:${(_time.inSeconds % 60).toString().padLeft(2,'0')}';
         // print(_count);
+        
 }
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
@@ -184,10 +204,19 @@ bool disable = false;
                         width: 100.0,
                         height: 100.0,
                         child: Image.asset("images/checkin_flat.png"),
-                      ),                    
-                      Padding(
+                      ),  
+                      Container(
                         padding: const EdgeInsets.only(
                             top: 20.0, left: 10.0, right: 10.0),
+                        child:Text(_count,
+                            style:TextStyle(
+                              fontSize : 20.0
+                            )
+                        )
+                      ),                 
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 15.0, left: 10.0, right: 10.0),
                         child: Text('Punya Kode Checkin ????',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500)),
@@ -244,11 +273,11 @@ bool disable = false;
           child: RaisedButton(
             color: Colors.green,
             textColor: Colors.white,
-            disabledColor: Colors.green[400],
+            disabledColor: disable ? Colors.grey:Colors.green[400],
             disabledTextColor: Colors.white,
             padding: EdgeInsets.all(15.0),
             splashColor: Colors.blueAccent,
-            onPressed: () async {
+            onPressed: disable ? null:() async {
               checkinsekarang();
             },
             child: isCheckin == true
