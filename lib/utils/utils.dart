@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+final Color primaryAppBarColor = Color.fromRGBO(254, 86, 14, 1);
+final Color primaryButtonColor = Color.fromRGBO(254, 86, 14, 1);
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");

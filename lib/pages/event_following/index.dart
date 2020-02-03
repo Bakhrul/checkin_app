@@ -1,4 +1,5 @@
 import 'package:checkin_app/pages/event_following/detail.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'detail.dart';
@@ -15,6 +16,7 @@ import 'package:checkin_app/pages/register_event/step_register_six.dart';
 import 'package:checkin_app/pages/register_event/step_register_three.dart';
 import '../events_all/detail_event.dart';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
@@ -175,13 +177,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -196,9 +203,14 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Daftar Admin';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
@@ -349,10 +361,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         for (var i in followevents) {
           
           Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
-          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
-          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
-          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
+          String cekAllday = i['ev_allday'];
+          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
+          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
@@ -369,13 +384,18 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -390,17 +410,19 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Daftar Admin';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
             break;
           }
-
         }
-
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
@@ -486,10 +508,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         for (var i in followevents) {
           
           Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
-          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
-          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
-          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
+          String cekAllday = i['ev_allday'];
+          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
+          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
@@ -506,13 +531,17 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.red;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Verifikasi';
               color = Colors.orange;
               break;
           case 'A':
               status = 'Sudah Terdaftar';
               color = Colors.green;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
               status = 'Belum Terdaftar';
               color = Colors.grey;
@@ -527,9 +556,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
               color = Colors.grey;
               break;
           case 'P':
-              status = 'Proses Pendaftaran';
+              status = 'Menunggu Konfirmasi Admin';
               color = Colors.orange;
               break;
+          case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
           default:
             status = 'Admin / Co-Host';
             color = Colors.green;
@@ -691,10 +724,159 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
       backgroundColor: Colors.white,
       appBar: buildBar(context),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
+          ? Column(
+              children: <Widget>[
+                Container(
+                    child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300],
+                            highlightColor: Colors.grey[100],
+                            child: Row(
+                              children: [0, 1, 2, 3, 4]
+                                  .map((_) => Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)),
+                                        ),
+                                        margin: EdgeInsets.only(right: 15.0),
+                                        width: 120.0,
+                                        height: 20.0,
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        ))),
+                Container(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                      width: double.infinity,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300],
+                        highlightColor: Colors.grey[100],
+                        child: Column(
+                          children: [0, 1]
+                              .map((_) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 15.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 120.0,
+                                          height: 70.0,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                              ),
+                                              Container(
+                                                width: 40.0,
+                                                height: 8.0,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             )
-          : Padding(
+          :
+          isError == true ?
+           Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => listFilterFollowingEvent(),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              listFilterFollowingEvent();
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ):
+           Padding(
               padding: const EdgeInsets.only(
                   top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
               child: RefreshIndicator(
@@ -720,8 +902,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                 child: RaisedButton(
                                   color:
                                       categoryNow == listkategoriEvent[index].id
-                                          ? Color.fromRGBO(41, 30, 47, 1)
-                                          : Colors.white,
+                                          ? primaryAppBarColor
+                                          : Colors.grey[100],
                                   elevation: 0.0,
                                   highlightColor: Colors.transparent,
                                   highlightElevation: 0.0,
@@ -744,7 +926,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                         color: categoryNow ==
                                                 listkategoriEvent[index].id
                                             ? Colors.white
-                                            : Color.fromRGBO(41, 30, 47, 1),
+                                            : Colors.black54,
                                         fontWeight: FontWeight.w500),
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -753,8 +935,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                       side: BorderSide(
                                         color: listkategoriEvent[index].color ==
                                                 true
-                                            ? Color.fromRGBO(41, 30, 47, 1)
-                                            : Color.fromRGBO(41, 30, 47, 1),
+                                            ? Colors.transparent
+                                            : Colors.transparent,
                                       )),
                                 ),
                               ));
@@ -763,18 +945,91 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                     ),
                     isFilter == true
                         ? Container(
-                            margin: EdgeInsets.only(top: 20.0),
-                            child: CircularProgressIndicator(),
-                          )
+                                      margin: EdgeInsets.only(top:20.0),
+                                        child: SingleChildScrollView(
+                                            child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300],
+                                          highlightColor: Colors.grey[100],
+                                          child: Column(
+                                            children: [0, 1]
+                                                .map((_) => Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 25.0),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width: 120.0,
+                                                            height: 70.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: 40.0,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                          ),
+                                        ),
+                                      )))
                         : Expanded(
                             child: Scrollbar(
                               child: ListView(
                                 controller: pageScroll,
                                 children : <Widget>[
-                                //    ListView.builder(
-                                // scrollDirection: Axis.horizontal,
-                                // itemCount: listItemFollowing.length,
-                                // itemBuilder: (BuildContext context, int index) {
                                 for(var index = 0; index < listItemFollowing.length; index++)
                                   InkWell(
                                       child: Container(
@@ -1108,7 +1363,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          case 'Proses Pendaftaran':
+                                          case 'Menunggu Verifikasi':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1117,12 +1372,13 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                           id: int.parse(listItemFollowing[index].id),
                                                           selfEvent: true,
                                                           creatorId:listItemFollowing[index].idcreator,
+                                                          dataUser: dataUser,
                                                         );
                                                       }
                                                     )
                                                   );
                                                 break;
-                                          case 'Proses Daftar Admin':
+                                          case 'Belum Konfirmasi Admin':
                                                return Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1182,133 +1438,21 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                                     )
                                                   );
                                                 break;
-                                          // case 'P':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               WaitingEvent(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
-                                          // case 'C':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: false,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: false,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
-                                          // case 'A':
-                                          //   if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '2') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               RegisterEvents(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             dataUser: dataUser,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else if (listItemFollowing[index]
-                                          //           .posisi ==
-                                          //       '3') {
-                                          //     Navigator.push(
-                                          //         context,
-                                          //         MaterialPageRoute(
-                                          //           builder: (context) =>
-                                          //               SuccesRegisteredEvent(
-                                          //             id: int.parse(
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .id),
-                                          //             selfEvent: true,
-                                          //             creatorId:
-                                          //                 listItemFollowing[
-                                          //                         index]
-                                          //                     .idcreator,
-                                          //           ),
-                                          //         ));
-                                          //   } else {}
-                                          //   break;
+                                            case 'Dilarang Mendaftar Event':
+                                               return Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context){
+                                                     return RegisterEvents(
+                                                          id: int.parse(listItemFollowing[index].id),
+                                                          selfEvent: true,
+                                                          dataUser: dataUser,
+                                                          creatorId:listItemFollowing[index].idcreator,
+                                                        );
+                                                      }
+                                                    )
+                                                  );
+                                                break;
                                           default:
                                             Navigator.push(
                                                 context,
@@ -1328,8 +1472,6 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                                             break;
                                         }
                                       }),
-                              //   },
-                              // ),
                               _isPageDisconnect ?
                         Container(
                           height: 50,
@@ -1388,7 +1530,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         IconButton(
           icon: actionIcon,

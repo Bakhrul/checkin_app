@@ -18,6 +18,26 @@ class ListOngoingEvent {
       this.status});
 }
 
+class ListMoreMyEvent {
+   String id;
+   String title;
+   String waktuawal;
+   String waktuakhir;
+   String fullday;  
+   String deskripsi;
+   String lokasi;
+   String status;
+  ListMoreMyEvent(
+      {this.id,
+      this.title,
+      this.waktuawal,
+      this.waktuakhir,
+      this.deskripsi,
+      this.lokasi,
+      this.fullday,
+      this.status});
+}
+
 class ListWillComeEvent {
    String id;
    String title;
@@ -214,6 +234,7 @@ class ListEditKategoriEvent {
 }
 
 class ListPointCheckin {
+   String idpeserta;
    String namapeserta;
    String image;
    String jumlahcheckinevent;
@@ -221,7 +242,8 @@ class ListPointCheckin {
    String persencheckin;
    
   ListPointCheckin(
-      {this.namapeserta,
+      {this.idpeserta,
+      this.namapeserta,
       this.jumlahcheckinevent,
       this.jumlahcheckinpeserta,
       this.persencheckin,
@@ -231,6 +253,7 @@ class ListPointCheckin {
 
 
 class LisMultiCheckinUser {
+   String idpeserta;
    String email;
    String nama;
    String image;
@@ -238,8 +261,22 @@ class LisMultiCheckinUser {
   LisMultiCheckinUser(
       {this.email,
       this.nama,
+      this.idpeserta,
       this.image,
       this.listcheckin,
+      });
+}
+
+class ListUserCheckins {
+   String keyword;
+   String userId;
+   String ucTime;
+   String idCheckin;
+  ListUserCheckins(
+      {this.keyword,
+      this.userId,
+      this.ucTime,
+      this.idCheckin,
       });
 }
 

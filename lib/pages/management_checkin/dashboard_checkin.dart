@@ -6,6 +6,7 @@ import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
@@ -14,10 +15,6 @@ import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_participant.dart';
 import 'list_peserta_checkin.dart';
-// import 'listprovinsi.dart';
-// import 'listkabupaten.dart';
-// import 'listkecamatan.dart';
-// import 'create_checkin.dart';
 
 String sifat = 'VIP';
 String tipe = 'Public';
@@ -66,7 +63,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           id: response[i]["id"].toString(),
           name: response[i]["name"],
           email: response[i]["email"],
-          // position: response[i]["position"],
+          position: response[i]["position"].toString(),
+          status: response[i]["status"],
           picProfile: response[i]["pic_profile"],
           eventId: response[i]["event_id"].toString(),
         );
@@ -104,7 +102,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           startTime: response[i]["start_time"],
           endTime: response[i]["end_time"],
           checkinDate: response[i]["checkin_date"],
+          totalUsers: response[i]["total_users"],
         );
+
         listCheckin.add(checkin);
       }
       setState(() {
@@ -132,7 +132,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
               .sendrequest();
-      print(response['status']);
+      // print(response['status']);
       if (response['status'] == "success") {
         setState(() {});
 
@@ -246,18 +246,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
           title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
-          actions: <Widget>[
-            // new IconButton(
-            //   icon: new Icon(Icons.notifications_none),
-            //   tooltip: 'Air it',
-            //   onPressed: () {
-            //     Navigator.push(context,
-            //         MaterialPageRoute(builder: (context) => ListApproval()));
-            //   },
-            // ),
-          ],
+          actions: <Widget>[],
           bottom: TabBar(
             controller: _tabController,
             tabs: [
@@ -277,24 +268,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                     margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
+                      // border: Color.fromRGBO(r, g, b, opacity),
                       borderRadius: BorderRadius.all(Radius.circular(25.0)),
                     ),
-                    // child: TextField(
-                    //     style: TextStyle(
-                    //       fontSize: 14.0,
-                    //       color: Colors.black,
-                    //     ),
-                    //     decoration: InputDecoration(
-                    //       contentPadding:
-                    //           EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                    //       prefixIcon: Icon(
-                    //         Icons.search,
-                    //         color: Color.fromRGBO(41, 30, 47, 1),
-                    //       ),
-                    //       hintText: "Cari Berdasarkan Nama Lengkap",
-                    //       border: InputBorder.none,
-                    //     )
-                    //     ),
                   ),
                   SingleChildScrollView(
                     child: isLoading == true
@@ -329,284 +305,350 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   }
 
   Widget _buildListViewMember() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Container(
-          child: Expanded(
-            child: SizedBox(
-                child: SingleChildScrollView(
+    return listPeserta.length == 0
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
               child: Column(
-                  children: listPeserta
-                      .map((UserParticipant f) => Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: Card(
-                              child: ListTile(
-                                leading: 
-                             f.picProfile == '-' ?
-                          Container(
-                                margin: EdgeInsets.only(top:20),
-                                height: 50,
-                                width: 50,
-                                child : ClipOval(
-                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
-                                )
-                              ):
-                          Container(
-                                margin: EdgeInsets.only(top:20),
-                                height: 50,
-                                width: 50,
-                                child : ClipOval(
-                                  child: imageProfile == null ? 
-                                  FadeInImage.assetNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder : 'images/imgavatar.png',
-                                    image:url('storage/image/profile/${f.picProfile}')
-                                  ):
-                                  Image.file(imageProfile)
-                                )
-                              ),
-                                trailing: FlatButton(
-                                  child: Icon(Icons.exit_to_app),
-                                  onPressed: () async {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: Text("Warning"),
-                                            content: Text(
-                                                "Apa anda yakin untuk mengeluarkan ${f.name}?"),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                child: Text("Yes"),
-                                                onPressed: () {
-                                                  deleteParticipant(f.id,
-                                                      f.eventId.toString());
-                                                  listPeserta.remove(f);
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                              FlatButton(
-                                                child: Text("No"),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        });
-                                  },
-                                ),
-                                title: Text(f.name),
-                                onTap: () {},
-                                subtitle: Text(f.email.toString()),
-                              ),
-                            ),
-                          ))
-                      .toList()),
-            )),
-          ),
-        ),
-      ],
-    );
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Container(
+                      width: 100.0,
+                      height: 100.0,
+                      child: Image.asset("images/empty-white-box.png"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 30.0,
+                        left: 15.0,
+                        right: 15.0,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Event Belum Memiliki Peserta Sama Sekali",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black45,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ]),
+            ),
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Container(
+                child: Expanded(
+                  child: SizedBox(
+                      child: SingleChildScrollView(
+                    child: Column(
+                        children: listPeserta
+                            .map((UserParticipant f) => Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Card(
+                                    child: ListTile(
+                                      leading: Container(
+                                          margin: EdgeInsets.only(top: 20),
+                                          child: ClipOval(
+                                              child: imageProfile == null
+                                                  ? FadeInImage.assetNetwork(
+                                                      fit: BoxFit.cover,
+                                                      placeholder:
+                                                          'images/loading.gif',
+                                                      image: f.picProfile ==
+                                                                  null ||
+                                                              f.picProfile == ''
+                                                          ? url(
+                                                              'assets/images/imgavatar.png')
+                                                          : url(
+                                                              'storage/image/profile/${f.picProfile}'))
+                                                  : Image.file(imageProfile))),
+                                      trailing: FlatButton(
+                                        child: Icon(Icons.exit_to_app),
+                                        onPressed: () async {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text("Warning"),
+                                                  content: Text(
+                                                      "Apa anda yakin untuk mengeluarkan ${f.name}?"),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                      child: Text("Yes"),
+                                                      onPressed: () {
+                                                        deleteParticipant(
+                                                            f.id,
+                                                            f.eventId
+                                                                .toString());
+                                                        listPeserta.remove(f);
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    FlatButton(
+                                                      child: Text("No"),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                      ),
+                                      title: Text(f.name == null || f.name == ''
+                                          ? 'Memuat..'
+                                          : f.name),
+                                      onTap: () {},
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5.0, bottom: 5.0),
+                                        child: Text(
+                                          f.status == 'P' && f.position == '2'
+                                              ? 'Menunggu Konfirmasi ( Admin / Co-Host)'
+                                              : f.status == 'P' &&
+                                                      f.position == '3'
+                                                  ? 'Menunggu Konfirmasi ( Peserta )'
+                                                  : f.status == 'C' &&
+                                                          f.position == '2'
+                                                      ? 'Permintaan Ditolak ( Admin-Co-Host )'
+                                                      : f.status == 'C' &&
+                                                              f.position == '3'
+                                                          ? 'Pendaftaran Ditolak ( Peserta )'
+                                                          : f.status == 'A' &&
+                                                                  f.position ==
+                                                                      '2'
+                                                              ? 'Perimintaan Diterima ( Admin / Co-Host)'
+                                                              : f.status ==
+                                                                          'A' &&
+                                                                      f.position ==
+                                                                          '3'
+                                                                  ? 'pendaftaran Diterima ( Peserta )'
+                                                                  : 'Status Tidak Diketahui',
+                                          style: f.status == 'P'
+                                              ? TextStyle(
+                                                  fontWeight: FontWeight.w500)
+                                              : f.status == 'C'
+                                                  ? TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.red)
+                                                  : f.status == 'A'
+                                                      ? TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.green)
+                                                      : TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ))
+                            .toList()),
+                  )),
+                ),
+              ),
+            ],
+          );
   }
 
   Widget _builderlistViewCheckin() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Container(
-          child: Expanded(
-            child: SizedBox(
-              child: SingleChildScrollView(
-                  padding: EdgeInsets.all(2),
-                  child: Column(
-                      children: listCheckin
-                          .map((Checkin data) => Padding(
-                                padding: EdgeInsets.all(2),
-                                child: Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10.0),
-                                      child: Text(
-                                        data.checkinDate,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(100.0),
-                                              child: Container(
-                                                height: 15.0,
-                                                alignment: Alignment.center,
-                                                width: 15.0,
-                                                color: Color.fromRGBO(
-                                                    41, 30, 47, 1),
-                                              ),
-                                            ),
-                                          ),
-                                          title: Text(
-                                            data.checkinKey,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                          onTap: () async {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ListPesertaCheckin(
-                                                            id: data.id
-                                                                .toString(),
-                                                            eventid: data
-                                                                .eventId
-                                                                .toString())));
-                                          },
-                                          // trailing: ButtonTheme(
-                                          //     minWidth: 0.0,
-                                          //     child: FlatButton(
-                                          //       color: Colors.white,
-                                          //       textColor: Colors.red,
-                                          //       disabledColor:
-                                          //           Colors.green[400],
-                                          //       disabledTextColor: Colors.white,
-                                          //       padding: EdgeInsets.all(15.0),
-                                          //       splashColor: Colors.blueAccent,
-                                          //       child: Icon(
-                                          //         Icons.close,
-                                          //       ),
-                                          //       onPressed: () async {
-                                          //         showDialog(
-                                          //             context: context,
-                                          //             builder: (context) {
-                                          //               return AlertDialog(
-                                          //                 title:
-                                          //                     Text("Warning"),
-                                          //                 content: Text(
-                                          //                     "Are you sure want to delete data?"),
-                                          //                 actions: <Widget>[
-                                          //                   FlatButton(
-                                          //                     child:
-                                          //                         Text("Yes"),
-                                          //                     onPressed: () {
-                                          //                       deleteCheckin(
-                                          //                           data.id,
-                                          //                           data.eventId);
-
-                                          //                      listCheckin.remove(data);
-                                          //                      Navigator.pop(context);
-                                          //                     },
-                                          //                   ),
-                                          //                   FlatButton(
-                                          //                     child: Text("No"),
-                                          //                     onPressed: () {
-                                          //                       Navigator.pop(
-                                          //                           context);
-                                          //                     },
-                                          //                   )
-                                          //                 ],
-                                          //               );
-                                          //             });
-                                          //       },
-                                          //     )),
-                                          trailing: PopupMenuButton<PageEnum>(
-                                            onSelected: (PageEnum value) {
-                                              switch (value) {
-                                                case PageEnum.detailCheckin:
-                                                  Navigator.of(context).push(
-                                                      CupertinoPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              DetailCheckin(
-                                                                  idEvent: data
-                                                                      .eventId,
-                                                                  idCheckin:
-                                                                      data.id)));
-                                                  break;
-                                                case PageEnum.deleteCheckin:
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                          title:
-                                                              Text("Warning"),
-                                                          content: Text(
-                                                              "Are you sure want to delete data?"),
-                                                          actions: <Widget>[
-                                                            FlatButton(
-                                                              child:
-                                                                  Text("Yes"),
-                                                              onPressed: () {
-                                                                deleteCheckin(
-                                                                    data.id,
-                                                                    data.eventId);
-
-                                                                listCheckin
-                                                                    .remove(
-                                                                        data);
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            ),
-                                                            FlatButton(
-                                                              child: Text("No"),
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            )
-                                                          ],
-                                                        );
-                                                      });
-                                                  break;
-
-                                                default:
-                                              }
-                                            },
-                                            icon: Icon(Icons.more_vert),
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value: PageEnum.detailCheckin,
-                                                child: Text("Detail Checkin"),
-                                              ),
-                                              PopupMenuItem(
-                                                value: PageEnum.deleteCheckin,
-                                                child: Text("Delete"),
-                                              )
-                                            ],
-                                          ),
-                                          subtitle: Text(DateFormat('HH:mm:dd')
-                                                  .format(DateTime.parse(
-                                                      data.startTime))
-                                                  .toString() +
-                                              " - " +
-                                              DateFormat('HH:mm:dd')
-                                                  .format(DateTime.parse(
-                                                      data.endTime))
-                                                  .toString())),
-                                    ),
-                                  ],
-                                ),
-                              ))
-                          .toList())),
+    return listCheckin.length == 0
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Container(
+                      width: 100.0,
+                      height: 100.0,
+                      child: Image.asset("images/empty-white-box.png"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 30.0,
+                        left: 15.0,
+                        right: 15.0,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Event Belum Memiliki Checkin Sama Sekali",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black45,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ]),
             ),
-          ),
-        )
-      ],
-    );
-  }
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Container(
+                child: Expanded(
+                  child: SizedBox(
+                    child: SingleChildScrollView(
+                        padding: EdgeInsets.all(2),
+                        child: Column(
+                            children: listCheckin
+                                .map((Checkin data) => Padding(
+                                      padding: EdgeInsets.all(2),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Card(
+                                            child: ListTile(
+                                                leading: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100.0),
+                                                    child: Container(
+                                                      height: 15.0,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      width: 15.0,
+                                                      color: Color.fromRGBO(
+                                                          41, 30, 47, 1),
+                                                    ),
+                                                  ),
+                                                ),
+                                                title: Text(
+                                                  data.checkinKey == null ||
+                                                          data.checkinKey == ''
+                                                      ? 'Memuat...'
+                                                      : data.checkinKey,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ListPesertaCheckin(
+                                                                  id: data.id
+                                                                      .toString(),
+                                                                  eventid: data
+                                                                      .eventId
+                                                                      .toString())));
+                                                },
+                                                trailing:
+                                                    PopupMenuButton<PageEnum>(
+                                                  onSelected: (PageEnum value) {
+                                                    switch (value) {
+                                                      case PageEnum
+                                                          .detailCheckin:
+                                                        Navigator.of(context).push(CupertinoPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                DetailCheckin(
+                                                                    idEvent: data
+                                                                        .eventId,
+                                                                    idCheckin:
+                                                                        data.id)));
+                                                        break;
+                                                      case PageEnum
+                                                          .deleteCheckin:
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                title: Text(
+                                                                    "Warning"),
+                                                                content: Text(
+                                                                    "Apakah Anda Yakin Akan Menghapus Checkin ini?"),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  FlatButton(
+                                                                    child: Text(
+                                                                        "Yes"),
+                                                                    onPressed:
+                                                                        () {
+                                                                      deleteCheckin(
+                                                                          data.id,
+                                                                          data.eventId);
 
-  Widget _deleteCheckin() {}
+                                                                      listCheckin
+                                                                          .remove(
+                                                                              data);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                  ),
+                                                                  FlatButton(
+                                                                    child: Text(
+                                                                        "No"),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                  )
+                                                                ],
+                                                              );
+                                                            });
+                                                        break;
+
+                                                      default:
+                                                    }
+                                                  },
+                                                  icon: Icon(Icons.more_vert),
+                                                  itemBuilder: (context) => [
+                                                    PopupMenuItem(
+                                                      value: PageEnum
+                                                          .detailCheckin,
+                                                      child: Text(
+                                                          "Detail Checkin"),
+                                                    ),
+                                                    data.totalUsers < 1
+                                                        ? PopupMenuItem(
+                                                            value: PageEnum
+                                                                .deleteCheckin,
+                                                            child:
+                                                                Text("Delete"),
+                                                          )
+                                                        : null
+                                                  ],
+                                                ),
+                                                subtitle: Text(DateFormat(
+                                                            'HH:mm:dd')
+                                                        .format(DateTime.parse(
+                                                            data.startTime))
+                                                        .toString() +
+                                                    " - " +
+                                                    DateFormat('HH:mm:dd')
+                                                        .format(DateTime.parse(
+                                                            data.endTime))
+                                                        .toString())),
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                .toList())),
+                  ),
+                ),
+              )
+            ],
+          );
+  }
 
   Widget _bottomButtons() {
     return _tabController.index == 1
@@ -621,7 +663,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                             ChoiceCheckin(idevent: widget.idevent),
                       ));
                 },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                backgroundColor: Color.fromRGBO(254, 86, 14, 1),
                 child: Icon(
                   Icons.add,
                   size: 20.0,
@@ -637,7 +679,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                             CreateParticipant(idevent: widget.idevent),
                       ));
                 },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                backgroundColor: Color.fromRGBO(254, 86, 14, 1),
                 child: Icon(
                   Icons.add,
                   size: 20.0,

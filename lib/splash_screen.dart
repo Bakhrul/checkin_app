@@ -12,7 +12,6 @@ class _SplashScreenState extends State<SplashScreen> {
     String _status;
     DataStore dataStore = new DataStore();
     _status = await dataStore.getDataString("name");
-    print(_status);
 
     if (_status == "Tidak ditemukan") {
       Timer(Duration(seconds: 2),

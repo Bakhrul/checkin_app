@@ -16,6 +16,8 @@ import 'dart:core';
 import 'manage_absenpeserta.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 bool isLoading, isError, isDelete;
 String tokenType, accessToken;
 List<ListCheckinEvent> listcheckinevent = [];
@@ -563,7 +565,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                               builder: (context) =>
                                   ManajemenTambahCheckin(event: widget.event)));
                     },
-                    backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                    backgroundColor: primaryButtonColor,
                     child: Icon(
                       Icons.add,
                       size: 20.0,
@@ -574,7 +576,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[],
     );
   }

@@ -8,6 +8,9 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
+
 bool isLoading, isError, isFilter, isErrorfilter, isCreate;
 TextEditingController _filtercontroller = new TextEditingController();
 String tokenType, accessToken;
@@ -83,6 +86,9 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
     try {
       final getUser = await http.post(
         url('api/getdataparticipant'),
+        body: {
+          'filter': _filtercontroller.text,
+        },
         headers: requestHeaders,
       );
 
@@ -209,7 +215,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -320,7 +326,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                 Icons.search,
                                 color: Color.fromRGBO(41, 30, 47, 1),
                               ),
-                              hintText: "Cari Berdasarkan Nama atau Email",
+                              hintText: "Cari Berdasarkan Email Pengguna",
                               border: InputBorder.none,
                             )),
                       ),
@@ -347,7 +353,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "User Tidak ada / tidak ditemukan",
+                                          "Pengguna Tidak ada / tidak ditemukan",
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.black45,

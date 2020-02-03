@@ -18,9 +18,10 @@
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/image_gallery_saver-1.2.2" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/printing-3.0.2" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-4.1.0" />
-      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/image_cropper-1.1.2" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-1.1.1" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-6.0.9" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/image_crop-0.3.2" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/image_cropper-1.2.0" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

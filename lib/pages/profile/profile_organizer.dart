@@ -1,5 +1,6 @@
 import 'package:checkin_app/model/search_event.dart';
 import 'package:checkin_app/pages/profile/model.dart';
+import 'package:checkin_app/utils/utils.dart';
 import '../events_all/detail_event.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -14,6 +15,7 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType,
     accessToken,
@@ -168,16 +170,16 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         });
         listItemFollowing = [];
         for (var i in followevents) {
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
             creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: DateFormat("dd MMM yyyy")
-                .format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: DateFormat("dd MMM yyyy")
-                .format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: i['ev_allday'] == 'N' ?  DateFormat("dd MMM yyyy H:m").format(DateTime.parse(i['ev_time_start'])) : yearStart.year == yearEnd.year ? DateFormat("dd MMM").format(DateTime.parse(i['ev_time_start'])) : DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: i['ev_allday'] == 'N' ?  DateFormat("H:m").format(DateTime.parse(i['ev_time_end'])) :  DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -274,16 +276,17 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         });
         listItemFollowing = [];
         for (var i in followevents) {
+          DateTime yearStart = DateTime.parse(i['ev_time_start']);
+          DateTime yearEnd = DateTime.parse(i['ev_time_end']);
+
           EventOrganizer followX = EventOrganizer(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
             creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: DateFormat("dd MMM yyyy")
-                .format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: DateFormat("dd MMM yyyy")
-                .format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: i['ev_allday'] == 'N' ?  DateFormat("dd MMM yyyy H:m").format(DateTime.parse(i['ev_time_start'])) : yearStart.year == yearEnd.year ? DateFormat("dd MMM").format(DateTime.parse(i['ev_time_start'])) : DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: i['ev_allday'] == 'N' ?  DateFormat("H:m").format(DateTime.parse(i['ev_time_end'])) :  DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -445,7 +448,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
-          backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+          backgroundColor: primaryAppBarColor,
         ),
         body: isLoading == true
             ? Center(
@@ -492,7 +495,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                     height: 200.0,
                                     padding: EdgeInsets.only(
                                         left: 40.0, right: 40.0),
-                                    color: Color.fromRGBO(41, 30, 47, 1),
+                                    color: primaryAppBarColor,
                                   ),
                                   Center(
                                     child: Padding(
@@ -771,7 +774,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           top: 10.0,
-                                                          bottom: 10.0),
+                                                          bottom: 5.0),
                                                   child: Text(
                                                     'Sedang Berlangsung',
                                                     style: TextStyle(
@@ -902,7 +905,87 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                 ),
                               ),
                               isFilter == true
-                                  ? Center(child: CircularProgressIndicator())
+                                  ?  Container(
+                                      margin: EdgeInsets.only(top:20.0),
+                                        child: SingleChildScrollView(
+                                            child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[300],
+                                          highlightColor: Colors.grey[100],
+                                          child: Column(
+                                            children: [0, 1]
+                                                .map((_) => Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 25.0),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width: 120.0,
+                                                            height: 70.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          5.0),
+                                                                ),
+                                                                Container(
+                                                                  width: 40.0,
+                                                                  height: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                          ),
+                                        ),
+                                      )))
                                   : isErrorfilter == true
                                       ? Center(
                                           child: GestureDetector(
@@ -1054,13 +1137,13 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                                 children: <Widget>[
                                                                                   Container(
                                                                                       decoration: new BoxDecoration(
-                                                                                        color: item.statusdaftar == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : item.statusdaftar == null ? Colors.grey : item.statusdaftar == 'P' ? Colors.orange : item.statusdaftar == 'C' ? Colors.red : item.statusdaftar == 'A' ? Colors.green : Colors.blue,
+                                                                                        color: item.statusdaftar == 'selesai' ? Color.fromRGBO(255, 191, 128, 1) : item.statusdaftar == 'B' ? Colors.red : item.statusdaftar == null ? Colors.grey : item.statusdaftar == 'P' ? Colors.orange : item.statusdaftar == 'C' ? Colors.red : item.statusdaftar == 'A' ? Colors.green : Colors.blue,
                                                                                         borderRadius: new BorderRadius.only(topLeft: const Radius.circular(5.0), topRight: const Radius.circular(5.0), bottomLeft: const Radius.circular(5.0), bottomRight: const Radius.circular(5.0)),
                                                                                       ),
                                                                                       padding: EdgeInsets.all(5.0),
                                                                                       width: 120.0,
                                                                                       child: Text(
-                                                                                        item.statusdaftar == 'selesai' ? 'Event Selesai' : item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
+                                                                                        item.statusdaftar == 'selesai' ? 'Event Selesai' : item.statusdaftar == 'B' ? 'Dilarang Mendaftar Event' : item.statusdaftar == null ? 'Belum Terdaftar' : item.statusdaftar == 'P' && item.posisi == '3' ? 'Proses Daftar' : item.statusdaftar == 'C' && item.posisi == '3' ? 'Pendaftaran Ditolak' : item.statusdaftar == 'A' && item.posisi == '3' ? 'Sudah Terdaftar' : item.statusdaftar == 'P' && item.posisi == '2' ? 'Proses Daftar Admin' : item.statusdaftar == 'C' && item.posisi == '2' ? 'Tolak Pendaftaran Admin' : item.statusdaftar == 'A' && item.posisi == '2' ? 'Sudah Terdaftar Admin' : 'Status Tidak Diketahui',
                                                                                         style: TextStyle(
                                                                                           color: Colors.white,
                                                                                           fontSize: 12,
@@ -1126,6 +1209,24 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                           onTap: () async {
                                                             switch (item
                                                                 .statusdaftar) {
+                                                              case 'B':
+                                                              Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                RegisterEvents(
+                                                                          id: int.parse(
+                                                                              item.id),
+                                                                          selfEvent:
+                                                                              true,
+                                                                          dataUser:
+                                                                              dataUser,
+                                                                          creatorId:
+                                                                              item.idcreator,
+                                                                        ),
+                                                                      ));
+                                                              break;
                                                               case 'P':
                                                                 if (item.posisi ==
                                                                     '2') {
@@ -1160,6 +1261,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               true,
                                                                           creatorId:
                                                                               item.idcreator,
+                                                                              dataUser:
+                                                                    dataUser,
                                                                         ),
                                                                       ));
                                                                 } else {}

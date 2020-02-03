@@ -12,6 +12,8 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'model.dart';
 import 'dart:core';
 
+import 'package:checkin_app/utils/utils.dart';
+
 String tokenType, accessToken;
 List<ListAdminEvent> listadminevent = [];
 bool isLoading, isError, isFilter, isErrorfilter, isDelete;
@@ -612,7 +614,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                   builder: (context) =>
                       ManajemenTambahAdmin(event: widget.event)));
                 },
-                backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+                backgroundColor: primaryButtonColor,
                 child: Icon(
                   Icons.add,
                   size: 20.0,
@@ -624,7 +626,7 @@ class _ManageAdminState extends State<ManageAdmin> {
     return AppBar(
       centerTitle: true,
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+      backgroundColor: primaryAppBarColor,
       actions: <Widget>[
         IconButton(
           icon: actionIcon,

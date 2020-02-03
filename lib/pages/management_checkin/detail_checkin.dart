@@ -6,6 +6,7 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/user_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/list_peserta_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -63,6 +64,7 @@ class _DetailCheckinState extends State<DetailCheckin>
       typeCheckin,
       eventName,
       dateCheckin;
+  bool _isLoading = true;
   //shader gradient Color for text
   final Shader linearGradient = LinearGradient(
     colors: <Color>[Color(0xFF6200EA), Color(0xDD000000)],
@@ -109,16 +111,22 @@ class _DetailCheckinState extends State<DetailCheckin>
     startTime = response["time_start"].toString();
     endTime = response["time_end"].toString();
     keyword = response["keyword"].toString();
-    typeCheckin = response["type"].toString();
     eventName = response["eventName"].toString();
 
     if (startTime.substring(0, 10) == endTime.substring(0, 10)) {
-      dateCheckin = startTime + ' - ' + endTime.substring(0, 10);
+      dateCheckin = startTime + ' - ' + endTime.substring(11);
     } else {
       dateCheckin = startTime + ' - ' + endTime;
     }
-    // print();
-    setState(() {});
+
+    if (response["type"].toString() == "S") {
+      typeCheckin = "Checkin Reguler";
+    }else{
+      typeCheckin = "Checkin Langsung";
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -126,7 +134,7 @@ class _DetailCheckinState extends State<DetailCheckin>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -146,7 +154,7 @@ class _DetailCheckinState extends State<DetailCheckin>
           ),
         ],
       ),
-      body: _buildBody(),
+      body: _isLoading == false? _buildBody() : Center(child:CircularProgressIndicator())
     );
   }
 

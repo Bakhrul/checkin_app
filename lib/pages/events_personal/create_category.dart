@@ -8,6 +8,8 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isSame;
 var datepicker;
@@ -121,7 +123,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),

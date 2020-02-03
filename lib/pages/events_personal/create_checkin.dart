@@ -6,8 +6,10 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'model.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
-bool isSame;
+bool isSame, isBottomDate;
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
@@ -33,6 +35,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     firstdate = FocusNode();
     lastdate = FocusNode();
     isSame = false;
+    isBottomDate = false;
     _namacheckinController.text = '';
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
@@ -50,7 +53,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
       backgroundColor: Colors.white,
       key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -71,7 +74,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.create,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: TextField(
                   controller: _namacheckinController,
@@ -85,7 +87,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.access_time,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: DateTimeField(
                   decoration: InputDecoration(
@@ -100,7 +101,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                     final date = await showDatePicker(
                         context: context,
                         firstDate: DateTime.now(),
-                        initialDate: currentValue ?? DateTime.now(),
+                        initialDate: DateTime.now(),
                         lastDate: DateTime(2100));
                     if (date != null) {
                       final time = await showTimePicker(
@@ -124,7 +125,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                       leading: Icon(
                         Icons.access_time,
-                        color: Color.fromRGBO(41, 30, 47, 1),
                       ),
                       title: DateTimeField(
                         decoration: InputDecoration(
@@ -140,7 +140,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                           final date = await showDatePicker(
                               context: context,
                               firstDate: DateTime.now(),
-                              initialDate: currentValue ?? DateTime.now(),
+                              initialDate: DateTime.now(),
                               lastDate: DateTime(2100));
                           if (date != null) {
                             final time = await showTimePicker(
@@ -164,7 +164,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   child: ListTile(
                 leading: Icon(
                   Icons.create,
-                  color: Color.fromRGBO(41, 30, 47, 1),
                 ),
                 title: TextField(
                   controller: _kodecheckinController,
@@ -199,11 +198,27 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   isSame = true;
                 });
               }
+               Duration cekAwal1 = DateTime.parse(_tanggalawal).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timestart));
+               Duration cekAwal2 = DateTime.parse(_tanggalawal).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timeend));
+
+               Duration cekAkhir1 = DateTime.parse(_tanggalakhir).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timestart));
+               Duration cekAkhir2 = DateTime.parse(_tanggalakhir).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timeend));
+
+              if(cekAwal1.inSeconds <= 0 || cekAwal2.inSeconds <= 0 || cekAkhir1.inSeconds <= 0 || cekAkhir2.inSeconds <= 0 ){
+                setState(() {
+                  isBottomDate = true;
+                });
+              }
             }
             if (isSame == true) {
               Fluttertoast.showToast(msg: 'Kode Unik Checkin Tidak Boleh Sama');
               setState(() {
                 isSame = false;
+              });
+            }else if(isBottomDate == true){
+              Fluttertoast.showToast(msg: 'Waktu checkin tidak boleh kurang Dari tanggal terakhir checkin ditambahkan');
+              setState(() {
+                isBottomDate = false;
               });
             } else {
               setState(() {
@@ -226,7 +241,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           }
         },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryButtonColor,
       ),
     );
   }

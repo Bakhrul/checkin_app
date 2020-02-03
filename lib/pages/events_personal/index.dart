@@ -14,8 +14,11 @@ import 'list_multicheckin.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'model.dart';
+import 'detail_index.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
+
+import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isDelete;
 String tokenType, accessToken;
@@ -379,7 +382,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -477,7 +480,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                   Container(
                                       width: 15.0,
                                       margin: EdgeInsets.only(
-                                          top: 10.0, right: 15.0,bottom: 20.0),
+                                          top: 10.0, right: 15.0, bottom: 20.0),
                                       height: 15.0,
                                       child: CircularProgressIndicator()),
                                 ],
@@ -490,6 +493,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                     onTap: currentEvent,
                                     child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white,Colors.grey[50]]
+                                        )
+                                        
+                                      ),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -540,6 +551,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           MainAxisAlignment
                                                               .center,
                                                       children: <Widget>[
+                                                        
                                                         Text(
                                                           item.waktuawal == null
                                                               ? 'Unknown Date'
@@ -553,6 +565,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -618,37 +632,46 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   builder: (BuildContext
                                                                           context) =>
                                                                       ManageAdmin(
-                                                                          event:
-                                                                              item.id,
-                                                                              eventEnd: false,)));
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            false,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManagePeserta(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd: false,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaWaktuCheckinPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd: false,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaCheckinPesertaPage:
                                                           Navigator.of(context).push(
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin(event:item.id)));
+                                                                      ManagePeserta(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            false,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            false,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin(
+                                                                      event: item
+                                                                          .id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -729,6 +752,27 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         .toList(),
                                   ),
                                 ),
+                                listItemOngoing.length == 5 ?
+                                Container(
+                                  height: height,
+                                  child: FlatButton(
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ManajemenMoreMyEvent(
+                                                    type: "berlangsung",
+                                                    textEvent: 'Event Berlangsung',
+                                                    eventEnd: false,
+                                                  )));
+                                    },
+                                    color: Colors.transparent,
+                                    textColor: Colors.black,
+                                    child: Text('Lihat Semua'),
+                                  ),
+                                ):
+                                Container(),
                                 Container(
                                   padding: EdgeInsets.all(10),
                                   child: Divider(),
@@ -736,6 +780,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                   onTap: futureEvent,
                                   child: Container(
+                                     decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white,Colors.grey[50]]
+                                        )
+                                        
+                                      ),
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -746,8 +798,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         children: <Widget>[
                                           Text(
                                               (jumlahwillcomeX == null
-                                                      ? 'Event Yang Akan Datang  ( 0 Event )'
-                                                      : 'Event Yang Akan Datang  ( $jumlahwillcomeX Event )')
+                                                      ? 'Event Akan Datang  ( 0 Event )'
+                                                      : 'Event Akan Datang  ( $jumlahwillcomeX Event )')
                                                   .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 14,
@@ -800,6 +852,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -864,42 +918,49 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           break;
                                                         case PageEnum
                                                             .kelolaadminPage:
-                                                          Navigator.of(context).push(
-                                                              CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ManageAdmin(
-                                                                          event:
-                                                                              item.id,
-                                                                              eventEnd: false)));
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAdmin(
+                                                                      event: item
+                                                                          .id,
+                                                                      eventEnd:
+                                                                          false)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManagePeserta(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd: false,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaWaktuCheckinPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd:  false,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaCheckinPesertaPage:
                                                           Navigator.of(context).push(
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin(event:item.id)));
+                                                                      ManagePeserta(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            false,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            false,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin(
+                                                                      event: item
+                                                                          .id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -978,6 +1039,27 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         .toList(),
                                   ),
                                 ),
+                                listItemWillCome.length == 5 ?
+                                Container(
+                                  height: futureheight,
+                                  child: FlatButton(
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ManajemenMoreMyEvent(
+                                                    type: "akan datang",
+                                                    textEvent:
+                                                        'Event Akan Datang',
+                                                    eventEnd: false,
+                                                  )));
+                                    },
+                                    color: Colors.transparent,
+                                    textColor: Colors.black,
+                                    child: Text('Lihat Semua'),
+                                  ),
+                                ): Container(),
                                 Container(
                                   padding: EdgeInsets.all(10),
                                   child: Divider(),
@@ -985,6 +1067,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                 InkWell(
                                     onTap: pastEvent,
                                     child: Container(
+                                       decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin:Alignment.topLeft,
+                                          end:Alignment.bottomRight,
+                                          colors: [Colors.white,Colors.grey[50]]
+                                        )
+                                        
+                                      ),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -1047,6 +1137,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -1112,19 +1204,24 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   builder: (BuildContext
                                                                           context) =>
                                                                       ManageAdmin(
-                                                                          event:
-                                                                              item.id,
-                                                                              eventEnd: true,)));
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            true,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManagePeserta(
-                                                                      event: item
-                                                                          .id,
-                                                                      eventEnd: true,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManagePeserta(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            true,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaWaktuCheckinPage:
@@ -1134,15 +1231,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   ManageCheckin(
                                                                       event: item
                                                                           .id,
-                                                                          eventEnd : true)));
+                                                                      eventEnd:
+                                                                          true)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
-                                                          Navigator.of(context).push(
-                                                              CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ListMultiCheckin(event:item.id)));
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin(
+                                                                      event: item
+                                                                          .id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -1223,6 +1322,26 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         .toList(),
                                   ),
                                 ),
+                                listItemDoneEvent.length == 5 ?
+                                Container(
+                                  height: pastheight,
+                                  child: FlatButton(
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ManajemenMoreMyEvent(
+                                                    type: "selesai",
+                                                    textEvent: 'Event Selesai',
+                                                    eventEnd: true,
+                                                  )));
+                                    },
+                                    color: Colors.transparent,
+                                    textColor: Colors.black,
+                                    child: Text('Lihat Semua'),
+                                  ),
+                                ): Container(),
                               ],
                             )),
                       ],
@@ -1254,7 +1373,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isDelete = false;
         });
         print(deleteEvent.body);
-   Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+        Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
       setState(() {

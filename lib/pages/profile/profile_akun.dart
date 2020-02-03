@@ -1,3 +1,4 @@
+import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/pages/profile/profile_akun_edit.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -35,7 +36,7 @@ class _ProfileUser extends State<ProfileUser> {
              iconTheme: IconThemeData(
                 color: Colors.white,
               ),
-             backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+             backgroundColor: primaryAppBarColor,
              elevation: 0.0,
              actions:<Widget>[
                IconButton(
@@ -55,7 +56,7 @@ class _ProfileUser extends State<ProfileUser> {
                   Container(
                     height: 300,
                     width: double.infinity,
-                    color: Color.fromRGBO(41, 30, 47, 1)
+                    color: primaryAppBarColor,
                   ),
                   Container(
                       child: Column(

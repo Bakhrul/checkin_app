@@ -9,6 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 GlobalKey globalKey = new GlobalKey();
 String _dataString, message;
 
@@ -44,7 +46,7 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           'Cetak QR Code',
           style: TextStyle(fontSize: 14),
         ),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.file_download),

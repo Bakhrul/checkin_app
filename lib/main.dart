@@ -1,4 +1,5 @@
 import 'package:checkin_app/auth/register.dart';
+import 'package:checkin_app/pages/event_order/index.dart';
 import 'package:checkin_app/pages/events_all/index.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +30,7 @@ Map<String, WidgetBuilder> routesX = <String, WidgetBuilder>{
   "/register" : (BuildContext context) => Register(),
   "/follow_event" : (BuildContext context) => ManajemenEventFollowing(),
   "/notifications" : (BuildContext context) => ManajemenNotifications(),
+  "/event_order"  : (BuildContext context) => EventOrder()
 };
 
 void main() => runApp(MyApp());
@@ -58,7 +60,7 @@ class _MyApp extends State<MyApp> {
   }
 
    register() {
-    _firebaseMessaging.getToken().then((token) => print(token));
+    _firebaseMessaging.getToken().then((token) => print("j"));
   }
 
   void getMessage(){
@@ -66,17 +68,17 @@ class _MyApp extends State<MyApp> {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
           notif.showNotificationWithSound(message["notification"]["title"],message["notification"]["body"]);
-          print('on message $message');
+          // print('on message $message');
           setState(() {
             _message = message["notification"]["title"];
           });
     }, onResume: (Map<String, dynamic> message) async {
-          print('on resume $message');
+          // print('on resume $message');
           setState(() {
             _message = message["notification"]["title"];
           });
     }, onLaunch: (Map<String, dynamic> message) async {
-          print('on launch $message');
+          // print('on launch $message');
           setState(() {
             _message = message["notification"]["title"];
           });
@@ -86,6 +88,7 @@ class _MyApp extends State<MyApp> {
   
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'EventZhee',

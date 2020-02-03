@@ -12,6 +12,8 @@ import 'package:checkin_app/storage/storage.dart';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 String tokenType, accessToken;
@@ -136,6 +138,11 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           isCreate = false;
         });
             Fluttertoast.showToast(msg: "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+          }else if(responseJson['status'] == 'tanggalkurang'){
+            setState(() {
+          isCreate = false;
+        });
+            Fluttertoast.showToast(msg: "Tanggal checkin tidak boleh kurang dari waktu checkin terakhir");
           }
           print('response decoded $responseJson');
         } else {
@@ -166,7 +173,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
@@ -311,7 +318,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 _tambahcheckin();
               },
         child: Icon(Icons.check),
-        backgroundColor: Color.fromRGBO(41, 30, 47, 1),
+        backgroundColor: primaryButtonColor,
       ),
     );
   }

@@ -11,11 +11,13 @@ class Checkin {
   String locationEvent;
   String eventName;
   String checkinType;
+  int totalUsers;
 
   Checkin({this.id,this.eventId ,this.titleEvent,this.locationEvent, 
   this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName,
   this.eventName,
-  this.checkinType
+  this.checkinType,
+  this.totalUsers
   });
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {
