@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
-import 'package:checkin_app/pages/management_checkin/checkin_manual.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -16,10 +15,6 @@ import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'create_participant.dart';
 import 'list_peserta_checkin.dart';
-// import 'listprovinsi.dart';
-// import 'listkabupaten.dart';
-// import 'listkecamatan.dart';
-// import 'create_checkin.dart';
 
 String sifat = 'VIP';
 String tipe = 'Public';

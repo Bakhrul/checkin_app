@@ -52,9 +52,11 @@ class SearchEvent{
       Duration dif = DateTime.parse(map['ev_time_end']).difference(DateTime.now());
       DateTime yearStart = DateTime.parse(map['ev_time_start']);
       DateTime yearEnd = DateTime.parse(map['ev_time_end']);
-      String format = yearStart.year == yearEnd.year ? "dd MMM":"dd MMM yyyy";
-      String dateStart = DateFormat(format).format(DateTime.parse(map['ev_time_start']));
-      String dateEnd = DateFormat("dd MMM yyyy").format(DateTime.parse(map['ev_time_end']));      
+      String cekAllday = map['ev_allday'];
+      String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+      String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+      String dateStart = DateFormat(formatStart).format(DateTime.parse(map['ev_time_start']));
+      String dateEnd = DateFormat(formatEnd).format(DateTime.parse(map['ev_time_end']));      
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));
       String status;
       Color color;
@@ -72,12 +74,16 @@ class SearchEvent{
              color = Colors.red;
              break;
         case 'P':
-             status = 'Proses Pendaftaran';
+             status = 'Menunggu Verifikasi';
              color = Colors.orange;
              break;
         case 'A':
              status = 'Sudah Terdaftar';
              color = Colors.green;
+             break;
+        case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
              break;
         default:
              status = 'Belum Terdaftar';
@@ -93,9 +99,14 @@ class SearchEvent{
              color = Colors.grey;
              break;
         case 'P':
-             status = 'Proses Daftar Admin';
+             status = 'Belum Konfirmasi Admin';
              color = Colors.orange;
              break;
+        case 'B':
+             status = 'Dilarang Mendaftar Event';
+             color = Colors.red;
+             break;
+
         default:
            status = 'Admin / Co-Host';
            color = Colors.green;

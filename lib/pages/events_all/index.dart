@@ -978,7 +978,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                     ? true
                                                                     : false);
                                                             break;
-                                                          case 'Proses Pendaftaran':
+                                                          case 'Menunggu Verifikasi':
                                                             return WaitingEvent(
                                                               id: _event[x].id,
                                                               creatorId: _event[
@@ -993,7 +993,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                   : false,
                                                             );
                                                             break;
-                                                          case 'Proses Daftar Admin':
+                                                          case 'Belum Konfirmasi Admin':
                                                             return RegisterEvents(
                                                                 id: _event[x]
                                                                     .id,
@@ -1020,6 +1020,18 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                                     dataUser);
                                                             break;
                                                           case 'Admin / Co-Host':
+                                                            return RegisterEvents(
+                                                                id: _event[x]
+                                                                    .id,
+                                                                creatorId: _event[
+                                                                        x]
+                                                                    .userEvent,
+                                                                dataUser:
+                                                                    dataUser,
+                                                                selfEvent:
+                                                                    true);
+                                                            break;
+                                                            case 'Dilarang Mendaftar Event':
                                                             return RegisterEvents(
                                                                 id: _event[x]
                                                                     .id,

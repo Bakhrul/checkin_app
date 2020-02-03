@@ -246,16 +246,13 @@ class _Register extends State<Register> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                SizedBox(
-                  height: 160.0,
-                  child: Center(
-                    child: Image.asset(
-                      "images/logo.png",
-                      height: 500.0,
-                      width: 500.0,
-                    ),
+                Container(
+                    margin: EdgeInsets.only(bottom: 40.0,top:40.0),
+                    child: Text('EventZhee', style: TextStyle(
+                      color: Color.fromRGBO(254, 86, 14, 1),
+                      fontSize: 42.0,
+                    ),),
                   ),
-                ),
                 namaField,
                 SizedBox(height: 15.0),
                 emailField,
@@ -340,6 +337,28 @@ class _Register extends State<Register> {
             ),
           ),
         ),
+      ),
+       bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        child: SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: Text(
+                    'Powered By :',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+                Image.asset(
+                  "images/logo.png",
+                  height: 50.0,
+                  width: 50.0,
+                ),
+              ],
+            )),
       ),
       // ),
     );

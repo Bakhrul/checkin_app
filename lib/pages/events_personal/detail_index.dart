@@ -325,6 +325,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
+                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
+                                                        Column():
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets

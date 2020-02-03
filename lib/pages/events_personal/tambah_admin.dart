@@ -86,6 +86,9 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
     try {
       final getUser = await http.post(
         url('api/getdataparticipant'),
+        body: {
+          'filter': _filtercontroller.text,
+        },
         headers: requestHeaders,
       );
 
@@ -323,7 +326,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                 Icons.search,
                                 color: Color.fromRGBO(41, 30, 47, 1),
                               ),
-                              hintText: "Cari Berdasarkan Nama atau Email",
+                              hintText: "Cari Berdasarkan Email Pengguna",
                               border: InputBorder.none,
                             )),
                       ),
@@ -350,7 +353,7 @@ class _ManajemeCreatePesertaState extends State<ManajemenTambahAdmin> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "User Tidak ada / tidak ditemukan",
+                                          "Pengguna Tidak ada / tidak ditemukan",
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.black45,

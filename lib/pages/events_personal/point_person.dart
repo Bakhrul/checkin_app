@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
-
+import 'detail_user_checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isFilter, isErrorfilter;
@@ -95,6 +95,7 @@ class _PointEventsState extends State<PointEvents> {
         listpointcheckin = [];
         for (var i in listuserJson) {
           ListPointCheckin willcomex = ListPointCheckin(
+            idpeserta: i['idparticipant'].toString(),
             namapeserta: i['name'],
             image: i['image'],
             jumlahcheckinevent: i['of_checkin'].toString(),
@@ -398,7 +399,20 @@ class _PointEventsState extends State<PointEvents> {
                                             String persencheckinpeserta =
                                                 listpointcheckin[index]
                                                     .persencheckin;
-                                            return Card(
+                                            return InkWell(
+                                              onTap:() async {
+                                              Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                DetailUserCheckin(
+                                                                          idUser: listpointcheckin[index].idpeserta,
+                                                                          idevent: widget.idevent,
+                                                                        ),
+                                                                      ));
+                                              },
+                                              child: Card(
                                               child: ListTile(
                                                 leading: Container(
                                                     width: 40.0,
@@ -451,6 +465,7 @@ class _PointEventsState extends State<PointEvents> {
                                                           FontWeight.w500,
                                                     )),
                                               ),
+                                              )
                                             );
                                           },
                                         ),

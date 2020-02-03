@@ -86,6 +86,9 @@ Map<String, String> requestHeaders = Map();
     return checkinDate(widget.id);
   }
   Future<List<Checkin>> checkinDate(eventid) async {
+    setState(() {
+      isLoading = true;
+    });
     try{
       final eventList = await http.get(
         url('api/checkin/getdata/checkdate/$eventid'),
@@ -93,7 +96,9 @@ Map<String, String> requestHeaders = Map();
       );
       print(eventList.statusCode);
 
-      var isValidDate = json.decode(eventList.body);
+     
+      if (eventList.statusCode == 200) {
+         var isValidDate = json.decode(eventList.body);
 
       var timesEnd = isValidDate['times_end'];
       var boolDate = isValidDate['bool'];
@@ -102,8 +107,9 @@ Map<String, String> requestHeaders = Map();
          endTime = timesEnd.toString(); 
          startTime = timeStart.toString(); 
         _isValidDate =  boolDate == "TRUE" ?  true : false;
+        isLoading = false;
+        isError = false;
       });
-      if (eventList.statusCode == 200) {
       } else if (eventList.statusCode == 401) {
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
@@ -213,15 +219,63 @@ Map<String, String> requestHeaders = Map();
           ),
           backgroundColor: primaryAppBarColor,
         ),
-        body: SingleChildScrollView(
+        body: isLoading == true ? Center(child: CircularProgressIndicator(),): SingleChildScrollView(
             child: Stack(
-          children: <Widget>[
-            // Positioned.fill(  //
-            //     child: Image(
-            //       image: AssetImage('images/party.jpg'),
-            //       fit : BoxFit.,
-            //   )
-            // ),
+          children: <Widget>[   
+            isError == true
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => checkinDate(widget.id),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              checkinDate(widget.id);
+                            },
+                            child: Text(
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ):
             Column(
               children: <Widget>[
                 Container(
@@ -266,18 +320,19 @@ Map<String, String> requestHeaders = Map();
                                             dataUser: widget.dataUser),
                                       ));
                                 })),
+                        _isValidDate != true ?
+                        Container():
                         Container(
                             width: double.infinity,
                             
                             child: RaisedButton(
                                 color: Colors.indigo,
+                                disabledColor: Colors.indigo[400],
                                 child: Text("Checkin",
                                     style: TextStyle(color: Colors.white)),
-                                onPressed: () async {
-                                  if (_isValidDate != true) {
-                                    null;
-                                  }else{
- Navigator.push(
+                                onPressed: _isValidDate != true ? null : () async {
+                                 
+                                Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => CheckinManual(
@@ -286,7 +341,6 @@ Map<String, String> requestHeaders = Map();
                                             endTime: endTime,),
                                             
                                       ));
-                                  }
                                  
                                 })),
                         Container(
