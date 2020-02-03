@@ -656,8 +656,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   }
 
   Widget _bottomButtons() {
-    return _tabController.index == 1
-        ? DraggableFab(
+    return 
+    // _tabController.index == 1
+    //     ?
+         DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
                 onPressed: () async {
@@ -672,22 +674,22 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                 child: Icon(
                   Icons.add,
                   size: 20.0,
-                )))
-        : DraggableFab(
-            child: FloatingActionButton(
-                shape: StadiumBorder(),
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CreateParticipant(idevent: widget.idevent),
-                      ));
-                },
-                backgroundColor: Color.fromRGBO(254, 86, 14, 1),
-                child: Icon(
-                  Icons.add,
-                  size: 20.0,
                 )));
+        // : DraggableFab(
+        //     child: FloatingActionButton(
+        //         shape: StadiumBorder(),
+        //         onPressed: () async {
+        //           Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                 builder: (context) =>
+        //                     CreateParticipant(idevent: widget.idevent),
+        //               ));
+        //         },
+        //         backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+        //         child: Icon(
+        //           Icons.add,
+        //           size: 20.0,
+        //         )));
   }
 }
