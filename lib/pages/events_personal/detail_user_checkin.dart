@@ -1,4 +1,3 @@
-import 'package:checkin_app/pages/events_personal/manage_absenpeserta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
@@ -16,13 +15,13 @@ import 'package:intl/intl.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError;
-String jumlahhadirX, jumlahtidakhadirX, jumlahpesertaX, percentX;
+String jumlahhadirX, jumlahtidakhadirX, jumlahpesertaX, percentX, namaParticipantX;
 List<ListUserCheckins> listuserscheckin = [];
 
 class DetailUserCheckin extends StatefulWidget {
-  DetailUserCheckin({Key key, this.title, this.idevent, this.idUser})
+  DetailUserCheckin({Key key, this.title, this.idevent, this.idUser, this.namaParticipant})
       : super(key: key);
-  final String title, idevent, idUser;
+  final String title, idevent, idUser, namaParticipant;
   @override
   State<StatefulWidget> createState() {
     return _DetailUserCheckinState();
@@ -36,6 +35,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
     getHeaderHTTP();
     isLoading = true;
     isError = false;
+    namaParticipantX = widget.namaParticipant == null || widget.namaParticipant == '' ? "Participant" : widget.namaParticipant;
     jumlahhadirX = '0';
     jumlahpesertaX = '0';
     jumlahtidakhadirX = '0';
@@ -127,7 +127,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
   }
 
   Widget appBarTitle = Text(
-    "Kelola Absen Peserta",
+    "Detail Checkin $namaParticipantX",
     style: TextStyle(fontSize: 16),
   );
   Icon actionIcon = Icon(

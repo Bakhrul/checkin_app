@@ -70,6 +70,10 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
             for (var x in rawData['participant']) {
               _users.add(x);
             }
+
+            if(_users.isEmpty){
+              Fluttertoast.showToast(msg: "email tidak ditemukan");
+          }
             _isLoading = false;
           });
         }

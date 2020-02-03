@@ -276,6 +276,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                           listCheckinUser[index]
                                                               .idpeserta,
                                                       idevent: widget.event,
+                                                      namaParticipant: listCheckinUser[index].nama,
                                                     ),
                                                   ));
                                             },

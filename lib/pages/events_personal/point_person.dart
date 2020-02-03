@@ -311,7 +311,7 @@ class _PointEventsState extends State<PointEvents> {
                                 Icons.search,
                                 color: Color.fromRGBO(41, 30, 47, 1),
                               ),
-                              hintText: "Cari Berdasarkan Nama Lengkap",
+                              hintText: "Cari Berdasarkan Nama",
                               border: InputBorder.none,
                             )),
                       ),
@@ -409,6 +409,7 @@ class _PointEventsState extends State<PointEvents> {
                                                                                 DetailUserCheckin(
                                                                           idUser: listpointcheckin[index].idpeserta,
                                                                           idevent: widget.idevent,
+                                                                          namaParticipant: listpointcheckin[index].namapeserta
                                                                         ),
                                                                       ));
                                               },
