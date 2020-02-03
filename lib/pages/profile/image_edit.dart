@@ -76,7 +76,7 @@ class _ImageEdit extends State<ImageEdit>{
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                    GestureDetector(
+                    InkWell(
                       onTap:openCamera,
                       child: Container(
                         padding: EdgeInsets.all(20.0),
@@ -93,7 +93,7 @@ class _ImageEdit extends State<ImageEdit>{
                         )
                       )
                     ),
-                     GestureDetector(
+                     InkWell(
                       onTap:openGallery,
                       child: Container(
                         padding: EdgeInsets.all(20.0),
