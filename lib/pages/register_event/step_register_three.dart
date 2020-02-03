@@ -8,6 +8,7 @@ import 'package:checkin_app/storage/storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'step_register_someone.dart';
+import 'step_not_register.dart';
 
 String tokenType, accessToken;
 String typePrimary, userPrimary;
@@ -275,7 +276,12 @@ class _WaitingEventState extends State<WaitingEvent> {
                                                         ))),
                                                 InkWell(
                                                     onTap: () {
-                                                      print('tes');
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                GuestNotRegistered(),
+                                                          ));
                                                     },
                                                     child: Container(
                                                         width: double.infinity,

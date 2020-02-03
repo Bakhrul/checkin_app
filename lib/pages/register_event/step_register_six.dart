@@ -13,6 +13,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:core';
+import 'step_not_register.dart';
 
 class SuccesRegisteredEvent extends StatefulWidget {
   final int checkin;
@@ -387,7 +388,13 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                         ))),
                                                             InkWell(
                                                                 onTap: () {
-                                                                  print('tes');
+                                                                  Navigator.pushReplacement(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                GuestNotRegistered(),
+                                                                      ));
                                                                 },
                                                                 child:
                                                                     Container(
