@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:checkin_app/storage/storage.dart';
+import 'step_register_three.dart';
 
 String tokenType,accessToken;
 
@@ -15,8 +16,9 @@ class GuestNotRegistered extends StatefulWidget{
 
   final String creatorId;
   final int eventId;
+  final Map dataUser;
 
-  GuestNotRegistered({Key key,this.eventId,this.creatorId}) : super(key : key);
+  GuestNotRegistered({Key key,this.eventId,this.creatorId,this.dataUser}) : super(key : key);
 
   State<StatefulWidget> createState(){
     return _GuestNotRegistered();
@@ -55,6 +57,8 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
 
    invite(String userId) async {
 
+    Fluttertoast.showToast(msg: "mohon tunggu sebentar");
+
     Map<String, dynamic> body = {
       'to': userId.toString(),
       'event_id':widget.eventId.toString(),
@@ -72,8 +76,15 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
 
         if (invite.statusCode == 200) {
           var data = json.decode(invite.body);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WaitingEvent(
+                  id: widget.eventId, creatorId: widget.creatorId, selfEvent: false, userId: userId.toString(), type: 'someone',dataUser: widget.dataUser,),
+            ));
           Fluttertoast.showToast(msg: data['success']);
         } else {
+          print(invite.body);
           Fluttertoast.showToast(msg: "gagal mendaftarkan event");
         }
     
