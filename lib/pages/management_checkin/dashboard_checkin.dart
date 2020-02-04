@@ -67,6 +67,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           status: response[i]["status"],
           picProfile: response[i]["pic_profile"],
           eventId: response[i]["event_id"].toString(),
+          
         );
 
         listPeserta.add(peserta);
@@ -103,6 +104,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           endTime: response[i]["end_time"],
           checkinDate: response[i]["checkin_date"],
           totalUsers: response[i]["total_users"],
+          checkinType: response[i]["checkin_type"],
         );
 
         listCheckin.add(checkin);
@@ -511,7 +513,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                         children: <Widget>[
                                           Card(
                                             child: ListTile(
-                                                leading: Padding(
+                                              
+                                                leading: data.checkinType == "Direct" ? Padding(
                                                   padding: const EdgeInsets.all(
                                                       10.0),
                                                   child: ClipRRect(
@@ -527,7 +530,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                           41, 30, 47, 1),
                                                     ),
                                                   ),
-                                                ),
+                                                ) : null,
                                                 title: Text(
                                                   data.checkinKey == null ||
                                                           data.checkinKey == ''
@@ -538,6 +541,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                     fontSize: 13,
                                                   ),
                                                 ),
+
                                                 onTap: () async {
                                                   Navigator.push(
                                                       context,
@@ -652,8 +656,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   Widget _bottomButtons() {
     return 
-    // _tabController.index == 1
-    //     ?
+    _tabController.index == 1
+        ?
          DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
@@ -669,7 +673,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                 child: Icon(
                   Icons.add,
                   size: 20.0,
-                )));
+                )))
+            : null;
         // : DraggableFab(
         //     child: FloatingActionButton(
         //         shape: StadiumBorder(),
