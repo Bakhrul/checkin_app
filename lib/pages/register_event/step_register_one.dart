@@ -55,18 +55,19 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                       child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.only(
-                              left: 10, right: 10, top: 15, bottom: 15),
+                              left: 20, right: 10, top: 15, bottom: 15),
                           child: Row(
                             children: <Widget>[
                               Container(
-                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  margin: EdgeInsets.only(left: 10, right: 20),
                                   child: Icon(
                                     Icons.people,
+                                    color:Colors.red[700]
                                   )),
                               Container(
                                   child: Text('Belum Memiliki Akun',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w500)))
+                                          fontSize: 16,)))
                             ],
                           ))),
                   InkWell(
@@ -74,22 +75,27 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => GuestNotRegistered(),
+                              builder: (context) => GuestNotRegistered(
+                                creatorId : widget.creatorId,
+                                eventId : widget.id
+                              ),
                             ));
                       },
                       child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.only(
-                              left: 10, right: 10, top: 15, bottom: 15),
+                              left: 20, right: 10, top: 15, bottom: 15),
                           child: Row(
                             children: <Widget>[
                               Container(
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  child: Icon(Icons.people)),
+                                  margin: EdgeInsets.only(left: 10, right: 20),
+                                  child: Icon(Icons.people,
+                                            color:Colors.blue[700]
+                                  )),
                               Container(
                                   child: Text('Sudah Memiliki Akun',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w500)))
+                                          fontSize: 16,)))
                             ],
                           ))),
                 ]));

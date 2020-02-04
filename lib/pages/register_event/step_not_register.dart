@@ -13,7 +13,10 @@ String tokenType,accessToken;
 
 class GuestNotRegistered extends StatefulWidget{
 
-  GuestNotRegistered({Key key}) : super(key : key);
+  final String creatorId;
+  final int eventId;
+
+  GuestNotRegistered({Key key,this.eventId,this.creatorId}) : super(key : key);
 
   State<StatefulWidget> createState(){
     return _GuestNotRegistered();
@@ -28,9 +31,62 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
   List _users = [];
   bool _isLoading = false;
   bool _isDisconnect = false;
+  Map<String, String> requestHeaders = {};
+
+  @override
+  initState(){
+    headers();
+    super.initState();
+  }
+
+   headers() async {
+      var storage = new DataStore();
+      var tokenTypeStorage = await storage.getDataString('token_type');
+      var accessTokenStorage = await storage.getDataString('access_token');
+
+      tokenType = tokenTypeStorage;
+      accessToken = accessTokenStorage;
+
+      setState((){
+        requestHeaders['Accept'] = 'application/json';
+        requestHeaders['Authorization'] = '$tokenType $accessToken';
+      });
+   }
+
+   invite(String userId) async {
+
+    Map<String, dynamic> body = {
+      'to': userId.toString(),
+      'event_id':widget.eventId.toString(),
+      'creator_id':widget.creatorId
+    };
+
+    try {
+    
+      final invite = await http.post(
+          url('api/inviteparticipant'),
+          headers: requestHeaders,
+          body: body
+      );
+
+
+        if (invite.statusCode == 200) {
+          var data = json.decode(invite.body);
+          Fluttertoast.showToast(msg: data['success']);
+        } else {
+          Fluttertoast.showToast(msg: "gagal mendaftarkan event");
+        }
+    
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(msg: "No Internet Connection");
+    } catch (e) {
+      print('$e');
+    }
+  }
 
   _getUser(String query) async {
-    print('_getAll()');
 
     setState(() {
       _users.clear();
@@ -40,26 +96,17 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
       _isDisconnect = false;
     });
 
-    var storage = new DataStore();
-    var tokenTypeStorage = await storage.getDataString('token_type');
-    var accessTokenStorage = await storage.getDataString('access_token');
-    Map<String, String> requestHeaders =  {};
-
-    tokenType = tokenTypeStorage;
-    accessToken = accessTokenStorage;
-    requestHeaders['Accept'] = 'application/json';
-    requestHeaders['Authorization'] = '$tokenType $accessToken';
-
     Map<String, dynamic> body = {
       'filter': query.toString()
     };
 
+
     try {
-      final ongoingevent = await http.post(url('api/getdataparticipant'),
+      final userData = await http.post(url('api/getdataparticipant'),
           headers: requestHeaders, body: body);
 
-      if (ongoingevent.statusCode == 200) {
-        Map rawData = json.decode(ongoingevent.body);
+      if (userData.statusCode == 200) {
+        Map rawData = json.decode(userData.body);
         print(rawData);
 
         if (mounted) {
@@ -77,14 +124,9 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
             _isLoading = false;
           });
         }
-      } else if (ongoingevent.statusCode == 401) {
-        setState(() {
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
+      }  else {
+        print('error');
+        print(userData.body);
         return null;
       }
     } on TimeoutException catch (_) {
@@ -117,7 +159,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
           color: Colors.white,
         ),
         title: new Text(
-          "Tambahkan Admin Event",
+          "Tambahkan Peserta Event",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -162,6 +204,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
               for(var x = 0;x < _users.length;x++)
                   InkWell(
                     child: Container(
+                      margin:EdgeInsets.only(left:10,right:10),
                       child: Card(
                         child: ListTile(
                         leading: Container(
@@ -176,11 +219,42 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
                           ),
                         ),
                         title: Text(_users[x]['us_name'] == null || _users[x]['us_name'] == '' ? 'Unknown Nama':_users[x]['us_name']),
-                        subtitle: Text(_users[x]['us_email'] == null || _users[x]['us_emil'] == '' ? 'Unknown email':_users[x]['us_email']),
+                        subtitle: Text(_users[x]['us_email'] == null || _users[x]['us_email'] == '' ? 'Unknown email':_users[x]['us_email']),
                       )),
                     ),
                     onTap: (){
-                      print('test');
+                      showDialog(
+                        context: context,
+                        builder: (context){
+                          return AlertDialog(
+                            title: Text('Info',
+                              style:TextStyle(
+                                fontSize: 18
+                              )
+                            ),
+                            content:Text('apakah anda yakin untuk mengundang akun ini untuk ikutserta ke dalam event ?',
+                              style:TextStyle(
+                                fontSize: 14
+                              )
+                            ),
+                            actions: <Widget>[
+                                FlatButton(
+                                  onPressed: (){
+                                    invite(_users[x]['us_code'].toString());
+                                    Navigator.pop(context);
+                                  }, 
+                                  child: Text('ya')
+                                  ),
+                                FlatButton(
+                                  onPressed: (){
+                                     Navigator.pop(context);
+                                  }, 
+                                  child: Text('Tidak')
+                                  )
+                            ],
+                          );
+                        }
+                      );
                     }
                   )
                   
