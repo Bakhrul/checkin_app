@@ -184,7 +184,9 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
              setState(() {
               isUpdate = false;
             });
-            Fluttertoast.showToast(msg: "Tanggal checkin tidak boleh kurang dari waktu checkin terakhir");
+            var dateCheckin = responseJson['message']['Tanggal'];
+            var timeCheckin = responseJson['message']['Jam'];
+            Fluttertoast.showToast(msg: "Tanggal $dateCheckin checkin tidak boleh kurang dari waktu checkin $timeCheckin");
           }
           print('response decoded $responseJson');
         } else {

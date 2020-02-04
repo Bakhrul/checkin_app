@@ -564,10 +564,11 @@ class _EventOrder extends State<EventOrder> {
                                                       margin: EdgeInsets.only(
                                                           top: 10.0),
                                                       padding:
-                                                          EdgeInsets.all(5.0),
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 5.0),
                                                       width: 200.0,
                                                       child: Text(
-                                                        'Menunggu Konfirmasi ',
+                                                        'Menunggu Konfirmasi',
                                                         style: TextStyle(
                                                           color: Colors.orange,
                                                           fontSize: 14,
@@ -577,7 +578,8 @@ class _EventOrder extends State<EventOrder> {
                                                       ))
                                                   : Container(
                                                       padding:
-                                                          EdgeInsets.all(5.0),
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 5.0),
                                                       width: 200,
                                                       child: Text(
                                                         'Sudah Terdaftar',

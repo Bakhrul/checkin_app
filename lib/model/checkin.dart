@@ -17,7 +17,7 @@ class Checkin {
   this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName,
   this.eventName,
   this.checkinType,
-  this.totalUsers
+  this.totalUsers,
   });
 }
   // factory Checkin.fromJson(Map<String, dynamic> map) {
