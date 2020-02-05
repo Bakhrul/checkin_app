@@ -722,19 +722,19 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "Kelola Waktu Checkin"),
+                                                            "Kelola Waktu Check-In"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "Kelola Checkin Peserta"),
+                                                            "Kelola Check-In Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir checkin Peserta"),
+                                                            "Hasil Akhir Check-In Peserta"),
                                                       ),
                                                       // item.status == 'creator'
                                                       //     ? PopupMenuItem(
