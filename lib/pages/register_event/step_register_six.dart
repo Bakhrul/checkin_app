@@ -96,7 +96,6 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
         url('api/checkin/getdata/checkdate/$eventid'),
         headers: requestHeaders,
       );
-      print(eventList.statusCode);
 
       if (eventList.statusCode == 200) {
         var isValidDate = json.decode(eventList.body);

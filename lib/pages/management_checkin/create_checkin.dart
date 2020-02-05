@@ -125,17 +125,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   @override
   void initState() {
-    // _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     datepicker = FocusNode();
-    if (widget.checkin != null) {
-      // _isFieldDateValid = true;
-      // _controllerDate.text = widget.checkin.checkin_date;
-      // _isFieldEmailValid = true;
-      // _controllerEmail.text = widget.profile.email;
-      // _isFieldAgeValid = true;
-      // _controllerAge.text = widget.profile.age.toString();
-    }
-    // postDataCheckin();
     super.initState();
   }
 
@@ -143,7 +133,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
         backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
@@ -187,7 +176,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
               Card(
                   child: ListTile(
                       leading: Icon(
-                        Icons.timeline,
+                        Icons.access_time,
                         color: Color.fromRGBO(41, 30, 47, 1),
                       ),
                       title: _buildTextFieldTimeEnd())),
