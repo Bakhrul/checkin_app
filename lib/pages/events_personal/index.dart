@@ -722,19 +722,19 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "Kelola Waktu Check-In"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "Kelola Check-In Peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir Check-In Peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       // item.status == 'creator'
                                                       //     ? PopupMenuItem(
@@ -990,7 +990,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaeditEventPage,
                                                               child: Text(
-                                                                  "Edit data event"),
+                                                                  "Edit Data Event"),
                                                             )
                                                           : null,
                                                       item.status == 'creator'
@@ -998,32 +998,32 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "K. admin / co-host"),
+                                                                  "Kelola Admin / Co-Host"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "K. peserta"),
+                                                            "Kelola Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "K. waktu checkin"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "K. checkin peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil akhir checkin peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       item.status == 'creator'
                                                           ?  PopupMenuItem(
@@ -1036,7 +1036,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   Divider(color: Colors.black38),
                                                                   Padding(
                                                                     padding: const EdgeInsets.only(top:10.0),
-                                                                    child: Text('Hapus event'),
+                                                                    child: Text('Hapus Event'),
                                                                   ),
                                                                 ]
                                                                   ),
@@ -1288,32 +1288,32 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "K. admin / co-host"),
+                                                                  "Kelola Admin / Co-Host"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "K. peserta"),
+                                                            "Kelola Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "K. waktu Checkin"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "K. Checkin peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil akhir checkin peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       item.status == 'creator'
                                                           ?
@@ -1327,7 +1327,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   Divider(color: Colors.black38),
                                                                   Padding(
                                                                     padding: const EdgeInsets.only(top:10.0),
-                                                                    child: Text('Hapus event'),
+                                                                    child: Text('Hapus Event'),
                                                                   ),
                                                                 ]
                                                                   ),
