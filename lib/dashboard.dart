@@ -969,7 +969,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1196,7 +1196,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1440,7 +1440,7 @@ class _DashboardState extends State<Dashboard> {
                                                                               mainAxisAlignment: MainAxisAlignment.start,
                                                                               children: <Widget>[
                                                                                 Expanded(
-                                                                                    flex: 2,
+                                                                                    flex: 3,
                                                                                     child: Card(
                                                                                         margin: EdgeInsets.only(left: 5.0),
                                                                                         elevation: 0.5,
@@ -1655,7 +1655,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1837,7 +1837,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: <Widget>[
                                                                                       Expanded(
-                                                                                          flex: 2,
+                                                                                          flex: 3,
                                                                                           child: Card(
                                                                                               margin: EdgeInsets.only(left: 10.0),
                                                                                               elevation: 0.5,
