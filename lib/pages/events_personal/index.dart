@@ -709,32 +709,32 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "K. admin / co-host"),
+                                                                  "Kelola Admin / Co-Host"),
                                                             )
                                                           : null, 
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "K. peserta"),
+                                                            "Kelola Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "K. waktu Checkin"),
+                                                            "Kelola Waktu Checkin"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "K. Checkin peserta"),
+                                                            "Kelola Checkin Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil akhir checkin peserta"),
+                                                            "Hasil Akhir checkin Peserta"),
                                                       ),
                                                       // item.status == 'creator'
                                                       //     ? PopupMenuItem(
