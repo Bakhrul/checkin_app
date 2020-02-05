@@ -57,7 +57,7 @@ class _ResetPassword extends State<ResetPassword> {
       if (response.statusCode == 200) {
         dynamic responseJson = jsonDecode(response.body);
         if (responseJson == 'success') {
-          Fluttertoast.showToast(msg: "Silahkan Cek Email Anda",toastLength: Toast.LENGTH_LONG);
+          Fluttertoast.showToast(msg: "Silahkan cek email anda, jika tidak ditemukan cek pada spam email",toastLength: Toast.LENGTH_LONG);
           setState(() {
             isReset = false;
           });

@@ -77,7 +77,8 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                             MaterialPageRoute(
                               builder: (context) => GuestNotRegistered(
                                 creatorId : widget.creatorId,
-                                eventId : widget.id
+                                eventId : widget.id,
+                                dataUser: widget.dataUser
                               ),
                             ));
                       },
