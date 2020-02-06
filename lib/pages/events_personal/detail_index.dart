@@ -18,7 +18,7 @@ import 'manage_peserta.dart';
 
 import 'package:checkin_app/utils/utils.dart';
 
-bool isLoading, isError, isDelete;
+bool isLoading, isError, isDelete, isPublish;
 String tokenType, accessToken;
 String jumlahongoingX, jumlahwillcomeX, jumlahdoneeventX;
 Map<String, String> requestHeaders = Map();
@@ -32,10 +32,13 @@ enum PageEnum {
   kelolaHasilAKhirPage,
   kelolaadminPage,
   deleteEvent,
+  publishEvent
 }
 
 class ManajemenMoreMyEvent extends StatefulWidget {
-  ManajemenMoreMyEvent({Key key, this.title, this.type, this.textEvent, this.eventEnd}) : super(key: key);
+  ManajemenMoreMyEvent(
+      {Key key, this.title, this.type, this.textEvent, this.eventEnd})
+      : super(key: key);
   final String title, type, textEvent;
   final bool eventEnd;
   @override
@@ -94,6 +97,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
       ),
     );
   }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -124,10 +128,9 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
     });
     try {
       final getOngoningMyEvent = await http.post(
-        url('api/more_resourcemyevent'),
-        headers: requestHeaders,
-        body: {'type' : widget.type}
-      );
+          url('api/more_resourcemyevent'),
+          headers: requestHeaders,
+          body: {'type': widget.type});
 
       if (getOngoningMyEvent.statusCode == 200) {
         // return nota;
@@ -144,6 +147,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
             lokasi: i['ev_location'],
             fullday: i['ev_allday'],
             status: i['status'],
+            publish: i['ev_ispublish'],
           );
           listMoreMyEvent.add(notax);
         }
@@ -269,14 +273,14 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        isDelete == true
+                        isDelete == true || isPublish == true
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Container(
                                       width: 15.0,
                                       margin: EdgeInsets.only(
-                                          top: 10.0, right: 15.0,bottom: 20.0),
+                                          top: 10.0, right: 15.0, bottom: 20.0),
                                       height: 15.0,
                                       child: CircularProgressIndicator()),
                                 ],
@@ -293,8 +297,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: listMoreMyEvent
-                                        .map((ListMoreMyEvent item) =>
-                                            Container(
+                                        .map(
+                                            (ListMoreMyEvent item) => Container(
                                                 height: futureheight,
                                                 child: Card(
                                                     child: ListTile(
@@ -325,31 +329,61 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                   FontWeight
                                                                       .bold),
                                                         ),
-                                                        DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuawal)) == DateFormat('dd MMM yyyy').format(DateTime.parse(item.waktuakhir)) ? 
-                                                        Column():
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 10.0),
-                                                          child: Text(
-                                                            item.waktuakhir ==
-                                                                    null
-                                                                ? 'Unknown Date'
-                                                                : DateFormat(
-                                                                        'dd-MM-y')
+                                                        DateFormat('dd MMM yyyy')
                                                                     .format(DateTime
                                                                         .parse(item
-                                                                            .waktuakhir)),
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
+                                                                            .waktuawal)) ==
+                                                                DateFormat(
+                                                                        'dd MMM yyyy')
+                                                                    .format(DateTime
+                                                                        .parse(item
+                                                                            .waktuakhir))
+                                                            ? Column()
+                                                            : Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  item.waktuakhir ==
+                                                                          null
+                                                                      ? 'Unknown Date'
+                                                                      : DateFormat(
+                                                                              'dd-MM-y')
+                                                                          .format(
+                                                                              DateTime.parse(item.waktuakhir)),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ),
                                                       ],
                                                     ),
                                                   ),
+                                                  subtitle: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.0),
+                                                      child: Text(
+                                                        item.publish == 'Y'
+                                                            ? 'Event sudah dipublish'
+                                                            : item.publish ==
+                                                                    'N'
+                                                                ? 'Event belum dipublish'
+                                                                : 'Status tidak diketahui',
+                                                        style: TextStyle(
+                                                          color: item.publish ==
+                                                                  'Y'
+                                                              ? Colors.green
+                                                              : item.publish ==
+                                                                      'N'
+                                                                  ? Colors.red
+                                                                  : Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      )),
                                                   title: Text(
                                                     item.title == null ||
                                                             item.title == ''
@@ -391,42 +425,50 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                           break;
                                                         case PageEnum
                                                             .kelolaadminPage:
-                                                          Navigator.of(context).push(
-                                                              CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ManageAdmin(
-                                                                          event:
-                                                                              item.id,
-                                                                              eventEnd: widget.eventEnd)));
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAdmin(
+                                                                      event: item
+                                                                          .id,
+                                                                      eventEnd:
+                                                                          widget
+                                                                              .eventEnd)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManagePeserta(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd: widget.eventEnd,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaWaktuCheckinPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                          eventEnd:  widget.eventEnd,)));
-                                                          break;
-                                                        case PageEnum
-                                                            .kelolaCheckinPesertaPage:
                                                           Navigator.of(context).push(
                                                               CupertinoPageRoute(
                                                                   builder: (BuildContext
                                                                           context) =>
-                                                                      ListMultiCheckin(event:item.id)));
+                                                                      ManagePeserta(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            widget.eventEnd,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaWaktuCheckinPage:
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            widget.eventEnd,
+                                                                      )));
+                                                          break;
+                                                        case PageEnum
+                                                            .kelolaCheckinPesertaPage:
+                                                          Navigator.of(context).push(CupertinoPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ListMultiCheckin(
+                                                                      event: item
+                                                                          .id)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -437,6 +479,12 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                       PointEvents(
                                                                           idevent:
                                                                               item.id)));
+                                                          break;
+                                                        case PageEnum
+                                                            .publishEvent:
+                                                          konfirmasiPublish(
+                                                              item.id,
+                                                              item.publish);
                                                           break;
                                                         case PageEnum
                                                             .deleteEvent:
@@ -452,51 +500,63 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                     icon: Icon(Icons.more_vert),
                                                     itemBuilder: (context) => [
                                                       item.status == 'creator'
-                                                          ? widget.eventEnd == true ? null : PopupMenuItem(
-                                                              value: PageEnum
-                                                                  .kelolaeditEventPage,
-                                                              child: Text(
-                                                                  "Edit data event"),
-                                                            )
+                                                          ? widget.eventEnd ==
+                                                                  true
+                                                              ? null
+                                                              : PopupMenuItem(
+                                                                  value: PageEnum
+                                                                      .kelolaeditEventPage,
+                                                                  child: Text(
+                                                                      "Edit data event"),
+                                                                )
                                                           : null,
                                                       item.status == 'creator'
                                                           ? PopupMenuItem(
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "K. admin / co-host"),
+                                                                  "Kelola Admin / Co-Host"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "K. peserta"),
+                                                            "Kelola Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "K. waktu Checkin"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "K. Checkin peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil akhir checkin peserta"),
+                                                            "Hasil Akhir Checkin Peserta"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: PageEnum
+                                                            .publishEvent,
+                                                        child: Text(item
+                                                                    .publish ==
+                                                                'Y'
+                                                            ? "Batalkan Publish Event"
+                                                            : "Publish Event"),
                                                       ),
                                                       item.status == 'creator'
                                                           ? PopupMenuItem(
                                                               value: PageEnum
                                                                   .deleteEvent,
                                                               child: Text(
-                                                                  "Hapus event"),
+                                                                  "Hapus Event"),
                                                             )
                                                           : null,
                                                     ],
@@ -512,6 +572,60 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                   ),
                 ),
     );
+  }
+
+  void konfirmasiPublish(idevent, publish) async {
+    setState(() {
+      isPublish = true;
+    });
+    try {
+      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      final publishEvent = await http
+          .post(url('api/publishEvent'), headers: requestHeaders, body: {
+        'event': idevent,
+      });
+
+      if (publishEvent.statusCode == 200) {
+        var publishEventJson = json.decode(publishEvent.body);
+        if (publishEventJson['status'] == 'berhasil publish') {
+          setState(() {
+            publish = 'Y';
+            isPublish = false;
+          });
+          listOngoingEvent();
+          Fluttertoast.showToast(msg: "Berhasil");
+        } else if (publishEventJson['status'] == 'berhasil batal publish') {
+          setState(() {
+            publish = 'N';
+            isPublish = false;
+          });
+          listOngoingEvent();
+          Fluttertoast.showToast(msg: "Berhasil");
+        } else if (publishEventJson['status'] == 'tidak ada') {
+          Fluttertoast.showToast(msg: "Event tidak ditemukan");
+          setState(() {
+            isPublish = false;
+          });
+        }
+      } else {
+        setState(() {
+          isPublish = false;
+        });
+        print(publishEvent.body);
+        Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isPublish = false;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isPublish = false;
+      });
+      Fluttertoast.showToast(msg: "${e.toString()}");
+      print(e);
+    }
   }
 
   void _deleteEvent(idevent) async {
@@ -536,7 +650,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
           isDelete = false;
         });
         print(deleteEvent.body);
-   Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+        Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
       setState(() {

@@ -284,7 +284,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
             load = false;
           });
 
-          Fluttertoast.showToast(msg: "success");
+          Fluttertoast.showToast(msg: "Berhasil");
 
           Navigator.pop(context);
         } else {

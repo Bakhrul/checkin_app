@@ -183,9 +183,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
           }else if(responseJson['status'] == 'tanggalkurang'){
              setState(() {
               isUpdate = false;
-            });
-            // var dateCheckin = responseJson['message']['Tanggal'];
-            // var timeCheckin = responseJson['message']['Jam'];
+            });          
             Fluttertoast.showToast(msg: "waktu tersebut sudah memiliki jadwal checkin, mohon gunakan waktu lainnya");
           }
           print('response decoded $responseJson');
@@ -243,6 +241,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 title: TextField(
                   controller: _namacheckinController,
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'Nama Checkin',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
@@ -255,6 +254,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 ),
                 title: DateTimeField(
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Waktu Awal dimulainya checkin',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
                   ),
@@ -298,6 +298,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                       ),
                       title: DateTimeField(
                         decoration: InputDecoration(
+                          border: InputBorder.none,
                           hintText: 'Waktu Akhir Checkin',
                           hintStyle:
                               TextStyle(fontSize: 13, color: Colors.black),
@@ -343,6 +344,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 title: TextField(
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),

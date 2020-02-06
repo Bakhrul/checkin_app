@@ -367,7 +367,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                             .infinity,
                                                                         padding: EdgeInsets.only(
                                                                             left:
-                                                                                10,
+                                                                                20,
                                                                             right:
                                                                                 10,
                                                                             top:
@@ -379,11 +379,13 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                           children: <
                                                                               Widget>[
                                                                             Container(
-                                                                                margin: EdgeInsets.only(left: 10, right: 10),
-                                                                                child: Icon(
-                                                                                  Icons.people,
-                                                                                )),
-                                                                            Container(child: Text('Belum Memiliki Akun', style: TextStyle(fontWeight: FontWeight.w500)))
+                                                                                margin: EdgeInsets.only(left: 10, right: 20),
+                                                                                child: Icon(Icons.people, color: Colors.red[700])),
+                                                                            Container(
+                                                                                child: Text('Belum Memiliki Akun',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 16,
+                                                                                    )))
                                                                           ],
                                                                         ))),
                                                             InkWell(
@@ -391,9 +393,11 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                   Navigator.pushReplacement(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                GuestNotRegistered(),
+                                                                        builder: (context) => GuestNotRegistered(
+                                                                            creatorId:
+                                                                                widget.creatorId,
+                                                                            eventId: widget.id,
+                                                                            dataUser: widget.dataUser),
                                                                       ));
                                                                 },
                                                                 child:
@@ -402,7 +406,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                             .infinity,
                                                                         padding: EdgeInsets.only(
                                                                             left:
-                                                                                10,
+                                                                                20,
                                                                             right:
                                                                                 10,
                                                                             top:
@@ -414,9 +418,13 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                           children: <
                                                                               Widget>[
                                                                             Container(
-                                                                                margin: EdgeInsets.only(left: 10, right: 10),
-                                                                                child: Icon(Icons.people)),
-                                                                            Container(child: Text('Sudah Memiliki Akun', style: TextStyle(fontWeight: FontWeight.w500)))
+                                                                                margin: EdgeInsets.only(left: 10, right: 20),
+                                                                                child: Icon(Icons.people, color: Colors.blue[700])),
+                                                                            Container(
+                                                                                child: Text('Sudah Memiliki Akun',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 16,
+                                                                                    )))
                                                                           ],
                                                                         ))),
                                                           ]));

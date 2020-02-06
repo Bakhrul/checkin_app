@@ -11,8 +11,9 @@ import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isFilter, isErrorfilter;
 String tokenType, accessToken, ideventget;
-TextEditingController _filtercontroller = new TextEditingController();
+bool actionBackAppBar, iconButtonAppbarColor;
 Map<String, String> requestHeaders = Map();
+final TextEditingController _searchQuery = new TextEditingController();
 var datepicker;
 List<ListPointCheckin> listpointcheckin = [];
 final _debouncer = Debouncer(milliseconds: 500);
@@ -48,6 +49,8 @@ class _PointEventsState extends State<PointEvents> {
     isLoading = true;
     isError = false;
     ideventget = widget.idevent;
+    actionBackAppBar = true;
+    iconButtonAppbarColor = true;
     getHeaderHTTP();
   }
 
@@ -64,6 +67,29 @@ class _PointEventsState extends State<PointEvents> {
     requestHeaders['Authorization'] = '$tokenType $accessToken';
     print(requestHeaders);
     return listUser();
+  }
+
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      actionBackAppBar = true;
+      iconButtonAppbarColor = true;
+      this.appBarTitle = new Text(
+        "Kelola Hasil Absen Peserta",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
+      listUser();
+      _debouncer.run(() {
+        _searchQuery.clear();
+      });
+    });
   }
 
   Future<List<List>> listUser() async {
@@ -107,6 +133,8 @@ class _PointEventsState extends State<PointEvents> {
         setState(() {
           isLoading = false;
           isError = false;
+          isFilter = false;
+          isErrorfilter = false;
         });
       } else if (resultCheckinParticipant.statusCode == 401) {
         Fluttertoast.showToast(
@@ -114,12 +142,16 @@ class _PointEventsState extends State<PointEvents> {
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
       } else {
         print(resultCheckinParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
         return null;
       }
@@ -127,12 +159,16 @@ class _PointEventsState extends State<PointEvents> {
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+        isErrorfilter = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+        isErrorfilter = false;
       });
       debugPrint('$e');
     }
@@ -157,7 +193,7 @@ class _PointEventsState extends State<PointEvents> {
         url('api/checkin/getdata/countcheckin/users'),
         body: {
           'idevent': widget.idevent,
-          'filter' : _filtercontroller.text,
+          'filter': _searchQuery.text,
         },
         headers: requestHeaders,
       );
@@ -179,6 +215,8 @@ class _PointEventsState extends State<PointEvents> {
         setState(() {
           isFilter = false;
           isErrorfilter = false;
+          isLoading = false;
+          isError = false;
         });
       } else if (resultCheckinParticipantFilter.statusCode == 401) {
         Fluttertoast.showToast(
@@ -186,12 +224,16 @@ class _PointEventsState extends State<PointEvents> {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
       } else {
         print(resultCheckinParticipantFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
         return null;
       }
@@ -199,21 +241,25 @@ class _PointEventsState extends State<PointEvents> {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       debugPrint('$e');
     }
     return null;
-  }  
+  }
 
   Widget appBarTitle = Text(
     "Kelola Hasil Absen Peserta",
-    style: TextStyle(fontSize: 16),
+    style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
     Icons.search,
@@ -287,39 +333,13 @@ class _PointEventsState extends State<PointEvents> {
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        ),
-                        child: TextField(
-                            controller: _filtercontroller,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Colors.black,
-                            ),
-                            onChanged: (string) {
-                              _debouncer.run(() {
-                                listUserfilter();
-                              });
-                            },
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                              ),
-                              hintText: "Cari Berdasarkan Nama",
-                              border: InputBorder.none,
-                            )),
-                      ),
                       isFilter == true
-                          ? Container(
-                              padding: EdgeInsets.only(top: 20.0),
-                              child: CircularProgressIndicator(),
-                            )
+                          ? Center(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 20.0),
+                                child: CircularProgressIndicator(),
+                              ),
+                          )
                           : listpointcheckin.length == 0
                               ? Padding(
                                   padding: const EdgeInsets.only(top: 20.0),
@@ -400,74 +420,82 @@ class _PointEventsState extends State<PointEvents> {
                                                 listpointcheckin[index]
                                                     .persencheckin;
                                             return InkWell(
-                                              onTap:() async {
-                                              Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                DetailUserCheckin(
-                                                                          idUser: listpointcheckin[index].idpeserta,
-                                                                          idevent: widget.idevent,
-                                                                          namaParticipant: listpointcheckin[index].namapeserta
-                                                                        ),
-                                                                      ));
-                                              },
-                                              child: Card(
-                                              child: ListTile(
-                                                leading: Container(
-                                                    width: 40.0,
-                                                    height: 40.0,
-                                                  child: ClipOval(
-                                                      child: FadeInImage
-                                                          .assetNetwork(
-                                                        placeholder:
-                                                            'images/loading.gif',
-                                                        image: listpointcheckin[index]
-                                                                        .image ==
-                                                                    null ||
+                                                onTap: () async {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => DetailUserCheckin(
+                                                            idUser:
                                                                 listpointcheckin[
-                                                                            index]
-                                                                        .image ==
-                                                                    '' ||
+                                                                        index]
+                                                                    .idpeserta,
+                                                            idevent:
+                                                                widget.idevent,
+                                                            namaParticipant:
                                                                 listpointcheckin[
-                                                                            index]
-                                                                        .image ==
-                                                                    'null'
-                                                            ? url('assets/images/imgavatar.png')
-                                                            : url(
-                                                                'storage/image/profile/${listpointcheckin[index].image}'),
-                                                        fit: BoxFit.cover,
+                                                                        index]
+                                                                    .namapeserta),
+                                                      ));
+                                                },
+                                                child: Card(
+                                                  child: ListTile(
+                                                    leading: Container(
+                                                      width: 40.0,
+                                                      height: 40.0,
+                                                      child: ClipOval(
+                                                        child: FadeInImage
+                                                            .assetNetwork(
+                                                          placeholder:
+                                                              'images/loading.gif',
+                                                          image: listpointcheckin[
+                                                                              index]
+                                                                          .image ==
+                                                                      null ||
+                                                                  listpointcheckin[
+                                                                              index]
+                                                                          .image ==
+                                                                      '' ||
+                                                                  listpointcheckin[
+                                                                              index]
+                                                                          .image ==
+                                                                      'null'
+                                                              ? url(
+                                                                  'assets/images/imgavatar.png')
+                                                              : url(
+                                                                  'storage/image/profile/${listpointcheckin[index].image}'),
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
-                                                    ),),
-                                                title: Text(listpointcheckin[
-                                                                    index]
-                                                                .namapeserta ==
-                                                            null ||
-                                                        listpointcheckin[index]
-                                                                .namapeserta ==
-                                                            ''
-                                                    ? 'Peserta tidak diketahui'
-                                                    : listpointcheckin[index]
-                                                        .namapeserta),
-                                                subtitle: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10.0),
-                                                  child: Text(
-                                                      '$jumlahcheckinpeserta / $jumlahcheckinevent Total Absen'),
-                                                ),
-                                                trailing: Text(
-                                                    '$persencheckinpeserta %',
-                                                    style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          41, 30, 47, 1),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )),
-                                              ),
-                                              )
-                                            );
+                                                    ),
+                                                    title: Text(listpointcheckin[
+                                                                        index]
+                                                                    .namapeserta ==
+                                                                null ||
+                                                            listpointcheckin[
+                                                                        index]
+                                                                    .namapeserta ==
+                                                                ''
+                                                        ? 'Peserta tidak diketahui'
+                                                        : listpointcheckin[
+                                                                index]
+                                                            .namapeserta),
+                                                    subtitle: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10.0),
+                                                      child: Text(
+                                                          '$jumlahcheckinpeserta / $jumlahcheckinevent Total Absen'),
+                                                    ),
+                                                    trailing: Text(
+                                                        '$persencheckinpeserta %',
+                                                        style: TextStyle(
+                                                          color: Color.fromRGBO(
+                                                              41, 30, 47, 1),
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                  ),
+                                                ));
                                           },
                                         ),
                                       ),
@@ -479,12 +507,74 @@ class _PointEventsState extends State<PointEvents> {
   }
 
   Widget buildBar(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
+    return PreferredSize( preferredSize: Size.fromHeight(50.0),
+     child : AppBar(
+    
       title: appBarTitle,
+      titleSpacing: 0.0,
+      centerTitle: true,
       backgroundColor: primaryAppBarColor,
+      automaticallyImplyLeading: actionBackAppBar,
       actions: <Widget>[
+        Container(
+          color: iconButtonAppbarColor == true ? primaryAppBarColor : Colors.white,
+          child: IconButton(
+            icon: actionIcon,
+            onPressed: () {
+              setState(() {
+                if (this.actionIcon.icon == Icons.search) {
+                  actionBackAppBar = false;
+                  iconButtonAppbarColor = false;
+                  this.actionIcon = new Icon(
+                    
+                    Icons.close,
+                    color: Colors.grey,
+                    
+                  );
+                  this.appBarTitle = Container(
+                    height: 50.0,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(0),
+                    margin: EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      controller: _searchQuery,
+                      onChanged: (string) {
+                        if (string != null || string != '') {
+                          _debouncer.run(() {
+                            listUserfilter();
+                          });
+                        }
+                      },
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                        
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          prefixIcon: new Icon(Icons.search, color: Colors.grey),
+                          hintText: "Cari Berdasarkan Nama Peserta",
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            
+                          ),),
+                    ),
+                  );
+                } else {
+                  _handleSearchEnd();
+                }
+              });
+            },
+          ),
+        ),
       ],
+    )
     );
   }
 }
