@@ -256,9 +256,7 @@ class _DashboardState extends State<Dashboard> {
         var admins = eventListJson['admin_event'];
         var creators = eventListJson['creator_event'];
         var followers = eventListJson['follower_organizer'];
-        print(wishs);
-
-        // print('willcome $events');
+        
         listParticipant = [];
         listWish = [];
         listFollower = [];
@@ -373,7 +371,8 @@ class _DashboardState extends State<Dashboard> {
 
           listFollower.add(follower);
         }
-
+        
+   
         setState(() {
           isLoadingCategory = false;
           isLoading = false;
@@ -677,6 +676,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _builderBody() {
+
     return SafeArea(
       child: SingleChildScrollView(
           child: Column(
@@ -833,9 +833,39 @@ class _DashboardState extends State<Dashboard> {
                             ]),
                           ),
                         )
-                      : Column(
+                      : listParticipant.length == 0  && listWish.length == 0 && listAdmin.length == 0 && listCreator.length == 0 && listFollower.length == 0 && listEventNow.length == 0 
+                                ? Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Column(children: <Widget>[
+                                        new Container(
+                                          width: 100.0,
+                                          height: 100.0,
+                                          child: Image.asset(
+                                              "images/empty-white-box.png"),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 30.0,
+                                            left: 15.0,
+                                            right: 15.0,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Anda Belum Memiliki Event",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black45,
+                                                height: 1.5,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
+                                    ) : Column(
                           children: <Widget>[
                             //                            ==================================Participant========================================
+                            
                             listParticipant.length == 0
                                 ? Container()
                                 : Container(
@@ -939,7 +969,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1166,7 +1196,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1410,7 +1440,7 @@ class _DashboardState extends State<Dashboard> {
                                                                               mainAxisAlignment: MainAxisAlignment.start,
                                                                               children: <Widget>[
                                                                                 Expanded(
-                                                                                    flex: 2,
+                                                                                    flex: 3,
                                                                                     child: Card(
                                                                                         margin: EdgeInsets.only(left: 5.0),
                                                                                         elevation: 0.5,
@@ -1625,7 +1655,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: <Widget>[
                                                                                   Expanded(
-                                                                                      flex: 2,
+                                                                                      flex: 3,
                                                                                       child: Card(
                                                                                           margin: EdgeInsets.only(left: 10.0),
                                                                                           elevation: 0.5,
@@ -1807,7 +1837,7 @@ class _DashboardState extends State<Dashboard> {
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: <Widget>[
                                                                                       Expanded(
-                                                                                          flex: 2,
+                                                                                          flex: 3,
                                                                                           child: Card(
                                                                                               margin: EdgeInsets.only(left: 10.0),
                                                                                               elevation: 0.5,

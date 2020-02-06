@@ -59,11 +59,14 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                           child: Row(
                             children: <Widget>[
                               Container(
+                                width: 20,
+                                height: 20,
                                   margin: EdgeInsets.only(left: 10, right: 20),
-                                  child: Icon(
-                                    Icons.people,
-                                    color:Colors.red[700]
-                                  )),
+                                  child: Image.asset(
+                                    'images/not_have_account.png',
+                                    fit:BoxFit.contain
+                                    )
+                                  ),
                               Container(
                                   child: Text('Belum Memiliki Akun',
                                       style: TextStyle(
@@ -89,10 +92,14 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                           child: Row(
                             children: <Widget>[
                               Container(
+                                width: 20,
+                                height: 20,
                                   margin: EdgeInsets.only(left: 10, right: 20),
-                                  child: Icon(Icons.people,
-                                            color:Colors.blue[700]
-                                  )),
+                                  child: Image.asset(
+                                    'images/have_account.png',
+                                    fit:BoxFit.contain
+                                    )
+                                  ),
                               Container(
                                   child: Text('Sudah Memiliki Akun',
                                       style: TextStyle(

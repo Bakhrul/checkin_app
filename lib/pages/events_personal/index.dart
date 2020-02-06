@@ -762,13 +762,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "Kelola Waktu Checkin"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "Kelola Checkin Peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum

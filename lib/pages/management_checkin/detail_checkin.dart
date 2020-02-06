@@ -139,7 +139,7 @@ class _DetailCheckinState extends State<DetailCheckin>
           color: Colors.white,
         ),
         title: new Text(
-          "Detail Checkin",
+          "Detail CheckIn",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -255,37 +255,6 @@ class _DetailCheckinState extends State<DetailCheckin>
                                   Image.file(imageProfile)
                                 )
                               ),
-                                    // trailing: FlatButton(
-                                    //   child: Icon(Icons.exit_to_app),
-                                    //   onPressed: () async {
-                                    //     showDialog(
-                                    //         context: context,
-                                    //         builder: (context) {
-                                    //           return AlertDialog(
-                                    //             title: Text("Warning"),
-                                    //             content: Text(
-                                    //                 "Apa anda yakin untuk mengeluarkan name?"),
-                                    //             actions: <Widget>[
-                                    //               FlatButton(
-                                    //                 child: Text("Yes"),
-                                    //                 onPressed: () {
-                                    //                   // deleteParticipant(
-                                    //                   //     f.id, f.eventId.toString());
-                                    //                   //     listPeserta.remove(f);
-                                    //                   Navigator.pop(context);
-                                    //                 },
-                                    //               ),
-                                    //               FlatButton(
-                                    //                 child: Text("No"),
-                                    //                 onPressed: () {
-                                    //                   Navigator.pop(context);
-                                    //                 },
-                                    //               )
-                                    //             ],
-                                    //           );
-                                    //         });
-                                    //   },
-                                    // ),
                                     title: Text("${item.name}"),
                                     onTap: () {},
                                     subtitle: Text("${item.email}"),
@@ -301,7 +270,7 @@ class _DetailCheckinState extends State<DetailCheckin>
                 width: double.infinity,
                 margin: EdgeInsets.only(bottom: 4.5, right: 8.0, left: 8.0),
                 child: FlatButton(
-                  child: Text("more..."),
+                  child: Text("More..."),
                   onPressed: () {
                     Navigator.push(
                         context,

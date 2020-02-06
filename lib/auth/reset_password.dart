@@ -57,7 +57,8 @@ class _ResetPassword extends State<ResetPassword> {
       if (response.statusCode == 200) {
         dynamic responseJson = jsonDecode(response.body);
         if (responseJson == 'success') {
-          Fluttertoast.showToast(msg: "Silahkan cek email anda, jika tidak ditemukan cek pada spam email",toastLength: Toast.LENGTH_LONG);
+          Fluttertoast.showToast(msg: "Silahkan cek email anda, jika tidak ditemukan cek pada spam email",
+          toastLength: Toast.LENGTH_LONG);
           setState(() {
             isReset = false;
           });
@@ -71,7 +72,7 @@ class _ResetPassword extends State<ResetPassword> {
             isReset = false;
           });
         }
-        print('response decoded $responseJson');
+        // print('response decoded $responseJson');
       } else {
         print('${response.body}');
         Fluttertoast.showToast(
@@ -94,6 +95,44 @@ class _ResetPassword extends State<ResetPassword> {
       });
       print(e);
     }
+  }
+
+  DateTime _date = new DateTime.now();
+  int _seconds = 0;
+  var _count = '00:00';
+  bool disable = false;
+
+  void startTimer() {
+    Duration minusDuration = Duration(seconds: 1);
+
+    Timer.periodic(minusDuration, (Timer timer) {
+      if (mounted) {
+        setState(() {
+          if (_seconds < 1) {
+            timer.cancel();
+            disable = true;
+            Fluttertoast.showToast(msg: "Waktu Checkin telah Habis");
+          } else {
+            _seconds = _seconds - 1;
+            var _time = Duration(seconds: _seconds);
+            _count = _seconds < 1
+                ? "00:00:00"
+                : '${(_time.inHours).toString().padLeft(2, '0')}:${(_time.inMinutes % 60).toString().padLeft(2, '0')}:${(_time.inSeconds % 60).toString().padLeft(2, '0')}';
+          }
+        });
+      }
+    });
+  }
+
+  void getDifTime() {
+    DateTime _getDateExp = DateTime.now().subtract(Duration(minutes: 1));
+
+    _seconds = _getDateExp.difference(_date).inSeconds;
+    var _time = Duration(seconds: _seconds);
+    _count = _seconds < 1
+        ? "00:00:00"
+        : '${(_time.inHours).toString().padLeft(2, '0')}:${(_time.inMinutes % 60).toString().padLeft(2, '0')}:${(_time.inSeconds % 60).toString().padLeft(2, '0')}';
+    // print(_count);
   }
 
   @override
@@ -146,7 +185,7 @@ class _ResetPassword extends State<ResetPassword> {
           String emailValid = email.text;
           final bool isValid = EmailValidator.validate(emailValid);
 
-          print('Email is valid? ' + (isValid ? 'yes' : 'no'));
+          // print('Email is valid? ' + (isValid ? 'yes' : 'no'));
           if (email.text == null || email.text == '') {
             setState(() {
               isLoading = false;
@@ -159,7 +198,7 @@ class _ResetPassword extends State<ResetPassword> {
           }
         },
         child: Text(
-          isReset == true ? "Mohon Tunggu Sebentar" :"Kirim Permintaan",
+          isReset == true ? "Mohon Tunggu Sebentar"  : disable == false ? "Kirim Permintaan" : _count,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,

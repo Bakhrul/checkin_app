@@ -274,12 +274,6 @@ postDataCheckin() async {
                 child: QrImage(
                   data: checkinId,
                   size: 0.5 * bodyHeight,
-                  // onError: (ex) {
-                  //   print("[QR] ERROR - $ex");
-                  //   setState((){
-                  //     _inputErrorText = "Error! Maybe your input value is too long?";
-                  //   });
-                  // },
                 ),
               ),
           ),
@@ -316,13 +310,6 @@ postDataCheckin() async {
               ],
             ),
           ),
-                
-          // Expanded(
-          //   child: Column(
-          //     children: <Widget>[
-                
-          //     ],
-          //   ),)
         ],
       );
     } else {
@@ -338,7 +325,6 @@ postDataCheckin() async {
               disabledTextColor: Colors.black,
               padding: EdgeInsets.all(8.0),
               onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder: (context) => ManajemeCreateCheckin() ));
                 randomNumberGenerator();
                 postDataCheckin();
                 

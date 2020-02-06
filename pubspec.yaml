@@ -121,6 +121,8 @@ flutter:
     - images/icon.png
     - images/loading.gif
     - images/loading-event.png
+    - images/have_account.png
+    - images/not_have_account.png
   # fonts:
   #   - family: Schyler
   #     fonts:
