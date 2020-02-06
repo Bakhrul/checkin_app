@@ -488,7 +488,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget appBarTitle = Text(
-    "Dashboard",
+    "Beranda",
     style: TextStyle(fontSize: 16),
   );
   Icon notifIcon = Icon(
