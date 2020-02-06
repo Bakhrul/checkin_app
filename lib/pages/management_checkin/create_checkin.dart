@@ -79,8 +79,8 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
         .sendrequest();
 
-    
-    if (response != 'gagal') {
+    print(response);
+    if (response != 'gagal' && response != "tanggal kurang") {
       Fluttertoast.showToast(
           msg: "Success",
           toastLength: Toast.LENGTH_SHORT,

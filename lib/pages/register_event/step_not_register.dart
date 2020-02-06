@@ -38,6 +38,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
   @override
   initState(){
     headers();
+    print("j");
     super.initState();
   }
 
@@ -57,13 +58,14 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
 
    invite(String userId) async {
 
-    Fluttertoast.showToast(msg: "mohon tunggu sebentar");
+    Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
 
     Map<String, dynamic> body = {
       'to': userId.toString(),
       'event_id':widget.eventId.toString(),
       'creator_id':widget.creatorId
     };
+          print(body);
 
     try {
     
@@ -82,16 +84,16 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
               builder: (context) => WaitingEvent(
                   id: widget.eventId, creatorId: widget.creatorId, selfEvent: false, userId: userId.toString(), type: 'someone',dataUser: widget.dataUser,),
             ));
-          Fluttertoast.showToast(msg: data['success']);
+          Fluttertoast.showToast(msg: "Sukses");
         } else {
           print(invite.body);
-          Fluttertoast.showToast(msg: "gagal mendaftarkan event");
+          Fluttertoast.showToast(msg: "Gagal Mendaftarkan Event");
         }
     
     } on TimeoutException catch (_) {
-      Fluttertoast.showToast(msg: "Timed out, Try again");
+      Fluttertoast.showToast(msg: "Terjadi Galat, Mohon Coba Lagi");
     } on SocketException catch (_) {
-      Fluttertoast.showToast(msg: "No Internet Connection");
+      Fluttertoast.showToast(msg: "Koneksi Telah Terputus,Periksa Koneksi Anda");
     } catch (e) {
       print('$e');
     }
@@ -130,7 +132,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
             }
 
             if(_users.isEmpty){
-              Fluttertoast.showToast(msg: "email tidak ditemukan");
+              Fluttertoast.showToast(msg: "Email Tidak Ditemukan");
           }
             _isLoading = false;
           });
@@ -243,25 +245,26 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
                                 fontSize: 18
                               )
                             ),
-                            content:Text('apakah anda yakin untuk mengundang akun ini untuk ikutserta ke dalam event ?',
+                            content:Text('Apakah Anda Yakin Untuk Mengundang Akun Ini Untuk Ikut Serta Ke Dalam Event ?',
                               style:TextStyle(
                                 fontSize: 14
                               )
                             ),
                             actions: <Widget>[
-                                FlatButton(
-                                  onPressed: (){
-                                    invite(_users[x]['us_code'].toString());
-                                    Navigator.pop(context);
-                                  }, 
-                                  child: Text('ya')
-                                  ),
+                               
                                 FlatButton(
                                   onPressed: (){
                                      Navigator.pop(context);
                                   }, 
                                   child: Text('Tidak')
-                                  )
+                                  ),
+                                   FlatButton(
+                                  onPressed: (){
+                                    invite(_users[x]['us_code'].toString());
+                                    Navigator.pop(context);
+                                  }, 
+                                  child: Text('Ya')
+                                  ),
                             ],
                           );
                         }

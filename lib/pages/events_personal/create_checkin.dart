@@ -29,6 +29,7 @@ class ManajemeCreateCheckin extends StatefulWidget {
 
 class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  DateTime timeReplacement;
   @override
   void initState() {
     _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
@@ -40,9 +41,17 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
     _tanggalakhir = 'kosong';
+    timeSetToMinute();
     super.initState();
   }
 
+  void timeSetToMinute(){
+    var timeNow     = DateTime.now();
+    var timeString  = timeNow.toString();
+    var minutes = timeNow.minute;
+    var hours = timeNow.hour;
+    timeReplacement = DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:")) ;
+  }
   void dispose() {
     super.dispose();
   }
@@ -79,7 +88,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   controller: _namacheckinController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Nama Checkin',
+                      hintText: 'Nama CheckIn',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
@@ -91,7 +100,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 title: DateTimeField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Waktu Awal dimulainya checkin',
+                    hintText: 'Waktu Awal Dimulainya CheckIn',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
                   ),
                   readOnly: true,
@@ -107,7 +116,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(
-                            currentValue ?? DateTime.now()),
+                            currentValue ?? timeReplacement),
                       );
                       return DateTimeField.combine(date, time);
                     } else {
@@ -129,7 +138,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                       title: DateTimeField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Waktu Akhir Checkin',
+                          hintText: 'Waktu Akhir CheckIn',
                           hintStyle:
                               TextStyle(fontSize: 13, color: Colors.black),
                         ),
@@ -146,7 +155,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                             final time = await showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.fromDateTime(
-                                  currentValue ?? DateTime.now()),
+                                  currentValue ?? timeReplacement),
                             );
                             return DateTimeField.combine(date, time);
                           } else {
@@ -216,7 +225,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 isSame = false;
               });
             }else if(isBottomDate == true){
-              Fluttertoast.showToast(msg: 'Waktu checkin tidak boleh kurang Dari tanggal terakhir checkin ditambahkan');
+              Fluttertoast.showToast(msg: 'Waktu Checkin Tidak Boleh Kurang Dari Tanggal Terakhir Checkin Ditambahkan');
               setState(() {
                 isBottomDate = false;
               });

@@ -280,7 +280,7 @@ class _WaitingEventState extends State<WaitingEvent> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                GuestNotRegistered(),
+                                                                GuestNotRegistered(eventId: widget.id,creatorId: widget.creatorId),
                                                           ));
                                                     },
                                                     child: Container(

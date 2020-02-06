@@ -392,7 +392,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                                       MaterialPageRoute(
                                                                         builder:
                                                                             (context) =>
-                                                                                GuestNotRegistered(),
+                                                                                GuestNotRegistered(eventId: widget.id,creatorId: widget.creatorId),
                                                                       ));
                                                                 },
                                                                 child:
