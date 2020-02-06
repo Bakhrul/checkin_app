@@ -250,28 +250,33 @@ class _WaitingEventState extends State<WaitingEvent> {
                                                         width: double.infinity,
                                                         padding:
                                                             EdgeInsets.only(
-                                                                left: 10,
+                                                                left: 20,
                                                                 right: 10,
                                                                 top: 15,
                                                                 bottom: 15),
                                                         child: Row(
                                                           children: <Widget>[
                                                             Container(
+                                                                width: 20,
+                                                                height: 20,
                                                                 margin: EdgeInsets
                                                                     .only(
                                                                         left:
                                                                             10,
                                                                         right:
-                                                                            10),
-                                                                child: Icon(
-                                                                  Icons.people,
-                                                                )),
+                                                                            20),
+                                                                child: Image.asset(
+                                                                    'images/not_have_account.png',
+                                                                    fit: BoxFit
+                                                                        .contain)),
                                                             Container(
                                                                 child: Text(
                                                                     'Belum Memiliki Akun',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500)))
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                    )))
                                                           ],
                                                         ))),
                                                 InkWell(
@@ -280,34 +285,48 @@ class _WaitingEventState extends State<WaitingEvent> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                GuestNotRegistered(),
+                                                                GuestNotRegistered(
+                                                                    creatorId:
+                                                                        widget
+                                                                            .creatorId,
+                                                                    eventId:
+                                                                        widget
+                                                                            .id,
+                                                                    dataUser: widget
+                                                                        .dataUser),
                                                           ));
                                                     },
                                                     child: Container(
                                                         width: double.infinity,
                                                         padding:
                                                             EdgeInsets.only(
-                                                                left: 10,
+                                                                left: 20,
                                                                 right: 10,
                                                                 top: 15,
                                                                 bottom: 15),
                                                         child: Row(
                                                           children: <Widget>[
                                                             Container(
+                                                                width: 20,
+                                                                height: 20,
                                                                 margin: EdgeInsets
                                                                     .only(
                                                                         left:
                                                                             10,
                                                                         right:
-                                                                            10),
-                                                                child: Icon(Icons
-                                                                    .people)),
+                                                                            20),
+                                                                child: Image.asset(
+                                                                    'images/have_account.png',
+                                                                    fit: BoxFit
+                                                                        .contain)),
                                                             Container(
                                                                 child: Text(
                                                                     'Sudah Memiliki Akun',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500)))
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                    )))
                                                           ],
                                                         ))),
                                               ]));

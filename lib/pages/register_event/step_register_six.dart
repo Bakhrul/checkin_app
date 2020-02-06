@@ -320,115 +320,91 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                                     color: Colors.white)),
                                             onPressed: () {
                                               showModalBottomSheet(
-                                                context: context,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                builder: (context) {
-                                                  return Container(
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          10)),
-                                                          color: Colors.white),
-                                                      width: double.infinity,
-                                                      height: 150,
-                                                      padding: EdgeInsets.only(
-                                                          top: 20),
-                                                      child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            InkWell(
-                                                                onTap: () {
-                                                                  Navigator.pushReplacement(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder: (context) => ConfirmEventGuest(
-                                                                            id: widget
-                                                                                .id,
-                                                                            creatorId:
-                                                                                widget.creatorId,
-                                                                            dataUser: widget.dataUser),
-                                                                      ));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                        width: double
-                                                                            .infinity,
-                                                                        padding: EdgeInsets.only(
-                                                                            left:
-                                                                                20,
-                                                                            right:
-                                                                                10,
-                                                                            top:
-                                                                                15,
-                                                                            bottom:
-                                                                                15),
-                                                                        child:
-                                                                            Row(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                                margin: EdgeInsets.only(left: 10, right: 20),
-                                                                                child: Icon(Icons.people, color: Colors.red[700])),
-                                                                            Container(
-                                                                                child: Text('Belum Memiliki Akun',
-                                                                                    style: TextStyle(
-                                                                                      fontSize: 16,
-                                                                                    )))
-                                                                          ],
-                                                                        ))),
-                                                            InkWell(
-                                                                onTap: () {
-                                                                  Navigator.pushReplacement(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder: (context) => GuestNotRegistered(
-                                                                            creatorId:
-                                                                                widget.creatorId,
-                                                                            eventId: widget.id,
-                                                                            dataUser: widget.dataUser),
-                                                                      ));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                        width: double
-                                                                            .infinity,
-                                                                        padding: EdgeInsets.only(
-                                                                            left:
-                                                                                20,
-                                                                            right:
-                                                                                10,
-                                                                            top:
-                                                                                15,
-                                                                            bottom:
-                                                                                15),
-                                                                        child:
-                                                                            Row(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                                margin: EdgeInsets.only(left: 10, right: 20),
-                                                                                child: Icon(Icons.people, color: Colors.blue[700])),
-                                                                            Container(
-                                                                                child: Text('Sudah Memiliki Akun',
-                                                                                    style: TextStyle(
-                                                                                      fontSize: 16,
-                                                                                    )))
-                                                                          ],
-                                                                        ))),
-                                                          ]));
-                                                },
-                                              );
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      builder: (context) {
+        return Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+                color: Colors.white),
+            width: double.infinity,
+            height: 150,
+            padding: EdgeInsets.only(top: 20),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  InkWell(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConfirmEventGuest(
+                                  id: widget.id,
+                                  creatorId: widget.creatorId,
+                                  dataUser: widget.dataUser),
+                            ));
+                      },
+                      child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.only(
+                              left: 20, right: 10, top: 15, bottom: 15),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 20,
+                                height: 20,
+                                  margin: EdgeInsets.only(left: 10, right: 20),
+                                  child: Image.asset(
+                                    'images/not_have_account.png',
+                                    fit:BoxFit.contain
+                                    )
+                                  ),
+                              Container(
+                                  child: Text('Belum Memiliki Akun',
+                                      style: TextStyle(
+                                          fontSize: 16,)))
+                            ],
+                          ))),
+                  InkWell(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GuestNotRegistered(
+                                creatorId : widget.creatorId,
+                                eventId : widget.id,
+                                dataUser: widget.dataUser
+                              ),
+                            ));
+                      },
+                      child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.only(
+                              left: 20, right: 10, top: 15, bottom: 15),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width: 20,
+                                height: 20,
+                                  margin: EdgeInsets.only(left: 10, right: 20),
+                                  child: Image.asset(
+                                    'images/have_account.png',
+                                    fit:BoxFit.contain
+                                    )
+                                  ),
+                              Container(
+                                  child: Text('Sudah Memiliki Akun',
+                                      style: TextStyle(
+                                          fontSize: 16,)))
+                            ],
+                          ))),
+                ]));
+      },
+    );
                                             })),
                                     _isValidDate != true
                                         ? Container()

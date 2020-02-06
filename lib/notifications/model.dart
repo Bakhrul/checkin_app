@@ -15,6 +15,7 @@ class ListNotifications {
    String statusRead;
    String namaCreator;
    String namaEvent;
+   String messageCustom;
   
   ListNotifications(
       {this.id,
@@ -33,5 +34,6 @@ class ListNotifications {
       this.statusRead,
       this.namaCreator,
       this.namaEvent,
+      this.messageCustom,
       });
 }

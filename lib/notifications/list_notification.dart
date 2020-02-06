@@ -142,6 +142,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
             confirmation: i['n_confirmation'],
             statusRead: i['nev_status'],
             namaEvent: i['ev_title'],
+            messageCustom: i['nev_custom_message'],
           );
           listnotifications.add(willcomex);
         }
@@ -905,7 +906,9 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                             .title ==
                                                         ''
                                                 ? 'Pesan Tidak Diketahui'
-                                                : listnotifications[index]
+                                                : listnotifications[index].idmessage == '14'? 
+                                                '${listnotifications[index].namafromperson} - ${listnotifications[index].title}':
+                                                listnotifications[index]
                                                     .title),
                                           ),
                                           subtitle: Padding(
@@ -923,7 +926,8 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                 listnotifications[index]
                                                     .namaEvent,
                                                 listnotifications[index]
-                                                    .namafromperson),
+                                                    .namafromperson,
+                                                listnotifications[index].messageCustom),
                                           )),
                                     ),
                                   );
@@ -937,7 +941,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
   }
 
   Widget messageEvent(
-      idpesan, namaUpdate, pesan, namaCreator, event, namaFrom) {
+      idpesan, namaUpdate, pesan, namaCreator, event, namaFrom, pesanCustom) {
     String finalNamaPeserta;
 
     if (idpesan == '1' || idpesan == '7') {
@@ -957,19 +961,19 @@ class _NotificationsState extends State<ManajemenNotifications> {
       finalNamaPeserta = null;
     } else if (idpesan == '13') {
       finalNamaPeserta = namaFrom;
+    }else if(idpesan == '14'){
+      finalNamaPeserta = namaFrom;
     } else {
       finalNamaPeserta = null;
     }
     return Text(
         finalNamaPeserta == null
             ? 'Pesan Tidak Diketahui'
-            : idpesan == '14' ? '$pesan' : '$finalNamaPeserta $pesan $event',
+            : idpesan == '14' ? '$pesanCustom' : '$finalNamaPeserta $pesan $event',
         style: TextStyle(
           color: Colors.black54,
           fontSize: 14,
         ),
-        overflow: TextOverflow.ellipsis,
-        softWrap: true,
-        maxLines: 3);
+      );
   }
 }
