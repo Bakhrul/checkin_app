@@ -256,7 +256,7 @@ class _DashboardState extends State<Dashboard> {
         var admins = eventListJson['admin_event'];
         var creators = eventListJson['creator_event'];
         var followers = eventListJson['follower_organizer'];
-        
+
         listParticipant = [];
         listWish = [];
         listFollower = [];
@@ -371,8 +371,7 @@ class _DashboardState extends State<Dashboard> {
 
           listFollower.add(follower);
         }
-        
-   
+
         setState(() {
           isLoadingCategory = false;
           isLoading = false;
@@ -489,7 +488,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget appBarTitle = Text(
-    "Dashboard",
+    "Beranda",
     style: TextStyle(fontSize: 16),
   );
   Icon notifIcon = Icon(
@@ -676,7 +675,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _builderBody() {
-
     return SafeArea(
       child: SingleChildScrollView(
           child: Column(
@@ -833,273 +831,57 @@ class _DashboardState extends State<Dashboard> {
                             ]),
                           ),
                         )
-                      : listParticipant.length == 0  && listWish.length == 0 && listAdmin.length == 0 && listCreator.length == 0 && listFollower.length == 0 && listEventNow.length == 0 
-                                ? Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Column(children: <Widget>[
-                                        new Container(
-                                          width: 100.0,
-                                          height: 100.0,
-                                          child: Image.asset(
-                                              "images/empty-white-box.png"),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 30.0,
-                                            left: 15.0,
-                                            right: 15.0,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Anda Belum Memiliki Event",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black45,
-                                                height: 1.5,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                    ) : Column(
-                          children: <Widget>[
-                            //                            ==================================Participant========================================
-                            
-                            listParticipant.length == 0
-                                ? Container()
-                                : Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0,
-                                        right: 10.0,
-                                        top: 15.0,
-                                        bottom: 0.0),
-                                    child: Divider(),
+                      : listParticipant.length == 0 &&
+                              listWish.length == 0 &&
+                              listAdmin.length == 0 &&
+                              listCreator.length == 0 &&
+                              listFollower.length == 0 &&
+                              listEventNow.length == 0
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Column(children: <Widget>[
+                                new Container(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child:
+                                      Image.asset("images/empty-white-box.png"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 30.0,
+                                    left: 15.0,
+                                    right: 15.0,
                                   ),
-                            Column(children: <Widget>[
-                              listParticipant.length == 0
-                                  ? Container()
-                                  : Container(
-                                      margin: EdgeInsets.only(bottom: 10.0),
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
+                                  child: Center(
+                                    child: Text(
+                                      "Anda Belum Memiliki Event",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black45,
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            )
+                          : Column(
+                              children: <Widget>[
+                                //                            ==================================Participant========================================
+
+                                listParticipant.length == 0
+                                    ? Container()
+                                    : Container(
+                                        padding: EdgeInsets.only(
                                             left: 10.0,
                                             right: 10.0,
-                                            top: 5.0,
-                                            bottom: 5.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                                ('Event Yang Jadi Peserta')
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
-                                            listParticipant.length == 5
-                                                ? FlatButton(
-                                                    padding: EdgeInsets.all(0),
-                                                    onPressed: () async {
-                                                      linkToPageDetail(
-                                                          types, 'participant');
-                                                    },
-                                                    color: Colors.transparent,
-                                                    textColor: Colors.black,
-                                                    child: Text('Lihat Semua'),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
+                                            top: 15.0,
+                                            bottom: 0.0),
+                                        child: Divider(),
                                       ),
-                                    ),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Row(
-                                            children: listParticipant
-                                                .map((Event item) => Container(
-                                                      child: InkWell(
-                                                        child: Container(
-                                                            width: 220,
-                                                            margin:
-                                                                EdgeInsets.only(
-//                                                    top: 5.0,
-                                                                    bottom: 5.0,
-                                                                    left: 5.0,
-                                                                    right: 5.0),
-                                                            child: Column(
-                                                              children: <
-                                                                  Widget>[
-                                                                Card(
-                                                                  elevation: 1,
-                                                                  child: Column(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(0.0),
-                                                                        child:
-                                                                            Column(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                              height: 250.0,
-                                                                              margin: EdgeInsets.only(bottom: 10.0),
-                                                                              width: double.infinity,
-                                                                              child: FadeInImage.assetNetwork(
-                                                                                placeholder: 'images/loading-event.png',
-                                                                                image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                    ? url('assets/images/noimage.jpg')
-                                                                                    : url(
-                                                                                        'storage/image/event/event_thumbnail/${item.image}',
-                                                                                      ),
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                            Container(
-                                                                              margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: <Widget>[
-                                                                                  Expanded(
-                                                                                      flex: 3,
-                                                                                      child: Card(
-                                                                                          margin: EdgeInsets.only(left: 10.0),
-                                                                                          elevation: 0.5,
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsets.all(7.0),
-                                                                                            child: Column(
-                                                                                              children: <Widget>[
-                                                                                                Text(
-                                                                                                  DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                )
-                                                                                              ],
-                                                                                            ),
-                                                                                          ))),
-                                                                                  Expanded(
-                                                                                      flex: 6,
-                                                                                      child: Column(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                                                        children: <Widget>[
-                                                                                          Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                                                                            child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                          ),
-                                                                                          Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
-                                                                                            child: Text(
-                                                                                              "${item.location}",
-                                                                                              style: TextStyle(color: Colors.grey),
-                                                                                            ),
-                                                                                          )
-                                                                                        ],
-                                                                                      ))
-                                                                                ],
-                                                                              ),
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      Container(
-                                                                          padding: EdgeInsets.only(
-                                                                              left:
-                                                                                  10.0,
-                                                                              right:
-                                                                                  10.0),
-                                                                          child:
-                                                                              Divider()),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(
-                                                                            left:
-                                                                                10.0,
-                                                                            right:
-                                                                                10.0,
-                                                                            bottom:
-                                                                                10.0),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.all(2),
-                                                                              child: _buildTextStatus(item.userStatus, item.userPosition),
-                                                                            ),
-                                                                            item.userStatus != null
-                                                                                ? Padding(
-                                                                                    padding: const EdgeInsets.only(right: 0),
-                                                                                    child: ButtonTheme(
-                                                                                      minWidth: 0, //wraps child's width
-                                                                                      height: 0,
-                                                                                      child: FlatButton(
-                                                                                          child: Row(
-                                                                                            children: <Widget>[],
-                                                                                          ),
-                                                                                          color: Colors.white,
-                                                                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                          padding: EdgeInsets.all(5.0),
-                                                                                          onPressed: () async {
-                                                                                            // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
-                                                                                          }),
-                                                                                    ),
-                                                                                  )
-                                                                                : Text(""),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )),
-                                                        onTap: () async {
-                                                          linkToPage(
-                                                              item.userStatus,
-                                                              item.userPosition,
-                                                              item.eventCreator,
-                                                              item.id);
-                                                        },
-                                                      ),
-                                                    ))
-                                                .toList()),
-                                      ],
-                                    ),
-                                  )),
-                            ]),
-//====================================End===============================
-                            //                            ==================================Wish========================================
-                            listWish.length == 0
-                                ? Container()
-                                : Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0,
-                                        right: 10.0,
-                                        top: 15.0,
-                                        bottom: 0.0),
-                                    child: Divider(),
-                                  ),
-                            Column(children: <Widget>[
-                              listWish.length == 0
-                                  ? Container()
-                                  : listWish.length == 0
+                                Column(children: <Widget>[
+                                  listParticipant.length == 0
                                       ? Container()
                                       : Container(
                                           margin: EdgeInsets.only(bottom: 10.0),
@@ -1116,20 +898,21 @@ class _DashboardState extends State<Dashboard> {
                                                       .spaceBetween,
                                               children: <Widget>[
                                                 Text(
-                                                    ('Event Yang Disukai')
+                                                    ('Event Yang Jadi Peserta')
                                                         .toUpperCase(),
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     )),
-                                                listWish.length == 5
+                                                listParticipant.length == 5
                                                     ? FlatButton(
                                                         padding:
                                                             EdgeInsets.all(0),
                                                         onPressed: () async {
                                                           linkToPageDetail(
-                                                              types, 'wish');
+                                                              types,
+                                                              'participant');
                                                         },
                                                         color:
                                                             Colors.transparent,
@@ -1142,811 +925,897 @@ class _DashboardState extends State<Dashboard> {
                                             ),
                                           ),
                                         ),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Row(
-                                            children: listWish
-                                                .map((Event item) => Container(
-                                                      child: InkWell(
-                                                        child: Container(
-                                                            width: 220,
-                                                            margin:
-                                                                EdgeInsets.only(
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                                children: listParticipant
+                                                    .map(
+                                                        (Event item) =>
+                                                            Container(
+                                                              child: InkWell(
+                                                                child: Container(
+                                                                    width: 180,
+                                                                    margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                                    bottom: 5.0,
-                                                                    left: 5.0,
-                                                                    right: 5.0),
-                                                            child: Column(
-                                                              children: <
-                                                                  Widget>[
-                                                                Card(
-                                                                  elevation: 1,
-                                                                  child: Column(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(0.0),
-                                                                        child:
-                                                                            Column(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                              height: 250.0,
-                                                                              margin: EdgeInsets.only(bottom: 10.0),
-                                                                              width: double.infinity,
-                                                                              child: FadeInImage.assetNetwork(
-                                                                                placeholder: 'images/loading-event.png',
-                                                                                image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                    ? url('assets/images/noimage.jpg')
-                                                                                    : url(
-                                                                                        'storage/image/event/event_thumbnail/${item.image}',
+                                                                        bottom: 5.0,
+                                                                        left: 5.0,
+                                                                        right: 5.0),
+                                                                    child: Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Card(
+                                                                          elevation:
+                                                                              1,
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(0.0),
+                                                                                child: Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Container(
+                                                                                      height: 140.0,
+                                                                                      margin: EdgeInsets.only(bottom: 10.0),
+                                                                                      width: double.infinity,
+                                                                                      child: FadeInImage.assetNetwork(
+                                                                                        placeholder: 'images/loading-event.png',
+                                                                                        image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                            ? url('assets/images/noimage.jpg')
+                                                                                            : url(
+                                                                                                'storage/image/event/event_thumbnail/${item.image}',
+                                                                                              ),
+                                                                                        fit: BoxFit.cover,
                                                                                       ),
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                            Container(
-                                                                              margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: <Widget>[
-                                                                                  Expanded(
-                                                                                      flex: 3,
-                                                                                      child: Card(
-                                                                                          margin: EdgeInsets.only(left: 10.0),
-                                                                                          elevation: 0.5,
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsets.all(7.0),
-                                                                                            child: Column(
-                                                                                              children: <Widget>[
-                                                                                                Text(
-                                                                                                  DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                )
-                                                                                              ],
-                                                                                            ),
-                                                                                          ))),
-                                                                                  Expanded(
-                                                                                      flex: 6,
+                                                                                    ),
+                                                                                    Container(
+                                                                                      margin: EdgeInsets.only(top: 5),
                                                                                       child: Column(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                                         mainAxisAlignment: MainAxisAlignment.start,
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                                         children: <Widget>[
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                                                                            child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            padding: const EdgeInsets.only(left: 8.0),
+                                                                                            child: Text("${item.title}", 
+                                                                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), 
+                                                                                            maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           ),
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+                                                                                            padding: const EdgeInsets.only(left: 8.0,top: 4),
+                                                                                            child: Text(
+                                                                                              DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                              style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                            ),
+                                                                                          ),
+                                                                                          Padding(
+                                                                                            padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
                                                                                             child: Text(
                                                                                               "${item.location}",
-                                                                                              style: TextStyle(color: Colors.grey),
+                                                                                              style: TextStyle(fontSize: 11,color: Colors.grey),
+                                                                                               maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
                                                                                             ),
                                                                                           )
                                                                                         ],
-                                                                                      ))
-                                                                                ],
+                                                                                      ),
+                                                                                    )
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      Container(
-                                                                          padding: EdgeInsets.only(
-                                                                              left:
-                                                                                  10.0,
-                                                                              right:
-                                                                                  10.0),
-                                                                          child:
-                                                                              Divider()),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(
-                                                                            left:
-                                                                                10.0,
-                                                                            right:
-                                                                                10.0,
-                                                                            bottom:
-                                                                                10.0),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.all(2),
-                                                                              child: _buildTextStatus(item.userStatus, item.userPosition),
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.only(right: 0),
-                                                                              child: ButtonTheme(
-                                                                                minWidth: 0, //wraps child's width
-                                                                                height: 0,
-                                                                                child: FlatButton(
-                                                                                    child: Row(
-                                                                                      children: <Widget>[
-                                                                                        Icon(Icons.favorite, color: item.wish == null || item.wish == '0' ? Colors.grey : Colors.pink, size: 16),
-                                                                                      ],
+                                                                              Container(padding: EdgeInsets.only(left: 10.0, right: 10.0), child: Divider()),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: <Widget>[
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.all(2),
+                                                                                      child: _buildTextStatus(item.userStatus, item.userPosition),
                                                                                     ),
-                                                                                    color: Colors.white,
-                                                                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                    padding: EdgeInsets.all(5.0),
-                                                                                    onPressed: () async {
-                                                                                      final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
-                                                                                        'event': item.id.toString(),
-                                                                                      });
-
-                                                                                      if (hapuswishlist.statusCode == 200) {
-                                                                                        var hapuswishlistJson = json.decode(hapuswishlist.body);
-                                                                                        if (hapuswishlistJson['status'] == 'tambah') {
-                                                                                          setState(() {
-                                                                                            item.wish = item.id.toString();
-                                                                                          });
-                                                                                        } else if (hapuswishlistJson['status'] == 'hapus') {
-                                                                                          setState(() {
-                                                                                            item.wish = null;
-                                                                                          });
-                                                                                        }
-                                                                                      } else {
-                                                                                        print(hapuswishlist.body);
-                                                                                        Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                                      }
-                                                                                    }),
+                                                                                    item.userStatus != null
+                                                                                        ? Padding(
+                                                                                            padding: const EdgeInsets.only(right: 0),
+                                                                                            child: ButtonTheme(
+                                                                                              minWidth: 0, //wraps child's width
+                                                                                              height: 0,
+                                                                                              child: FlatButton(
+                                                                                                  child: Row(
+                                                                                                    children: <Widget>[],
+                                                                                                  ),
+                                                                                                  color: Colors.white,
+                                                                                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                                  padding: EdgeInsets.all(5.0),
+                                                                                                  onPressed: () async {
+                                                                                                    // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
+                                                                                                  }),
+                                                                                            ),
+                                                                                          )
+                                                                                        : Text(""),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                          ],
+                                                                            ],
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )),
-                                                        onTap: () async {
-                                                          linkToPage(
-                                                              item.userStatus,
-                                                              item.userPosition,
-                                                              item.eventCreator,
-                                                              item.id);
-                                                        },
-                                                      ),
-                                                    ))
-                                                .toList()),
-                                      ],
-                                    ),
-                                  )),
-                            ]),
-//====================================End===============================
-//                            ==================================Follower========================================
-                            listFollower.length == 0
-                                ? Container()
-                                : Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0, right: 10.0, bottom: 0.0),
-                                    child: Divider(),
-                                  ),
-                            Column(children: <Widget>[
-                              listFollower.length == 0
-                                  ? Container()
-                                  : InkWell(
-                                      onTap: () {},
-                                      child: Container(
-                                        margin: EdgeInsets.only(bottom: 10.0),
-                                        width: double.infinity,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0,
-                                              right: 10.0,
-                                              top: 5.0,
-                                              bottom: 5.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  ('Event dari Organizer yang di ikuti')
-                                                      .toUpperCase(),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  )),
-                                              listFollower.length == 5
-                                                  ? FlatButton(
-                                                      padding:
-                                                          EdgeInsets.all(0),
-                                                      onPressed: () async {
-                                                        linkToPageDetail(
-                                                            types, 'follow');
-                                                      },
-                                                      color: Colors.transparent,
-                                                      textColor: Colors.black,
-                                                      child:
-                                                          Text('Lihat Semua'),
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          ),
+                                                                      ],
+                                                                    )),
+                                                                onTap:
+                                                                    () async {
+                                                                  linkToPage(
+                                                                      item.userStatus,
+                                                                      item.userPosition,
+                                                                      item.eventCreator,
+                                                                      item.id);
+                                                                },
+                                                              ),
+                                                            ))
+                                                    .toList()),
+                                          ],
                                         ),
                                       )),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Row(
-                                          children: listFollower
-                                              .map(
-                                                (Event item) => Container(
-                                                  child: InkWell(
-                                                      child: Container(
-                                                          width: 220,
-                                                          margin:
-                                                              EdgeInsets.only(
-//                                                    top: 5.0,
-                                                                  bottom: 5.0,
-                                                                  left: 5.0,
-                                                                  right: 5.0),
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Card(
-                                                                elevation: 1,
-                                                                child: Column(
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              0.0),
-                                                                      child:
-                                                                          Column(
-                                                                        children: <
-                                                                            Widget>[
-                                                                          Container(
-                                                                            height:
-                                                                                250.0,
-                                                                            width:
-                                                                                double.infinity,
-                                                                            child:
-                                                                                FadeInImage.assetNetwork(
-                                                                              placeholder: 'images/loading-event.png',
-                                                                              image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                  ? url('assets/images/noimage.jpg')
-                                                                                  : url(
-                                                                                      'storage/image/event/event_thumbnail/${item.image}',
-                                                                                    ),
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
-                                                                          Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(top: 10, bottom: 10.0),
-                                                                            child:
-                                                                                Row(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Expanded(
-                                                                                    flex: 3,
-                                                                                    child: Card(
-                                                                                        margin: EdgeInsets.only(left: 5.0),
-                                                                                        elevation: 0.5,
-                                                                                        child: Padding(
-                                                                                          padding: const EdgeInsets.all(7.0),
-                                                                                          child: Column(
-                                                                                            children: <Widget>[
-                                                                                              Text(
-                                                                                                DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                              ),
-                                                                                              Text(
-                                                                                                DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                              ),
-                                                                                              Text(
-                                                                                                DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                              )
-                                                                                            ],
-                                                                                          ),
-                                                                                        ))),
-                                                                                Expanded(
-                                                                                    flex: 6,
-                                                                                    child: Column(
-                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                      children: <Widget>[
-                                                                                        Padding(
-                                                                                          padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
-                                                                                          child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                        ),
-                                                                                        Row(
-                                                                                          children: <Widget>[
-                                                                                            Container(width: 50, padding: EdgeInsets.only(top: 2.0, bottom: 2.0, left: 3.0, right: 3.0), margin: EdgeInsets.only(left: 5.0, right: 2.0), child: Text('Di ikuti', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.blue)), decoration: BoxDecoration(border: Border.all(color: Colors.lightBlueAccent), borderRadius: BorderRadius.circular(10))),
-                                                                                            Expanded(
-                                                                                                child: Container(
-                                                                                                    padding: EdgeInsets.only(left: 3.0, right: 3.0),
-                                                                                                    child: Text(
-                                                                                                      item.creatorName == null ? 'memuat' : item.creatorName,
-                                                                                                      style: TextStyle(color: Colors.grey),
-                                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                                      softWrap: true,
-                                                                                                    )))
-                                                                                          ],
-                                                                                        )
-                                                                                      ],
-                                                                                    ))
-                                                                              ],
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    Container(
-                                                                        padding: EdgeInsets.only(
-                                                                            left:
-                                                                                10.0,
-                                                                            right:
-                                                                                10.0),
-                                                                        child:
-                                                                            Divider()),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .only(
-                                                                          left:
-                                                                              10.0,
-                                                                          right:
-                                                                              10.0,
-                                                                          bottom:
-                                                                              10.0),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceBetween,
-                                                                        children: <
-                                                                            Widget>[
-                                                                          Padding(
-                                                                            padding:
-                                                                                EdgeInsets.all(2),
-                                                                            child:
-                                                                                _buildTextStatus(item.userStatus, item.userPosition),
-                                                                          ),
-                                                                          item.userStatus != null
-                                                                              ? Padding(
-                                                                                  padding: const EdgeInsets.only(right: 0),
-                                                                                )
-                                                                              : Text(""),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                      onTap: () {
-                                                        linkToPage(
-                                                            item.userStatus,
-                                                            item.userPosition,
-                                                            item.eventCreator,
-                                                            item.id);
-                                                      }),
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                            ]),
+                                ]),
 //====================================End===============================
-                            listCreator.length == 0
-                                ? Container()
-                                : Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0,
-                                        right: 10.0,
-                                        top: 15.0,
-                                        bottom: 0.0),
-                                    child: Divider(),
-                                  ),
-                            Column(children: <Widget>[
-                              listCreator.length == 0
-                                  ? Container()
-                                  : Container(
-                                      margin: EdgeInsets.only(bottom: 10.0),
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
+                                //                            ==================================Wish========================================
+                                listWish.length == 0
+                                    ? Container()
+                                    : Container(
+                                        padding: EdgeInsets.only(
                                             left: 10.0,
                                             right: 10.0,
-                                            top: 5.0,
-                                            bottom: 5.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                                ('Event Yang dibuat')
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
-                                            listCreator.length == 5
-                                                ? FlatButton(
-                                                    padding: EdgeInsets.all(0),
-                                                    onPressed: () async {
-                                                      linkToPageDetail(
-                                                          types, 'creator');
-                                                    },
-                                                    color: Colors.transparent,
-                                                    textColor: Colors.black,
-                                                    child: Text('Lihat Semua'),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
+                                            top: 15.0,
+                                            bottom: 0.0),
+                                        child: Divider(),
                                       ),
-                                    ),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Row(
-                                            children: listCreator
-                                                .map((Event item) => Container(
-                                                      child: InkWell(
-                                                        child: Container(
-                                                            width: 220,
-                                                            margin:
-                                                                EdgeInsets.only(
+                                Column(children: <Widget>[
+                                  listWish.length == 0
+                                      ? Container()
+                                      : listWish.length == 0
+                                          ? Container()
+                                          : Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10.0),
+                                              width: double.infinity,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10.0,
+                                                    right: 10.0,
+                                                    top: 5.0,
+                                                    bottom: 5.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: <Widget>[
+                                                    Text(
+                                                        ('Event Yang Disukai')
+                                                            .toUpperCase(),
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
+                                                    listWish.length == 5
+                                                        ? FlatButton(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    0),
+                                                            onPressed:
+                                                                () async {
+                                                              linkToPageDetail(
+                                                                  types,
+                                                                  'wish');
+                                                            },
+                                                            color: Colors
+                                                                .transparent,
+                                                            textColor:
+                                                                Colors.black,
+                                                            child: Text(
+                                                                'Lihat Semua'),
+                                                          )
+                                                        : Container(),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                                children: listWish
+                                                    .map(
+                                                        (Event item) =>
+                                                            Container(
+                                                              child: InkWell(
+                                                                child: Container(
+                                                                    width: 180,
+                                                                    margin: EdgeInsets.only(
 //                                                    top: 5.0,
-                                                                    bottom: 5.0,
-                                                                    left: 5.0,
-                                                                    right: 5.0),
-                                                            child: Column(
-                                                              children: <
-                                                                  Widget>[
-                                                                Card(
-                                                                  elevation: 1,
-                                                                  child: Column(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(0.0),
-                                                                        child:
-                                                                            Column(
-                                                                          children: <
-                                                                              Widget>[
-                                                                            Container(
-                                                                              height: 250.0,
-                                                                              margin: EdgeInsets.only(bottom: 10.0),
-                                                                              width: double.infinity,
-                                                                              child: FadeInImage.assetNetwork(
-                                                                                placeholder: 'images/loading-event.png',
-                                                                                image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                    ? url('assets/images/noimage.jpg')
-                                                                                    : url(
-                                                                                        'storage/image/event/event_thumbnail/${item.image}',
+                                                                        bottom: 5.0,
+                                                                        left: 5.0,
+                                                                        right: 5.0),
+                                                                    child: Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Card(
+                                                                          elevation:
+                                                                              1,
+                                                                          child:
+                                                                              Column(
+                                                                            children: <Widget>[
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(0.0),
+                                                                                child: Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    
+                                                                                   
+                                                                                    Stack(children: <Widget>[
+                                                                                       Container(
+                                                                                      height: 140.0,
+                                                                                      margin: EdgeInsets.only(bottom: 10.0),
+                                                                                      width: double.infinity,
+                                                                                      child: FadeInImage.assetNetwork(
+                                                                                        placeholder: 'images/loading-event.png',
+                                                                                        image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                            ? url('assets/images/noimage.jpg')
+                                                                                            : url(
+                                                                                                'storage/image/event/event_thumbnail/${item.image}',
+                                                                                              ),
+                                                                                        fit: BoxFit.cover,
                                                                                       ),
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
-                                                                            Container(
-                                                                              margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                                                                              child: Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: <Widget>[
-                                                                                  Expanded(
-                                                                                      flex: 3,
-                                                                                      child: Card(
-                                                                                          margin: EdgeInsets.only(left: 10.0),
-                                                                                          elevation: 0.5,
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsets.all(7.0),
-                                                                                            child: Column(
-                                                                                              children: <Widget>[
-                                                                                                Text(
-                                                                                                  DateFormat("dd").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("MMM").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  DateFormat("yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                )
-                                                                                              ],
-                                                                                            ),
-                                                                                          ))),
-                                                                                  Expanded(
-                                                                                      flex: 6,
+                                                                                      
+                                                                                    ),
+                                                                                    
+                                                                                    Align(
+                                                                                      alignment: Alignment.topRight,
+                                                                                      child: IconButton(
+                                                                                            icon:Icon(Icons.favorite, color: item.wish == null || item.wish == '0' ? Colors.grey : Colors.pink, size: 16),
+                                                                                            color: Colors.red,
+                                                                                            alignment: Alignment.topRight,
+                                                                                            // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                            // padding: EdgeInsets.all(5.0),
+                                                                                            onPressed: () async {
+                                                                                              final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
+                                                                                                'event': item.id.toString(),
+                                                                                              });
+
+                                                                                              if (hapuswishlist.statusCode == 200) {
+                                                                                                var hapuswishlistJson = json.decode(hapuswishlist.body);
+                                                                                                if (hapuswishlistJson['status'] == 'tambah') {
+                                                                                                  setState(() {
+                                                                                                    item.wish = item.id.toString();
+                                                                                                  });
+                                                                                                } else if (hapuswishlistJson['status'] == 'hapus') {
+                                                                                                  setState(() {
+                                                                                                    item.wish = null;
+                                                                                                  });
+                                                                                                }
+                                                                                              } else {
+                                                                                                print(hapuswishlist.body);
+                                                                                                Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                                              }
+                                                                                            }),
+                                                                                    )
+                                                                                     
+
+                                                                                    ],),
+                                                                                    Container(
+                                                                                      margin: EdgeInsets.only(top: 5),
                                                                                       child: Column(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                                         mainAxisAlignment: MainAxisAlignment.start,
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                                         children: <Widget>[
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                                                                            child: Text("${item.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            padding: const EdgeInsets.only(left: 8.0),
+                                                                                            child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           ),
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+                                                                                            padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                            child: Text(
+                                                                                              DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                              style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                            ),
+                                                                                          ),
+                                                                                          Padding(
+                                                                                            padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
                                                                                             child: Text(
                                                                                               "${item.location}",
-                                                                                              style: TextStyle(color: Colors.grey),
+                                                                                              style: TextStyle(fontSize: 11,color: Colors.grey),
+                                                                                               maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
                                                                                             ),
                                                                                           )
                                                                                         ],
-                                                                                      ))
-                                                                                ],
+                                                                                      ),
+                                                                                    )
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            )
-                                                                          ],
+                                                                              Container(padding: EdgeInsets.only(left: 10.0, right: 10.0), child: Divider()),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: <Widget>[
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.all(2),
+                                                                                      child: _buildTextStatus(item.userStatus, item.userPosition),
+                                                                                    ),
+                                                                                   
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )),
-                                                        onTap: () async {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    DashboardCheckin(
-                                                                        idevent: item
-                                                                            .id
-                                                                            .toString()),
-                                                              ));
-                                                        },
-                                                      ),
-                                                    ))
-                                                .toList()),
-                                      ],
-                                    ),
-                                  )),
-                            ]),
-
-                            //                            ==================================Admin========================================
-                            listAdmin.length == 0
-                                ? Container()
-                                : Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0,
-                                        right: 10.0,
-                                        top: 15.0,
-                                        bottom: 0.0),
-                                    child: Divider(),
-                                  ),
-                            Column(children: <Widget>[
-                              listAdmin.length == 0
-                                  ? Container()
-                                  : Container(
-                                      margin: EdgeInsets.only(bottom: 10.0),
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10.0,
-                                            right: 10.0,
-                                            top: 5.0,
-                                            bottom: 5.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                                ('Event Yang Jadi Admin')
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
-                                            listAdmin.length == 5
-                                                ? FlatButton(
-                                                    padding: EdgeInsets.all(0),
-                                                    onPressed: () async {
-                                                      linkToPageDetail(
-                                                          types, 'admin');
-                                                    },
-                                                    color: Colors.transparent,
-                                                    textColor: Colors.black,
-                                                    child: Text('Lihat Semua'),
-                                                  )
-                                                : Container(),
+                                                                      ],
+                                                                    )),
+                                                                onTap:
+                                                                    () async {
+                                                                  linkToPage(
+                                                                      item.userStatus,
+                                                                      item.userPosition,
+                                                                      item.eventCreator,
+                                                                      item.id);
+                                                                },
+                                                              ),
+                                                            ))
+                                                    .toList()),
                                           ],
                                         ),
+                                      )),
+                                ]),
+//====================================End===============================
+//                            ==================================Follower========================================
+                                listFollower.length == 0
+                                    ? Container()
+                                    : Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10.0,
+                                            right: 10.0,
+                                            bottom: 0.0),
+                                        child: Divider(),
                                       ),
-                                    ),
-                              Container(
-                                  alignment: Alignment.topLeft,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Row(
-                                            children: listAdmin
-                                                .map(
-                                                    (Event itemAdmin) =>
-                                                        Container(
-                                                          child: InkWell(
-                                                            child: Container(
-                                                                width: 220,
-                                                                margin: EdgeInsets
-                                                                    .only(
+                                Column(children: <Widget>[
+                                  listFollower.length == 0
+                                      ? Container()
+                                      : InkWell(
+                                          onTap: () {},
+                                          child: Container(
+                                            margin:
+                                                EdgeInsets.only(bottom: 10.0),
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0,
+                                                  right: 10.0,
+                                                  top: 5.0,
+                                                  bottom: 5.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                      ('Event dari Organizer yang di ikuti')
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      )),
+                                                  listFollower.length == 5
+                                                      ? FlatButton(
+                                                          padding:
+                                                              EdgeInsets.all(0),
+                                                          onPressed: () async {
+                                                            linkToPageDetail(
+                                                                types,
+                                                                'follow');
+                                                          },
+                                                          color: Colors
+                                                              .transparent,
+                                                          textColor:
+                                                              Colors.black,
+                                                          child: Text(
+                                                              'Lihat Semua'),
+                                                        )
+                                                      : Container(),
+                                                ],
+                                              ),
+                                            ),
+                                          )),
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                              children: listFollower
+                                                  .map(
+                                                    (Event item) => Container(
+                                                      child: InkWell(
+                                                          child: Container(
+                                                              width: 180,
+                                                              margin: EdgeInsets
+                                                                  .only(
 //                                                    top: 5.0,
-                                                                        bottom:
-                                                                            5.0,
-                                                                        left:
-                                                                            5.0,
-                                                                        right:
-                                                                            5.0),
-                                                                child: Column(
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Card(
-                                                                      elevation:
-                                                                          1,
-                                                                      child:
-                                                                          Column(
-                                                                        children: <
-                                                                            Widget>[
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.all(0.0),
-                                                                            child:
-                                                                                Column(
-                                                                              children: <Widget>[
-                                                                                Container(
-                                                                                  height: 250.0,
-                                                                                  margin: EdgeInsets.only(bottom: 10.0),
-                                                                                  width: double.infinity,
-                                                                                  child: FadeInImage.assetNetwork(
-                                                                                    placeholder: 'images/loading-event.png',
-                                                                                    image: itemAdmin.image == null || itemAdmin.image == '' || itemAdmin.image == 'null'
-                                                                                        ? url('assets/images/noimage.jpg')
-                                                                                        : url(
-                                                                                            'storage/image/event/event_thumbnail/${itemAdmin.image}',
-                                                                                          ),
-                                                                                    fit: BoxFit.cover,
-                                                                                  ),
+                                                                      bottom:
+                                                                          5.0,
+                                                                      left: 5.0,
+                                                                      right:
+                                                                          5.0),
+                                                              child: Column(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Card(
+                                                                    elevation:
+                                                                        1,
+                                                                    child:
+                                                                        Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.all(0.0),
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Container(
+                                                                                height: 140.0,
+                                                                                width: double.infinity,
+                                                                                child: FadeInImage.assetNetwork(
+                                                                                  placeholder: 'images/loading-event.png',
+                                                                                  image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                      ? url('assets/images/noimage.jpg')
+                                                                                      : url(
+                                                                                          'storage/image/event/event_thumbnail/${item.image}',
+                                                                                        ),
+                                                                                  fit: BoxFit.cover,
                                                                                 ),
-                                                                                Container(
-                                                                                  margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                                                                                  child: Row(
-                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                              ),
+                                                                              Container(
+                                                                                  margin: EdgeInsets.only(top: 10),
+                                                                                  child: Column(
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
                                                                                     children: <Widget>[
-                                                                                      Expanded(
-                                                                                          flex: 3,
-                                                                                          child: Card(
-                                                                                              margin: EdgeInsets.only(left: 10.0),
-                                                                                              elevation: 0.5,
-                                                                                              child: Padding(
-                                                                                                padding: const EdgeInsets.all(7.0),
-                                                                                                child: Column(
-                                                                                                  children: <Widget>[
-                                                                                                    Text(
-                                                                                                      DateFormat("dd").format(DateTime.parse(itemAdmin.dateEvent)).toString(),
-                                                                                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                    ),
-                                                                                                    Text(
-                                                                                                      DateFormat("MMM").format(DateTime.parse(itemAdmin.dateEvent)).toString(),
-                                                                                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                    ),
-                                                                                                    Text(
-                                                                                                      DateFormat("yyyy").format(DateTime.parse(itemAdmin.dateEvent)).toString(),
-                                                                                                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                                                                                                    )
-                                                                                                  ],
-                                                                                                ),
-                                                                                              ))),
-                                                                                      Expanded(
-                                                                                          flex: 6,
-                                                                                          child: Column(
-                                                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                                                            children: <Widget>[
-                                                                                              Padding(
-                                                                                                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                                                                                child: Text("${itemAdmin.title}", style: TextStyle(fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
-                                                                                              ),
-                                                                                              Padding(
-                                                                                                padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
-                                                                                                child: Text(
-                                                                                                  "${itemAdmin.location}",
-                                                                                                  style: TextStyle(color: Colors.grey),
-                                                                                                ),
-                                                                                              )
-                                                                                            ],
-                                                                                          ))
-                                                                                    ],
-                                                                                  ),
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          Container(
-                                                                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                                                                              child: Divider()),
-                                                                          Padding(
-                                                                            padding: const EdgeInsets.only(
-                                                                                left: 10.0,
-                                                                                right: 10.0,
-                                                                                bottom: 10.0),
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: <Widget>[
-                                                                                Padding(
-                                                                                  padding: EdgeInsets.all(2),
-                                                                                  child: _buildTextStatus(itemAdmin.userStatus, itemAdmin.userPosition),
-                                                                                ),
-                                                                                itemAdmin.userStatus != null
-                                                                                    ? Padding(
-                                                                                        padding: const EdgeInsets.only(right: 0),
-                                                                                        child: ButtonTheme(
-                                                                                          minWidth: 0, //wraps child's width
-                                                                                          height: 0,
-                                                                                          child: FlatButton(
-                                                                                              child: Row(
-                                                                                                children: <Widget>[],
-                                                                                              ),
-                                                                                              color: Colors.white,
-                                                                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                              padding: EdgeInsets.all(5.0),
-                                                                                              onPressed: () async {
-                                                                                                // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
-                                                                                              }),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                                                        child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                        child: Text(
+                                                                                          DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                          style: TextStyle( fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
+                                                                                        child: Text(
+                                                                                          "${item.location}",
+                                                                                          style: TextStyle(fontSize: 11,color: Colors.grey),
+                                                                                           maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
                                                                                         ),
                                                                                       )
-                                                                                    : Text(""),
-                                                                              ],
-                                                                            ),
+                                                                                    ],
+                                                                                  ))
+                                                                            ],
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+                                                                        Container(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                            child: Divider()),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 10.0,
+                                                                              right: 10.0,
+                                                                              bottom: 10.0),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: <Widget>[
+                                                                              Padding(
+                                                                                padding: EdgeInsets.all(2),
+                                                                                child: _buildTextStatus(item.userStatus, item.userPosition),
+                                                                              ),
+                                                                              item.userStatus != null
+                                                                                  ? Padding(
+                                                                                      padding: const EdgeInsets.only(right: 0),
+                                                                                    )
+                                                                                  : Text(""),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                  ],
-                                                                )),
-                                                            onTap: () async {
-                                                              linkToPage(
-                                                                  itemAdmin
-                                                                      .userStatus,
-                                                                  itemAdmin
-                                                                      .userPosition,
-                                                                  itemAdmin
-                                                                      .eventCreator,
-                                                                  itemAdmin.id);
-                                                            },
-                                                          ),
-                                                        ))
-                                                .toList()),
-                                      ],
-                                    ),
-                                  )),
-                            ]),
-                          ],
-                        ),
+                                                                  ),
+                                                                ],
+                                                              )),
+                                                          onTap: () {
+                                                            linkToPage(
+                                                                item.userStatus,
+                                                                item.userPosition,
+                                                                item.eventCreator,
+                                                                item.id);
+                                                          }),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                ]),
+//====================================End===============================
+                                listCreator.length == 0
+                                    ? Container()
+                                    : Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10.0,
+                                            right: 10.0,
+                                            top: 15.0,
+                                            bottom: 0.0),
+                                        child: Divider(),
+                                      ),
+                                Column(children: <Widget>[
+                                  listCreator.length == 0
+                                      ? Container()
+                                      : Container(
+                                          margin: EdgeInsets.only(bottom: 10.0),
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0,
+                                                right: 10.0,
+                                                top: 5.0,
+                                                bottom: 5.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                    ('Event Yang Dibuat')
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )),
+                                                listCreator.length == 5
+                                                    ? FlatButton(
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        onPressed: () async {
+                                                          linkToPageDetail(
+                                                              types, 'creator');
+                                                        },
+                                                        color:
+                                                            Colors.transparent,
+                                                        textColor: Colors.black,
+                                                        child:
+                                                            Text('Lihat Semua'),
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                                children: listCreator
+                                                    .map(
+                                                        (Event item) =>
+                                                            Container(
+                                                              child: InkWell(
+                                                                child: Container(
+                                                                    width: 180,
+                                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                                        bottom: 5.0,
+                                                                        left: 3.0),
+                                                                    child: Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Card(
+                                                                          elevation:
+                                                                              1,
+                                                                          child:
+                                                                              Column(
+                                                                            children: <Widget>[
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(0.0),
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Container(
+                                                                                      height: 140.0,
+                                                                                      margin: EdgeInsets.only(bottom: 10.0),
+                                                                                      width: double.infinity,
+                                                                                      child: FadeInImage.assetNetwork(
+                                                                                        placeholder: 'images/loading-event.png',
+                                                                                        image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                            ? url('assets/images/noimage.jpg')
+                                                                                            : url(
+                                                                                                'storage/image/event/event_thumbnail/${item.image}',
+                                                                                              ),
+                                                                                        fit: BoxFit.cover,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Container(
+                                                                                        margin: EdgeInsets.only(top: 5, bottom: 10.0),
+                                                                                        child: Column(
+                                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          children: <Widget>[
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0,),
+                                                                                              child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                              child: Text(
+                                                                                                DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
+                                                                                                style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
+                                                                                              child: Text(
+                                                                                                "${item.location}",
+                                                                                                style: TextStyle(fontSize: 11,color: Colors.grey),
+                                                                                                 maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
+                                                                                              ),
+                                                                                            )
+                                                                                          ],
+                                                                                        ))
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    )),
+                                                                onTap:
+                                                                    () async {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                DashboardCheckin(idevent: item.id.toString()),
+                                                                      ));
+                                                                },
+                                                              ),
+                                                            ))
+                                                    .toList()),
+                                          ],
+                                        ),
+                                      )),
+                                ]),
+
+                                //                            ==================================Admin========================================
+                                listAdmin.length == 0
+                                    ? Container()
+                                    : Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10.0,
+                                            right: 10.0,
+                                            top: 15.0,
+                                            bottom: 0.0),
+                                        child: Divider(),
+                                      ),
+                                Column(children: <Widget>[
+                                  listAdmin.length == 0
+                                      ? Container()
+                                      : Container(
+                                          margin: EdgeInsets.only(bottom: 10.0),
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0,
+                                                right: 10.0,
+                                                top: 5.0,
+                                                bottom: 5.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                    ('Event Yang Jadi Admin')
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )),
+                                                listAdmin.length == 5
+                                                    ? FlatButton(
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        onPressed: () async {
+                                                          linkToPageDetail(
+                                                              types, 'admin');
+                                                        },
+                                                        color:
+                                                            Colors.transparent,
+                                                        textColor: Colors.black,
+                                                        child:
+                                                            Text('Lihat Semua'),
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                  Container(
+                                      alignment: Alignment.topLeft,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Row(
+                                                children: listAdmin
+                                                    .map(
+                                                        (Event itemAdmin) =>
+                                                            Container(
+                                                              child: InkWell(
+                                                                child: Container(
+                                                                    width: 180,
+                                                                    margin: EdgeInsets.only(
+//                                                    top: 5.0,
+                                                                        bottom: 5.0,
+                                                                        left: 5.0,
+                                                                        right: 5.0),
+                                                                    child: Column(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Card(
+                                                                          elevation:
+                                                                              1,
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.all(0.0),
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  children: <Widget>[
+                                                                                    Container(
+                                                                                      height: 140.0,
+                                                                                      margin: EdgeInsets.only(bottom: 10.0),
+                                                                                      width: double.infinity,
+                                                                                      child: FadeInImage.assetNetwork(
+                                                                                        placeholder: 'images/loading-event.png',
+                                                                                        image: itemAdmin.image == null || itemAdmin.image == '' || itemAdmin.image == 'null'
+                                                                                            ? url('assets/images/noimage.jpg')
+                                                                                            : url(
+                                                                                                'storage/image/event/event_thumbnail/${itemAdmin.image}',
+                                                                                              ),
+                                                                                        fit: BoxFit.cover,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Container(
+                                                                                        margin: EdgeInsets.only(top: 5),
+                                                                                        child: Column(
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                                          children: <Widget>[
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0),
+                                                                                              child: Text("${itemAdmin.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                              child: Text(
+                                                                                                DateFormat("dd MMM yyyy").format(DateTime.parse(itemAdmin.dateEvent)).toString(),
+                                                                                                style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                              ),
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
+                                                                                              child: Text(
+                                                                                                "${itemAdmin.location}",
+                                                                                                style: TextStyle(fontSize: 11,color: Colors.grey),
+                                                                                                 maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
+                                                                                              ),
+                                                                                            )
+                                                                                          ],
+                                                                                        ))
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              Container(padding: EdgeInsets.only(left: 10.0, right: 10.0), child: Divider()),
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: <Widget>[
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.all(2),
+                                                                                      child: _buildTextStatus(itemAdmin.userStatus, itemAdmin.userPosition),
+                                                                                    ),
+                                                                                    itemAdmin.userStatus != null
+                                                                                        ? Padding(
+                                                                                            padding: const EdgeInsets.only(right: 0),
+                                                                                            child: ButtonTheme(
+                                                                                              minWidth: 0, //wraps child's width
+                                                                                              height: 0,
+                                                                                              child: FlatButton(
+                                                                                                  child: Row(
+                                                                                                    children: <Widget>[],
+                                                                                                  ),
+                                                                                                  color: Colors.white,
+                                                                                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                                  padding: EdgeInsets.all(5.0),
+                                                                                                  onPressed: () async {
+                                                                                                    // _wish(item.wish.toString(),item.id.toString(),listParticipant,item);
+                                                                                                  }),
+                                                                                            ),
+                                                                                          )
+                                                                                        : Text(""),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    )),
+                                                                onTap:
+                                                                    () async {
+                                                                  linkToPage(
+                                                                      itemAdmin
+                                                                          .userStatus,
+                                                                      itemAdmin
+                                                                          .userPosition,
+                                                                      itemAdmin
+                                                                          .eventCreator,
+                                                                      itemAdmin
+                                                                          .id);
+                                                                },
+                                                              ),
+                                                            ))
+                                                    .toList()),
+                                          ],
+                                        ),
+                                      )),
+                                ]),
+                              ],
+                            ),
             )
           ])),
     );

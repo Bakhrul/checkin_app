@@ -91,13 +91,13 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
         }
         
       } else if (ongoingevent.statusCode == 401) {
-        Fluttertoast.showToast(msg: 'Gagal mendaftar');
+        Fluttertoast.showToast(msg: 'Gagal Mendaftar');
         print(ongoingevent.body);
         setState(() {
           _isLoading = false;
         });
       } else {
-        Fluttertoast.showToast(msg: 'Gagal mendaftar');
+        Fluttertoast.showToast(msg: 'Gagal Mendaftar');
         setState(() {
           _isLoading = false;
         });
@@ -126,7 +126,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
             color: Colors.white,
           ),
           title: new Text(
-            "Form Pendaftaran Event",
+            "Form Pendaftaran Event ${widget.id}",
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
