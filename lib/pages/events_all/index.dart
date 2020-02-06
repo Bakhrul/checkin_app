@@ -14,11 +14,14 @@ import "dart:convert";
 import "dart:io";
 import 'package:shimmer/shimmer.dart';
 
+import 'package:checkin_app/utils/utils.dart';
+
 enum PageEnum {
   kelolaRegisterPage,
 }
 
 String tokenType, accessToken;
+bool actionBackAppBar, iconButtonAppbarColor;
 Map<String, String> requestHeaders = Map();
 
 class ManajemenEvent extends StatefulWidget {
@@ -55,6 +58,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     _getUserData();
     getHeaderHTTP();
     _getCategory();
+      actionBackAppBar = true;
+    iconButtonAppbarColor = true;
     _getAll(0, _searchQuery);
     super.initState();
     pageScroll.addListener(() async {
@@ -379,6 +384,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   void _handleSearchEnd() {
     setState(() {
       // ignore: new_with_non_type
+        actionBackAppBar = true;
+        iconButtonAppbarColor = true;
       this.actionIcon = new Icon(
         Icons.search,
         color: Colors.white,
@@ -1117,52 +1124,76 @@ class _ManajemenEventState extends State<ManajemenEvent> {
   }
 
   Widget buildBar(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
+    return PreferredSize( preferredSize: Size.fromHeight(50.0),
+     child : AppBar(
       title: appBarTitle,
-      backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+      titleSpacing: 0.0,
+      centerTitle: true,
+      backgroundColor: primaryAppBarColor,
+      automaticallyImplyLeading: actionBackAppBar,
       actions: <Widget>[
-        IconButton(
-          icon: actionIcon,
-          onPressed: () {
-            setState(() {
-              if (this.actionIcon.icon == Icons.search) {
-                // ignore: new_with_non_type
-                this.actionIcon = new Icon(
-                  Icons.close,
-                  color: Colors.white,
-                );
-                this.appBarTitle = TextField(
-                  onChanged: (value) {
-                    if (_debouncer != null) {
+        Container(
+          color: iconButtonAppbarColor == true ? primaryAppBarColor : Colors.white,
+          child: IconButton(
+            icon: actionIcon,
+            onPressed: () {
+              setState(() {
+                if (this.actionIcon.icon == Icons.search) {
+                  actionBackAppBar = false;
+                  iconButtonAppbarColor = false;
+                  this.actionIcon = new Icon(
+                    
+                    Icons.close,
+                    color: Colors.grey,
+                    
+                  );
+                  this.appBarTitle = Container(
+                    height: 50.0,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(0),
+                    margin: EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      onChanged: (value) {
+                         if (_debouncer != null) {
                       _debouncer.cancel();
                     }
 
                     _debouncer = new Timer(new Duration(milliseconds: 500), () {
                       _changeSearch(value);
                     });
-                  },
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 10.0, 15.0),
-                      border: InputBorder.none,
-                      prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Berdasarkan Nama Event",
-                      hintStyle: TextStyle(
-                        color: Colors.white,
+                      },
+                      style: TextStyle(
+                        color: Colors.grey,
                         fontSize: 14,
-                      )),
-                );
-              } else {
-                _handleSearchEnd();
-              }
-            });
-          },
+                        
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          prefixIcon: new Icon(Icons.search, color: Colors.grey),
+                          hintText: "Cari Berdasarkan Nama Event",
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            
+                          ),),
+                    ),
+                  );
+                } else {
+                  _handleSearchEnd();
+                }
+              });
+            },
+          ),
         ),
       ],
+    )
     );
   }
 }
+
+ 

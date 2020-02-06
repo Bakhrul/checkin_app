@@ -127,7 +127,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
   }
 
   Widget appBarTitle = Text(
-    "Detail Checkin $namaParticipantX",
+    "Detail Checkin Peserta",
     style: TextStyle(fontSize: 16),
   );
   Icon actionIcon = Icon(

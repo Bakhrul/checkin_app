@@ -99,6 +99,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
   void _handleTabIndex() {
     setState(() {});
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -601,7 +602,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                                               },
                                             )),
                                         title: Text(
-                                          '${item.keyword} - ${item.nama}',
+                                          '${item.nama} ( ${item.nama} )',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 15,

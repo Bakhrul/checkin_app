@@ -11,7 +11,8 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isFilter, isErrorfilter, isCreate;
-TextEditingController _filtercontroller = new TextEditingController();
+bool actionBackAppBar, iconButtonAppbarColor;
+final TextEditingController _searchQuery = new TextEditingController();
 String tokenType, accessToken;
 final _debouncer = Debouncer(milliseconds: 500);
 Map<String, String> requestHeaders = Map();
@@ -45,6 +46,10 @@ class Debouncer {
 class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
   @override
   void initState() {
+    actionBackAppBar = true;
+    listUserItem = [];
+    iconButtonAppbarColor = true;
+    _searchQuery.text = '';
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
@@ -94,9 +99,6 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
     try {
       final getUser = await http.post(
         url('api/getdataparticipant'),
-          body: {
-          'filter': _filtercontroller.text,
-        },
         headers: requestHeaders,
       );
 
@@ -116,6 +118,8 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         setState(() {
           isLoading = false;
           isError = false;
+          isFilter = false;
+          isErrorfilter = false;
         });
       } else if (getUser.statusCode == 401) {
         Fluttertoast.showToast(
@@ -123,12 +127,16 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
       } else {
         print(getUser.body);
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
         return null;
       }
@@ -136,12 +144,16 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+        isErrorfilter = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+        isErrorfilter = false;
       });
       debugPrint('$e');
     }
@@ -165,7 +177,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       final getUserFilter = await http.post(
         url('api/getdataparticipant'),
         body: {
-          'filter': _filtercontroller.text,
+          'filter': _searchQuery.text,
         },
         headers: requestHeaders,
       );
@@ -186,11 +198,15 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         setState(() {
           isFilter = false;
           isErrorfilter = false;
+          isLoading = false;
+          isError = false;
         });
       } else if (getUserFilter.statusCode == 401) {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
@@ -199,6 +215,8 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
         return null;
       }
@@ -206,35 +224,59 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       debugPrint('$e');
     }
     return null;
   }
 
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      actionBackAppBar = true;
+      iconButtonAppbarColor = true;
+      this.appBarTitle = new Text(
+        "Tambah Peserta Event",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
+      listUser();
+      _debouncer.run(() {
+        _searchQuery.clear();
+      });
+    });
+  }
+
+  Widget appBarTitle = Text(
+    "Tambah Peserta Event",
+    style: TextStyle(fontSize: 14),
+  );
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-      appBar: new AppBar(
-        backgroundColor: primaryAppBarColor,
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Tambahkan Peserta Event",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-      ),
+      appBar: buildBar(context),
       body: isLoading == true
           ? Center(
               child: CircularProgressIndicator(),
@@ -294,7 +336,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
+                  padding: const EdgeInsets.only(top: 10.0),
                   child: Column(
                     children: <Widget>[
                       isCreate == true
@@ -304,46 +346,49 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                 Container(
                                     width: 15.0,
                                     margin:
-                                        EdgeInsets.only(top: 10.0, right: 15.0),
+                                        EdgeInsets.only(top: 10.0, right: 15.0,bottom: 10.0),
                                     height: 15.0,
                                     child: CircularProgressIndicator()),
                               ],
                             )
                           : Container(),
-                      Container(
-                        margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        ),
-                        child: TextField(
-                            controller: _filtercontroller,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Colors.black,
-                            ),
-                            onChanged: (string) {
-                              _debouncer.run(() {
-                                listUserfilter();
-                              });
-                            },
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Color.fromRGBO(41, 30, 47, 1),
-                              ),
-                              hintText: "Cari Berdasarkan Email Pengguna",
-                              border: InputBorder.none,
-                            )),
-                      ),
                       isFilter == true
                           ? Container(
                               padding: EdgeInsets.only(top: 20.0),
                               child: CircularProgressIndicator(),
                             )
-                          : listUserItem.length == 0
+                          : isErrorfilter == true
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: RefreshIndicator(
+                            onRefresh: () => listUserfilter(),
+                            child: Column(children: <Widget>[
+                              new Container(
+                                width: 80.0,
+                                height: 80.0,
+                                child: Image.asset("images/system-eror.png"),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10.0,
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Gagal Memuat Data, Silahkan Coba Kembali",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black54,
+                                      height: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ]),
+                          ),
+                        ):listUserItem.length == 0
                               ? Padding(
                                   padding: const EdgeInsets.only(top: 20.0),
                                   child: Column(children: <Widget>[
@@ -425,8 +470,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                           .assetNetwork(
                                                         placeholder:
                                                             'images/loading.gif',
-                                                        image: listUserItem[
-                                                                            index]
+                                                        image: listUserItem[index]
                                                                         .image ==
                                                                     null ||
                                                                 listUserItem[
@@ -437,7 +481,8 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                                                                             index]
                                                                         .image ==
                                                                     'null'
-                                                            ? url('assets/images/imgavatar.png')
+                                                            ? url(
+                                                                'assets/images/imgavatar.png')
                                                             : url(
                                                                 'storage/image/profile/${listUserItem[index].image}'),
                                                         fit: BoxFit.cover,
@@ -586,7 +631,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       } else {
         print(addpeserta.body);
         Navigator.pop(context);
-          Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+        Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
         setState(() {
           isCreate = false;
         });
@@ -604,5 +649,76 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
       });
       print(e);
     }
+  }
+
+  Widget buildBar(BuildContext context) {
+    return PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          title: appBarTitle,
+          titleSpacing: 0.0,
+          centerTitle: true,
+          backgroundColor: primaryAppBarColor,
+          automaticallyImplyLeading: actionBackAppBar,
+          actions: <Widget>[
+            Container(
+              color: iconButtonAppbarColor == true
+                  ? primaryAppBarColor
+                  : Colors.white,
+              child: IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.actionIcon.icon == Icons.search) {
+                      actionBackAppBar = false;
+                      iconButtonAppbarColor = false;
+                      this.actionIcon = new Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      );
+                      this.appBarTitle = Container(
+                        height: 50.0,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          controller: _searchQuery,
+                          onChanged: (string) {
+                            if (string != null || string != '') {
+                              _debouncer.run(() {
+                                listUserfilter();
+                              });
+                            }
+                          },
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon:
+                                new Icon(Icons.search, color: Colors.grey),
+                            hintText: "Cari Berdasarkan Email Pengguna",
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      _handleSearchEnd();
+                    }
+                  });
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }

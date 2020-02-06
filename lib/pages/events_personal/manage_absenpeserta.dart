@@ -139,7 +139,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
 
   Widget appBarTitle = Text(
     "Kelola Absen Peserta",
-    style: TextStyle(fontSize: 16),
+    style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
     Icons.search,

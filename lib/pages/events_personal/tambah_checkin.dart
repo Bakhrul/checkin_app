@@ -142,7 +142,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
             setState(() {
           isCreate = false;
         });
-            Fluttertoast.showToast(msg: "Tanggal checkin tidak boleh kurang dari waktu checkin terakhir");
+            Fluttertoast.showToast(msg: "Waktu berlangsungnya checkin tersebut sudah ada, mohon gunakan lainnya");
           }
           print('response decoded $responseJson');
         } else {
@@ -211,6 +211,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 title: TextField(
                   controller: _namacheckinController,
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'Nama Checkin',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
@@ -223,6 +224,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 ),
                 title: DateTimeField(
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Waktu Awal dimulainya checkin',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
                   ),
@@ -260,6 +262,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                       ),
                       title: DateTimeField(
                         decoration: InputDecoration(
+                          border: InputBorder.none,
                           hintText: 'Waktu Akhir Checkin',
                           hintStyle:
                               TextStyle(fontSize: 13, color: Colors.black),
@@ -300,6 +303,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 title: TextField(
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),

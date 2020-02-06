@@ -16,6 +16,7 @@ import 'package:checkin_app/utils/utils.dart';
 
 String tokenType, accessToken;
 List<ListAdminEvent> listadminevent = [];
+bool actionBackAppBar, iconButtonAppbarColor;
 bool isLoading, isError, isFilter, isErrorfilter, isDelete;
 final _debouncer = Debouncer(milliseconds: 500);
 Map<String, String> requestHeaders = Map();
@@ -54,6 +55,8 @@ class _ManageAdminState extends State<ManageAdmin> {
     isFilter = false;
     isErrorfilter = false;
     isDelete = false;
+    actionBackAppBar = true;
+    iconButtonAppbarColor = true;
     getHeaderHTTP();
     print(requestHeaders);
     listcheckin();
@@ -113,11 +116,15 @@ class _ManageAdminState extends State<ManageAdmin> {
         setState(() {
           isLoading = false;
           isError = false;
+          isFilter = false;
+          isErrorfilter = false;
         });
       } else if (getAdminEvent.statusCode == 401) {
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
@@ -126,6 +133,8 @@ class _ManageAdminState extends State<ManageAdmin> {
         setState(() {
           isLoading = false;
           isError = true;
+          isFilter = false;
+          isErrorfilter = false;
         });
         return null;
       }
@@ -133,13 +142,16 @@ class _ManageAdminState extends State<ManageAdmin> {
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+          isErrorfilter = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      print('eror');
       setState(() {
         isLoading = false;
         isError = true;
+        isFilter = false;
+        isErrorfilter = false;
       });
       debugPrint('$e');
     }
@@ -186,11 +198,15 @@ class _ManageAdminState extends State<ManageAdmin> {
         setState(() {
           isFilter = false;
           isErrorfilter = false;
+          isLoading = false;
+          isError = false;
         });
       } else if (checkinevent.statusCode == 401) {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
         Fluttertoast.showToast(
             msg: "Token telah kadaluwarsa, silahkan login kembali");
@@ -199,6 +215,8 @@ class _ManageAdminState extends State<ManageAdmin> {
         setState(() {
           isFilter = false;
           isErrorfilter = true;
+          isLoading = false;
+          isError = false;
         });
         return null;
       }
@@ -206,6 +224,8 @@ class _ManageAdminState extends State<ManageAdmin> {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
@@ -213,6 +233,8 @@ class _ManageAdminState extends State<ManageAdmin> {
       setState(() {
         isFilter = false;
         isErrorfilter = true;
+        isLoading = false;
+        isError = false;
       });
       debugPrint('$e');
     }
@@ -222,6 +244,8 @@ class _ManageAdminState extends State<ManageAdmin> {
   void _handleSearchEnd() {
     setState(() {
       // ignore: new_with_non_type
+      actionBackAppBar = true;
+      iconButtonAppbarColor = true;
       this.actionIcon = new Icon(
         Icons.search,
         color: Colors.white,
@@ -230,7 +254,7 @@ class _ManageAdminState extends State<ManageAdmin> {
         "Kelola Co Host / Admin Event",
         style: TextStyle(
           color: Colors.white,
-          fontSize: 16,
+          fontSize: 14,
         ),
       );
       listcheckin();
@@ -244,7 +268,7 @@ class _ManageAdminState extends State<ManageAdmin> {
 
   Widget appBarTitle = Text(
     "Kelola Co Host / Admin Event",
-    style: TextStyle(fontSize: 16),
+    style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
     Icons.search,
@@ -621,53 +645,73 @@ class _ManageAdminState extends State<ManageAdmin> {
                 )))
     );
   }
-
-  Widget buildBar(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
+   Widget buildBar(BuildContext context) {
+    return PreferredSize( preferredSize: Size.fromHeight(50.0),
+     child : AppBar(
       title: appBarTitle,
+      titleSpacing: 0.0,
+      centerTitle: true,
       backgroundColor: primaryAppBarColor,
+      automaticallyImplyLeading: actionBackAppBar,
       actions: <Widget>[
-        IconButton(
-          icon: actionIcon,
-          onPressed: () {
-            setState(() {
-              if (this.actionIcon.icon == Icons.search) {
-                // ignore: new_with_non_type
-                this.actionIcon = new Icon(
-                  Icons.close,
-                  color: Colors.white,
-                );
-                this.appBarTitle = TextField(
-                  controller: _searchQuery,
-                  onChanged: (string) {
-                    if (string != null || string != '') {
-                      _debouncer.run(() {
-                        filterlistadmin();
-                      });
-                    }
-                  },
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      border: InputBorder.none,
-                      prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Nama Admin",
-                      hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      )),
-                );
-              } else {
-                _handleSearchEnd();
-              }
-            });
-          },
+        Container(
+          color: iconButtonAppbarColor == true ? primaryAppBarColor : Colors.white,
+          child: IconButton(
+            icon: actionIcon,
+            onPressed: () {
+              setState(() {
+                if (this.actionIcon.icon == Icons.search) {
+                  actionBackAppBar = false;
+                  iconButtonAppbarColor = false;
+                  this.actionIcon = new Icon(        
+                    Icons.close,
+                    color: Colors.grey,
+                    
+                  );
+                  this.appBarTitle = Container(
+                    height: 50.0,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(0),
+                    margin: EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      autofocus: true,
+                      controller: _searchQuery,
+                      onChanged: (string) {
+                        if (string != null || string != '') {
+                          _debouncer.run(() {
+                            filterlistadmin();
+                          });
+                        }
+                      },
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          prefixIcon: new Icon(Icons.search, color: Colors.grey),
+                          hintText: "Cari Berdasarkan Nama Admin",
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                            
+                          ),),
+                    ),
+                  );
+                } else {
+                  _handleSearchEnd();
+                }
+              });
+            },
+          ),
         ),
       ],
+    )
     );
   }
 }

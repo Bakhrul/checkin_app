@@ -21,6 +21,7 @@ import 'package:shimmer/shimmer.dart';
 String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 List<ListFollowingEvent> listItemFollowing = [];
+bool actionBackAppBar, iconButtonAppbarColor;
 final _debouncer = Debouncer(milliseconds: 500);
 List<ListKategoriEvent> listkategoriEvent = [];
 bool isLoading, isError, isFilter;
@@ -58,72 +59,69 @@ class ManajemenEventFollowing extends StatefulWidget {
 }
 
 class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
-
-    bool isLoading = true;
-    String filterX = 'all';
-    String categoryNow = 'all';
-    bool isError = false;
-    bool isFilter = false;
-    int page = 1;
-    ScrollController pageScroll = new ScrollController();
-    bool delay = false;
-    int manyPage;
-    bool _isLoadingPagination = false;
-    bool _isPageDisconnect = false;
-    String userId;
+  bool isLoading = true;
+  String filterX = 'all';
+  String categoryNow = 'all';
+  bool isError = false;
+  bool isFilter = false;
+  int page = 1;
+  ScrollController pageScroll = new ScrollController();
+  bool delay = false;
+  int manyPage;
+  bool _isLoadingPagination = false;
+  bool _isPageDisconnect = false;
+  String userId;
 
   @override
   void initState() {
+    actionBackAppBar = true;
+    iconButtonAppbarColor = true;
     _searchQuery.text = '';
     getUser();
     listDoneEvent();
-    pageScroll.addListener((){
-      if(pageScroll.position.pixels == pageScroll.position.maxScrollExtent){
-          _getPage(categoryNow,_searchQuery.text);
-        }
-    }
-    );
+    pageScroll.addListener(() {
+      if (pageScroll.position.pixels == pageScroll.position.maxScrollExtent) {
+        _getPage(categoryNow, _searchQuery.text);
+      }
+    });
     super.initState();
   }
-   void dispose() {
+
+  void dispose() {
     super.dispose();
   }
 
-    getUser() async {
+  getUser() async {
+    var session = new DataStore();
+    var id = await session.getDataString('id');
 
-      var session = new DataStore();
-      var id = await session.getDataString('id');
+    setState(() {
+      userId = id;
+    });
+  }
 
-      setState((){
-        userId = id;
-      });
-
-    }
-
-    _getPage(String type, String query) async {
-
+  _getPage(String type, String query) async {
     print('_getPage()');
-      if(delay){
+    if (delay) {
+      return false;
+    } else {
+      setState(() {
+        delay = true;
+      });
+    }
+
+    if (manyPage != 0) {
+      if (page == manyPage) {
         return false;
-      }else{
-        setState((){
-           delay = true;
-        });
-      }
-      
-      
-    if(manyPage != 0){
-      if(page == manyPage){
-        return false;
-      }else{
-        setState((){
-        page = page + 1;
-        _isPageDisconnect = false;
-        _isLoadingPagination = true;
+      } else {
+        setState(() {
+          page = page + 1;
+          _isPageDisconnect = false;
+          _isLoadingPagination = true;
         });
       }
     }
-    
+
     print(query);
 
     var storage = new DataStore();
@@ -137,127 +135,112 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
     // Map<String, dynamic> body = {'filter':type.toString(),'search_query':query.toString()};
 
-  try{
-   final followevent = await http.post(
+    try {
+      final followevent = await http.post(
         url('api/getfollowingevent/$page'),
         body: {'filter': filterX},
         headers: requestHeaders,
       );
 
-    if (followevent.statusCode == 200) {
+      if (followevent.statusCode == 200) {
+        Map rawData = json.decode(followevent.body);
+        print(rawData);
+        print(page);
 
-      Map rawData = json.decode(followevent.body);
-      print(rawData);
-      print(page);
+        if (mounted) {
+          for (var i in rawData['eventfollow']) {
+            Duration dif =
+                DateTime.parse(i['ev_time_end']).difference(DateTime.now());
+            DateTime waktuawal = DateTime.parse(i['ev_time_start']);
+            DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
+            String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
+            String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
+            Color color;
+            String status;
 
+            if (dif.inSeconds <= 0) {
+              status = 'Event Selesai';
+              color = Color.fromRGBO(255, 191, 128, 1);
+            } else if (i['ep_position'] != 2) {
+              switch (i['ep_status']) {
+                case 'C':
+                  status = 'Pendaftaran Ditolak';
+                  color = Colors.red;
+                  break;
+                case 'P':
+                  status = 'Menunggu Verifikasi';
+                  color = Colors.orange;
+                  break;
+                case 'A':
+                  status = 'Sudah Terdaftar';
+                  color = Colors.green;
+                  break;
+                case 'B':
+                  status = 'Dilarang Mendaftar Event';
+                  color = Colors.red;
+                  break;
 
-      if(mounted){
+                default:
+                  status = 'Belum Terdaftar';
+                  color = Colors.grey;
+                  break;
+              }
+            } else {
+              switch (i['ep_status']) {
+                case 'C':
+                  status = 'Belum Terdaftar';
+                  color = Colors.grey;
+                  break;
+                case 'P':
+                  status = 'Menunggu Konfirmasi Admin';
+                  color = Colors.orange;
+                  break;
+                case 'B':
+                  status = 'Dilarang Mendaftar Event';
+                  color = Colors.red;
+                  break;
 
-
-        for (var i in rawData['eventfollow']) {
-          
-          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
-          DateTime waktuawal = DateTime.parse(i['ev_time_start']);
-          DateTime waktuakhir = DateTime.parse(i['ev_time_end']);
-          String timestart = DateFormat('dd MMM yyyy').format(waktuawal);
-          String timeend = DateFormat('dd MMM yyyy').format(waktuakhir);
-          Color color;
-          String status;
-
-        if(dif.inSeconds <= 0){
-
-        status = 'Event Selesai';
-        color = Color.fromRGBO(255, 191, 128,1);
-
-        }else if(i['ep_position'] != 2){
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Pendaftaran Ditolak';
-              color = Colors.red;
-              break;
-          case 'P':
-              status = 'Menunggu Verifikasi';
-              color = Colors.orange;
-              break;
-          case 'A':
-              status = 'Sudah Terdaftar';
-              color = Colors.green;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-
-          default:
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
+                default:
+                  status = 'Admin / Co-Host';
+                  color = Colors.green;
+                  break;
+              }
+            }
+            ListFollowingEvent followX = ListFollowingEvent(
+              id: '${i['ev_id']}',
+              idcreator: i['ev_create_user'].toString(),
+              image: i['ev_image'],
+              title: i['ev_title'],
+              waktuawal: timestart,
+              waktuakhir: timeend,
+              fullday: i['ev_allday'].toString(),
+              alamat: i['ev_location'],
+              wishlist: i['ew_wish'].toString(),
+              follow: i['fo_status'] == null ? "N" : i['fo_status'],
+              statusdaftar: i['ep_status'],
+              creatorName: i['us_name'],
+              color: color,
+              status: status == null ? "Memuat" : status,
+              posisi: i['ep_position'].toString(),
+            );
+            listItemFollowing.add(followX);
           }
-
-        }else{
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
-          case 'P':
-              status = 'Menunggu Konfirmasi Admin';
-              color = Colors.orange;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-
-          default:
-            status = 'Admin / Co-Host';
-            color = Colors.green;
-            break;
-          }
-
-        }
-          ListFollowingEvent followX = ListFollowingEvent(
-            id: '${i['ev_id']}',
-            idcreator: i['ev_create_user'].toString(),
-            image: i['ev_image'],
-            title: i['ev_title'],
-            waktuawal: timestart,
-            waktuakhir: timeend,
-            fullday: i['ev_allday'].toString(),
-            alamat: i['ev_location'],
-            wishlist: i['ew_wish'].toString(),
-            follow: i['fo_status'] == null ? "N":i['fo_status'],
-            statusdaftar: i['ep_status'],
-            creatorName: i['us_name'],
-            color:color,
-            status: status == null ? "Memuat":status,
-            posisi: i['ep_position'].toString(),
-          );
-          listItemFollowing.add(followX);
         }
 
-        }
-
-        setState((){
+        setState(() {
           delay = false;
           _isLoadingPagination = false;
         });
-
-    }
-      
-  } on TimeoutException catch(_){
-
-    setState(() {
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
         _isPageDisconnect = true;
         _isLoadingPagination = false;
         page -= 1;
         delay = false;
       });
       Fluttertoast.showToast(msg: "Time out");
-
-  } on SocketException catch(_){
+    } on SocketException catch (_) {
       setState(() {
         _isPageDisconnect = true;
         _isLoadingPagination = false;
@@ -265,10 +248,9 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         delay = false;
       });
       Fluttertoast.showToast(msg: "No Internet Connection");
-  } catch(e) {
-    print(e);
-  }
-
+    } catch (e) {
+      print(e);
+    }
   }
 
   _getUserData() async {
@@ -359,70 +341,71 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
 
         listItemFollowing = [];
         for (var i in followevents) {
-          
-          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
+          Duration dif =
+              DateTime.parse(i['ev_time_end']).difference(DateTime.now());
           DateTime yearStart = DateTime.parse(i['ev_time_start']);
           DateTime yearEnd = DateTime.parse(i['ev_time_end']);
           String cekAllday = i['ev_allday'];
-          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
-          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
-          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
-          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
+          String formatStart = yearStart.year == yearEnd.year
+              ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM'
+              : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year
+              ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy'
+              : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart)
+              .format(DateTime.parse(i['ev_time_start']));
+          String timeend =
+              DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
-        if(dif.inSeconds <= 0){
+          if (dif.inSeconds <= 0) {
+            status = 'Event Selesai';
+            color = Color.fromRGBO(255, 191, 128, 1);
+          } else if (i['ep_position'] != 2) {
+            switch (i['ep_status']) {
+              case 'C':
+                status = 'Pendaftaran Ditolak';
+                color = Colors.red;
+                break;
+              case 'P':
+                status = 'Menunggu Verifikasi';
+                color = Colors.orange;
+                break;
+              case 'A':
+                status = 'Sudah Terdaftar';
+                color = Colors.green;
+                break;
+              case 'B':
+                status = 'Dilarang Mendaftar Event';
+                color = Colors.red;
+                break;
 
-        status = 'Event Selesai';
-        color = Color.fromRGBO(255, 191, 128,1);
-
-        }else if(i['ep_position'] != 2){
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Pendaftaran Ditolak';
-              color = Colors.red;
-              break;
-          case 'P':
-              status = 'Menunggu Verifikasi';
-              color = Colors.orange;
-              break;
-          case 'A':
-              status = 'Sudah Terdaftar';
-              color = Colors.green;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-
-          default:
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
+              default:
+                status = 'Belum Terdaftar';
+                color = Colors.grey;
+                break;
+            }
+          } else {
+            switch (i['ep_status']) {
+              case 'C':
+                status = 'Belum Terdaftar';
+                color = Colors.grey;
+                break;
+              case 'P':
+                status = 'Menunggu Konfirmasi Admin';
+                color = Colors.orange;
+                break;
+              case 'B':
+                status = 'Dilarang Mendaftar Event';
+                color = Colors.red;
+                break;
+              default:
+                status = 'Admin / Co-Host';
+                color = Colors.green;
+                break;
+            }
           }
-
-        }else{
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
-          case 'P':
-              status = 'Menunggu Konfirmasi Admin';
-              color = Colors.orange;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-          default:
-            status = 'Admin / Co-Host';
-            color = Colors.green;
-            break;
-          }
-        }
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
             idcreator: i['ev_create_user'].toString(),
@@ -433,11 +416,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            follow: i['fo_status'] == null ? "N":i['fo_status'],
+            follow: i['fo_status'] == null ? "N" : i['fo_status'],
             statusdaftar: i['ep_status'],
             creatorName: i['us_name'],
-            color:color,
-            status: status == null ? "Memuat":status,
+            color: color,
+            status: status == null ? "Memuat" : status,
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -503,73 +486,73 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
         var eventfollowingJson = json.decode(followevent.body);
         var followevents = eventfollowingJson['eventfollow'];
         manyPage = eventfollowingJson['num_page'];
-        
+
         listItemFollowing = [];
         for (var i in followevents) {
-          
-          Duration dif = DateTime.parse(i['ev_time_end']).difference(DateTime.now());
+          Duration dif =
+              DateTime.parse(i['ev_time_end']).difference(DateTime.now());
           DateTime yearStart = DateTime.parse(i['ev_time_start']);
           DateTime yearEnd = DateTime.parse(i['ev_time_end']);
           String cekAllday = i['ev_allday'];
-          String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
-          String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
-          String timestart = DateFormat(formatStart).format(DateTime.parse(i['ev_time_start']));
-          String timeend = DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
+          String formatStart = yearStart.year == yearEnd.year
+              ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM'
+              : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
+          String formatEnd = yearStart.year == yearEnd.year
+              ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy'
+              : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+          String timestart = DateFormat(formatStart)
+              .format(DateTime.parse(i['ev_time_start']));
+          String timeend =
+              DateFormat(formatEnd).format(DateTime.parse(i['ev_time_end']));
           Color color;
           String status;
 
-        if(dif.inSeconds <= 0){
-
-        status = 'Event Selesai';
-        color = Color.fromRGBO(255, 191, 128,1);
-
-        }else if(i['ep_position'] != 2){
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Pendaftaran Ditolak';
-              color = Colors.red;
-              break;
-          case 'P':
-              status = 'Menunggu Verifikasi';
-              color = Colors.orange;
-              break;
-          case 'A':
-              status = 'Sudah Terdaftar';
-              color = Colors.green;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-          default:
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
+          if (dif.inSeconds <= 0) {
+            status = 'Event Selesai';
+            color = Color.fromRGBO(255, 191, 128, 1);
+          } else if (i['ep_position'] != 2) {
+            switch (i['ep_status']) {
+              case 'C':
+                status = 'Pendaftaran Ditolak';
+                color = Colors.red;
+                break;
+              case 'P':
+                status = 'Menunggu Verifikasi';
+                color = Colors.orange;
+                break;
+              case 'A':
+                status = 'Sudah Terdaftar';
+                color = Colors.green;
+                break;
+              case 'B':
+                status = 'Dilarang Mendaftar Event';
+                color = Colors.red;
+                break;
+              default:
+                status = 'Belum Terdaftar';
+                color = Colors.grey;
+                break;
+            }
+          } else {
+            switch (i['ep_status']) {
+              case 'C':
+                status = 'Belum Terdaftar';
+                color = Colors.grey;
+                break;
+              case 'P':
+                status = 'Menunggu Konfirmasi Admin';
+                color = Colors.orange;
+                break;
+              case 'B':
+                status = 'Dilarang Mendaftar Event';
+                color = Colors.red;
+                break;
+              default:
+                status = 'Admin / Co-Host';
+                color = Colors.green;
+                break;
+            }
           }
-
-        }else{
-
-          switch(i['ep_status']){
-          case 'C':
-              status = 'Belum Terdaftar';
-              color = Colors.grey;
-              break;
-          case 'P':
-              status = 'Menunggu Konfirmasi Admin';
-              color = Colors.orange;
-              break;
-          case 'B':
-             status = 'Dilarang Mendaftar Event';
-             color = Colors.red;
-             break;
-          default:
-            status = 'Admin / Co-Host';
-            color = Colors.green;
-            break;
-          }
-
-        }
 
           ListFollowingEvent followX = ListFollowingEvent(
             id: '${i['ev_id']}',
@@ -581,11 +564,11 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
-            follow: i['fo_status'] == null ? "N":i['fo_status'],
+            follow: i['fo_status'] == null ? "N" : i['fo_status'],
             statusdaftar: i['ep_status'],
             creatorName: i['us_name'],
-            color:color,
-            status: status == null ? "Memuat":status,
+            color: color,
+            status: status == null ? "Memuat" : status,
             posisi: i['ep_position'].toString(),
           );
           listItemFollowing.add(followX);
@@ -689,6 +672,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
   void _handleSearchEnd() {
     setState(() {
       // ignore: new_with_non_type
+      actionBackAppBar = true;
+      iconButtonAppbarColor = true;
       this.actionIcon = new Icon(
         Icons.search,
         color: Colors.white,
@@ -755,7 +740,7 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                   child: SingleChildScrollView(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 16.0),
+                          horizontal: 16.0, vertical: 16.0),
                       width: double.infinity,
                       child: Shimmer.fromColors(
                         baseColor: Colors.grey[300],
@@ -763,7 +748,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                         child: Column(
                           children: [0, 1]
                               .map((_) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 15.0),
+                                    padding:
+                                        const EdgeInsets.only(bottom: 15.0),
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -821,9 +807,8 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                 ),
               ],
             )
-          :
-          isError == true ?
-           Padding(
+          : isError == true
+              ? Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: RefreshIndicator(
                     onRefresh: () => listFilterFollowingEvent(),
@@ -875,703 +860,723 @@ class _ManajemenEventFollowingState extends State<ManajemenEventFollowing> {
                       ),
                     ]),
                   ),
-                ):
-           Padding(
-              padding: const EdgeInsets.only(
-                  top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
-              child: RefreshIndicator(
-                onRefresh: () => listDoneEvent(),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 10, left: 5, bottom: 5.0),
-                      height: 50.0,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        primary: false,
-                        itemCount: listkategoriEvent.length == 0
-                            ? 0
-                            : listkategoriEvent.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                              margin: EdgeInsets.only(right: 10.0),
-                              child: ButtonTheme(
-                                minWidth: 0.0,
-                                height: 0,
-                                child: RaisedButton(
-                                  color:
-                                      categoryNow == listkategoriEvent[index].id
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
+                  child: RefreshIndicator(
+                    onRefresh: () => listDoneEvent(),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding:
+                              EdgeInsets.only(top: 10, left: 5, bottom: 5.0),
+                          height: 50.0,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            primary: false,
+                            itemCount: listkategoriEvent.length == 0
+                                ? 0
+                                : listkategoriEvent.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                  margin: EdgeInsets.only(right: 10.0),
+                                  child: ButtonTheme(
+                                    minWidth: 0.0,
+                                    height: 0,
+                                    child: RaisedButton(
+                                      color: categoryNow ==
+                                              listkategoriEvent[index].id
                                           ? primaryAppBarColor
                                           : Colors.grey[100],
-                                  elevation: 0.0,
-                                  highlightColor: Colors.transparent,
-                                  highlightElevation: 0.0,
-                                  onPressed: () {
-                                    setState(() {
-                                      categoryNow = listkategoriEvent[index].id;
-                                    });
-                                    listFilterFollowingEvent();
-                                  },
-                                  padding: EdgeInsets.only(
-                                      top: 7.0,
-                                      left: 15.0,
-                                      right: 15.0,
-                                      bottom: 7.0),
-                                  child: Text(
-                                    listkategoriEvent[index].nama == null
-                                        ? 'Unknown Kategori'
-                                        : listkategoriEvent[index].nama,
-                                    style: TextStyle(
-                                        color: categoryNow ==
-                                                listkategoriEvent[index].id
-                                            ? Colors.white
-                                            : Colors.black54,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(18.0),
-                                      side: BorderSide(
-                                        color: listkategoriEvent[index].color ==
-                                                true
-                                            ? Colors.transparent
-                                            : Colors.transparent,
-                                      )),
-                                ),
-                              ));
-                        },
-                      ),
-                    ),
-                    isFilter == true
-                        ? Container(
-                                      margin: EdgeInsets.only(top:20.0),
-                                        child: SingleChildScrollView(
-                                            child: Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 15.0),
-                                        child: Shimmer.fromColors(
-                                          baseColor: Colors.grey[300],
-                                          highlightColor: Colors.grey[100],
-                                          child: Column(
-                                            children: [0, 1]
-                                                .map((_) => Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 25.0),
-                                                      child: Row(
+                                      elevation: 0.0,
+                                      highlightColor: Colors.transparent,
+                                      highlightElevation: 0.0,
+                                      onPressed: () {
+                                        setState(() {
+                                          categoryNow =
+                                              listkategoriEvent[index].id;
+                                        });
+                                        listFilterFollowingEvent();
+                                      },
+                                      padding: EdgeInsets.only(
+                                          top: 7.0,
+                                          left: 15.0,
+                                          right: 15.0,
+                                          bottom: 7.0),
+                                      child: Text(
+                                        listkategoriEvent[index].nama == null
+                                            ? 'Unknown Kategori'
+                                            : listkategoriEvent[index].nama,
+                                        style: TextStyle(
+                                            color: categoryNow ==
+                                                    listkategoriEvent[index].id
+                                                ? Colors.white
+                                                : Colors.black54,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(18.0),
+                                          side: BorderSide(
+                                            color: listkategoriEvent[index]
+                                                        .color ==
+                                                    true
+                                                ? Colors.transparent
+                                                : Colors.transparent,
+                                          )),
+                                    ),
+                                  ));
+                            },
+                          ),
+                        ),
+                        isFilter == true
+                            ? Container(
+                                margin: EdgeInsets.only(top: 20.0),
+                                child: SingleChildScrollView(
+                                    child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.grey[300],
+                                    highlightColor: Colors.grey[100],
+                                    child: Column(
+                                      children: [0, 1]
+                                          .map((_) => Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 25.0),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: 120.0,
+                                                      height: 70.0,
+                                                      color: Colors.white,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 8.0),
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
                                                           Container(
-                                                            width: 120.0,
-                                                            height: 70.0,
+                                                            width:
+                                                                double.infinity,
+                                                            height: 8.0,
                                                             color: Colors.white,
                                                           ),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
                                                                         .symmetric(
-                                                                    horizontal:
-                                                                        8.0),
+                                                                    vertical:
+                                                                        5.0),
                                                           ),
-                                                          Expanded(
-                                                            child: Column(
+                                                          Container(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 8.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical:
+                                                                        5.0),
+                                                          ),
+                                                          Container(
+                                                            width: 40.0,
+                                                            height: 8.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                )))
+                            : Expanded(
+                                child: Scrollbar(
+                                    child: ListView(
+                                        controller: pageScroll,
+                                        children: <Widget>[
+                                      for (var index = 0;
+                                          index < listItemFollowing.length;
+                                          index++)
+                                        InkWell(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                  top: 5.0,
+                                                  bottom: 5.0,
+                                                ),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Card(
+                                                      elevation: 1,
+                                                      child: Column(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10.0),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
                                                                       .start,
-                                                              children: [
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 8.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  flex: 5,
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        80.0,
+                                                                    width: 80.0,
+                                                                    child: FadeInImage
+                                                                        .assetNetwork(
+                                                                      placeholder:
+                                                                          'images/loading-event.png',
+                                                                      image: listItemFollowing[index].image == null ||
+                                                                              listItemFollowing[index].image ==
+                                                                                  '' ||
+                                                                              listItemFollowing[index].image ==
+                                                                                  'null'
+                                                                          ? url(
+                                                                              'assets/images/noimage.jpg')
+                                                                          : url(
+                                                                              'storage/image/event/event_thumbnail/${listItemFollowing[index].image}'),
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          5.0),
-                                                                ),
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: 8.0,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          5.0),
-                                                                ),
-                                                                Container(
-                                                                  width: 40.0,
-                                                                  height: 8.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                                Expanded(
+                                                                  flex: 7,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            15.0,
+                                                                        right:
+                                                                            5.0),
+                                                                    child:
+                                                                        Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Text(
+                                                                          listItemFollowing[index].waktuawal +
+                                                                              ' - ' +
+                                                                              listItemFollowing[index].waktuakhir,
+                                                                          style: TextStyle(
+                                                                              color: Colors.blue,
+                                                                              fontSize: 13,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 5.0),
+                                                                          child: Text(
+                                                                              listItemFollowing[index].title == null ? 'Unknown Event' : listItemFollowing[index].title,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              softWrap: true,
+                                                                              maxLines: 2,
+                                                                              style: TextStyle(
+                                                                                color: Colors.black,
+                                                                                fontWeight: FontWeight.w500,
+                                                                              )),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 10.0),
+                                                                          child:
+                                                                              Row(children: <Widget>[
+                                                                            if (listItemFollowing[index].follow ==
+                                                                                "Y")
+                                                                              Container(width: 50, padding: EdgeInsets.only(top: 2.0, bottom: 2.0, left: 3.0, right: 3.0), margin: EdgeInsets.only(left: 1.0, right: 2.0), child: Text('Di ikuti', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.blue)), decoration: BoxDecoration(border: Border.all(color: Colors.lightBlueAccent), borderRadius: BorderRadius.circular(10))),
+                                                                            Expanded(
+                                                                              child: Container(
+                                                                                  padding: EdgeInsets.only(left: 3.0, right: 3.0),
+                                                                                  child: Text(
+                                                                                    listItemFollowing[index].creatorName == null ? 'tidak tersedia' : listItemFollowing[index].creatorName,
+                                                                                    style: TextStyle(color: Colors.grey),
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    softWrap: true,
+                                                                                  )),
+                                                                            )
+                                                                          ]),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                        ),
-                                      )))
-                        : Expanded(
-                            child: Scrollbar(
-                              child: ListView(
-                                controller: pageScroll,
-                                children : <Widget>[
-                                for(var index = 0; index < listItemFollowing.length; index++)
-                                  InkWell(
-                                      child: Container(
-                                          margin: EdgeInsets.only(
-                                            top: 5.0,
-                                            bottom: 5.0,
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              Card(
-                                                elevation: 1,
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10.0),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            flex: 5,
-                                                            child:Container(
-                                                                          height:
-                                                                              80.0,
-                                                                          width:
-                                                                              80.0,
-                                                                          child:
-                                                                              FadeInImage.assetNetwork(
-                                                                            placeholder:
-                                                                                'images/loading-event.png',
-                                                                            image: listItemFollowing[index].image == null || listItemFollowing[index].image == '' || listItemFollowing[index].image == 'null'
-                                                                                ? 
-                                                                                  url('assets/images/noimage.jpg')
-                                                                                : url('storage/image/event/event_thumbnail/${listItemFollowing[index].image}'),
-                                                                                
-                                                                            fit:
-                                                                                BoxFit.cover,
-
-                                                                          ),
-                                                                        ),
                                                           ),
-                                                          Expanded(
-                                                            flex: 7,
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left:
-                                                                          15.0,
-                                                                      right:
-                                                                          5.0),
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <
-                                                                    Widget>[
-                                                                  Text(
-                                                                    listItemFollowing[index].waktuawal+' - '+listItemFollowing[index].waktuakhir,
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .blue,
-                                                                        fontSize:
-                                                                            13,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .only(
-                                                                        top:
-                                                                            5.0),
-                                                                    child: Text(
-                                                                        listItemFollowing[index].title ==
-                                                                                null
-                                                                            ? 'Unknown Event'
-                                                                            : listItemFollowing[index]
-                                                                                .title,
-                                                                        overflow:TextOverflow.ellipsis,
-                                                                        softWrap:true,
-                                                                        maxLines: 2,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        )),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .only(
-                                                                        top:
-                                                                            10.0),
-                                                                    child: Row(
-                                                                      children: <Widget>[
-                                                                        if(listItemFollowing[index].follow == "Y")
-                                                                          Container(
-                                                                              width: 50,
-                                                                              padding: EdgeInsets.only(top:2.0,bottom:2.0,left:3.0,right:3.0),
-                                                                              margin:EdgeInsets.only(left:1.0,right:2.0),
-                                                                              child: Text(
-                                                                                'Di ikuti',
-                                                                                textAlign: TextAlign.center,
-                                                                                  style: TextStyle(
-                                                                                      fontSize: 12,
-                                                                                      color: Colors.blue)
-                                                                                ),
-                                                                                decoration: BoxDecoration(
-                                                                                  border: Border.all(color:Colors.lightBlueAccent),
-                                                                                  borderRadius: BorderRadius.circular(10)
-                                                                                )
-                                                                            ),
-                                                                         Expanded(
-                                                                           child:Container(
-                                                                                padding: EdgeInsets.only(left:3.0,right:3.0),
-                                                                                child: Text(
-                                                                                  listItemFollowing[index].creatorName ==
-                                                                                  null
-                                                                              ? 'tidak tersedia'
-                                                                              : listItemFollowing[index]
-                                                                                  .creatorName,
-                                                                                  style: TextStyle(
-                                                                                      color: Colors.grey),
-                                                                                  overflow:TextOverflow.ellipsis,
-                                                                                  softWrap:true,
-                                                                                )
-                                                                              ),
-                                                                         )
-                                                                      ]
-                                                                    ),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 10.0,
-                                                                right: 10.0),
-                                                        child: Divider()),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              right: 10.0,
-                                                              bottom: 10.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: <Widget>[
                                                           Container(
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                color: listItemFollowing[index].color,
-                                                                borderRadius: new BorderRadius
-                                                                        .only(
-                                                                    topLeft:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    topRight:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    bottomLeft:
-                                                                        const Radius.circular(
-                                                                            5.0),
-                                                                    bottomRight:
-                                                                        const Radius.circular(
-                                                                            5.0)),
-                                                              ),
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(5.0),
-                                                              width: 120.0,
-                                                              child: Text(listItemFollowing[index].status,
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              )),
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left:
+                                                                          10.0,
+                                                                      right:
+                                                                          10.0),
+                                                              child: Divider()),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
                                                                         .only(
-                                                                    right: 0),
-                                                            child: ButtonTheme(
-                                                              minWidth:
-                                                                  0, //wraps child's width
-                                                              height: 0,
-                                                              child: FlatButton(
-                                                                child: Row(
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Icon(
-                                                                      Icons
-                                                                          .favorite,
-                                                                      color: listItemFollowing[index].wishlist == null ||
-                                                                              listItemFollowing[index].wishlist ==
-                                                                                  'null' ||
-                                                                              listItemFollowing[index].wishlist ==
-                                                                                  '0'
-                                                                          ? Colors
-                                                                              .grey
-                                                                          : Colors
-                                                                              .pink,
-                                                                      size: 18,
+                                                                    left: 10.0,
+                                                                    right: 10.0,
+                                                                    bottom:
+                                                                        10.0),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: <
+                                                                  Widget>[
+                                                                Container(
+                                                                    decoration:
+                                                                        new BoxDecoration(
+                                                                      color: listItemFollowing[
+                                                                              index]
+                                                                          .color,
+                                                                      borderRadius: new BorderRadius
+                                                                              .only(
+                                                                          topLeft: const Radius.circular(
+                                                                              5.0),
+                                                                          topRight: const Radius.circular(
+                                                                              5.0),
+                                                                          bottomLeft: const Radius.circular(
+                                                                              5.0),
+                                                                          bottomRight:
+                                                                              const Radius.circular(5.0)),
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                                color: Colors
-                                                                    .white,
-                                                                materialTapTargetSize:
-                                                                    MaterialTapTargetSize
-                                                                        .shrinkWrap,
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left:
-                                                                            15,
-                                                                        right:
-                                                                            15.0),
-                                                                onPressed:
-                                                                    () async {
-                                                                  try {
-                                                                    final hapuswishlist = await http.post(
-                                                                        url(
-                                                                            'api/actionwishlist'),
-                                                                        headers:
-                                                                            requestHeaders,
-                                                                        body: {
-                                                                          'event':
-                                                                              listItemFollowing[index].id,
-                                                                        });
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            5.0),
+                                                                    width:
+                                                                        120.0,
+                                                                    child: Text(
+                                                                      listItemFollowing[
+                                                                              index]
+                                                                          .status,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    )),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      right: 0),
+                                                                  child:
+                                                                      ButtonTheme(
+                                                                    minWidth:
+                                                                        0, //wraps child's width
+                                                                    height: 0,
+                                                                    child:
+                                                                        FlatButton(
+                                                                      child:
+                                                                          Row(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Icon(
+                                                                            Icons.favorite,
+                                                                            color: listItemFollowing[index].wishlist == null || listItemFollowing[index].wishlist == 'null' || listItemFollowing[index].wishlist == '0'
+                                                                                ? Colors.grey
+                                                                                : Colors.pink,
+                                                                            size:
+                                                                                18,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      color: Colors
+                                                                          .white,
+                                                                      materialTapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                      padding: EdgeInsets.only(
+                                                                          left:
+                                                                              15,
+                                                                          right:
+                                                                              15.0),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        try {
+                                                                          final hapuswishlist = await http.post(
+                                                                              url('api/actionwishlist'),
+                                                                              headers: requestHeaders,
+                                                                              body: {
+                                                                                'event': listItemFollowing[index].id,
+                                                                              });
 
-                                                                    if (hapuswishlist
-                                                                            .statusCode ==
-                                                                        200) {
-                                                                      var hapuswishlistJson =
-                                                                          json.decode(
-                                                                              hapuswishlist.body);
-                                                                      if (hapuswishlistJson[
-                                                                              'status'] ==
-                                                                          'tambah') {
-                                                                        setState(
-                                                                            () {
-                                                                          listItemFollowing[index].wishlist =
-                                                                              listItemFollowing[index].id;
-                                                                        });
-                                                                      } else if (hapuswishlistJson[
-                                                                              'status'] ==
-                                                                          'hapus') {
-                                                                        setState(
-                                                                            () {
-                                                                          listItemFollowing[index].wishlist =
-                                                                              null;
-                                                                        });
-                                                                      }
-                                                                    } else {
-                                                                      print(hapuswishlist
-                                                                          .body);
-                                                                      Fluttertoast
-                                                                          .showToast(
-                                                                              msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                    }
-                                                                  } on TimeoutException catch (_) {
-                                                                    Fluttertoast
-                                                                        .showToast(
-                                                                            msg:
-                                                                                "Timed out, Try again");
-                                                                  } catch (e) {
-                                                                    print(e);
-                                                                  }
-                                                                },
-                                                              ),
+                                                                          if (hapuswishlist.statusCode ==
+                                                                              200) {
+                                                                            var hapuswishlistJson =
+                                                                                json.decode(hapuswishlist.body);
+                                                                            if (hapuswishlistJson['status'] ==
+                                                                                'tambah') {
+                                                                              setState(() {
+                                                                                listItemFollowing[index].wishlist = listItemFollowing[index].id;
+                                                                              });
+                                                                            } else if (hapuswishlistJson['status'] ==
+                                                                                'hapus') {
+                                                                              setState(() {
+                                                                                listItemFollowing[index].wishlist = null;
+                                                                              });
+                                                                            }
+                                                                          } else {
+                                                                            print(hapuswishlist.body);
+                                                                            Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
+                                                                          }
+                                                                        } on TimeoutException catch (_) {
+                                                                          Fluttertoast.showToast(
+                                                                              msg: "Timed out, Try again");
+                                                                        } catch (e) {
+                                                                          print(
+                                                                              e);
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   ],
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                      onTap: () async {
-                                        switch (listItemFollowing[index].status) {
-                                          case 'Event Selesai':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                        id: int.parse(listItemFollowing[index].id),
-                                                        creatorId:listItemFollowing[index].idcreator,
-                                                        dataUser:dataUser,
-                                                        selfEvent: true
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Belum Terdaftar':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                        id: int.parse(listItemFollowing[index].id),
-                                                        creatorId:listItemFollowing[index].idcreator,
-                                                        dataUser:dataUser,
-                                                        selfEvent: listItemFollowing[index].idcreator == userId ? true:false
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Menunggu Verifikasi':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return WaitingEvent(
-                                                          id: int.parse(listItemFollowing[index].id),
-                                                          selfEvent: true,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                          dataUser: dataUser,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Belum Konfirmasi Admin':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                          id: int.parse(listItemFollowing[index].id),
-                                                          selfEvent: true,
-                                                          dataUser: dataUser,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Sudah Terdaftar':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return SuccesRegisteredEvent(
-                                                          id: int.parse(listItemFollowing[index].id),
-                                                          selfEvent: true,
-                                                          dataUser: dataUser,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Pendaftaran Ditolak':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                          id: int.parse(listItemFollowing[index].id),
+                                                )),
+                                            onTap: () async {
+                                              switch (listItemFollowing[index]
+                                                  .status) {
+                                                case 'Event Selesai':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                        id: int.parse(
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .id),
+                                                        creatorId:
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .idcreator,
+                                                        dataUser: dataUser,
+                                                        selfEvent: true);
+                                                  }));
+                                                  break;
+                                                case 'Belum Terdaftar':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                        id: int.parse(
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .id),
+                                                        creatorId:
+                                                            listItemFollowing[
+                                                                    index]
+                                                                .idcreator,
+                                                        dataUser: dataUser,
+                                                        selfEvent: listItemFollowing[
+                                                                        index]
+                                                                    .idcreator ==
+                                                                userId
+                                                            ? true
+                                                            : false);
+                                                  }));
+                                                  break;
+                                                case 'Menunggu Verifikasi':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return WaitingEvent(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                      dataUser: dataUser,
+                                                    );
+                                                  }));
+                                                  break;
+                                                case 'Belum Konfirmasi Admin':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    );
+                                                  }));
+                                                  break;
+                                                case 'Sudah Terdaftar':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return SuccesRegisteredEvent(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    );
+                                                  }));
+                                                  break;
+                                                case 'Pendaftaran Ditolak':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: false,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    );
+                                                  }));
+                                                  break;
+                                                case 'Admin / Co-Host':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    );
+                                                  }));
+                                                  break;
+                                                case 'Dilarang Mendaftar Event':
+                                                  return Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return RegisterEvents(
+                                                      id: int.parse(
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .id),
+                                                      selfEvent: true,
+                                                      dataUser: dataUser,
+                                                      creatorId:
+                                                          listItemFollowing[
+                                                                  index]
+                                                              .idcreator,
+                                                    );
+                                                  }));
+                                                  break;
+                                                default:
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            RegisterEvents(
+                                                          id: int.parse(
+                                                              listItemFollowing[
+                                                                      index]
+                                                                  .id),
                                                           selfEvent: false,
                                                           dataUser: dataUser,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          case 'Admin / Co-Host':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                          id: int.parse(listItemFollowing[index].id),
-                                                          selfEvent: true,
-                                                          dataUser: dataUser,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                            case 'Dilarang Mendaftar Event':
-                                               return Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context){
-                                                     return RegisterEvents(
-                                                          id: int.parse(listItemFollowing[index].id),
-                                                          selfEvent: true,
-                                                          dataUser: dataUser,
-                                                          creatorId:listItemFollowing[index].idcreator,
-                                                        );
-                                                      }
-                                                    )
-                                                  );
-                                                break;
-                                          default:
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RegisterEvents(
-                                                    id: int.parse(
-                                                        listItemFollowing[index]
-                                                            .id),
-                                                    selfEvent: false,
-                                                    dataUser: dataUser,
-                                                    creatorId:
-                                                        listItemFollowing[index]
-                                                            .idcreator,
-                                                  ),
-                                                ));
-                                            break;
-                                        }
-                                      }),
-                              _isPageDisconnect ?
-                        Container(
-                          height: 50,
-                          child:Center(
-          child:GestureDetector(
-            onTap:(){
-              _getPage(categoryNow,_searchQuery.text);
-            },
-            child:Container(
-              padding: EdgeInsets.all(5.0),
-              child:Icon(
-              Icons.refresh,
-              color: Colors.blueAccent,
-              size: 25
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:BorderRadius.only(
-                  topLeft : Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                  bottomLeft : Radius.circular(20.0),
-                  bottomRight : Radius.circular(20.0)
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    offset: Offset(0, 1), // changes position of shadow
+                                                          creatorId:
+                                                              listItemFollowing[
+                                                                      index]
+                                                                  .idcreator,
+                                                        ),
+                                                      ));
+                                                  break;
+                                              }
+                                            }),
+                                      _isPageDisconnect
+                                          ? Container(
+                                              height: 50,
+                                              child: Center(
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        _getPage(categoryNow,
+                                                            _searchQuery.text);
+                                                      },
+                                                      child: Container(
+                                                          padding: EdgeInsets.all(
+                                                              5.0),
+                                                          child: Icon(
+                                                              Icons.refresh,
+                                                              color: Colors
+                                                                  .blueAccent,
+                                                              size: 25),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius: BorderRadius.only(
+                                                                  topLeft:
+                                                                      Radius.circular(
+                                                                          20.0),
+                                                                  topRight:
+                                                                      Radius.circular(
+                                                                          20.0),
+                                                                  bottomLeft:
+                                                                      Radius.circular(
+                                                                          20.0),
+                                                                  bottomRight:
+                                                                      Radius.circular(
+                                                                          20.0)),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  spreadRadius:
+                                                                      1,
+                                                                  blurRadius: 1,
+                                                                  offset: Offset(
+                                                                      0,
+                                                                      1), // changes position of shadow
+                                                                ),
+                                                              ])))))
+                                          : Container(
+                                              height: _isLoadingPagination ? 50 : 0,
+                                              child: Center(child: CircularProgressIndicator()))
+                                    ])),
+                              ),
+                      ],
+                    ),
                   ),
-                ]
-              )
-            ) 
-          )
-        )
-                        ):
-                              Container(
-                                height:_isLoadingPagination ? 50:0,
-                                child:Center(
-                                  child:CircularProgressIndicator()
-                                )
-                              )
-                                ]
-                              )
-                              
-                            ),
-                          ),
-                  ],
                 ),
-              ),
-            ),
     );
   }
 
   Widget buildBar(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
-      title: appBarTitle,
-      backgroundColor: primaryAppBarColor,
-      actions: <Widget>[
-        IconButton(
-          icon: actionIcon,
-          onPressed: () {
-            setState(() {
-              if (this.actionIcon.icon == Icons.search) {
-                // ignore: new_with_non_type
-                this.actionIcon = new Icon(
-                  Icons.close,
-                  color: Colors.white,
-                );
-                this.appBarTitle = TextField(
-                  controller: _searchQuery,
-                  onChanged: (string) {
-                    if (string != null || string != '') {
-                      _debouncer.run(() {
-                        listFilterFollowingEvent();
-                      });
+    return PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          title: appBarTitle,
+          titleSpacing: 0.0,
+          centerTitle: true,
+          backgroundColor: primaryAppBarColor,
+          automaticallyImplyLeading: actionBackAppBar,
+          actions: <Widget>[
+            Container(
+              color: iconButtonAppbarColor == true
+                  ? primaryAppBarColor
+                  : Colors.white,
+              child: IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.actionIcon.icon == Icons.search) {
+                      actionBackAppBar = false;
+                      iconButtonAppbarColor = false;
+                      this.actionIcon = new Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      );
+                      this.appBarTitle = Container(
+                        height: 50.0,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          controller: _searchQuery,
+                          onChanged: (string) {
+                            if (string != null || string != '') {
+                              _debouncer.run(() {
+                                listFilterFollowingEvent();
+                              });
+                            }
+                          },
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon:
+                                new Icon(Icons.search, color: Colors.grey),
+                            hintText: "Cari Berdasarkan Nama Event",
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      _handleSearchEnd();
                     }
-                  },
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                      border: InputBorder.none,
-                      prefixIcon: new Icon(Icons.search, color: Colors.white),
-                      hintText: "Cari Berdasarkan Nama, Kategori , Tempat",
-                      hintStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      )),
-                );
-              } else {
-                _handleSearchEnd();
-              }
-            });
-          },
-        ),
-      ],
-    );
+                  });
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }
