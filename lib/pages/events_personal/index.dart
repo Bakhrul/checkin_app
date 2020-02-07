@@ -193,7 +193,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         listWillComeEvent();
       } else if (getOngoningMyEvent.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
@@ -609,11 +609,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           top: 10.0),
                                                       child: Text(
                                                         item.publish == 'Y'
-                                                            ? 'Event sudah dipublish'
+                                                            ? 'Event Sudah Dipublish'
                                                             : item.publish ==
                                                                     'N'
-                                                                ? 'Event belum dipublish'
-                                                                : 'Status tidak diketahui',
+                                                                ? 'Event Belum DiPublish'
+                                                                : 'Status Tidak Diketahui',
                                                         style: TextStyle(
                                                           color: item.publish ==
                                                                   'Y'
@@ -1077,7 +1077,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   value: PageEnum
                                                                       .kelolaeditEventPage,
                                                                   child: Text(
-                                                                      "Edit data event"),
+                                                                      "Edit Data Event"),
                                                                 )
                                                               : null,
                                                           item.status ==
