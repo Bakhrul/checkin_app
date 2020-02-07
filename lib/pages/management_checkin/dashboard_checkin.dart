@@ -20,6 +20,7 @@ String sifat = 'VIP';
 String tipe = 'Public';
 var datepicker;
 List<UserParticipant> listPeserta;
+List<UserParticipant> listAdmin;
 List<Checkin> listCheckin;
 enum PageEnum { detailCheckin, deleteCheckin }
 
@@ -40,6 +41,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   String tokenType, accessToken;
   TabController _tabController;
   File imageProfile;
+  String titleEvent;
   static const List<IconData> icons = const [
     Icons.sms,
     Icons.mail,
@@ -47,6 +49,48 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   ];
 
   var childButtons = List<UnicornButton>();
+
+  getDataEvent() async {
+    setState(() {
+      isLoading = true;
+    });
+    listPeserta = [];
+    try {
+      dynamic response = await RequestGet(
+              name: "event/getdata/event/",
+              customrequest: "${widget.idevent}")
+          .getdata();
+          // print(response[0]['title']);
+        setState((){
+          titleEvent = response[0]['title'];
+        });
+
+      // for (var i = 0; i < response.length; i++) {
+      //   UserParticipant peserta = UserParticipant(
+      //     id: response[i]["id"].toString(),
+      //     name: response[i]["name"],
+      //     email: response[i]["email"],
+      //     position: response[i]["position"].toString(),
+      //     status: response[i]["status"],
+      //     picProfile: response[i]["pic_profile"],
+      //     eventId: response[i]["event_id"].toString(),
+          
+      //   );
+
+      //   listPeserta.add(peserta);
+      // }
+      setState(() {
+        isLoading = false;
+        isError = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+  }
 
   getDataMember() async {
     setState(() {
@@ -58,6 +102,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
               name: "event/getdata/participant/",
               customrequest: "${widget.idevent}")
           .getdata();
+          print(response);
       for (var i = 0; i < response.length; i++) {
         UserParticipant peserta = UserParticipant(
           id: response[i]["id"].toString(),
@@ -71,6 +116,45 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         );
 
         listPeserta.add(peserta);
+      }
+      setState(() {
+        isLoading = false;
+        isError = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+  }
+
+  getDataAdmin() async {
+    setState(() {
+      isLoading = true;
+    });
+    listAdmin = [];
+    try {
+      dynamic response = await RequestGet(
+              name: "event/getdata/admin/",
+              customrequest: "${widget.idevent}")
+          .getdata();
+          print("as");
+          print(response);
+      for (var i = 0; i < response.length; i++) {
+        UserParticipant admin = UserParticipant(
+          id: response[i]["id"].toString(),
+          name: response[i]["name"],
+          email: response[i]["email"],
+          position: response[i]["position"].toString(),
+          status: response[i]["status"],
+          picProfile: response[i]["pic_profile"],
+          eventId: response[i]["event_id"].toString(),
+          
+        );
+
+        listAdmin.add(admin);
       }
       setState(() {
         isLoading = false;
@@ -206,8 +290,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   void initState() {
     getDataMember();
     getDataCheckin();
+    getDataAdmin();
+    getDataEvent();
     _tabController = TabController(
-        length: 2, vsync: _DashboardCheckinState(), initialIndex: 0);
+        length: 3, vsync: _DashboardCheckinState(), initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
     datepicker = FocusNode();
     super.initState();
@@ -231,7 +317,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   int currentIndex = 0;
 
   Widget appBarTitle = Text(
-    "Dashboard",
+    "Beranda",
     style: TextStyle(fontSize: 16),
   );
   Icon actionIcon = Icon(
@@ -243,19 +329,21 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   Widget build(BuildContext context) {
     this.context = context;
     String jumlahPeserta = listPeserta.length.toString();
+    String jumlahAdmin = listAdmin.length.toString();
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: primaryAppBarColor,
-          title: Text('Manajemen Event', style: TextStyle(fontSize: 14)),
+          title: Text('Manajemen Event $titleEvent', style: TextStyle(fontSize: 14)),
           actions: <Widget>[],
           bottom: TabBar(
             controller: _tabController,
             tabs: [
+              Tab(icon: Icon(Icons.person), text: 'Admin ( $jumlahAdmin )'),
               Tab(icon: Icon(Icons.person), text: 'Peserta ( $jumlahPeserta )'),
-              Tab(icon: Icon(Icons.schedule), text: 'Checkin'),
+              Tab(icon: Icon(Icons.schedule), text: 'CheckIn'),
             ],
           ),
         ), //
@@ -279,11 +367,36 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                         ? Center(
                             child: CircularProgressIndicator(),
                           )
-                        : _buildListViewMember(),
+                        : _buildListViewAdmin(),
                   )
+                  
                 ],
               ),
             ),
+            SingleChildScrollView(
+              padding: EdgeInsets.all(5.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      // border: Color.fromRGBO(r, g, b, opacity),
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    child: isLoading == true
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : _buildListViewMember(),
+                  )
+                  
+                ],
+              ),
+            ),
+            
             SingleChildScrollView(
               padding: EdgeInsets.only(
                 top: 15.0,
@@ -297,13 +410,170 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                       )
                     : _builderlistViewCheckin(),
               ),
-            )
+            ),
+            
           ],
         ),
 
         floatingActionButton: _bottomButtons(),
       ),
     );
+  }
+
+  Widget _buildListViewAdmin() {
+    return listAdmin.length == 0
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Container(
+                      width: 100.0,
+                      height: 100.0,
+                      child: Image.asset("images/empty-white-box.png"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 30.0,
+                        left: 15.0,
+                        right: 15.0,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Event Belum Memiliki Admin Sama Sekali",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black45,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ]),
+            ),
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Container(
+                child: Expanded(
+                  child: SizedBox(
+                      child: SingleChildScrollView(
+                    child: Column(
+                        children: listAdmin
+                            .map((UserParticipant f) => Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Card(
+                                    child: ListTile(
+                                      leading: Container(
+                                          margin: EdgeInsets.only(top: 20),
+                                          child: ClipOval(
+                                              child: imageProfile == null
+                                                  ? FadeInImage.assetNetwork(
+                                                      fit: BoxFit.cover,
+                                                      placeholder:
+                                                          'images/loading.gif',
+                                                      image: f.picProfile ==
+                                                                  null ||
+                                                              f.picProfile == ''
+                                                          ? url(
+                                                              'assets/images/imgavatar.png')
+                                                          : url(
+                                                              'storage/image/profile/${f.picProfile}'))
+                                                  : Image.file(imageProfile))),
+                                      // trailing: FlatButton(
+                                      //   child: Icon(Icons.exit_to_app),
+                                      //   onPressed: () async {
+                                      //     showDialog(
+                                      //         context: context,
+                                      //         builder: (context) {
+                                      //           return AlertDialog(
+                                      //             title: Text("Warning"),
+                                      //             content: Text(
+                                      //                 "Apa anda yakin untuk mengeluarkan ${f.name}?"),
+                                      //             actions: <Widget>[
+                                      //               FlatButton(
+                                      //                 child: Text("Yes"),
+                                      //                 onPressed: () {
+                                      //                   deleteParticipant(
+                                      //                       f.id,
+                                      //                       f.eventId
+                                      //                           .toString());
+                                      //                   listPeserta.remove(f);
+                                      //                   Navigator.pop(context);
+                                      //                 },
+                                      //               ),
+                                      //               FlatButton(
+                                      //                 child: Text("No"),
+                                      //                 onPressed: () {
+                                      //                   Navigator.pop(context);
+                                      //                 },
+                                      //               )
+                                      //             ],
+                                      //           );
+                                      //         });
+                                      //   },
+                                      // ),
+                                      title: Text(f.name == null || f.name == ''
+                                          ? 'Memuat..'
+                                          : f.name),
+                                      onTap: () {},
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5.0, bottom: 5.0),
+                                        child: Text(
+                                          f.status == 'P' && f.position == '2'
+                                              ? 'Menunggu Konfirmasi ( Admin / Co-Host)'
+                                              : f.status == 'P' &&
+                                                      f.position == '3'
+                                                  ? 'Menunggu Konfirmasi ( Peserta )'
+                                                  : f.status == 'C' &&
+                                                          f.position == '2'
+                                                      ? 'Permintaan Ditolak ( Admin-Co-Host )'
+                                                      : f.status == 'C' &&
+                                                              f.position == '3'
+                                                          ? 'Pendaftaran Ditolak ( Peserta )'
+                                                          : f.status == 'A' &&
+                                                                  f.position ==
+                                                                      '2'
+                                                              ? 'Permintaan Diterima ( Admin / Co-Host)'
+                                                              : f.status ==
+                                                                          'A' &&
+                                                                      f.position ==
+                                                                          '3'
+                                                                  ? 'Pendaftaran Diterima ( Peserta )'
+                                                                  : 'Status Tidak Diketahui',
+                                          style: f.status == 'P'
+                                              ? TextStyle(
+                                                  fontWeight: FontWeight.w500)
+                                              : f.status == 'C'
+                                                  ? TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.red)
+                                                  : f.status == 'A'
+                                                      ? TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.green)
+                                                      : TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ))
+                            .toList()),
+                  )),
+                ),
+              ),
+            ],
+          );
   }
 
   Widget _buildListViewMember() {
@@ -425,12 +695,12 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                           : f.status == 'A' &&
                                                                   f.position ==
                                                                       '2'
-                                                              ? 'Perimintaan Diterima ( Admin / Co-Host)'
+                                                              ? 'Permintaan Diterima ( Admin / Co-Host)'
                                                               : f.status ==
                                                                           'A' &&
                                                                       f.position ==
                                                                           '3'
-                                                                  ? 'pendaftaran Diterima ( Peserta )'
+                                                                  ? 'Pendaftaran Diterima ( Peserta )'
                                                                   : 'Status Tidak Diketahui',
                                           style: f.status == 'P'
                                               ? TextStyle(
@@ -656,7 +926,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   Widget _bottomButtons() {
     return 
-    _tabController.index == 1
+    _tabController.index == 2
         ?
          DraggableFab(
             child: FloatingActionButton(

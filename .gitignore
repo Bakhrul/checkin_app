@@ -26,3 +26,4 @@ lib/core/env.dart
 lib/core/env.dart
 lib/routes/env.dart
 lib/core/env.dart
+lib/pages/management_checkin/direct_checkin.dart

@@ -78,15 +78,18 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
 
         if (invite.statusCode == 200) {
           var data = json.decode(invite.body);
+          if(data['status'] == 'failed'){
+           return Fluttertoast.showToast(msg: data['message']);
+          }
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => WaitingEvent(
                   id: widget.eventId, creatorId: widget.creatorId, selfEvent: false, userId: userId.toString(), type: 'someone',dataUser: widget.dataUser,),
             ));
-          Fluttertoast.showToast(msg: "Sukses");
+          Fluttertoast.showToast(msg: data['message']);
+
         } else {
-          print(invite.body);
           Fluttertoast.showToast(msg: "Gagal Mendaftarkan Event");
         }
     

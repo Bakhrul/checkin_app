@@ -140,7 +140,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listOngoingEvent();
   }
 
@@ -169,6 +168,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         var ongoingevents = ongoingeventJson['eventongoing'];
         String jumlahongoing = ongoingeventJson['jumlahongoing'].toString();
         listItemOngoing = [];
+        // print(ongoingevents)
         for (var i in ongoingevents) {
           ListOngoingEvent notax = ListOngoingEvent(
             id: '${i['ev_id']}',
@@ -180,6 +180,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             fullday: i['ev_allday'],
             status: i['status'],
             publish: i['ev_ispublish'],
+            participant: i['peserta'].toString(),
+            admin: i['admin'].toString()
           );
           listItemOngoing.add(notax);
         }
@@ -197,7 +199,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = true;
         });
       } else {
-        print(getOngoningMyEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -251,10 +252,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         // return nota;
         var willcomeeventJson = json.decode(getWillComeMyEvent.body);
         var willcomeEvents = willcomeeventJson['eventakandatang'];
-        print(willcomeEvents);
         String jumlahwillcome =
             willcomeeventJson['jumlahakandatang'].toString();
-        print('willcome $jumlahwillcome');
         listItemWillCome = [];
         for (var i in willcomeEvents) {
           ListWillComeEvent willcomex = ListWillComeEvent(
@@ -267,6 +266,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             fullday: i['ev_allday'],
             status: i['status'],
             publish: i['ev_ispublish'],
+            participant: i['peserta'].toString(),
+            admin: i['admin'].toString(),
           );
           listItemWillCome.add(willcomex);
         }
@@ -284,7 +285,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           isError = true;
         });
       } else {
-        print(getWillComeMyEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -344,6 +344,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             fullday: i['ev_allday'],
             status: i['status'],
             publish: i['ev_ispublish'],
+            participant: i['peserta'].toString(),
+            admin: i['admin'].toString(),
           );
           listItemDoneEvent.add(donex);
         }
@@ -749,14 +751,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "Kelola Admin / Co-Host"),
+                                                                  "Kelola Admin / Co-Host (${item.admin})"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "Kelola Peserta"),
+                                                            "Kelola Peserta (${item.participant})"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
@@ -1084,14 +1086,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   value: PageEnum
                                                                       .kelolaadminPage,
                                                                   child: Text(
-                                                                      "Kelola Admin / Co-Host"),
+                                                                      "Kelola Admin / Co-Host (${item.admin})"),
                                                                 )
                                                               : null,
                                                           PopupMenuItem(
                                                             value: PageEnum
                                                                 .kelolaPesertaPage,
                                                             child: Text(
-                                                                "Kelola Peserta"),
+                                                                "Kelola Peserta (${item.participant})"),
                                                           ),
                                                           PopupMenuItem(
                                                             value: PageEnum
@@ -1429,14 +1431,14 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "Kelola Admin / Co-Host"),
+                                                                  "Kelola Admin / Co-Host (${item.admin})"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "Kelola Peserta"),
+                                                            "Kelola Peserta (${item.participant})"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
@@ -1552,7 +1554,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         setState(() {
           isDelete = false;
         });
-        print(deleteEvent.body);
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
@@ -1606,7 +1607,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         setState(() {
           isPublish = false;
         });
-        print(publishEvent.body);
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {

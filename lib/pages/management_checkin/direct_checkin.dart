@@ -154,7 +154,7 @@ postDataCheckin() async {
             .sendrequest();
     if (response != "gagal") {
       Fluttertoast.showToast(
-          msg: "Success",
+          msg: "Sukses",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,
@@ -233,7 +233,7 @@ postDataCheckin() async {
                 title: TextField(
                   controller: _controllerGenerate,
                   decoration: InputDecoration(
-                      hintText: 'Keyword',
+                      hintText: 'Kata Kunci',
                       errorText: _inputErrorText,
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
