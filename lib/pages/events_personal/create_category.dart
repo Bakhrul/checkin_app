@@ -1,4 +1,4 @@
-import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/create_event-information.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,19 +7,22 @@ import 'dart:convert';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
-
+import 'create_event-category.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 List<ListKategoriEvent> listkategoriEvent = [];
-bool isLoading, isError, isSame;
+bool isLoading, isError, isSame, isCreate;
 var datepicker;
 String tokenType, accessToken;
 List<ListUser> listUserItem = [];
 
+Map<String, String> requestHeaders = Map();
+
 class ManajemenCreateCategory extends StatefulWidget {
-  ManajemenCreateCategory({Key key, this.title, this.listKategoriadd})
+  ManajemenCreateCategory(
+      {Key key, this.title, this.listKategoriadd, this.event})
       : super(key: key);
-  final String title;
+  final String title, event;
   final listKategoriadd;
   @override
   State<StatefulWidget> createState() {
@@ -35,6 +38,8 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
     isLoading = true;
     isError = false;
     isSame = false;
+    isCreate = false;
+    isDelete = false;
     listKategoriEvent();
     getHeaderHTTP();
   }
@@ -197,6 +202,19 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
                     children: <Widget>[
+                      isCreate == true
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                    width: 15.0,
+                                    margin:
+                                        EdgeInsets.only(top: 10.0, right: 15.0,bottom: 10.0),
+                                    height: 15.0,
+                                    child: CircularProgressIndicator()),
+                              ],
+                            )
+                          : Container(),
                       Expanded(
                         child: Scrollbar(
                           child: ListView.builder(
@@ -213,7 +231,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                                             : listkategoriEvent[index].nama),
                                   )),
                                 ),
-                                onTap: () async {
+                                onTap: isCreate == true ? null : () async {
                                   for (int i = 0;
                                       i < listKategoriAdd.length;
                                       i++) {
@@ -232,15 +250,8 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                                       isSame = false;
                                     });
                                   } else {
-                                    setState(() {
-                                      ListKategoriEventAdd notax =
-                                          ListKategoriEventAdd(
-                                        id: listkategoriEvent[index].id,
-                                        nama: listkategoriEvent[index].nama,
-                                      );
-                                      listKategoriAdd.add(notax);
-                                    });
-                                    Navigator.pop(context);
+                                    _tambahCategory(listkategoriEvent[index].id,
+                                        listkategoriEvent[index].nama);
                                   }
                                 },
                               );
@@ -252,5 +263,81 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                   ),
                 ),
     );
+  }
+
+  void _tambahCategory(idCategory, namaCategory) async {
+    setState(() {
+      isCreate = true;
+    });
+    Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+    formSerialize = Map<String, dynamic>();
+    formSerialize['event'] = null;
+    formSerialize['kategori'] = null;
+    formSerialize['typeinformasi'] = null;
+    formSerialize['typekategori'] = null;
+    formSerialize['typeadmin'] = null;
+    formSerialize['typecheckin'] = null;
+
+    formSerialize['typekategori'] = 'kategori';
+    formSerialize['event'] = widget.event == null || widget.event == ''
+        ? null
+        : widget.event.toString();
+    formSerialize['kategori'] = idCategory;
+
+    print(formSerialize);
+
+    Map<String, dynamic> requestHeadersX = requestHeaders;
+
+    requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+    try {
+      final response = await http.post(
+        url('api/createcheckin'),
+        headers: requestHeadersX,
+        body: {
+          'type_platform': 'android',
+          'data': jsonEncode(formSerialize),
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic responseJson = jsonDecode(response.body);
+        String idEventFromDB = responseJson['finalidevent'].toString();
+        if (responseJson['status'] == 'success') {
+          setState(() {
+            idEventFinalX = idEventFromDB;
+            isCreate = false;
+          });
+          setState(() {
+            ListKategoriEventAdd notax = ListKategoriEventAdd(
+              id: idCategory,
+              nama: namaCategory,
+            );
+            listKategoriAdd.add(notax);
+          });
+          Navigator.pop(context);
+        }
+        print('response decoded $responseJson');
+      } else {
+        print('${response.body}');
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Kategori, Silahkan Coba Kembali");
+        setState(() {
+          isCreate = false;
+        });
+      }
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Time Out, Try Again");
+      setState(() {
+        isCreate = false;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Gagal Menambahkan Kategori, Silahkan Coba Kembali");
+      setState(() {
+        isCreate = false;
+      });
+      print(e);
+    }
   }
 }

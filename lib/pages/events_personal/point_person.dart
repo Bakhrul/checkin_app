@@ -12,6 +12,7 @@ import 'package:checkin_app/utils/utils.dart';
 bool isLoading, isError, isFilter, isErrorfilter;
 String tokenType, accessToken, ideventget;
 bool actionBackAppBar, iconButtonAppbarColor;
+String namaEventX;
 Map<String, String> requestHeaders = Map();
 final TextEditingController _searchQuery = new TextEditingController();
 var datepicker;
@@ -34,8 +35,8 @@ class Debouncer {
 }
 
 class PointEvents extends StatefulWidget {
-  PointEvents({Key key, this.title, this.idevent}) : super(key: key);
-  final String title, idevent;
+  PointEvents({Key key, this.title, this.idevent, this.namaEvent}) : super(key: key);
+  final String title, idevent, namaEvent;
   @override
   State<StatefulWidget> createState() {
     return _PointEventsState();
@@ -49,6 +50,7 @@ class _PointEventsState extends State<PointEvents> {
     isLoading = true;
     isError = false;
     ideventget = widget.idevent;
+    namaEventX = widget.namaEvent;  
     actionBackAppBar = true;
     iconButtonAppbarColor = true;
     getHeaderHTTP();
@@ -79,7 +81,7 @@ class _PointEventsState extends State<PointEvents> {
       actionBackAppBar = true;
       iconButtonAppbarColor = true;
       this.appBarTitle = new Text(
-        "Kelola Hasil Absen Peserta",
+        namaEventX == null ?  "Hasil Akhir Peserta Event" : "Hasil Akhir Peserta Event $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -105,6 +107,13 @@ class _PointEventsState extends State<PointEvents> {
 
     setState(() {
       isLoading = true;
+      this.appBarTitle = Text(
+        "Hasil Akhir Peserta Event $namaEventX",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
     });
     try {
       final resultCheckinParticipant = await http.post(
@@ -258,7 +267,7 @@ class _PointEventsState extends State<PointEvents> {
   }
 
   Widget appBarTitle = Text(
-    "Kelola Hasil Absen Peserta",
+    namaEventX == null || namaEventX == '' ? "Hasil Akhir Peserta Event" : "Hasil Akhir Peserta Event $namaEventX",
     style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(

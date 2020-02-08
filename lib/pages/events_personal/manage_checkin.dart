@@ -21,6 +21,7 @@ import 'package:checkin_app/utils/utils.dart';
 bool isLoading, isError, isDelete;
 String tokenType, accessToken;
 List<ListCheckinEvent> listcheckinevent = [];
+String namaEventX;
 Map<String, String> requestHeaders = Map();
 String namaeventX;
 enum PageEnum {
@@ -31,9 +32,9 @@ enum PageEnum {
 }
 
 class ManageCheckin extends StatefulWidget {
-  ManageCheckin({Key key, this.title, this.event, this.eventEnd})
+  ManageCheckin({Key key, this.title, this.event, this.namaEvent, this.eventEnd})
       : super(key: key);
-  final String title, event;
+  final String title, event, namaEvent;
   final bool eventEnd;
   @override
   State<StatefulWidget> createState() {
@@ -44,8 +45,8 @@ class ManageCheckin extends StatefulWidget {
 class _ManageCheckinState extends State<ManageCheckin> {
   @override
   void initState() {
-    super.initState();
-    namaeventX = '';
+    super.initState();  
+    namaEventX = widget.namaEvent;    
     isDelete = false;
     isError = false;
     isLoading = true;
@@ -83,6 +84,13 @@ class _ManageCheckinState extends State<ManageCheckin> {
 
     setState(() {
       isLoading = true;
+      this.appBarTitle = Text(
+        "Kelola Checkin Event $namaEventX",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
     });
     try {
       final getCheckinEvent = await http.post(
@@ -149,7 +157,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
   }
 
   Widget appBarTitle = Text(
-    "Kelola Waktu Checkin Event",
+    namaEventX == null ? "Kelola Waktu Checkin Event" : "Kelola Waktu Checkin Event $namaEventX",
     style: TextStyle(fontSize: 16),
   );
   Icon actionIcon = Icon(

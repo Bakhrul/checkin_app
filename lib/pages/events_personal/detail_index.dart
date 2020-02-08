@@ -433,7 +433,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                           .id,
                                                                       eventEnd:
                                                                           widget
-                                                                              .eventEnd)));
+                                                                              .eventEnd,
+                                                                              namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
@@ -446,6 +447,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                             .id,
                                                                         eventEnd:
                                                                             widget.eventEnd,
+                                                                            namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -459,6 +461,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                             .id,
                                                                         eventEnd:
                                                                             widget.eventEnd,
+                                                                            namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -468,7 +471,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                       context) =>
                                                                   ListMultiCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -478,7 +482,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                           context) =>
                                                                       PointEvents(
                                                                           idevent:
-                                                                              item.id)));
+                                                                              item.id,
+                                                                              namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:

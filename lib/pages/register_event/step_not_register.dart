@@ -77,7 +77,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
 
 
         if (invite.statusCode == 200) {
-          var data = json.decode(invite.body);
+          var data = json.decode(invite.body);     
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

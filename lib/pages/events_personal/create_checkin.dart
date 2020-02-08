@@ -1,26 +1,32 @@
-import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/create_event-information.dart';
 import 'package:checkin_app/pages/events_personal/model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 import 'model.dart';
+import 'dart:async';
+import 'package:checkin_app/storage/storage.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:checkin_app/routes/env.dart';
 
+import 'create_event-checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
-GlobalKey<ScaffoldState> _scaffoldKeycreatecheckin;
-bool isSame, isBottomDate;
+bool isSame, isBottomDate, isCreate;
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
-void showInSnackBar(String value) {
-  _scaffoldKeycreatecheckin.currentState
-      .showSnackBar(new SnackBar(content: new Text(value)));
-}
+String tokenType, accessToken;
+
+Map<String, String> requestHeaders = Map();
 
 class ManajemeCreateCheckin extends StatefulWidget {
-  ManajemeCreateCheckin({Key key, this.title}) : super(key: key);
-  final String title;
+  ManajemeCreateCheckin({Key key, this.title, this.event, this.listCheckinadd})
+      : super(key: key);
+  final String title, event;
+  final listCheckinadd;
   @override
   State<StatefulWidget> createState() {
     return _ManajemeCreateCheckinState();
@@ -32,26 +38,45 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   DateTime timeReplacement;
   @override
   void initState() {
-    _scaffoldKeycreatecheckin = GlobalKey<ScaffoldState>();
     firstdate = FocusNode();
     lastdate = FocusNode();
     isSame = false;
     isBottomDate = false;
+    isCreate = false;
+    isDelete = false;
     _namacheckinController.text = '';
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
     _tanggalakhir = 'kosong';
     timeSetToMinute();
+    getHeaderHTTP();
     super.initState();
   }
 
-  void timeSetToMinute(){
-    var timeNow     = DateTime.now();
-    var timeString  = timeNow.toString();
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    print(requestHeaders);
+  }
+
+  void timeSetToMinute() {
+    var timeNow = DateTime.now();
+    var timeString = timeNow.toString();
     var minutes = timeNow.minute;
     var hours = timeNow.hour;
-    timeReplacement = DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:")) ;
+    timeReplacement =
+        DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:"));
+        print(timeReplacement);
   }
+
   void dispose() {
     super.dispose();
   }
@@ -60,7 +85,6 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKeycreatecheckin,
       appBar: new AppBar(
         backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
@@ -79,6 +103,18 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              isCreate == true
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                            width: 15.0,
+                            margin: EdgeInsets.only(top: 10.0, right: 15.0),
+                            height: 15.0,
+                            child: CircularProgressIndicator()),
+                      ],
+                    )
+                  : Container(),
               Card(
                   child: ListTile(
                 leading: Icon(
@@ -177,7 +213,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                 title: TextField(
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
-                    border: InputBorder.none,
+                      border: InputBorder.none,
                       hintText: 'KODE UNIK CHECKIN',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
@@ -187,7 +223,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
+        onPressed: isCreate == true ? null : () async {
           if (_namacheckinController.text == null ||
               _namacheckinController.text == '') {
             Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
@@ -201,51 +237,19 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
             Fluttertoast.showToast(
                 msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
           } else {
-            for (int i = 0; i < listcheckinAdd.length; i++) {
-              if (_kodecheckinController.text == listcheckinAdd[i].keyword) {
-                setState(() {
-                  isSame = true;
-                });
-              }
-               Duration cekAwal1 = DateTime.parse(_tanggalawal).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timestart));
-               Duration cekAwal2 = DateTime.parse(_tanggalawal).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timeend));
-
-               Duration cekAkhir1 = DateTime.parse(_tanggalakhir).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timestart));
-               Duration cekAkhir2 = DateTime.parse(_tanggalakhir).difference(DateFormat('dd-MM-y HH:mm:ss').parse(listcheckinAdd[i].timeend));
-
-              if(cekAwal1.inSeconds <= 0 || cekAwal2.inSeconds <= 0 || cekAkhir1.inSeconds <= 0 || cekAkhir2.inSeconds <= 0 ){
-                setState(() {
-                  isBottomDate = true;
-                });
-              }
-            }
             if (isSame == true) {
               Fluttertoast.showToast(msg: 'Kode Unik Checkin Tidak Boleh Sama');
               setState(() {
                 isSame = false;
               });
-            }else if(isBottomDate == true){
-              Fluttertoast.showToast(msg: 'Waktu Checkin Tidak Boleh Kurang Dari Tanggal Terakhir Checkin Ditambahkan');
-              setState(() {
-                isBottomDate = false;
-              });
             } else {
-              setState(() {
-                ListCheckinAdd notax = ListCheckinAdd(
-                  nama: _namacheckinController.text,
-                  keyword: _kodecheckinController.text,
-                  timestart: _tanggalawal == 'kosong'
-                      ? null
-                      : DateFormat('dd-MM-y HH:mm:ss')
-                          .format(DateTime.parse(_tanggalawal)),
-                  timeend: _tanggalakhir == 'kosong'
-                      ? null
-                      : DateFormat('dd-MM-y HH:mm:ss')
-                          .format(DateTime.parse(_tanggalakhir)),
-                );
-                listcheckinAdd.add(notax);
-              });
-              Navigator.pop(context);
+              _tambahCheckin(
+                  _namacheckinController.text,
+                  _kodecheckinController.text,
+                  DateFormat('dd-MM-y HH:mm:ss')
+                      .format(DateTime.parse(_tanggalawal)),
+                  DateFormat('dd-MM-y HH:mm:ss')
+                      .format(DateTime.parse(_tanggalakhir)));
             }
           }
         },
@@ -253,5 +257,105 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         backgroundColor: primaryButtonColor,
       ),
     );
+  }
+
+  void _tambahCheckin(
+      nama, kode, tanggalawalCheckin, tanggalakhirCheckin) async {
+    setState(() {
+      isCreate = true;
+    });
+    Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+    formSerialize = Map<String, dynamic>();
+    formSerialize['event'] = null;
+    formSerialize['checkin'] = null;
+    formSerialize['keyword'] = null;
+    formSerialize['timestartcheckin'] = null;
+    formSerialize['timeendcheckin'] = null;
+
+    formSerialize['typeinformasi'] = null;
+    formSerialize['typekategori'] = null;
+    formSerialize['typeadmin'] = null;
+    formSerialize['typecheckin'] = null;
+
+    formSerialize['event'] = widget.event == null || widget.event == ''
+        ? null
+        : widget.event.toString();
+    formSerialize['checkin'] = nama;
+    formSerialize['keyword'] = kode;
+    formSerialize['timestartcheckin'] = tanggalawalCheckin;
+    formSerialize['timeendcheckin'] = tanggalakhirCheckin;
+    formSerialize['typecheckin'] = 'checkin';
+
+    print(formSerialize);
+
+    Map<String, dynamic> requestHeadersX = requestHeaders;
+
+    requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+    try {
+      final response = await http.post(
+        url('api/createcheckin'),
+        headers: requestHeadersX,
+        body: {
+          'type_platform': 'android',
+          'data': jsonEncode(formSerialize),
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic responseJson = jsonDecode(response.body);
+        print(responseJson);
+        String idEventFromDB = responseJson['finalidevent'].toString();
+        if (responseJson['status'] == 'success') {
+          setState(() {
+            idEventFinalX = idEventFromDB;
+            isCreate = false;
+          });
+          setState(() {
+            ListCheckinAdd notax = ListCheckinAdd(
+              nama: nama,
+              keyword: kode,
+              timestart: tanggalawalCheckin,
+              timeend: tanggalakhirCheckin,
+            );
+            listcheckinAdd.add(notax);
+          });
+          Navigator.pop(context);
+        } else if (responseJson['status'] == 'keywordsudahdigunakan') {
+          setState(() {
+            isCreate = false;
+          });
+          Fluttertoast.showToast(
+              msg:
+                  "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+        } else if (responseJson['status'] == 'tanggalkurang') {
+          setState(() {
+            isCreate = false;
+          });
+          Fluttertoast.showToast(
+              msg:
+                  "Waktu berlangsungnya checkin tersebut sudah ada, mohon gunakan lainnya");
+        }
+      } else {
+        print('${response.body}');
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Checkin, Silahkan Coba Kembali");
+        setState(() {
+          isCreate = false;
+        });
+      }
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Time Out, Try Again");
+      setState(() {
+        isCreate = false;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Gagal Menambahkan Checkin, Silahkan Coba Kembali");
+      setState(() {
+        isCreate = false;
+      });
+      print(e);
+    }
   }
 }

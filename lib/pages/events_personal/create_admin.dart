@@ -1,4 +1,4 @@
-import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/create_event-information.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
-
+import 'create_event-admin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool actionBackAppBar, iconButtonAppbarColor;
@@ -18,10 +18,13 @@ bool isLoading, isError, isSame, isFilter, isErrorfilter;
 var datepicker;
 List<ListUser> listUserItem = [];
 
+bool isCreate;
+Map<String, String> requestHeaders = Map();
+
 class ManajemeCreateAdmin extends StatefulWidget {
-  ManajemeCreateAdmin({Key key, this.title, this.listUseradd})
+  ManajemeCreateAdmin({Key key, this.title, this.listUseradd, this.event})
       : super(key: key);
-  final String title;
+  final String title, event;
   final listUseradd;
   @override
   State<StatefulWidget> createState() {
@@ -58,6 +61,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
     isSame = false;
     isFilter = false;
     isErrorfilter = false;
+    
     listUser();
     getHeaderHTTP();
   }
@@ -269,7 +273,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-     appBar: buildBar(context),
+      appBar: buildBar(context),
       body: isLoading == true
           ? Center(
               child: CircularProgressIndicator(),
@@ -334,11 +338,11 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                     children: <Widget>[
                       isFilter == true
                           ? Center(
-                            child: Container(
+                              child: Container(
                                 padding: EdgeInsets.only(top: 20.0),
                                 child: CircularProgressIndicator(),
                               ),
-                          )
+                            )
                           : isErrorfilter == true
                               ? Padding(
                                   padding: const EdgeInsets.only(top: 20.0),
@@ -432,7 +436,8 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                                                                             index]
                                                                         .image ==
                                                                     'null'
-                                                            ? url('assets/images/imgavatar.png')
+                                                            ? url(
+                                                                'assets/images/imgavatar.png')
                                                             : url(
                                                                 'storage/image/profile/${listUserItem[index].image}'),
                                                         fit: BoxFit.cover,
@@ -477,19 +482,11 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                                                     isSame = false;
                                                   });
                                                 } else {
-                                                  setState(() {
-                                                    ListUserAdd notax =
-                                                        ListUserAdd(
-                                                      id: listUserItem[index]
-                                                          .id,
-                                                      nama: listUserItem[index]
-                                                          .nama,
-                                                      email: listUserItem[index]
-                                                          .email,
-                                                    );
-                                                    listUseradd.add(notax);
-                                                  });
-                                                  Navigator.pop(context);
+                                                  _tambahAdmin(
+                                                      listUserItem[index].id,
+                                                      listUserItem[index].nama,
+                                                      listUserItem[index]
+                                                          .email);
                                                 }
                                               },
                                             );
@@ -502,7 +499,8 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                 ),
     );
   }
-    Widget buildBar(BuildContext context) {
+
+  Widget buildBar(BuildContext context) {
     return PreferredSize(
         preferredSize: Size.fromHeight(50.0),
         child: AppBar(
@@ -541,7 +539,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                           onChanged: (string) {
                             if (string != null || string != '') {
                               _debouncer.run(() {
-                               listUserfilter();
+                                listUserfilter();
                               });
                             }
                           },
@@ -571,5 +569,77 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
             ),
           ],
         ));
+  }
+
+  void _tambahAdmin(idAdmin, namaAdmin, emailAdmin) async {
+    Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+    formSerialize = Map<String, dynamic>();
+    formSerialize['event'] = null;
+    formSerialize['admin'] = null;
+
+    formSerialize['typeinformasi'] = null;
+    formSerialize['typekategori'] = null;
+    formSerialize['typeadmin'] = null;
+    formSerialize['typecheckin'] = null;
+
+    formSerialize['event'] = widget.event == null || widget.event == '' ? null : widget.event.toString();
+    formSerialize['typeadmin'] = 'admin';
+    formSerialize['admin'] = idAdmin;
+
+    print(formSerialize);
+
+    Map<String, dynamic> requestHeadersX = requestHeaders;
+
+    requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
+    try {
+      final response = await http.post(
+        url('api/createcheckin'),
+        headers: requestHeadersX,
+        body: {
+          'type_platform': 'android',
+          'data': jsonEncode(formSerialize),
+        },
+        encoding: Encoding.getByName("utf-8"),
+      );
+
+      if (response.statusCode == 200) {
+        dynamic responseJson = jsonDecode(response.body);
+        String idEventFromDB = responseJson['finalidevent'].toString();
+        if (responseJson['status'] == 'success') {
+          setState(() {
+            idEventFinalX = idEventFromDB;
+          });
+          setState(() {
+            ListUserAdd notax = ListUserAdd(
+              id: idAdmin,
+              nama: namaAdmin,
+              email: emailAdmin,
+            );
+            listUseradd.add(notax);
+          });
+          Navigator.pop(context);
+        }
+        print('response decoded $responseJson');
+      } else {
+        print('${response.body}');
+        Fluttertoast.showToast(
+            msg: "Gagal Menambahkan Admin, Silahkan Coba Kembali");
+        setState(() {
+          isCreate = false;
+        });
+      }
+    } on TimeoutException catch (_) {
+      Fluttertoast.showToast(msg: "Time Out, Try Again");
+      setState(() {
+        isCreate = false;
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "Gagal Menambahkan Admin, Silahkan Coba Kembali");
+      setState(() {
+        isCreate = false;
+      });
+      print(e);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:checkin_app/pages/events_personal/create.dart';
+import 'package:checkin_app/pages/events_personal/create_event-information.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -16,6 +16,7 @@ import 'package:checkin_app/utils/utils.dart';
 
 TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
+
 String tokenType, accessToken;
 bool isCreate;
 Map<String, String> requestHeaders = Map();
@@ -44,6 +45,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     _tanggalakhir = 'kosong';
     super.initState();
   }
+
 
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
@@ -133,16 +135,20 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ManageCheckin(event: widget.event)));
-          }else if(responseJson['status'] == 'keywordsudahdigunakan'){
+          } else if (responseJson['status'] == 'keywordsudahdigunakan') {
             setState(() {
-          isCreate = false;
-        });
-            Fluttertoast.showToast(msg: "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
-          }else if(responseJson['status'] == 'tanggalkurang'){
+              isCreate = false;
+            });
+            Fluttertoast.showToast(
+                msg:
+                    "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+          } else if (responseJson['status'] == 'tanggalkurang') {
             setState(() {
-          isCreate = false;
-        });
-            Fluttertoast.showToast(msg: "Waktu berlangsungnya checkin tersebut sudah ada, mohon gunakan lainnya");
+              isCreate = false;
+            });
+            Fluttertoast.showToast(
+                msg:
+                    "Waktu berlangsungnya checkin tersebut sudah ada, mohon gunakan lainnya");
           }
           print('response decoded $responseJson');
         } else {
@@ -191,17 +197,17 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           child: Column(
             children: <Widget>[
               isCreate == true
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Container(
-                              width: 20.0,
-                              margin: EdgeInsets.all(15.0),
-                              height: 20.0,
-                              child: CircularProgressIndicator()),
-                        ],
-                      )
-                    : Container(),
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                            width: 20.0,
+                            margin: EdgeInsets.all(15.0),
+                            height: 20.0,
+                            child: CircularProgressIndicator()),
+                      ],
+                    )
+                  : Container(),
               Card(
                   child: ListTile(
                 leading: Icon(

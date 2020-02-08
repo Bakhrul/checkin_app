@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'edit_event.dart';
 import 'manage_admin.dart';
 import 'package:flutter/cupertino.dart';
-import 'create.dart';
+import 'package:checkin_app/pages/events_personal/create_event-information.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
@@ -670,6 +670,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             false,
+                                                                        namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -681,8 +682,10 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       ManagePeserta(
                                                                         event: item
                                                                             .id,
+                                                                        namaEvent: item.title,
                                                                         eventEnd:
                                                                             false,
+                                                                        
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -696,6 +699,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             false,
+                                                                        namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -705,7 +709,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ListMultiCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,
+                                                                          namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -715,7 +720,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       PointEvents(
                                                                           idevent:
-                                                                              item.id)));
+                                                                              item.id,
+                                                                              namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:
@@ -736,14 +742,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                     },
                                                     icon: Icon(Icons.more_vert),
                                                     itemBuilder: (context) => [
-                                                      // item.status == 'creator'
-                                                      //     ? PopupMenuItem(
-                                                      //         value: PageEnum
-                                                      //             .kelolaeditEventPage,
-                                                      //         child: Text(
-                                                      //             "Edit Data Event"),
-                                                      //       )
-                                                      //     : null,
                                                       item.status == 'creator'
                                                           ? PopupMenuItem(
                                                               value: PageEnum
@@ -1002,7 +1000,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           event: item
                                                                               .id,
                                                                           eventEnd:
-                                                                              false)));
+                                                                              false,
+                                                                              namaEvent: item.title,)));
                                                               break;
                                                             case PageEnum
                                                                 .kelolaPesertaPage:
@@ -1015,6 +1014,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                                 item.id,
                                                                             eventEnd:
                                                                                 false,
+                                                                                namaEvent: item.title,
                                                                           )));
                                                               break;
                                                             case PageEnum
@@ -1028,6 +1028,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                                 item.id,
                                                                             eventEnd:
                                                                                 false,
+                                                                                namaEvent: item.title,
                                                                           )));
                                                               break;
                                                             case PageEnum
@@ -1037,7 +1038,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       ListMultiCheckin(
                                                                           event:
-                                                                              item.id)));
+                                                                              item.id,namaEvent: item.title,)));
                                                               break;
                                                             case PageEnum
                                                                 .kelolaHasilAKhirPage:
@@ -1046,7 +1047,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       PointEvents(
                                                                           idevent:
-                                                                              item.id)));
+                                                                              item.id,namaEvent: item.title,)));
                                                               break;
                                                             case PageEnum
                                                                 .publishEvent:
@@ -1352,6 +1353,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             true,
+                                                                            namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -1365,6 +1367,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             true,
+                                                                            namaEvent: item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -1376,7 +1379,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       event: item
                                                                           .id,
                                                                       eventEnd:
-                                                                          true)));
+                                                                          true,
+                                                                          namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
@@ -1385,7 +1389,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       context) =>
                                                                   ListMultiCheckin(
                                                                       event: item
-                                                                          .id)));
+                                                                          .id,namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -1395,7 +1399,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                           context) =>
                                                                       PointEvents(
                                                                           idevent:
-                                                                              item.id)));
+                                                                              item.id,namaEvent: item.title,)));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:

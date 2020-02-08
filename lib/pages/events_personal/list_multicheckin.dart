@@ -17,6 +17,7 @@ final _debouncer = Debouncer(milliseconds: 500);
 bool actionBackAppBar, iconButtonAppbarColor;
 Map<String, String> requestHeaders = Map();
 var datepicker;
+String namaEventX;
 List<LisMultiCheckinUser> listCheckinUser = [];
 
 class Debouncer {
@@ -35,8 +36,8 @@ class Debouncer {
 }
 
 class ListMultiCheckin extends StatefulWidget {
-  ListMultiCheckin({Key key, this.title, this.event}) : super(key: key);
-  final String title, event;
+  ListMultiCheckin({Key key, this.title, this.event, this.namaEvent}) : super(key: key);
+  final String title, event, namaEvent;
   @override
   State<StatefulWidget> createState() {
     return _ListMultiCheckinState();
@@ -48,6 +49,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
   void initState() {
     datepicker = FocusNode();
     super.initState();
+    namaEventX = widget.namaEvent;  
     actionBackAppBar = true;
     iconButtonAppbarColor = true;
     getHeaderHTTP();
@@ -80,6 +82,13 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
     setState(() {
       isLoading = true;
+      this.appBarTitle = Text(
+        "Kelola Checkin Peserta $namaEventX",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
     });
     try {
       final resultCheckinParticipant = await http.post(
@@ -241,7 +250,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
       actionBackAppBar = true;
       iconButtonAppbarColor = true;
       this.appBarTitle = new Text(
-        "Daftar Checkin Peserta",
+        namaEventX == null ? "Kelola Checkin Peserta" : "Kelola Checkin Peserta $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -255,7 +264,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
   }
 
   Widget appBarTitle = Text(
-    "Daftar Checkin Peserta",
+    "Kelola Checkin Peserta $namaEventX",
     style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
