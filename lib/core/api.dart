@@ -73,7 +73,7 @@ class Auth{
 
   getuser() async {
     dynamic getresponse = await RequestGet(name: name,customrequest: '').getdata();
-    // print(getresponse);
+    print(getresponse);
     // print(getresponse['cm_name']);
     if(getresponse.length > 0 ){
       
@@ -189,7 +189,7 @@ class RequestGet{
     } on TimeoutException catch (_){
       Fluttertoast.showToast(msg:'Request Timeout, try again',);
     } catch (e) {
-      // print(e.toString());
+      print(e.toString());
       Fluttertoast.showToast(msg:e.toString(),);
     }
   }

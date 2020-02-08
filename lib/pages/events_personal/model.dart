@@ -8,6 +8,9 @@ class ListOngoingEvent {
    String lokasi;
    String status;
    String publish;
+   String participant;
+   String admin;
+   
   ListOngoingEvent(
       {this.id,
       this.title,
@@ -17,7 +20,9 @@ class ListOngoingEvent {
       this.lokasi,
       this.fullday,
       this.status,
-      this.publish});
+      this.publish,
+      this.participant,
+      this.admin});
 }
 
 class ListMoreMyEvent {
@@ -30,6 +35,9 @@ class ListMoreMyEvent {
    String lokasi;
    String status;
    String publish;
+   String participant;
+   String admin;
+
   ListMoreMyEvent(
       {this.id,
       this.title,
@@ -39,7 +47,9 @@ class ListMoreMyEvent {
       this.lokasi,
       this.fullday,
       this.status,
-      this.publish});
+      this.publish,
+      this.participant,
+      this.admin});
 }
 
 class ListWillComeEvent {
@@ -52,6 +62,8 @@ class ListWillComeEvent {
    String lokasi;
    String status;
    String publish;
+   String participant;
+   String admin;
   
   ListWillComeEvent(
       {this.id,
@@ -62,7 +74,9 @@ class ListWillComeEvent {
       this.lokasi,
       this.fullday,
       this.status,
-      this.publish});
+      this.publish,
+      this.participant,
+      this.admin});
 }
 
 class ListDoneEvent {
@@ -75,7 +89,9 @@ class ListDoneEvent {
    String lokasi;
    String status;
    String publish;
-  
+   String participant;
+   String admin;
+
   ListDoneEvent(
       {this.id,
       this.title,
@@ -85,7 +101,9 @@ class ListDoneEvent {
       this.lokasi,
       this.fullday,
       this.status,
-      this.publish});
+      this.publish,
+      this.participant,
+      this.admin});
 }
 class ListUser {
    String id;

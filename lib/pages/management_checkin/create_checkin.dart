@@ -43,7 +43,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   TextEditingController _controllerSessionname = TextEditingController();
   bool inside = false;
   Uint8List imageInMemory;
-
+  DateTime timeReplacement;
   randomNumberGenerator() {
     var rnd = new math.Random();
     var next = rnd.nextDouble() * 10000;
@@ -62,7 +62,13 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   //           print(_dataString);
   // }
-
+  void timeSetToMinute(){
+    var timeNow     = DateTime.now();
+    var timeString  = timeNow.toString();
+    var minutes = timeNow.minute;
+    var hours = timeNow.hour;
+    timeReplacement = DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:")) ;
+  }
   postDataCheckin() async {
     _isLoading = true;
     dynamic body = {
@@ -82,7 +88,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     print(response);
     if (response != 'gagal' && response != "tanggal kurang") {
       Fluttertoast.showToast(
-          msg: "Success",
+          msg: "Sukses",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,
@@ -125,6 +131,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   @override
   void initState() {
+    timeSetToMinute();
     datepicker = FocusNode();
     super.initState();
   }
@@ -189,7 +196,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                     title: TextField(
                       controller: _controllerGenerate,
                       decoration: InputDecoration(
-                          hintText: 'Keyword',
+                          hintText: 'Kata Kunci',
                           errorText: _inputErrorText,
                           hintStyle: TextStyle(
                               fontSize: 13, color: Colors.black)),
@@ -262,7 +269,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         if (date != null) {
           final time = await showTimePicker(
             context: context,
-            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+            initialTime: TimeOfDay.fromDateTime(currentValue ?? timeReplacement),
           );
           return DateTimeField.combine(date, time);
         } else {
@@ -289,7 +296,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
         if (date != null) {
           final time = await showTimePicker(
             context: context,
-            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+            initialTime: TimeOfDay.fromDateTime(currentValue ?? timeReplacement),
           );
           return DateTimeField.combine(date, time);
         } else {
