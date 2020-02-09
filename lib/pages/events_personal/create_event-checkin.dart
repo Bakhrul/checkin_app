@@ -50,7 +50,7 @@ class _ManajemenCreateEventCheckinState
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    
+    print(requestHeaders);
   }
 
   void dispose() {
@@ -67,7 +67,7 @@ class _ManajemenCreateEventCheckinState
           color: Colors.white,
         ),
         title: new Text(
-          "Event Baru - Tambah Checkin",
+          "Event Baru - Tambah CheckIn",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,

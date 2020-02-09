@@ -21,6 +21,9 @@ import 'manage_peserta.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isDelete, isPublish;
+List<ListCheckinAdd> listcheckinAdd = [];
+List<ListKategoriEventAdd> listKategoriAdd = [];
+List<ListUserAdd> listUseradd = [];
 String tokenType, accessToken;
 String jumlahongoingX, jumlahwillcomeX, jumlahdoneeventX;
 Map<String, String> requestHeaders = Map();
@@ -408,6 +411,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             ),
             tooltip: 'Buat Event Sekarang',
             onPressed: () {
+              
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -774,7 +778,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir Checkin Peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
@@ -1112,7 +1116,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                             value: PageEnum
                                                                 .kelolaHasilAKhirPage,
                                                             child: Text(
-                                                                "Hasil Akhir Checkin Peserta"),
+                                                                "Hasil Akhir CheckIn Peserta"),
                                                           ),
                                                           PopupMenuItem(
                                                             value: PageEnum
@@ -1448,19 +1452,19 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                         value: PageEnum
                                                             .kelolaWaktuCheckinPage,
                                                         child: Text(
-                                                            "Kelola Waktu Checkin"),
+                                                            "Kelola Waktu CheckIn"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaCheckinPesertaPage,
                                                         child: Text(
-                                                            "Kelola Checkin Peserta"),
+                                                            "Kelola CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir Checkin Peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum

@@ -547,7 +547,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir Checkin Peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum

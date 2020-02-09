@@ -15,7 +15,7 @@ import 'package:email_validator/email_validator.dart';
 
 import 'package:checkin_app/utils/utils.dart';
 
-String tokenType, accessToken;
+String tokenType, accessToken, jumlahAdminactive;
 TextEditingController _controllerAddadmin = new TextEditingController();
 List<ListAdminEvent> listadminevent = [];
 bool actionBackAppBar, iconButtonAppbarColor;
@@ -275,6 +275,10 @@ class _ManageAdminState extends State<ManageAdmin> {
       if (getAdminEvent.statusCode == 200) {
         var listuserJson = json.decode(getAdminEvent.body);
         var listUsers = listuserJson['admin'];
+        String jumlahAdmin = listuserJson['countAdminActive'].toString();
+        setState(() {
+          jumlahAdminactive = jumlahAdmin;
+        });
         listadminevent = [];
         for (var i in listUsers) {
           ListAdminEvent willcomex = ListAdminEvent(
@@ -568,6 +572,35 @@ class _ManageAdminState extends State<ManageAdmin> {
                                       )
                                     : Container(),
                                 listadminevent.length == 0
+                                    ? Container()
+                                    : Container(
+                                        margin: EdgeInsets.only(right:5.0,left: 5.0,bottom:10.0),
+                                        padding: EdgeInsets.only(
+                                            top: 15.0, bottom: 15.0),
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                          color: Colors.grey[300],
+                                          width: 1.0,
+                                        ))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Expanded(
+                                                child: Text(
+                                                    'Jumlah Admin Terdaftar',
+                                                    style: TextStyle(
+                                                        ))),
+                                            Expanded(
+                                                child: Text(
+                                              '$jumlahAdminactive Admin',
+                                              textAlign: TextAlign.right,
+                                            )),
+                                          ],
+                                        ),
+                                      ),
+                                listadminevent.length == 0
                                     ? Padding(
                                         padding:
                                             const EdgeInsets.only(top: 20.0),
@@ -780,6 +813,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                                               Fluttertoast.showToast(msg: "Berhasil");
                                                                                               setState(() {
                                                                                                 isDelete = false;
+                                                                                                jumlahAdminactive =removeAdminJson['countAdminActive'].toString();
                                                                                               });
                                                                                               setState(() {
                                                                                                 listadminevent.remove(listadminevent[index]);

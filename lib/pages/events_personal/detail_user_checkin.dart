@@ -214,7 +214,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Event Belum Memiliki Checkin Sama Sekali",
+                                              "Event Belum Memiliki CheckIn Sama Sekali",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black45,
@@ -303,7 +303,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
     return AppBar(
       centerTitle: true,
       title: Text(
-    "Detail Checkin Peserta ${widget.namaParticipant}",
+    "Detail CheckIn Peserta ${widget.namaParticipant}",
     style: TextStyle(fontSize: 16),
   ),
       backgroundColor: primaryAppBarColor,

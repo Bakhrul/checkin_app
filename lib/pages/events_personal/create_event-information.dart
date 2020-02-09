@@ -9,13 +9,17 @@ import 'dart:async';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'create_event-category.dart';
+import 'create_event-category.dart' as category;
+import 'create_event-admin.dart' as admin;
+import 'create_event-checkin.dart' as checkin;
 import 'package:image_picker/image_picker.dart';
 
 import 'package:checkin_app/utils/utils.dart';
 
 String tokenType, accessToken, idEventFinalX;
 Map<String, dynamic> formSerialize;
+TextEditingController _tanggalakhireventController = TextEditingController();
+TextEditingController _tanggalawaleventController = TextEditingController();
 File _image;
 bool isCreate;
 Map<String, String> requestHeaders = Map();
@@ -46,14 +50,18 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
     getHeaderHTTP();
     _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
+    _tanggalawaleventController.text = '';
+    _tanggalakhireventController.text = '';
     firstdate = FocusNode();
     lastdate = FocusNode();
     _tanggalawalevent = null;
+                checkin.listcheckinAdd = [];
+            category.listKategoriAdd = [];
+            admin.listUseradd = [];
     _image = null;
     _tanggalakhirevent = null;
     idEventFinalX = null;
     isCreate = false;
-    isDelete = false;
     _namaeventController.text = '';
     _alamateventController.text = '';
     timeSetToMinute();
@@ -206,6 +214,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                       Icons.access_time,
                     ),
                     title: DateTimeField(
+                      controller: _tanggalawaleventController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Tanggal Awal Event',
@@ -235,6 +244,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                         setState(() {
                           _tanggalawalevent =
                               ini == null ? 'kosong' : ini.toString();
+                          _tanggalakhireventController.text = '';
+                          _tanggalakhirevent = 'kosong';
                         });
                       },
                     ))),
@@ -244,6 +255,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                       Icons.access_time,
                     ),
                     title: DateTimeField(
+                      controller: _tanggalakhireventController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Tanggal Akhir Event',
@@ -255,8 +267,8 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
                             context: context,
-                            firstDate: DateTime.now(),
-                            initialDate: DateTime.now(),
+                            firstDate: _tanggalawalevent == 'kosong' ? DateTime.now() : DateTime.parse(_tanggalawalevent),
+                            initialDate: _tanggalawalevent == 'kosong' ? DateTime.now() : DateTime.parse(_tanggalawalevent),
                             lastDate: DateTime(2100));
                         if (date != null) {
                           final time = await showTimePicker(
@@ -341,18 +353,18 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
       setState(() {
         isCreate = false;
       });
-    } else if (_alamateventController.text == '' ||
+    } else if (_alamateventController.text == null ||
         _alamateventController.text == '') {
       Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
       setState(() {
         isCreate = false;
       });
-    } else if (_tanggalawalevent == null) {
+    } else if (_tanggalawalevent == null || _tanggalawalevent == 'kosong') {
       Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
       setState(() {
         isCreate = false;
       });
-    } else if (_tanggalakhirevent == null) {
+    } else if (_tanggalakhirevent == null || _tanggalakhirevent == 'kosong') {
       Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
       setState(() {
         isCreate = false;
@@ -412,11 +424,12 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
           if (responseJson['status'] == 'success') {
             setState(() {
               idEventFinalX = idEventFromDB;
+              isCreate = false;
             });
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManajemenCreateEventCategory(
+                    builder: (context) => category.ManajemenCreateEventCategory(
                           event: idEventFinalX,
                         )));
             // Navigator.push(

@@ -1202,6 +1202,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                                                   setState(() {
                                                                                                     listpesertaevent[index].status = 'A';
                                                                                                     jumlahnotifX = accPesertaJson['jumlahnotif'].toString();
+                                                                                                    jumlahPesertaActive = accPesertaJson['countPesertaActive'].toString();
                                                                                                   });
                                                                                                 } else if (accPesertaJson['status'] == 'Error') {
                                                                                                   Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");

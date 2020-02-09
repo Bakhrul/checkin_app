@@ -36,6 +36,7 @@ class ManajemeEditCheckin extends StatefulWidget {
       this.kodecheckin,
       this.timestart,
       this.typecheckin,
+      this.namaEvent,
       this.timeend})
       : super(key: key);
   final String title,
@@ -45,6 +46,7 @@ class ManajemeEditCheckin extends StatefulWidget {
       timeend,
       namacheckin,
       typecheckin,
+      namaEvent,
       kodecheckin;
   @override
   State<StatefulWidget> createState() {
@@ -179,7 +181,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManageCheckin(event: widget.event)));
+                    builder: (context) => ManageCheckin(event: widget.event, namaEvent: widget.namaEvent)));
           } else if (responseJson['status'] == 'keywordsudahdigunakan') {
             setState(() {
               isUpdate = false;

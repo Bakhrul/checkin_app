@@ -126,7 +126,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
             color: Colors.white,
           ),
           title: new Text(
-            "Form Pendaftaran Event ${widget.id}",
+            "Form Pendaftaran Event",
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,

@@ -242,7 +242,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                             ),
                             child: Center(
                               child: Text(
-                                "Event Belum Memiliki Checkin Sama Sekali",
+                                "Event Belum Memiliki CheckIn Sama Sekali",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.black45,
@@ -336,6 +336,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                     timeend: listcheckinevent[
                                                                             index]
                                                                         .timeend,
+                                                                    namaEvent: widget.namaEvent,
                                                                   )));
                                                       break;
                                                     case PageEnum
@@ -486,6 +487,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                                   idevent: listcheckinevent[
                                                                           index]
                                                                       .idevent,
+                                                                  namaCheckin : listcheckinevent[index].name,
                                                                   idcheckin:
                                                                       listcheckinevent[
                                                                               index]
@@ -568,7 +570,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ManajemenTambahCheckin(event: widget.event)));
+                                  ManajemenTambahCheckin(event: widget.event, namaEvent: widget.namaEvent)));
                     },
                     backgroundColor: primaryButtonColor,
                     child: Icon(
