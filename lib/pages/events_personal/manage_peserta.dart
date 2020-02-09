@@ -29,7 +29,8 @@ Map<String, String> requestHeaders = Map();
 String namaEventX;
 
 class ManagePeserta extends StatefulWidget {
-  ManagePeserta({Key key, this.title, this.event, this.namaEvent, this.eventEnd})
+  ManagePeserta(
+      {Key key, this.title, this.event, this.namaEvent, this.eventEnd})
       : super(key: key);
   final String title, event;
   final bool eventEnd;
@@ -399,7 +400,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
         color: Colors.white,
       );
       this.appBarTitle = new Text(
-        namaEventX == null ? "Kelola Peserta Event" : "Kelola Peserta Event $namaEventX",
+        namaEventX == null
+            ? "Kelola Peserta Event"
+            : "Kelola Peserta Event $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -507,46 +510,46 @@ class _ManagePesertaState extends State<ManagePeserta> {
       });
 
       if (addadminevent.statusCode == 200) {
-        var addadmineventJson = json.decode(addadminevent.body);
-        if (addadmineventJson['status'] == 'success') {
+        var addpesertaJson = json.decode(addadminevent.body);
+        if (addpesertaJson['status'] == 'success') {
           setState(() {
             isCreate = false;
           });
           Fluttertoast.showToast(msg: "Berhasil !");
           listcheckin();
-        } else if (addadmineventJson['status'] == 'user tidak ditemukan') {
+        } else if (addpesertaJson['status'] == 'user tidak ada') {
           Fluttertoast.showToast(
               msg: "Email ini belum terdaftar pada akun eventzhee");
           setState(() {
             isCreate = false;
           });
-        } else if (addadmineventJson['status'] == 'sudah ada') {
-          Fluttertoast.showToast(
-              msg: "Member ini sudah terdaftar menjadi admin event anda");
-          setState(() {
-            isCreate = false;
-          });
-        } else if (addadmineventJson['status'] == 'creator') {
+        } else if (addpesertaJson['status'] == 'creator') {
           Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
           setState(() {
             isCreate = false;
           });
-        } else if (addadmineventJson['status'] == 'pending') {
+        } else if (addpesertaJson['status'] == 'sudah ada') {
           Fluttertoast.showToast(
-              msg: "Permintaan menjadi admin menunggu persetujuan");
+              msg: "Member ini sudah terdaftar pada event anda");
           setState(() {
             isCreate = false;
           });
-        } else if (addadmineventJson['status'] == 'sudahpeserta') {
+        } else if (addpesertaJson['status'] == 'pending') {
           Fluttertoast.showToast(
-              msg: "Member ini sudah menjadi peserta event anda");
+              msg: "Pendaftaran member ini menunggu persetujuan dari anda");
           setState(() {
             isCreate = false;
           });
-        } else if (addadmineventJson['status'] == 'pendingpeserta') {
+        } else if (addpesertaJson['status'] == 'sudahadmin') {
+          Fluttertoast.showToast(
+              msg: "member ini sudah terdaftar menjadi admin event anda");
+          setState(() {
+            isCreate = false;
+          });
+        } else if (addpesertaJson['status'] == 'adminpending') {
           Fluttertoast.showToast(
               msg:
-                  "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
+                  "Anda sudah memninta member ini untuk menjadi admin event dan saat ini menunggu persetujuan");
           setState(() {
             isCreate = false;
           });
@@ -580,7 +583,9 @@ class _ManagePesertaState extends State<ManagePeserta> {
   final TextEditingController _searchQuery = new TextEditingController();
 
   Widget appBarTitle = Text(
-    namaEventX == null ?  "Kelola Peserta Event " : "Kelola Peserta Event $namaEventX",
+    namaEventX == null
+        ? "Kelola Peserta Event "
+        : "Kelola Peserta Event $namaEventX",
     style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
@@ -694,7 +699,11 @@ class _ManagePesertaState extends State<ManagePeserta> {
                             padding: const EdgeInsets.only(top: 0.0),
                             child: Column(
                               children: <Widget>[
-                                isDelete == true || isDenied == true || isAccept == true || isCreate == true || isSendingMessage == true 
+                                isDelete == true ||
+                                        isDenied == true ||
+                                        isAccept == true ||
+                                        isCreate == true ||
+                                        isSendingMessage == true
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
@@ -709,6 +718,35 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                         ],
                                       )
                                     : Container(),
+                                listpesertaevent.length == 0
+                                    ? Container()
+                                    : Container(
+                                        margin: EdgeInsets.only(right:5.0,left: 5.0,bottom:10.0),
+                                        padding: EdgeInsets.only(
+                                            top: 15.0, bottom: 15.0),
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                          color: Colors.grey[300],
+                                          width: 1.0,
+                                        ))),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Expanded(
+                                                child: Text(
+                                                    'Jumlah Peserta Terdaftar',
+                                                    style: TextStyle(
+                                                        ))),
+                                            Expanded(
+                                                child: Text(
+                                              '$jumlahPesertaActive Peserta',
+                                              textAlign: TextAlign.right,
+                                            )),
+                                          ],
+                                        ),
+                                      ),
                                 listpesertaevent.length == 0
                                     ? Padding(
                                         padding:
@@ -1059,8 +1097,12 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                                                 var deletePesertaEventJson = json.decode(deletePesertaEvent.body);
                                                                                                 if (deletePesertaEventJson['status'] == 'success') {
                                                                                                   Fluttertoast.showToast(msg: "Berhasil");
+
+                                                                                                 
+
                                                                                                   setState(() {
                                                                                                     isDelete = false;
+                                                                                                    jumlahPesertaActive =  deletePesertaEventJson['countPesertaActive'].toString();
                                                                                                   });
                                                                                                   setState(() {
                                                                                                     listpesertaevent.remove(listpesertaevent[index]);

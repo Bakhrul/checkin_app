@@ -55,21 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
               ),
-              // Expanded(
-              //   flex: 2,
-              //   child: Container(
-              //     child: Center(
-              //       child: Text(
-              //         "MYOCIN",
-              //         style: TextStyle(
-              //             color: Color.fromRGBO(41, 30, 47, 1),
-              //             fontFamily: 'TitilliumWeb',
-              //             fontWeight: FontWeight.bold,
-              //             fontSize: 30.0),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           )
         ],
