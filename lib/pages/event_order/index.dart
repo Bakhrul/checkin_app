@@ -62,7 +62,6 @@ class _EventOrder extends State<EventOrder> {
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
               .sendrequest();
-      print(response['status']);
       if (response['status'] == "success") {
         Fluttertoast.showToast(
             msg: "Berhasil Keluar",
@@ -109,7 +108,6 @@ class _EventOrder extends State<EventOrder> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print("ID" + idEvent.toString() + idUser.toString());
     Map body = {
       'event_id': idEvent.toString(),
       'user_id': idUser.toString(),
@@ -159,7 +157,6 @@ class _EventOrder extends State<EventOrder> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listParticipants();
   }
 
@@ -249,13 +246,12 @@ class _EventOrder extends State<EventOrder> {
         });
       } else if (participant.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
         });
       } else {
-        print(participant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -287,7 +283,7 @@ class _EventOrder extends State<EventOrder> {
           color: Colors.white,
         ),
         title: new Text(
-          "List Order Event",
+          "Daftar Peserta Yang Didaftarkan",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -318,7 +314,7 @@ class _EventOrder extends State<EventOrder> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -370,7 +366,7 @@ class _EventOrder extends State<EventOrder> {
                           ),
                           child: Center(
                             child: Text(
-                              "Anda belum  mendaftarkan orang lain ke event",
+                              "Anda Belum  Mendaftarkan Orang Lain Ke Event",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black45,

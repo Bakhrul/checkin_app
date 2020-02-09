@@ -214,7 +214,7 @@ class _DetailCheckinState extends State<DetailCheckin>
                   elevation: 2,
                   child: Center(
                       child: Text(
-                    "Participant Checkin",
+                    "Peserta",
                     style: TextStyle(fontSize: 18),
                   )),
                 ),
@@ -270,7 +270,7 @@ class _DetailCheckinState extends State<DetailCheckin>
                 width: double.infinity,
                 margin: EdgeInsets.only(bottom: 4.5, right: 8.0, left: 8.0),
                 child: FlatButton(
-                  child: Text("More..."),
+                  child: Text("Lainnya..."),
                   onPressed: () {
                     Navigator.push(
                         context,

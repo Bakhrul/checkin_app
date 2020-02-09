@@ -243,7 +243,6 @@ class _ManageAdminState extends State<ManageAdmin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   Future<List<List>> listcheckin() async {
@@ -276,7 +275,6 @@ class _ManageAdminState extends State<ManageAdmin> {
       if (getAdminEvent.statusCode == 200) {
         var listuserJson = json.decode(getAdminEvent.body);
         var listUsers = listuserJson['admin'];
-        print(listUsers);
         listadminevent = [];
         for (var i in listUsers) {
           ListAdminEvent willcomex = ListAdminEvent(
@@ -304,9 +302,8 @@ class _ManageAdminState extends State<ManageAdmin> {
           isErrorfilter = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getAdminEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -358,7 +355,6 @@ class _ManageAdminState extends State<ManageAdmin> {
       if (checkinevent.statusCode == 200) {
         var listuserJson = json.decode(checkinevent.body);
         var listUsers = listuserJson['admin'];
-        print(listUsers);
         listadminevent = [];
         for (var i in listUsers) {
           ListAdminEvent willcomex = ListAdminEvent(
@@ -386,9 +382,8 @@ class _ManageAdminState extends State<ManageAdmin> {
           isError = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(checkinevent.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -406,7 +401,6 @@ class _ManageAdminState extends State<ManageAdmin> {
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      print('eror');
       setState(() {
         isFilter = false;
         isErrorfilter = true;
@@ -480,7 +474,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                           ),
                           child: Center(
                             child: Text(
-                              "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                              "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black54,
@@ -780,7 +774,6 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                                             'peserta': listadminevent[index].idpeserta,
                                                                                             'event': listadminevent[index].idevent
                                                                                           });
-                                                                                          print(removeAdmin);
                                                                                           if (removeAdmin.statusCode == 200) {
                                                                                             var removeAdminJson = json.decode(removeAdmin.body);
                                                                                             if (removeAdminJson['status'] == 'success') {

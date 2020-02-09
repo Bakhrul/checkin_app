@@ -71,10 +71,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
     namaEventX = widget.namaEvent;
     jumlahPesertaActive = '0';
     actionBackAppBar = true;
-    print(widget.namaEvent);
     iconButtonAppbarColor = true;
     getHeaderHTTP();
-    print(requestHeaders);
     listcheckin();
   }
 
@@ -121,7 +119,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
             isSendingMessage = false;
             _pesanController.text = '';
           });
-          print(sendMessagePesertaEvent.body);
           Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
@@ -211,7 +208,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   Future<List<List>> listcheckin() async {
@@ -248,7 +244,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
         setState(() {
           jumlahPesertaActive = jumlahPeserta;
         });
-        print(listUsers);
         listpesertaevent = [];
         for (var i in listUsers) {
           ListPesertaEvent willcomex = ListPesertaEvent(
@@ -277,9 +272,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
           isErrorfilter = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getParticipantEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -331,7 +325,6 @@ class _ManagePesertaState extends State<ManagePeserta> {
       if (getParticipantEventFilter.statusCode == 200) {
         var listuserJson = json.decode(getParticipantEventFilter.body);
         var listUsers = listuserJson['peserta'];
-        print(listUsers);
         listpesertaevent = [];
         for (var i in listUsers) {
           ListPesertaEvent willcomex = ListPesertaEvent(
@@ -359,9 +352,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
           isError = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getParticipantEventFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -519,7 +511,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
           listcheckin();
         } else if (addpesertaJson['status'] == 'user tidak ada') {
           Fluttertoast.showToast(
-              msg: "Email ini belum terdaftar pada akun eventzhee");
+              msg: "Email Ini Belum Terdaftar Pada Akun EventZhee");
           setState(() {
             isCreate = false;
           });

@@ -143,7 +143,7 @@ class _RegisterEventMethod extends State<RegisterEventMethod> {
                     margin: EdgeInsets.only(bottom: 30.0),
                     padding: EdgeInsets.all(5.0),
                     child: Text(
-                        "Anda Bisa mendaftar event untuk anda sendiri atau apabila anda ingin mendaftarkan orang lain juga bisa mendaftarkan",
+                        "Anda Bisa Mendaftar Event Untuk Anda Sendiri Atau Apabila Anda Ingin Mendaftarkan Orang Lain Juga Bisa Mendaftarkan",
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.7, fontSize: 20))),
                 Container(

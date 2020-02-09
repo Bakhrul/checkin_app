@@ -79,7 +79,6 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listUser();
   }
 
@@ -123,7 +122,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         });
       } else if (getUser.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
@@ -131,7 +130,6 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
           isErrorfilter = false;
         });
       } else {
-        print(getUser.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -209,9 +207,8 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
           isError = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getUserFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -300,7 +297,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -587,28 +584,28 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
                   builder: (BuildContext context) =>
                       ManagePeserta(event: widget.event)));
         } else if (addpesertaJson['status'] == 'creator') {
-          Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
+          Fluttertoast.showToast(msg: "Pengguna Ini Merupakan Pembuat Event");
           Navigator.pop(context);
           setState(() {
             isCreate = false;
           });
         } else if (addpesertaJson['status'] == 'sudah ada') {
           Fluttertoast.showToast(
-              msg: "Member ini sudah terdaftar pada event anda");
+              msg: "Pengguna Ini Sudah Terdaftar Pada Event Anda");
           Navigator.pop(context);
           setState(() {
             isCreate = false;
           });
         } else if (addpesertaJson['status'] == 'pending') {
           Fluttertoast.showToast(
-              msg: "Pendaftaran member ini menunggu persetujuan dari anda");
+              msg: "Pendaftaran Pengguna Ini Menunggu Persetujuan Dari Anda");
           Navigator.pop(context);
           setState(() {
             isCreate = false;
           });
         } else if (addpesertaJson['status'] == 'sudahadmin') {
           Fluttertoast.showToast(
-              msg: "member ini sudah terdaftar menjadi admin event anda");
+              msg: "Pengguna Ini Sudah Terdaftar Menjadi Admin Event Anda");
           Navigator.pop(context);
           setState(() {
             isCreate = false;
@@ -616,7 +613,7 @@ class _ManajemeCreatePesertaState extends State<ManajemeCreatePeserta> {
         } else if (addpesertaJson['status'] == 'adminpending') {
           Fluttertoast.showToast(
               msg:
-                  "Anda sudah memninta member ini untuk menjadi admin event dan saat ini menunggu persetujuan");
+                  "Anda Sudah Memninta Pengguna Ini Untuk Menjadi Admin Event Dan Saat Ini Menunggu Persetujuan");
           Navigator.pop(context);
           setState(() {
             isCreate = false;

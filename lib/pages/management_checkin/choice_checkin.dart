@@ -17,7 +17,7 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
     with SingleTickerProviderStateMixin {
   TextEditingController _searchNameController = new TextEditingController();
   AnimationController _controller;
-  List _types = ["Schedule Checkin", "Direct Checkin"];
+  List _types = ["CheckIn Reguler", "CheckIn Langsung"];
 
 
   List<DropdownMenuItem<String>> _dropDownTypes;
@@ -60,7 +60,7 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
           color: Colors.white,
         ),
         title: new Text(
-          "Pilih Checkin",
+          "Pilih CheckIn",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -88,7 +88,7 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
         onPressed: () {
           var idEvent = widget.idevent;
           Navigator.push(context, MaterialPageRoute(builder: (context) => 
-          _currentType == "Schedule Checkin" ? ManajemeCreateCheckin(idevent: idEvent) : DirectCheckin(idevent: idEvent)
+          _currentType == "CheckIn Reguler" ? ManajemeCreateCheckin(idevent: idEvent) : DirectCheckin(idevent: idEvent)
           ) );
         },
         child: Icon(Icons.arrow_forward_ios),

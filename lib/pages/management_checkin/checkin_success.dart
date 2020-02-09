@@ -53,7 +53,7 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 30.0),
                     child: Text(
-                        "Pastikan anda tetap konsisten checkin pada tiap sesi event dan dapatkan hadiah menarik dari creator untuk anda",
+                        "Pastikan Anda Tetap Konsisten Checkin Pada Tiap Sesi Event ",
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.5, fontSize: 14))),
                 Container(
@@ -66,7 +66,7 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                             child: RaisedButton(
                                 padding: EdgeInsets.all(15.0),
                                 color: Colors.indigo,
-                                child: Text("Kembali Ke Dashboard",
+                                child: Text("Kembali Ke Beranda",
                                     style: TextStyle(color: Colors.white,fontSize: 14)),
                                 onPressed: () async {
                                   Navigator.pushReplacement(

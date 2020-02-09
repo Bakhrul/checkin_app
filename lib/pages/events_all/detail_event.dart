@@ -57,7 +57,6 @@ class _RegisterEvent extends State<RegisterEvents> {
     _getAll();
     scrollPage.addListener(_parallax);
     super.initState();
-    print('testing' + widget.dataUser['us_code'].toString());
   }
 
   _parallax() {
@@ -181,7 +180,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                    "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black54,

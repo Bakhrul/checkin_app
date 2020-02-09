@@ -47,7 +47,6 @@ class _ManajemenCreateEventCategoryState
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   void dispose() {
@@ -187,7 +186,6 @@ class _ManajemenCreateEventCategoryState
                                                     msg: "Berhasil !");
                                               }
                                             } else {
-                                              print(addadminevent.body);
                                               Fluttertoast.showToast(
                                                   msg:
                                                       "Gagal, Silahkan Coba Kembali");

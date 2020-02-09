@@ -50,6 +50,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  DateTime timeReplacement;
   @override
   void initState() {
     super.initState();
@@ -77,7 +78,15 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     _alamateventController.text = widget.lokasi;
     _deskripsieventController.text = widget.deskripsi;
   }
-
+ void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
+  }
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -89,7 +98,6 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listkategorievent();
   }
 
@@ -128,7 +136,6 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         setState(() {
           gambarX = image;
         });
-        print(listCategoryEvent);
         listkategoriEventEdit = [];
         for (var i in listCategoryEvent) {
           ListEditKategoriEvent willcomex = ListEditKategoriEvent(
@@ -147,9 +154,8 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getEditEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -218,7 +224,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                         builder: (BuildContext context) => AlertDialog(
                           title: Text('Peringatan!'),
                           content: Text(
-                              'Apakah Anda Ingin Update Data Event Anda Sekarang? '),
+                              'Apakah Anda Ingin Memperbarui Data Event Anda Sekarang? '),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Tidak'),
@@ -314,7 +320,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                               child: isLoading == true
                                   ? CircularProgressIndicator()
                                   : gambarX == null || gambarX == ''
-                                      ? Text('Tidak ada gambar yang dipilih.')
+                                      ? Text('Tidak Ada Gambar Yang Dipilih.')
                                       : FadeInImage.assetNetwork(
                                           placeholder: 'images/loading-event.png',
                                           image:
@@ -386,7 +392,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                               final time = await showTimePicker(
                                 context: context,
                                 initialTime:
-                                    TimeOfDay.fromDateTime(DateTime.now()),
+                                    TimeOfDay.fromDateTime(timeReplacement),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
@@ -430,7 +436,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                               final time = await showTimePicker(
                                 context: context,
                                 initialTime:
-                                    TimeOfDay.fromDateTime(DateTime.now()),
+                                    TimeOfDay.fromDateTime(timeReplacement),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
@@ -693,8 +699,6 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         formSerialize['kategori'].add(listkategoriEventEdit[i].id);
       }
 
-      print(formSerialize);
-
       Map<String, dynamic> requestHeadersX = requestHeaders;
 
       requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
@@ -714,7 +718,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
             setState(() {
               isEdit = false;
             });
-            Fluttertoast.showToast(msg: "Berhasil Update Data Event");
+            Fluttertoast.showToast(msg: "Berhasil Memperbarui Data Event");
             Navigator.pop(context);
             Navigator.pop(context);
             Navigator.push(
@@ -722,14 +726,12 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                 MaterialPageRoute(
                     builder: (context) => ManajemenEventPersonal()));
           }
-          print('response decoded $responseJson');
         } else {
           setState(() {
             isEdit = false;
           });
-          print('${response.body}');
           Fluttertoast.showToast(
-              msg: "Gagal Update Event, Silahkan Coba Kembali");
+              msg: "Gagal Memperbarui Event, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
         Fluttertoast.showToast(msg: 'Timed out, Try again');

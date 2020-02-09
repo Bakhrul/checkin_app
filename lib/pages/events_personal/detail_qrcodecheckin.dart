@@ -89,7 +89,7 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           setState(() {
             sudahada = false;
             message =
-                'Berhasil, Cari gambar QrCode pada folder EventZhee - ${widget.namaEvent}_${widget.kodecheckin}.png';
+                'Berhasil, Cari Gambar QrCode Pada Folder EventZhee - ${widget.namaEvent}_${widget.kodecheckin}.png';
           });
         } else {
           final file = await new File(
@@ -98,7 +98,7 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           await file.writeAsBytes(pngBytes);
           setState(() {
             message =
-                'Berhasil, Cari gambar QrCode pada folder EventZhee - ${widget.namaEvent}_${widget.kodecheckin}.png';
+                'Berhasil, Cari Gambar QrCode Pada Folder EventZhee - ${widget.namaEvent}_${widget.kodecheckin}.png';
           });
         }
       }

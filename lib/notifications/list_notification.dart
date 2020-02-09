@@ -401,7 +401,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,

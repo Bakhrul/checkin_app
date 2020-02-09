@@ -56,7 +56,7 @@ class _CheckinManualState extends State<CheckinManual>
           if (_seconds < 1) {
             timer.cancel();
             disable = true;
-            Fluttertoast.showToast(msg: "Waktu Checkin telah Habis");
+            Fluttertoast.showToast(msg: "Waktu CheckIn Telah Habis");
           } else {
             _seconds = _seconds - 1;
             var _time = Duration(seconds: _seconds);
@@ -99,7 +99,7 @@ class _CheckinManualState extends State<CheckinManual>
       isCheckin = true;
     });
     if (_controllerCheckin.text == null || _controllerCheckin.text == '') {
-      Fluttertoast.showToast(msg: "Masukkan Kode Checkin Anda");
+      Fluttertoast.showToast(msg: "Masukkan Kode CheckIn Anda");
       setState(() {
         isCheckin = false;
       });
@@ -144,17 +144,15 @@ class _CheckinManualState extends State<CheckinManual>
               isCheckin = false;
             });
             Fluttertoast.showToast(
-                msg: "Checkin tidak ditemukan atau telah kadaluwarsa");
+                msg: "Checkin Tidak Ditemukan Atau Telah Kadaluwarsa");
           } else if (responseJson['status'] == 'sudahcheckin') {
             setState(() {
               isCheckin = false;
             });
             Fluttertoast.showToast(
-                msg: "Anda Sudah melakukan checkin pada sesi checkin tersebut");
+                msg: "Anda Sudah Melakukan Checkin Pada Sesi Checkin Tersebut");
           }
-          print('response decoded $responseJson');
         } else {
-          print('${response.body}');
           Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
           setState(() {
             isCheckin = false;

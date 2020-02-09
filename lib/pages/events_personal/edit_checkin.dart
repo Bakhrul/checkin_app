@@ -54,6 +54,7 @@ class ManajemeEditCheckin extends StatefulWidget {
 
 class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  DateTime timeReplacement;
   @override
   void initState() {
     _scaffoldKeyeditcheckin = GlobalKey<ScaffoldState>();
@@ -63,7 +64,6 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
     isUpdate = false;
     _namacheckinController.text = widget.namacheckin;
     _kodecheckinController.text = widget.kodecheckin;
-    print(widget.namacheckin);
     _tanggalawal = widget.timestart == 'kosong' ||
             widget.timestart == '' ||
             widget.timestart == null
@@ -74,7 +74,17 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             widget.timeend == null
         ? DateTime.now()
         : widget.timeend;
+        timeSetToMinute();
     super.initState();
+  }
+ void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
   }
 
   Future<void> getHeaderHTTP() async {
@@ -88,19 +98,18 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   void _updatecheckin() async {
     if (_namacheckinController.text == null ||
         _namacheckinController.text == '') {
-      Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
+      Fluttertoast.showToast(msg: "Nama CheckIn Tidak Boleh Kosong");
       setState(() {
         isUpdate = false;
       });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
-      Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
+      Fluttertoast.showToast(msg: "Kata Kunci CheckIn Tidak Boleh Kosong");
       setState(() {
         isUpdate = false;
       });
@@ -145,8 +154,6 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
           : DateFormat('dd-MM-y HH:mm:ss')
               .format(DateTime.parse(_tanggalakhir));
 
-      print(formSerialize);
-
       Map<String, dynamic> requestHeadersX = requestHeaders;
 
       requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
@@ -164,7 +171,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
         if (response.statusCode == 200) {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
-            Fluttertoast.showToast(msg: "Berhasil Update Data Checkin");
+            Fluttertoast.showToast(msg: "Berhasil Memperbarui Data CheckIn");
             setState(() {
               isUpdate = false;
             });
@@ -179,18 +186,18 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             });
             Fluttertoast.showToast(
                 msg:
-                    "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+                    "Kata Kunci Sudah Digunakan, Mohon Gunakan Kode Unik Yang Lain");
           }else if(responseJson['status'] == 'tanggalkurang'){
              setState(() {
               isUpdate = false;
             });          
-            Fluttertoast.showToast(msg: "waktu tersebut sudah memiliki jadwal checkin, mohon gunakan waktu lainnya");
+            Fluttertoast.showToast(msg: "Waktu Tersebut Sudah Memiliki Jadwal Checkin, Mohon Gunakan Waktu Lainnya");
           }
           print('response decoded $responseJson');
         } else {
           print('${response.body}');
           Fluttertoast.showToast(
-              msg: "Gagal Update Checkin, Silahkan Coba Kembali");
+              msg: "Gagal Memperbarui Checkin, Silahkan Coba Kembali");
           setState(() {
             isUpdate = false;
           });
@@ -220,7 +227,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
           color: Colors.white,
         ),
         title: new Text(
-          "Edit Checkin Sekarang",
+          "Edit CheckIn Sekarang",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -242,7 +249,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                   controller: _namacheckinController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Nama Checkin',
+                      hintText: 'Nama CheckIn',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
@@ -255,7 +262,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                 title: DateTimeField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Waktu Awal dimulainya checkin',
+                    hintText: 'Waktu Awal Dimulainya Checkin',
                     hintStyle: TextStyle(fontSize: 13, color: Colors.black),
                   ),
                   initialValue: widget.timestart == 'kosong' ||
@@ -276,7 +283,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(
-                            currentValue ?? DateTime.now()),
+                            currentValue ?? timeReplacement),
                       );
                       return DateTimeField.combine(date, time);
                     } else {
@@ -321,7 +328,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                             final time = await showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.fromDateTime(
-                                  currentValue ?? DateTime.now()),
+                                  currentValue ?? timeReplacement),
                             );
                             return DateTimeField.combine(date, time);
                           } else {
@@ -345,7 +352,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'KODE UNIK CHECKIN',
+                      hintText: 'Kata Kunci',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
@@ -377,7 +384,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                                 valueColor: new AlwaysStoppedAnimation<Color>(
                                     Colors.white)))
                         : Text(
-                            'Update data checkin',
+                            'Memperbarui Data Checkin',
                             style: TextStyle(fontSize: 14.0),
                           ),
                   ),
@@ -399,7 +406,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Batal update data checkin",
+                      "Batal Memperbarui Data CheckIn",
                       style: TextStyle(fontSize: 14.0),
                     ),
                   ),

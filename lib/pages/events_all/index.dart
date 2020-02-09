@@ -175,7 +175,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         _isLoading = false;
         _isGetAllDisconnect = true;
       });
-      Fluttertoast.showToast(msg: "No Internet Connection");
+      Fluttertoast.showToast(msg: "Koneksi Internet Terputus");
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -260,7 +260,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         page -= 1;
         delay = false;
       });
-      Fluttertoast.showToast(msg: "No Internet Connection");
+      Fluttertoast.showToast(msg: "Koneksi Internet Terputus");
     } catch (e) {
       print(e);
     }
@@ -316,7 +316,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
         _isLoadingCategory = false;
         _isDisconnect = true;
       });
-      Fluttertoast.showToast(msg: "No Internet Connection");
+      Fluttertoast.showToast(msg: "Koneksi Internet Terputus");
     } catch (e) {
       setState(() {
         _isLoadingCategory = false;
@@ -353,7 +353,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(msg: "Time out , please try again later");
     } on SocketException catch (_) {
-      Fluttertoast.showToast(msg: "No Internet Connection");
+      Fluttertoast.showToast(msg: "Koneksi Internet Terputus");
     } catch (e) {
       print(e);
     }
@@ -542,7 +542,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -668,7 +668,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                              "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black54,

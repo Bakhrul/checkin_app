@@ -53,7 +53,6 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listcheckin();
   }
 
@@ -80,7 +79,6 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
       if (getAttendParticipant.statusCode == 200) {
         var listuserJson = json.decode(getAttendParticipant.body);
         var listUsers = listuserJson['checkin'];
-        print(listUsers);
         listuserscheckin = [];
         for (var i in listUsers) {
           ListUserCheckins willcomex = ListUserCheckins(
@@ -101,9 +99,8 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getAttendParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -160,7 +157,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -278,7 +275,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
                                         title: Text(
                                             listuserscheckin[index].keyword == null ||
                                                     listuserscheckin[index].keyword == ''
-                                                ? 'Keyword Tidak Diketahui'
+                                                ? 'Kata Kunci Tidak Diketahui'
                                                 : listuserscheckin[index].keyword,
                                             style: TextStyle(
                                                 fontSize: 16,
@@ -288,7 +285,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
                                               const EdgeInsets.only(top: 15.0),
                                           child: Text(
                                               listuserscheckin[index].ucTime == null || listuserscheckin[index].ucTime == '' || listuserscheckin[index].ucTime == 'null'
-                                                  ? 'Belum Melakukan Checkin'
+                                                  ? 'Belum Melakukan CheckIn'
                                                   : DateFormat('dd MMM yyyy H:m:s').format(DateTime.parse(listuserscheckin[index].ucTime))),
                                         ),
                                       ));
