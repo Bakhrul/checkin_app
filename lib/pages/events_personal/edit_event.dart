@@ -50,6 +50,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  DateTime timeReplacement;
   @override
   void initState() {
     super.initState();
@@ -77,7 +78,15 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     _alamateventController.text = widget.lokasi;
     _deskripsieventController.text = widget.deskripsi;
   }
-
+ void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
+  }
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -383,7 +392,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                               final time = await showTimePicker(
                                 context: context,
                                 initialTime:
-                                    TimeOfDay.fromDateTime(DateTime.now()),
+                                    TimeOfDay.fromDateTime(timeReplacement),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
@@ -427,7 +436,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                               final time = await showTimePicker(
                                 context: context,
                                 initialTime:
-                                    TimeOfDay.fromDateTime(DateTime.now()),
+                                    TimeOfDay.fromDateTime(timeReplacement),
                               );
                               return DateTimeField.combine(date, time);
                             } else {
