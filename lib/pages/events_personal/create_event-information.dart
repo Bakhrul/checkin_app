@@ -79,13 +79,13 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   @override
   void dispose() {
     _tabController.removeListener(_handleTabIndex);
     _tabController.dispose();
+    timeSetToMinute();
     super.dispose();
   }
 
@@ -94,13 +94,13 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
   }
 
   void timeSetToMinute() {
-    var timeNow = DateTime.now();
-    var timeString = timeNow.toString();
-    var minutes = timeNow.minute;
-    var hours = timeNow.hour;
-    timeReplacement =
-        DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:"));
-    print(timeReplacement);
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
   }
 
   @override
@@ -391,7 +391,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
 
       
 
-      print(formSerialize);
 
       Map<String, dynamic> requestHeadersX = requestHeaders;
 
@@ -427,9 +426,7 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
             //           listKategoriadd: ListKategoriEventAdd),
             //     ));
           }
-          print('response decoded $responseJson');
         } else {
-          print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Menambahkan Event, Silahkan Coba Kembali");
           setState(() {

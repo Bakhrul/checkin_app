@@ -51,7 +51,6 @@ class _ManajemenCreateEventAdminState extends State<ManajemenCreateEventAdmin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   void showAddModalAdmin() {
@@ -97,8 +96,8 @@ class _ManajemenCreateEventAdminState extends State<ManajemenCreateEventAdmin> {
                                     final bool isValid =
                                         EmailValidator.validate(emailValid);
 
-                                    print('Email is valid? ' +
-                                        (isValid ? 'yes' : 'no'));
+                                    // print('Email is valid? ' +
+                                    //     (isValid ? 'yes' : 'no'));
                                     if (_controllerAddadmin.text == null ||
                                         _controllerAddadmin.text == '') {
                                       setState(() {
@@ -164,19 +163,18 @@ class _ManajemenCreateEventAdminState extends State<ManajemenCreateEventAdmin> {
           Fluttertoast.showToast(msg: "Berhasil !");
         } else if (addadmineventJson['status'] == 'user tidak terdaftar') {
           Fluttertoast.showToast(
-              msg: "Email yang belum memiliki akun eventzhee!");
+              msg: "Email Yang Belum Memiliki Akun EventZhee!");
           setState(() {
             isCreate = false;
           });
         } else if (addadmineventJson['status'] == 'sudah terdaftar') {
           Fluttertoast.showToast(
-              msg: "Email tersebut sudah terdaftar pada admin anda !");
+              msg: "Email Tersebut Sudah Terdaftar Pada Admin Anda !");
           setState(() {
             isCreate = false;
           });
         }
       } else {
-        print(addadminevent.body);
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
         setState(() {
           isCreate = false;
@@ -325,7 +323,6 @@ class _ManajemenCreateEventAdminState extends State<ManajemenCreateEventAdmin> {
                                                     msg: "Berhasil !");
                                               }
                                             } else {
-                                              print(addadminevent.body);
                                               Fluttertoast.showToast(
                                                   msg:
                                                       "Gagal, Silahkan Coba Kembali");

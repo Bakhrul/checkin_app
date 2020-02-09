@@ -440,7 +440,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -933,11 +933,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   top: 10.0),
                                                           child: Text(
                                                             item.publish == 'Y'
-                                                                ? 'Event sudah dipublish'
+                                                                ? 'Event Sudah Dipublish'
                                                                 : item.publish ==
                                                                         'N'
-                                                                    ? 'Event belum dipublish'
-                                                                    : 'Status tidak diketahui',
+                                                                    ? 'Event Belum Dipublish'
+                                                                    : 'Status Tidak Diketahui',
                                                             style: TextStyle(
                                                               color: item.publish ==
                                                                       'Y'
@@ -1100,13 +1100,13 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                             value: PageEnum
                                                                 .kelolaWaktuCheckinPage,
                                                             child: Text(
-                                                                "Kelola Waktu Checkin"),
+                                                                "Kelola Waktu CheckIn"),
                                                           ),
                                                           PopupMenuItem(
                                                             value: PageEnum
                                                                 .kelolaCheckinPesertaPage,
                                                             child: Text(
-                                                                "Kelola Checkin Peserta"),
+                                                                "Kelola CheckIn Peserta"),
                                                           ),
                                                           PopupMenuItem(
                                                             value: PageEnum
@@ -1292,11 +1292,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                           top: 10.0),
                                                       child: Text(
                                                         item.publish == 'Y'
-                                                            ? 'Event sudah dipublish'
+                                                            ? 'Event Sudah Dipublish'
                                                             : item.publish ==
                                                                     'N'
-                                                                ? 'Event belum dipublish'
-                                                                : 'Status tidak diketahui',
+                                                                ? 'Event Belum Dipublish'
+                                                                : 'Status Tidak Diketahui',
                                                         style: TextStyle(
                                                           color: item.publish ==
                                                                   'Y'
@@ -1602,7 +1602,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
           listOngoingEvent();
           Fluttertoast.showToast(msg: "Berhasil");
         } else if (publishEventJson['status'] == 'tidak ada') {
-          Fluttertoast.showToast(msg: "Event tidak ditemukan");
+          Fluttertoast.showToast(msg: "Event Tidak Ditemukan");
           setState(() {
             isPublish = false;
           });

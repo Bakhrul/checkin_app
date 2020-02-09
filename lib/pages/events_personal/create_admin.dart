@@ -77,7 +77,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
+    
   }
 
   Future<List<List>> listUser() async {
@@ -126,9 +126,8 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
           isErrorfilter = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getUser.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -206,9 +205,8 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
           isError = false;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getUserFilter.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -297,7 +295,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -394,7 +392,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Pengguna Tidak ada / tidak ditemukan",
+                                              "Pengguna Tidak Ada / Tidak Ditemukan",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black45,
@@ -586,8 +584,6 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
     formSerialize['typeadmin'] = 'admin';
     formSerialize['admin'] = idAdmin;
 
-    print(formSerialize);
-
     Map<String, dynamic> requestHeadersX = requestHeaders;
 
     requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
@@ -619,9 +615,7 @@ class _ManajemeCreateAdminState extends State<ManajemeCreateAdmin> {
           });
           Navigator.pop(context);
         }
-        print('response decoded $responseJson');
       } else {
-        print('${response.body}');
         Fluttertoast.showToast(
             msg: "Gagal Menambahkan Admin, Silahkan Coba Kembali");
         setState(() {

@@ -55,7 +55,6 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   Future<List<ListKategoriEvent>> listKategoriEvent() async {
@@ -99,7 +98,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
         setState(() {
           isLoading = false;
@@ -163,7 +162,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -284,7 +283,6 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
         : widget.event.toString();
     formSerialize['kategori'] = idCategory;
 
-    print(formSerialize);
 
     Map<String, dynamic> requestHeadersX = requestHeaders;
 
@@ -317,9 +315,7 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
           });
           Navigator.pop(context);
         }
-        print('response decoded $responseJson');
       } else {
-        print('${response.body}');
         Fluttertoast.showToast(
             msg: "Gagal Menambahkan Kategori, Silahkan Coba Kembali");
         setState(() {

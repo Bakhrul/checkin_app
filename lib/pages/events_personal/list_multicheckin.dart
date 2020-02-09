@@ -66,7 +66,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listUser();
   }
 
@@ -101,7 +100,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
       if (resultCheckinParticipant.statusCode == 200) {
         var listuserJson = json.decode(resultCheckinParticipant.body);
-        print(listuserJson);
         listCheckinUser = [];
         for (var i in listuserJson) {
           LisMultiCheckinUser willcomex = LisMultiCheckinUser(
@@ -121,7 +119,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
         });
       } else if (resultCheckinParticipant.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
@@ -129,7 +127,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
           isErrorfilter = false;
         });
       } else {
-        print(resultCheckinParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -183,7 +180,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
       if (resultCheckinParticipant.statusCode == 200) {
         var listuserJson = json.decode(resultCheckinParticipant.body);
-        print(listuserJson);
         listCheckinUser = [];
         for (var i in listuserJson) {
           LisMultiCheckinUser willcomex = LisMultiCheckinUser(
@@ -203,7 +199,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
         });
       } else if (resultCheckinParticipant.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -211,7 +207,6 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
           isError = false;
         });
       } else {
-        print(resultCheckinParticipant.body);
         setState(() {
           isFilter = false;
           isErrorfilter = true;
@@ -300,7 +295,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -394,7 +389,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Peserta event tidak ada / tidak ditemukan",
+                                              "Peserta Event Tidak Ada / Tidak Ditemukan",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black45,
@@ -470,7 +465,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                                           index]
                                                                       .nama ==
                                                                   ''
-                                                          ? 'Peserta tidak diketahui'
+                                                          ? 'Peserta Tidak Diketahui'
                                                           : listCheckinUser[
                                                                   index]
                                                               .nama,
@@ -490,7 +485,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                                         index]
                                                                     .email ==
                                                                 ''
-                                                        ? 'Email tidak diketahui'
+                                                        ? 'Email Tidak Diketahui'
                                                         : listCheckinUser[index]
                                                             .email),
                                                   ),

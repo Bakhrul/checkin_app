@@ -157,13 +157,12 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
         });
       } else if (getOngoningMyEvent.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
         });
       } else {
-        print(getOngoningMyEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -233,7 +232,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -367,11 +366,11 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                           top: 10.0),
                                                       child: Text(
                                                         item.publish == 'Y'
-                                                            ? 'Event sudah dipublish'
+                                                            ? 'Event Sudah Dipublish'
                                                             : item.publish ==
                                                                     'N'
-                                                                ? 'Event belum dipublish'
-                                                                : 'Status tidak diketahui',
+                                                                ? 'Event Belum Dipublish'
+                                                                : 'Status Tidak Diketahui',
                                                         style: TextStyle(
                                                           color: item.publish ==
                                                                   'Y'
@@ -512,7 +511,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                   value: PageEnum
                                                                       .kelolaeditEventPage,
                                                                   child: Text(
-                                                                      "Edit data event"),
+                                                                      "Edit Data Event"),
                                                                 )
                                                           : null,
                                                       item.status == 'creator'
@@ -607,7 +606,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
           listOngoingEvent();
           Fluttertoast.showToast(msg: "Berhasil");
         } else if (publishEventJson['status'] == 'tidak ada') {
-          Fluttertoast.showToast(msg: "Event tidak ditemukan");
+          Fluttertoast.showToast(msg: "Event Tidak Ditemukan");
           setState(() {
             isPublish = false;
           });

@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       } else if (getToken.statusCode == 401) {
-        Fluttertoast.showToast(msg: "Username atau Password salah");
+        Fluttertoast.showToast(msg: "Username Atau Password Salah");
         setState(() {
           _isLoading = false;
         });
@@ -294,7 +294,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Alamat Email",
-          errorText: validateEmail ? "email tidak boleh kosong" : null,
+          errorText: validateEmail ? "Email Tidak Boleh Kosong" : null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(
@@ -320,7 +320,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Kata Sandi",
-          errorText: validatePassword ? "password tidak boleh kosong" : null,
+          errorText: validatePassword ? "Password Tidak Boleh Kosong" : null,
           hintStyle: TextStyle(
               fontWeight: FontWeight.w300, color: Colors.black, fontSize: 14),
           focusedBorder: OutlineInputBorder(

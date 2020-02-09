@@ -97,7 +97,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         });
       } else if (ongoingevent.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
@@ -201,7 +201,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         _getUserData();
       } else if (followevent.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoading = false;
           isError = true;
@@ -306,7 +306,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
         });
       } else if (followevent.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isFilter = false;
           isErrorfilter = true;

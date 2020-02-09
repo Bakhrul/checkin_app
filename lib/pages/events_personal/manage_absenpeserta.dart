@@ -52,7 +52,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listcheckin();
   }
 
@@ -89,7 +88,6 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
           jumlahpesertaX = jumlahpeserta;
           percentX = percent;
         });
-        print(listUsers);
         listuserscheckin = [];
         for (var i in listUsers) {
           ListCheckinUsers willcomex = ListCheckinUsers(
@@ -112,9 +110,8 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getAttendParticipant.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -174,7 +171,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,
@@ -329,7 +326,7 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 5.0),
                                   child: Text(
-                                    'Indikator Absensi Peserta Checkin',
+                                    'Indikator Absensi Peserta CheckIn',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),

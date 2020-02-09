@@ -52,7 +52,6 @@ class _ManajemenEditCategoryEventState
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
   Future<List<ListKategoriEvent>> listKategoriEvent() async {
@@ -96,10 +95,8 @@ class _ManajemenEditCategoryEventState
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getCategory.body);
-        print(getCategory.statusCode);
         setState(() {
           isLoading = false;
           isError = true;
@@ -162,7 +159,7 @@ class _ManajemenEditCategoryEventState
                         ),
                         child: Center(
                           child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black54,

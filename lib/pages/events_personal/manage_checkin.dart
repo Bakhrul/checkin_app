@@ -68,7 +68,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
     return listcheckin();
   }
 
@@ -85,7 +84,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
     setState(() {
       isLoading = true;
       this.appBarTitle = Text(
-        "Kelola Checkin Event $namaEventX",
+        "Kelola CheckIn Event $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -106,7 +105,6 @@ class _ManageCheckinState extends State<ManageCheckin> {
         setState(() {
           namaeventX = namaevent;
         });
-        print(listCheckins);
         listcheckinevent = [];
         for (var i in listCheckins) {
           ListCheckinEvent willcomex = ListCheckinEvent(
@@ -131,9 +129,8 @@ class _ManageCheckinState extends State<ManageCheckin> {
           isError = true;
         });
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
       } else {
-        print(getCheckinEvent.body);
         setState(() {
           isLoading = false;
           isError = true;
@@ -193,7 +190,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                           ),
                           child: Center(
                             child: Text(
-                              "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                              "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black54,
@@ -544,7 +541,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                   listcheckinevent[index]
                                                           .code ==
                                                       ''
-                                              ? 'Keyword checkin tidak diketahui '
+                                              ? 'Kata Kunci Checkin Tidak Diketahui '
                                               : '${listcheckinevent[index].name} ( ${listcheckinevent[index].code} )',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,

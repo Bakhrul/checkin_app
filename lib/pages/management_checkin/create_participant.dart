@@ -83,7 +83,7 @@ Future<void> getHeaderHTTP() async {
 
     if (response == "success") {
       Fluttertoast.showToast(
-          msg: "Success",
+          msg: "Berhasil ",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,

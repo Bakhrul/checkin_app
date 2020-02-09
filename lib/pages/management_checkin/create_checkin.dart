@@ -62,12 +62,14 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
   //           print(_dataString);
   // }
-  void timeSetToMinute(){
-    var timeNow     = DateTime.now();
-    var timeString  = timeNow.toString();
-    var minutes = timeNow.minute;
-    var hours = timeNow.hour;
-    timeReplacement = DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:")) ;
+  void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
   }
   postDataCheckin() async {
     _isLoading = true;
@@ -136,6 +138,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +149,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           color: Colors.white,
         ),
         title: new Text(
-          "Buat Checkin Sekarang",
+          "Buat CheckIn Sekarang",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,

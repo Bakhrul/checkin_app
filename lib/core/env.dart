@@ -1,6 +1,6 @@
-// String url = 'http://alamraya.club/api/';
+String url = 'https://eventzhee.alamraya.club/api/';
 // String url = 'http://192.168.100.14/bisniskita_myocin/api/';
-String url = 'http://192.168.100.11/alamraya/myocin/api/';
+// String url = 'http://192.168.100.3/alamraya/myocin/api/';
 
 //  String url = 'https://eventzhee.alamraya.club//api/';
 

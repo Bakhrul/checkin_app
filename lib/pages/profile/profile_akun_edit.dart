@@ -208,19 +208,19 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
     Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
     if (password == 'Y') {
       if (_controllerPasswordLama.text == '') {
-        Fluttertoast.showToast(msg: "Password lama tidak boleh kosong");
+        Fluttertoast.showToast(msg: "Password Lama Tidak Boleh Kosong");
         return false;
       } else if (_controllerPasswordBaru.text == '') {
-        Fluttertoast.showToast(msg: "Password baru tidak boleh kosong");
+        Fluttertoast.showToast(msg: "Password Baru Tidak Boleh Kosong");
         return false;
       } else if (_controllerConfirmPassword.text == '') {
         Fluttertoast.showToast(
-            msg: "Konfirmasi password baru tidak boleh kosong");
+            msg: "Konfirmasi Password Baru Tidak Boleh Kosong");
         return false;
       } else if (_controllerPasswordBaru.text !=
           _controllerConfirmPassword.text) {
         Fluttertoast.showToast(
-            msg: "Password baru dan konfirmasi password baru harus sama");
+            msg: "Password Baru Dan Konfirmasi Password Baru Harus Sama");
         return false;
       }
     }
@@ -252,17 +252,17 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
       if (data.statusCode == 200) {
         if (dataUserToJson['status'] == 'password baru tidak sama') {
           Fluttertoast.showToast(
-              msg: "Password baru dan konfirmasi password baru tidak sama");
+              msg: "Password Baru Dan Konfirmasi Password Baru Tidak Sama");
           setState(() {
             load = false;
           });
         } else if (dataUserToJson['status'] == 'password lama tidak sama') {
-          Fluttertoast.showToast(msg: "Password lama tidak sama");
+          Fluttertoast.showToast(msg: "Password Lama Tidak Sama");
           setState(() {
             load = false;
           });
         } else if (dataUserToJson['status'] == 'emailnotavailable') {
-          Fluttertoast.showToast(msg: "Email Sudah digunakan");
+          Fluttertoast.showToast(msg: "Email Sudah Digunakan");
           setState(() {
             load = false;
           });
@@ -297,7 +297,7 @@ class _ProfileUserEdit extends State<ProfileUserEdit> {
         setState(() {
           load = false;
         });
-        Fluttertoast.showToast(msg: "error: gagal update");
+        Fluttertoast.showToast(msg: "Error: Gagal Memperbarui");
       }
     } on TimeoutException catch (_) {
       setState(() {

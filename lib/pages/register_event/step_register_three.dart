@@ -182,7 +182,7 @@ class _WaitingEventState extends State<WaitingEvent> {
                 Container(
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 5.0),
-                    child: Text("Terima Kasih telah mendaftar event",
+                    child: Text("Terima Kasih Telah Mendaftar Event",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             height: 1.5,
@@ -192,7 +192,7 @@ class _WaitingEventState extends State<WaitingEvent> {
                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     margin: EdgeInsets.only(bottom: 30.0),
                     child: Text(
-                        "Pendaftaran sebagai peserta event yang anda kirimkan telah kami terima, tunggu verifikasi dari pembuat event terkait dengan pendaftaran anda.",
+                        "Pendaftaran Sebagai Peserta Event Yang Anda Kirimkan Telah Kami Terima, Tunggu Verifikasi Dari Pembuat Event Terkait Dengan Pendaftaran Anda.",
                         textAlign: TextAlign.center,
                         style: TextStyle(height: 1.5, fontSize: 17))),
                 Container(

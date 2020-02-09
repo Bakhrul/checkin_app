@@ -112,14 +112,13 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
         });
       } else if (eventList.statusCode == 401) {
         Fluttertoast.showToast(
-            msg: "Token telah kadaluwarsa, silahkan login kembali");
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
         setState(() {
           isLoadingCategory = false;
           isLoading = false;
           isError = true;
         });
       } else {
-        print(eventList.body);
         setState(() {
           isLoadingCategory = false;
           isLoading = false;
@@ -156,7 +155,6 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
       dynamic response =
           await RequestPost(name: "deletepeserta_event", body: body)
               .sendrequest();
-      print(response['status']);
       if (response['status'] == "success") {
         setState(() {
           _buttonUndo == false;
@@ -244,7 +242,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                                    "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black54,
@@ -302,7 +300,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
                                     EdgeInsets.only(left: 20.0, right: 20.0),
                                 margin: EdgeInsets.only(bottom: 30.0),
                                 child: Text(
-                                    "Pastikan datang tepat waktu jangan terlembat karena ada hal hal yang menarik untuk anda pada event tersebut",
+                                    "Pastikan Datang Tepat Waktu Jangan Terlembat Karena Ada Hal Hal Yang Menarik Untuk Anda Pada Event Tersebut",
                                     textAlign: TextAlign.center,
                                     style:
                                         TextStyle(height: 1.5, fontSize: 12))),

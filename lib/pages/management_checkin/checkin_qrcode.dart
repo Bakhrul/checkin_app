@@ -114,18 +114,16 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
             tidakadaCheckin = true;
           });
           Fluttertoast.showToast(
-              msg: "Checkin tidak ditemukan atau telah kadaluwarsa");
+              msg: "Checkin Tidak Ditemukan Atau Telah Kadaluwarsa");
         } else if (responseJson['status'] == 'sudahcheckin') {
           setState(() {
             isCheckin = false;
             sudahCheckin = true;
           });
           Fluttertoast.showToast(
-              msg: "Anda Sudah melakukan checkin pada sesi checkin tersebut");
+              msg: "Anda Sudah Melakukan Checkin Pada Sesi Checkin Tersebut");
         }
-        print('response decoded $responseJson');
       } else {
-        print('${response.body}');
         Fluttertoast.showToast(msg: "Gagal Melakukan Checkin, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;

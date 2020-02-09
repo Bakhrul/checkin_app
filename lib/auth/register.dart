@@ -220,7 +220,7 @@ class _Register extends State<Register> {
          _login();
         } else if (responseJson['status'] == 'emailnotavailable') {
           Fluttertoast.showToast(
-              msg: "Email telah digunakan, mohon gunakan email lainnya");
+              msg: "Email Telah Digunakan, Mohon Gunakan Email Lainnya");
           setState(() {
             isRegister = false;
           });

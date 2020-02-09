@@ -72,9 +72,9 @@ class _ConfirmEvent extends State<ConfirmEvent> {
           _isLoading = false;
         });
         if(datasToJson['status'] == 'emailsendiri'){
-          Fluttertoast.showToast(msg: 'Mohon gunakan menu daftar untuk diri sendiri');
+          Fluttertoast.showToast(msg: 'Mohon Gunakan Menu Daftar Untuk Diri Sendiri');
         }else if(datasToJson['status'] == 'emailsudahada'){
-           Fluttertoast.showToast(msg: 'Email Sudah digunakan, mohon gunakan email lainnya');
+           Fluttertoast.showToast(msg: 'Email Sudah Digunakan, Mohon Gunakan Email Lainnya');
         }else if(datasToJson['status'] == 'success'){
           String idUser = datasToJson['user_id'].toString();
         return Navigator.pushReplacement(
@@ -96,13 +96,11 @@ class _ConfirmEvent extends State<ConfirmEvent> {
         setState(() {
           _isLoading = false;
         });
-        print(ongoingevent.body);
       } else {
         Fluttertoast.showToast(msg: 'Gagal mendaftar');
         setState(() {
           _isLoading = false;
         });
-        print(ongoingevent.body);
       }
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(msg: 'Time out, silahkan coba lagi nanti');

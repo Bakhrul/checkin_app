@@ -84,10 +84,10 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                   id: widget.id, creatorId: widget.creatorId, selfEvent: false, userId: idUser, type: 'someone',dataUser: widget.dataUser,),
             ));
         }else if(datasToJson['status'] == 'emailsudahada'){
-          Fluttertoast.showToast(msg: 'Email Sudah digunakan, mohon gunakan email lainnya');
+          Fluttertoast.showToast(msg: 'Email Sudah Digunakan, Mohon Gunakan Email Lainnya');
 
         }else if(datasToJson['status'] == 'emailsendiri'){
-          Fluttertoast.showToast(msg: 'Mohon gunakan menu daftar untuk diri sendiri');
+          Fluttertoast.showToast(msg: 'Mohon Gunakan Menu Daftar Untuk Diri Sendiri');
         }
         
       } else if (ongoingevent.statusCode == 401) {
@@ -173,7 +173,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                                 left: 10,
                                                 right: 10),
                                             border: OutlineInputBorder(),
-                                            hintText: 'nama depan',
+                                            hintText: 'Nama Depan',
                                           ),
                                         ))
                                   ],
@@ -210,7 +210,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                                 left: 10,
                                                 right: 10),
                                             border: OutlineInputBorder(),
-                                            hintText: 'nama belakang',
+                                            hintText: 'Nama Belakang',
                                           ),
                                         ))
                                   ],
@@ -225,7 +225,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                             Container(
                                 margin: EdgeInsets.only(
                                     top: 5, bottom: 5, left: 15, right: 15),
-                                child: Text("Alamat Lenkap",
+                                child: Text("Alamat Lengkap",
                                     style: TextStyle(
                                       fontSize: 14,
                                     ))),
@@ -279,7 +279,7 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                             Container(
                                 margin: EdgeInsets.only(
                                     top: 5, bottom: 5, left: 15, right: 15),
-                                child: Text("No Telp",
+                                child: Text("No Telepon",
                                     style: TextStyle(
                                       fontSize: 14,
                                     ))),
@@ -330,33 +330,33 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
                                        String emailValid = emailController.text;
                                        final bool isValid = EmailValidator.validate(emailValid);
                                       if(firstNameController.text == '' || firstNameController.text == null){
-                                        Fluttertoast.showToast(msg: 'Nama depan tidak boleh kosong');
+                                        Fluttertoast.showToast(msg: 'Nama Depan Tidak Boleh Kosong');
                                         setState(() {
                                           _isLoading = false;
                                         });
                                       }else if(lastNameController.text == '' || lastNameController.text == null){
-                                        Fluttertoast.showToast(msg: 'Nama belakang tidak boleh kosong');
+                                        Fluttertoast.showToast(msg: 'Nama Belakang Tidak Boleh Kosong');
                                         setState(() {
                                           _isLoading = false;
                                         });
                                       }else if(addressController.text == '' || addressController.text == null){
-                                        Fluttertoast.showToast(msg: 'Alamat lengkap tidak boleh kosong');
+                                        Fluttertoast.showToast(msg: 'Alamat Lengkap Tidak Boleh Kosong');
                                         setState(() {
                                           _isLoading = false;
                                         });
                                       }else if(emailController.text == '' || emailController.text == null){
-                                        Fluttertoast.showToast(msg: 'Email tidak boleh kosong');
+                                        Fluttertoast.showToast(msg: 'Email Tidak Boleh Kosong');
                                         setState(() {
                                           _isLoading = false;
                                         });
                                       }else if(!isValid){
-                                        Fluttertoast.showToast(msg: 'Masukkan email yang valid');
+                                        Fluttertoast.showToast(msg: 'Masukkan Email Yang Valid');
                                         setState(() {
                                           _isLoading = false;
                                         });
                                       }
                                       else if(phoneController.text == '' || phoneController.text == null){
-                                        Fluttertoast.showToast(msg: 'No. Telp tidak boleh kosong');
+                                        Fluttertoast.showToast(msg: 'No. Telp Tidak Boleh Kosong');
                                         setState(() {
                                           _isLoading = false;
                                         });

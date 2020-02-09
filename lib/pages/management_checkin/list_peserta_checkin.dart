@@ -70,7 +70,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
           color: Colors.white,
         ),
         title: new Text(
-          "List User ",
+          "Daftar Peserta ",
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ),
@@ -99,7 +99,7 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
                           ),
                           child: Center(
                             child: Text(
-                              "Belum Ada Peserta yang Checkin",
+                              "Belum Ada Peserta Yang Checkin",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black45,

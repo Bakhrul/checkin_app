@@ -50,7 +50,7 @@ class _ManajemenCreateEventCheckinState
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
+    
   }
 
   void dispose() {

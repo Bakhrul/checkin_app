@@ -64,17 +64,16 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
   }
 
-  void timeSetToMinute() {
-    var timeNow = DateTime.now();
-    var timeString = timeNow.toString();
-    var minutes = timeNow.minute;
-    var hours = timeNow.hour;
-    timeReplacement =
-        DateTime.parse(timeString.replaceAll("$hours:$minutes:", "00:00:"));
-        print(timeReplacement);
+ void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
   }
 
   void dispose() {
@@ -91,7 +90,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           color: Colors.white,
         ),
         title: new Text(
-          "Buat Checkin Sekarang",
+          "Buat CheckIn Sekarang",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,
@@ -214,7 +213,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'KODE UNIK CHECKIN',
+                      hintText: 'Kata Kunci',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),
@@ -286,7 +285,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
     formSerialize['timeendcheckin'] = tanggalakhirCheckin;
     formSerialize['typecheckin'] = 'checkin';
 
-    print(formSerialize);
+    
 
     Map<String, dynamic> requestHeadersX = requestHeaders;
 
@@ -304,7 +303,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
 
       if (response.statusCode == 200) {
         dynamic responseJson = jsonDecode(response.body);
-        print(responseJson);
+        
         String idEventFromDB = responseJson['finalidevent'].toString();
         if (responseJson['status'] == 'success') {
           setState(() {
@@ -327,14 +326,14 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
           });
           Fluttertoast.showToast(
               msg:
-                  "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
+                  "Kode Unik Sudah Digunakan, Mohon Gunakan Kode Unik Yang Lain");
         } else if (responseJson['status'] == 'tanggalkurang') {
           setState(() {
             isCreate = false;
           });
           Fluttertoast.showToast(
               msg:
-                  "Waktu berlangsungnya checkin tersebut sudah ada, mohon gunakan lainnya");
+                  "Waktu Berlangsungnya Checkin Tersebut Sudah Ada, Mohon Gunakan Lainnya");
         }
       } else {
         print('${response.body}');
