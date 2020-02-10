@@ -962,10 +962,10 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                         child: Text("Menolak"),
                                                       )
                                                     : null,
-                                                PopupMenuItem(
-                                                  value: PageEnum.deletePesan,
-                                                  child: Text("Hapus Pesan"),
-                                                ),
+                                                // PopupMenuItem(
+                                                //   value: PageEnum.deletePesan,
+                                                //   child: Text("Hapus Pesan"),
+                                                // ),
                                               ],
                                             ),
                                             leading: Padding(

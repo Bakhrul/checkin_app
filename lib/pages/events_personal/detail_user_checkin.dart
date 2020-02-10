@@ -123,10 +123,6 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
     return null;
   }
 
-  Widget appBarTitle = Text(
-    "Detail Checkin Peserta",
-    style: TextStyle(fontSize: 16),
-  );
   Icon actionIcon = Icon(
     Icons.search,
     color: Colors.white,
@@ -218,7 +214,7 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              "Event Belum Memiliki Checkin Sama Sekali",
+                                              "Event Belum Memiliki CheckIn Sama Sekali",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black45,
@@ -306,7 +302,10 @@ class _DetailUserCheckinState extends State<DetailUserCheckin> {
   Widget buildBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: appBarTitle,
+      title: Text(
+    "Detail CheckIn Peserta ${widget.namaParticipant}",
+    style: TextStyle(fontSize: 16),
+  ),
       backgroundColor: primaryAppBarColor,
       actions: <Widget>[
       ],

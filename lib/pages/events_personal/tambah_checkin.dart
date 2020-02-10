@@ -23,8 +23,9 @@ Map<String, String> requestHeaders = Map();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 
 class ManajemenTambahCheckin extends StatefulWidget {
-  ManajemenTambahCheckin({Key key, this.title, this.event}) : super(key: key);
+  ManajemenTambahCheckin({Key key, this.title, this.event, this.namaEvent}) : super(key: key);
   final String title, event;
+  final String namaEvent;
   @override
   State<StatefulWidget> createState() {
     return _ManajemeTambahCheckinState();
@@ -134,7 +135,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManageCheckin(event: widget.event)));
+                    builder: (context) => ManageCheckin(event: widget.event, namaEvent: widget.namaEvent)));
           } else if (responseJson['status'] == 'keywordsudahdigunakan') {
             setState(() {
               isCreate = false;
@@ -184,7 +185,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           color: Colors.white,
         ),
         title: new Text(
-          "Buat Checkin Sekarang",
+          "Tambah Checkin Event ${widget.namaEvent}",
           style: TextStyle(
             color: Colors.white,
             fontSize: 14,

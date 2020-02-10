@@ -136,6 +136,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
         // return nota;
         var ongoingeventJson = json.decode(getOngoningMyEvent.body);
         var ongoingevents = ongoingeventJson['more_event'];
+        print(ongoingevents);
         listMoreMyEvent = [];
         for (var i in ongoingevents) {
           ListMoreMyEvent notax = ListMoreMyEvent(
@@ -148,6 +149,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
             fullday: i['ev_allday'],
             status: i['status'],
             publish: i['ev_ispublish'],
+            participant: i['peserta'].toString(),
+            admin: i['admin'].toString()
           );
           listMoreMyEvent.add(notax);
         }
@@ -519,14 +522,14 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                               value: PageEnum
                                                                   .kelolaadminPage,
                                                               child: Text(
-                                                                  "Kelola Admin / Co-Host"),
+                                                                  "Kelola Admin / Co-Host (${item.admin})"),
                                                             )
                                                           : null,
                                                       PopupMenuItem(
                                                         value: PageEnum
                                                             .kelolaPesertaPage,
                                                         child: Text(
-                                                            "Kelola Peserta"),
+                                                            "Kelola Peserta (${item.participant})"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum
@@ -544,7 +547,7 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                         value: PageEnum
                                                             .kelolaHasilAKhirPage,
                                                         child: Text(
-                                                            "Hasil Akhir Checkin Peserta"),
+                                                            "Hasil Akhir CheckIn Peserta"),
                                                       ),
                                                       PopupMenuItem(
                                                         value: PageEnum

@@ -19,9 +19,9 @@ String jumlahhadirX, jumlahtidakhadirX, jumlahpesertaX, percentX;
 List<ListCheckinUsers> listuserscheckin = [];
 
 class ManageAbsenPeserta extends StatefulWidget {
-  ManageAbsenPeserta({Key key, this.title, this.idevent, this.idcheckin})
+  ManageAbsenPeserta({Key key, this.title, this.idevent, this.namaCheckin, this.idcheckin})
       : super(key: key);
-  final String title, idevent, idcheckin;
+  final String title, idevent, idcheckin, namaCheckin;
   @override
   State<StatefulWidget> createState() {
     return _ManageAbsenPesertaState();
@@ -426,7 +426,10 @@ class _ManageAbsenPesertaState extends State<ManageAbsenPeserta> {
   Widget buildBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: appBarTitle,
+      title: Text(
+    "Detail Peserta CheckIn ${widget.namaCheckin}",
+    style: TextStyle(fontSize: 14),
+  ),
       backgroundColor: primaryAppBarColor,
       actions: <Widget>[
       ],
