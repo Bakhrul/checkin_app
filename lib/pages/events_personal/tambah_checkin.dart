@@ -34,6 +34,7 @@ class ManajemenTambahCheckin extends StatefulWidget {
 
 class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  DateTime timeReplacement;
   @override
   void initState() {
     firstdate = FocusNode();
@@ -43,10 +44,20 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
     getHeaderHTTP();
+    timeSetToMinute();
     _tanggalakhir = 'kosong';
     super.initState();
   }
 
+ void timeSetToMinute() {
+    var time = DateTime.now();
+    var newHour = 0;
+    var newMinute = 0;
+    var newSecond = 0;
+    time = time.toLocal();
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
+       
+  }
 
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
@@ -63,6 +74,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
   }
 
   void dispose() {
+    timeSetToMinute();
     super.dispose();
   }
 
@@ -75,7 +87,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
       });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
-      Fluttertoast.showToast(msg: "Kode Unik Checkin Tidak Boleh Kosong");
+      Fluttertoast.showToast(msg: "Kata Kunci Checkin Tidak Boleh Kosong");
       setState(() {
         isCreate = false;
       });
@@ -247,7 +259,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                     if (date != null) {
                       final time = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+                        initialTime: TimeOfDay.fromDateTime(timeReplacement),
                       );
                       return DateTimeField.combine(date, time);
                     } else {
@@ -287,7 +299,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                             final time = await showTimePicker(
                               context: context,
                               initialTime:
-                                  TimeOfDay.fromDateTime(DateTime.now()),
+                                  TimeOfDay.fromDateTime(timeReplacement),
                             );
                             return DateTimeField.combine(date, time);
                           } else {
@@ -311,7 +323,7 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
                   controller: _kodecheckinController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'KODE UNIK CHECKIN',
+                      hintText: 'Kata Kunci',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
                 ),
               )),

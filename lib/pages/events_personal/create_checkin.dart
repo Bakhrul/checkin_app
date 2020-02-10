@@ -77,6 +77,7 @@ class _ManajemeCreateCheckinState extends State<ManajemeCreateCheckin> {
   }
 
   void dispose() {
+    timeSetToMinute();
     super.dispose();
   }
 

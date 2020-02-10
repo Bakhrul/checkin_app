@@ -55,6 +55,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
   void initState() {
     super.initState();
     getHeaderHTTP();
+    timeSetToMinute();
     isEdit = false;
     isUpdate = false;
     gambarX = null;
@@ -87,6 +88,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
        
   }
+
   Future<void> getHeaderHTTP() async {
     var storage = new DataStore();
 
@@ -182,6 +184,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
   void dispose() {
     _tabController.removeListener(_handleTabIndex);
     _tabController.dispose();
+    timeSetToMinute();
     super.dispose();
   }
 
