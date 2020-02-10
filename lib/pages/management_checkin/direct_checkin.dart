@@ -37,7 +37,9 @@ class Dependencies {
 // =======
 class DirectCheckin extends StatefulWidget {
   final idevent;
-  DirectCheckin({Key key,this.idevent});
+  final idcheckin;
+  final keyword;
+  DirectCheckin({Key key,this.idevent,this.idcheckin,this.keyword});
 
   @override
   _DirectCheckinState createState() => _DirectCheckinState();
@@ -75,23 +77,11 @@ void rightButtonPressed() {
 
   // ========
   GlobalKey globalKey = new GlobalKey();
-  bool _isLoading,_isChange = false;
-  String _dataString;
+  bool _isLoading,_isChange,isBack = false;
   String _inputErrorText;
-  String eventName,eventId,checkinId ;
+  String eventName,eventId;
 final TextEditingController _controllerGenerate = TextEditingController();
 
-   randomNumberGenerator() {
-    var rnd = new math.Random();
-    var next = rnd.nextDouble() * 10000;
-    while (next < 1000) {
-      next *= 10;
-    }
-      setState(() {
-  _isLoading = true;  
-  });
-    return _dataString = next.toInt().toString();
-  }
 
 updateDateCheckin() async {  
   // await new Future.delayed(const Duration(seconds: 2));
@@ -99,7 +89,7 @@ updateDateCheckin() async {
       "event_id": widget.idevent.toString(),
       // "checkin_keyword": checkinId.toString(),
       "types": "D",
-      "chekin_id": checkinId.toString(),
+      "chekin_id": widget.idcheckin.toString(),
     };
 
     dynamic response =
@@ -117,7 +107,7 @@ updateDateCheckin() async {
           fontSize: 16.0);
           //  dependencies.stopwatch.isRunning = false;
         setState(() {
-          
+          isBack = true;
           _isChange = true;
           dependencies.stopwatch.stop();
           //  _b = false;
@@ -140,56 +130,14 @@ updateDateCheckin() async {
     });
   }
 
-postDataCheckin() async {  
-  await new Future.delayed(const Duration(seconds: 2));
-    dynamic body = {
-      "event_id": widget.idevent.toString(),
-      "checkin_keyword": _controllerGenerate.text.toString(),
-      "types": "D",
-      "chekin_id": _dataString,
-    };
-
-    dynamic response =
-        await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
-            .sendrequest();
-    if (response != "gagal") {
-      Fluttertoast.showToast(
-          msg: "Sukses",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-        setState(() {
-          checkinId = response['checkin'].toString();
-          eventName = response['event'];
-          eventId   = widget.idevent.toString();
-          _isChange = true;
-          dependencies.stopwatch.start();
-          // rightButtonPressed();
-            
-          });
-      // Navigator.pushReplacement(context,
-      // MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
-    }else{
-       Fluttertoast.showToast(
-          msg: "Terjadi Kesalahan, Coba Lagi...",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
-    setState(() {
-      _isLoading = false;
-    });
-  }
   
   @override
   void initState() {
     super.initState();
+    isBack = false;
+    _isChange = true;
+    eventId = widget.idevent;
+    dependencies.stopwatch.start();
     _controller = AnimationController(vsync: this);
   }
 
@@ -203,76 +151,67 @@ postDataCheckin() async {
   Widget build(BuildContext context) {
     final bodyHeight = MediaQuery.of(context).size.height -
     MediaQuery.of(context).viewInsets.bottom;
-   return Scaffold(
-      backgroundColor: Colors.white,
-      // key: _scaffoldKeycreatecheckin,
-      appBar: new AppBar(
-        backgroundColor: primaryAppBarColor,
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Buat Checkin Sekarang",
-          style: TextStyle(
+   return WillPopScope(
+     onWillPop: () async => isBack,
+     child: Scaffold(
+        backgroundColor: Colors.white,
+        // key: _scaffoldKeycreatecheckin,
+        appBar: new AppBar(
+          backgroundColor: primaryAppBarColor,
+          iconTheme: IconThemeData(
             color: Colors.white,
-            fontSize: 14,
+          ),
+          title: new Text(
+            "Buat Checkin Sekarang",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Card(
-                  child: ListTile(
-                leading: Icon(
-                  Icons.create,
-                  color: Color.fromRGBO(41, 30, 47, 1),
-                ),
-                title: TextField(
-                  controller: _controllerGenerate,
-                  decoration: InputDecoration(
-                      hintText: 'Kata Kunci',
-                      errorText: _inputErrorText,
-                      hintStyle: TextStyle(fontSize: 13, color: Colors.black)),
-                ),
-              )),
-              Container(
-                padding: EdgeInsets.all(20.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: _builderGenerateDirect(bodyHeight),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Card(
+                    child: ListTile(
+                  leading: Icon(
+                    Icons.create,
+                    color: Color.fromRGBO(41, 30, 47, 1),
+                  ),
+                  title: Text(widget.keyword)
+                )),
+                Container(
+                  padding: EdgeInsets.all(20.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          child: _builderGenerateDirect(bodyHeight),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
+      
       ),
-    
-    );
+   );
   }
 
    Widget _builderGenerateDirect(bodyHeight) {
-     if(_isLoading == true){
-       return Center(
-         child: CircularProgressIndicator(),
-       );
-     }
-    if ( checkinId != null && _isChange == true) {
-      return Column(
+       return Column(
         children: <Widget>[
           Container(
             child: RepaintBoundary(
                 key: globalKey,
                 child: QrImage(
-                  data: checkinId,
+                  data: widget.idcheckin,
                   size: 0.5 * bodyHeight,
                 ),
               ),
@@ -304,7 +243,7 @@ postDataCheckin() async {
                   Container(
                     width: double.infinity,
                     child: FlatButton(
-                      child: Text("Kembali"), onPressed: () { 
+                      child: Text("Kembali"), onPressed: isBack != true ? null : ()  { 
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
                       },),)
               ],
@@ -312,28 +251,7 @@ postDataCheckin() async {
           ),
         ],
       );
-    } else {
-      return RepaintBoundary(
-          child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 3,
-              child: FlatButton(
-              color: Colors.green,
-              textColor: Colors.white,
-              disabledColor: Colors.grey,
-              disabledTextColor: Colors.black,
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                randomNumberGenerator();
-                postDataCheckin();
-                
-              },
-                child: Text("Mulai"),
-          ))
-        ],
-      ));
-    }
+    
   }
 
   _saveScreen() async {
