@@ -432,12 +432,6 @@ class _ManajemeCreateEventState extends State<ManajemeCreateEvent>
                     builder: (context) => category.ManajemenCreateEventCategory(
                           event: idEventFinalX,
                         )));
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => ManajemenCreateCategory(
-            //           listKategoriadd: ListKategoriEventAdd),
-            //     ));
           }
         } else {
           Fluttertoast.showToast(

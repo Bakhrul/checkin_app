@@ -70,8 +70,6 @@ class _DetailCheckinState extends State<DetailCheckin>
     colors: <Color>[Color(0xFF6200EA), Color(0xDD000000)],
   ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
 
-  List<Color> _colors = [Colors.deepOrange, Colors.yellow];
-  List<double> _stops = [0.0, 0.7];
   GlobalKey globalKey = new GlobalKey();
   @override
   void initState() {
@@ -294,7 +292,6 @@ class _DetailCheckinState extends State<DetailCheckin>
           .checkPermissionStatus(PermissionGroup.contacts);
 
       if (permission != PermissionStatus.denied) {
-        Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler()
                 .requestPermissions([PermissionGroup.storage]);
 

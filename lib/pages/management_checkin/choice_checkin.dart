@@ -15,7 +15,6 @@ class ChoiceCheckin extends StatefulWidget {
 
 class _ChoiceCheckinState extends State<ChoiceCheckin>
     with SingleTickerProviderStateMixin {
-  TextEditingController _searchNameController = new TextEditingController();
   AnimationController _controller;
   List _types = ["CheckIn Reguler", "CheckIn Langsung"];
 
@@ -24,7 +23,6 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
   String _currentType;
   String tokenType, accessToken;
   Map<String, String> requestHeaders = Map();
-  String _currentSearch;
 
   @override
   void initState() {
@@ -50,8 +48,6 @@ class _ChoiceCheckinState extends State<ChoiceCheckin>
 
   @override
   Widget build(BuildContext context) {
-    final bodyHeight = MediaQuery.of(context).size.height -
-        MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(

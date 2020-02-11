@@ -32,13 +32,14 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
   int manyPage = 0;
   List _users = [];
   bool _isLoading = false;
-  bool _isDisconnect = false;
+  bool isDisconnect;
   Map<String, String> requestHeaders = {};
 
   @override
   initState(){
     headers();
     print("j");
+    isDisconnect = false;
     super.initState();
   }
 
@@ -109,7 +110,7 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
       _isLoading = true;
       delay = false;
       page = 1;
-      _isDisconnect = false;
+      isDisconnect = false;
     });
 
     Map<String, dynamic> body = {
@@ -148,13 +149,13 @@ class _GuestNotRegistered extends State<GuestNotRegistered>{
     } on TimeoutException catch (_) {
       setState(() {
         _isLoading = false;
-        _isDisconnect = true;
+        isDisconnect = true;
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } on SocketException catch (_) {
       setState(() {
         _isLoading = false;
-        _isDisconnect = true;
+        isDisconnect = true;
       });
       Fluttertoast.showToast(msg: "No Internet Connection");
     } catch (e) {

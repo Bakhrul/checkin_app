@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:checkin_app/core/api.dart';
-import 'package:checkin_app/pages/management_checkin/create_checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -232,6 +231,7 @@ postDataCheckin() async {
                 ),
                 title: TextField(
                   controller: _controllerGenerate,
+                  enabled: false,
                   decoration: InputDecoration(
                       hintText: 'Kata Kunci',
                       errorText: _inputErrorText,
@@ -342,8 +342,8 @@ postDataCheckin() async {
       PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
 
       if(permission != PermissionStatus.denied){
-         
-          Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+        
+          await PermissionHandler().requestPermissions([PermissionGroup.storage]);
       
           RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
           

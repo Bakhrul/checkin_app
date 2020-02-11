@@ -18,23 +18,22 @@ class GenerateScreen extends StatefulWidget {
   final idEvent;
   final codeQr;
   final eventName;
-  String checkinKeyword;
+  final String checkinKeyword;
   
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
 }
 
 class GenerateScreenState extends State<GenerateScreen> {
-  String _codeQr;
+  String codeQr;
   bool isLoading,isError = false;
-  String _eventName,_checkinId;
+  
    
   GlobalKey globalKey = new GlobalKey();
   @override
   void setState(fn) {
-    // TODO: implement setState
     super.setState(fn);
-    _codeQr = widget.codeQr;
+    codeQr = widget.codeQr;
   }
 
 
@@ -44,7 +43,6 @@ class GenerateScreenState extends State<GenerateScreen> {
     super.initState();
   }
 
-  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +139,6 @@ class GenerateScreenState extends State<GenerateScreen> {
           .checkPermissionStatus(PermissionGroup.contacts);
 
       if (permission != PermissionStatus.denied) {
-        Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler()
                 .requestPermissions([PermissionGroup.storage]);
 

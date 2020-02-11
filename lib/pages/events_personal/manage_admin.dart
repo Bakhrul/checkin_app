@@ -777,8 +777,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                                                                         .delete,
                                                                   ),
                                                                   onPressed:
-                                                                      isDelete ==
-                                                                              true
+                                                                      isDelete == true || isCreate == true
                                                                           ? null
                                                                           : () async {
                                                                               showDialog(
@@ -863,15 +862,10 @@ class _ManageAdminState extends State<ManageAdmin> {
             : DraggableFab(
                 child: FloatingActionButton(
                     shape: StadiumBorder(),
-                    onPressed: isCreate == true
+                    onPressed: isDelete == true || isCreate == true
                         ? null
-                        : () async {
-                            showAddModalAdmin();
-                            //    Navigator.push(
-                            // context,
-                            // MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         ManajemenTambahAdmin(event: widget.event)));
+                        : () async {           
+                           showAddModalAdmin();             
                           },
                     backgroundColor: primaryButtonColor,
                     child: Icon(
@@ -896,7 +890,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                   : Colors.white,
               child: IconButton(
                 icon: actionIcon,
-                onPressed: () {
+                onPressed: isDelete == true || isCreate == true ? null : () {
                   setState(() {
                     if (this.actionIcon.icon == Icons.search) {
                       actionBackAppBar = false;

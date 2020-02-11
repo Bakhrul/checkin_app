@@ -23,10 +23,15 @@ final _debouncer = Debouncer(milliseconds: 500);
 List<ListPesertaEvent> listpesertaevent = [];
 TextEditingController _pesanController = TextEditingController();
 TextEditingController _controllerAddpeserta = TextEditingController();
+TextEditingController _pesanPribadiController = TextEditingController();
 bool actionBackAppBar, iconButtonAppbarColor, isSendingMessage;
 bool isLoading, isError, isFilter, isErrorfilter, isDelete, isDenied, isAccept;
 Map<String, String> requestHeaders = Map();
 String namaEventX;
+enum PageEnum {
+  kirimPesanPribadi,
+  deletePeserta,
+}
 
 class ManagePeserta extends StatefulWidget {
   ManagePeserta(
@@ -68,6 +73,8 @@ class _ManagePesertaState extends State<ManagePeserta> {
     isDelete = false;
     isDenied = false;
     isAccept = false;
+    _pesanPribadiController.text = '';
+    _pesanController.text = '';
     namaEventX = widget.namaEvent;
     jumlahPesertaActive = '0';
     actionBackAppBar = true;
@@ -138,14 +145,73 @@ class _ManagePesertaState extends State<ManagePeserta> {
     }
   }
 
+  void _kirimPesanPersonal(event, peserta, namapeserta) async {
+    if (_pesanPribadiController.text == null ||
+        _pesanPribadiController.text == '') {
+      Fluttertoast.showToast(msg: "Silahkan Isi Pesan Terlebih Dahulu");
+    } else {
+      setState(() {
+        isSendingMessage = true;
+      });
+      try {
+        Navigator.pop(context);
+        Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+        final sendMessagePesertaEvent = await http.post(
+            url('api/sendpersonalmessage'),
+            headers: requestHeaders,
+            body: {
+              'event': event,
+              'pesan': _pesanPribadiController.text,
+              'user': peserta,
+            });
+
+        if (sendMessagePesertaEvent.statusCode == 200) {
+          var sendMessagePesertaEventJson =
+              json.decode(sendMessagePesertaEvent.body);
+          if (sendMessagePesertaEventJson['status'] == 'success') {
+            Fluttertoast.showToast(
+                msg: "Berhasil Mengirimkan Pesan Ke $namapeserta");
+            setState(() {
+              isSendingMessage = false;
+              _pesanPribadiController.text = '';
+            });
+          }
+        } else {
+          setState(() {
+            isSendingMessage = false;
+            _pesanPribadiController.text = '';
+          });
+          Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+        }
+      } on TimeoutException catch (_) {
+        setState(() {
+          isSendingMessage = false;
+          _pesanPribadiController.text = '';
+        });
+        Fluttertoast.showToast(msg: "Timed out, Try again");
+      } catch (e) {
+        setState(() {
+          isSendingMessage = false;
+          _pesanPribadiController.text = '';
+        });
+        Fluttertoast.showToast(msg: "${e.toString()}");
+        print(e);
+      }
+    }
+  }
+
   void _showModalSendingMessage(event) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
         builder: (builder) {
           return Container(
-            margin: EdgeInsets.only(top: 40.0),
-            padding: EdgeInsets.all(15.0),
+            height: 250.0 + MediaQuery.of(context).viewInsets.bottom,
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                right: 15.0,
+                left: 15.0,
+                top: 15.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,6 +241,73 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                 ? null
                                 : () async {
                                     _kirimPesanPeserta(event);
+                                  },
+                            color: primaryAppBarColor,
+                            textColor: Colors.white,
+                            disabledColor: Color.fromRGBO(254, 86, 14, 0.7),
+                            disabledTextColor: Colors.white,
+                            splashColor: Colors.blueAccent,
+                            child: isSendingMessage == true
+                                ? Container(
+                                    height: 25.0,
+                                    width: 25.0,
+                                    child: CircularProgressIndicator(
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                Colors.white)))
+                                : Text("Kirim Pesan Sekarang",
+                                    style: TextStyle(color: Colors.white)))))
+              ],
+            ),
+          );
+        });
+  }
+
+  void _showModalSendingMessagePersonal(event, peserta, namapeserta) {
+    setState(() {
+      _pesanPribadiController.text = '';
+    });
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (builder) {
+          return Container(
+            height: 250.0 + MediaQuery.of(context).viewInsets.bottom,
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                right: 15.0,
+                left: 15.0,
+                top: 15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    child: Text('Kirim Pesan Ke $namapeserta',
+                        style: TextStyle(color: Colors.black54))),
+                Container(
+                    margin: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                    child: TextField(
+                      maxLines: 5,
+                      controller: _pesanPribadiController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(
+                            top: 5, bottom: 5, left: 10, right: 10),
+                        border: OutlineInputBorder(),
+                        hintText: 'Masukkan Pesan Disini',
+                        hintStyle: TextStyle(fontSize: 12),
+                      ),
+                    )),
+                Center(
+                    child: Container(
+                        width: double.infinity,
+                        height: 45.0,
+                        child: RaisedButton(
+                            onPressed: isSendingMessage == true
+                                ? null
+                                : () async {
+                                    _kirimPesanPersonal(
+                                        event, peserta, namapeserta);
                                   },
                             color: primaryAppBarColor,
                             textColor: Colors.white,
@@ -713,7 +846,10 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                 listpesertaevent.length == 0
                                     ? Container()
                                     : Container(
-                                        margin: EdgeInsets.only(right:5.0,left: 5.0,bottom:10.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0,
+                                            left: 5.0,
+                                            bottom: 10.0),
                                         padding: EdgeInsets.only(
                                             top: 15.0, bottom: 15.0),
                                         decoration: BoxDecoration(
@@ -729,8 +865,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                             Expanded(
                                                 child: Text(
                                                     'Jumlah Peserta Terdaftar',
-                                                    style: TextStyle(
-                                                        ))),
+                                                    style: TextStyle())),
                                             Expanded(
                                                 child: Text(
                                               '$jumlahPesertaActive Peserta',
@@ -785,23 +920,28 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                   DateFormat('dd-MM-y HH:mm:ss')
                                                       .format(waktuditerima);
                                               return InkWell(
-                                                  onTap: () async {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) => DetailUserCheckin(
-                                                              idUser:
-                                                                  listpesertaevent[
-                                                                          index]
-                                                                      .idpeserta,
-                                                              idevent:
-                                                                  widget.event,
-                                                              namaParticipant:
-                                                                  listpesertaevent[
-                                                                          index]
-                                                                      .nama),
-                                                        ));
-                                                  },
+                                                  onTap: isDelete == true ||
+                                                          isDenied == true ||
+                                                          isAccept == true ||
+                                                          isCreate == true ||
+                                                          isSendingMessage ==
+                                                              true
+                                                      ? null
+                                                      : () async {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => DetailUserCheckin(
+                                                                    idUser: listpesertaevent[
+                                                                            index]
+                                                                        .idpeserta,
+                                                                    idevent: widget
+                                                                        .event,
+                                                                    namaParticipant:
+                                                                        listpesertaevent[index]
+                                                                            .nama),
+                                                              ));
+                                                        },
                                                   child: Card(
                                                       child: ListTile(
                                                     leading: Container(
@@ -960,7 +1100,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                               Icon(
                                                                             Icons.close,
                                                                           ),
-                                                                          onPressed: isDelete || isAccept || isDenied == true
+                                                                          onPressed: isDelete == true || isDenied == true || isAccept == true || isCreate == true || isSendingMessage == true
                                                                               ? null
                                                                               : () async {
                                                                                   showDialog(
@@ -1034,101 +1174,108 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                 : widget.eventEnd ==
                                                                         true
                                                                     ? Container()
-                                                                    : ButtonTheme(
-                                                                        minWidth:
-                                                                            0.0,
-                                                                        child:
-                                                                            FlatButton(
-                                                                          color:
-                                                                              Colors.white,
-                                                                          textColor:
-                                                                              Colors.red,
-                                                                          disabledColor:
-                                                                              Colors.white,
-                                                                          disabledTextColor:
-                                                                              Colors.red[400],
-                                                                          padding:
-                                                                              EdgeInsets.all(0.0),
-                                                                          splashColor:
-                                                                              Colors.blueAccent,
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.delete,
-                                                                          ),
-                                                                          onPressed: isDelete || isAccept || isDenied == true
-                                                                              ? null
-                                                                              : () async {
-                                                                                  showDialog(
-                                                                                    context: context,
-                                                                                    builder: (BuildContext context) => AlertDialog(
-                                                                                      title: Text('Peringatan!'),
-                                                                                      content: Text('Apakah Anda Ingin Menghapus Secara Permanen?'),
-                                                                                      actions: <Widget>[
-                                                                                        FlatButton(
-                                                                                          child: Text('Tidak'),
-                                                                                          onPressed: () {
-                                                                                            Navigator.pop(context);
-                                                                                          },
-                                                                                        ),
-                                                                                        FlatButton(
-                                                                                          textColor: Colors.green,
-                                                                                          child: Text('Ya'),
-                                                                                          onPressed: () async {
-                                                                                            setState(() {
-                                                                                              isDelete = true;
-                                                                                            });
-                                                                                            Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                                                                                            Navigator.pop(context);
-                                                                                            try {
-                                                                                              final deletePesertaEvent = await http.post(url('api/deletepeserta_event'), headers: requestHeaders, body: {
-                                                                                                'peserta': listpesertaevent[index].idpeserta,
-                                                                                                'event': listpesertaevent[index].idevent
+                                                                    : PopupMenuButton<
+                                                                        PageEnum>(
+                                                                        onSelected:
+                                                                            (PageEnum
+                                                                                value) {
+                                                                          switch (
+                                                                              value) {
+                                                                            case PageEnum.kirimPesanPribadi:
+                                                                              _showModalSendingMessagePersonal(listpesertaevent[index].idevent, listpesertaevent[index].idpeserta, listpesertaevent[index].nama);
+                                                                              break;
+                                                                            case PageEnum.deletePeserta:
+                                                                              showDialog(
+                                                                                  context: context,
+                                                                                  builder: (BuildContext context) => AlertDialog(
+                                                                                        title: Text('Peringatan!'),
+                                                                                        content: Text('Apakah Anda Ingin Menghapus Secara Permanen?'),
+                                                                                        actions: <Widget>[
+                                                                                          FlatButton(
+                                                                                            child: Text('Tidak'),
+                                                                                            onPressed: () {
+                                                                                              Navigator.pop(context);
+                                                                                            },
+                                                                                          ),
+                                                                                          FlatButton(
+                                                                                            textColor: Colors.green,
+                                                                                            child: Text('Ya'),
+                                                                                            onPressed: () async {
+                                                                                              setState(() {
+                                                                                                isDelete = true;
                                                                                               });
-                                                                                              print(deletePesertaEvent);
-                                                                                              if (deletePesertaEvent.statusCode == 200) {
-                                                                                                var deletePesertaEventJson = json.decode(deletePesertaEvent.body);
-                                                                                                if (deletePesertaEventJson['status'] == 'success') {
-                                                                                                  Fluttertoast.showToast(msg: "Berhasil");
+                                                                                              Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+                                                                                              Navigator.pop(context);
+                                                                                              try {
+                                                                                                final deletePesertaEvent = await http.post(url('api/deletepeserta_event'), headers: requestHeaders, body: {
+                                                                                                  'peserta': listpesertaevent[index].idpeserta,
+                                                                                                  'event': listpesertaevent[index].idevent
+                                                                                                });
+                                                                                                print(deletePesertaEvent);
+                                                                                                if (deletePesertaEvent.statusCode == 200) {
+                                                                                                  var deletePesertaEventJson = json.decode(deletePesertaEvent.body);
+                                                                                                  if (deletePesertaEventJson['status'] == 'success') {
+                                                                                                    Fluttertoast.showToast(msg: "Berhasil");
 
-                                                                                                 
-
-                                                                                                  setState(() {
-                                                                                                    isDelete = false;
-                                                                                                    jumlahPesertaActive =  deletePesertaEventJson['countPesertaActive'].toString();
-                                                                                                  });
-                                                                                                  setState(() {
-                                                                                                    listpesertaevent.remove(listpesertaevent[index]);
-                                                                                                  });
-                                                                                                } else if (deletePesertaEventJson['status'] == 'error') {
+                                                                                                    setState(() {
+                                                                                                      isDelete = false;
+                                                                                                      jumlahPesertaActive = deletePesertaEventJson['countPesertaActive'].toString();
+                                                                                                    });
+                                                                                                    setState(() {
+                                                                                                      listpesertaevent.remove(listpesertaevent[index]);
+                                                                                                    });
+                                                                                                  } else if (deletePesertaEventJson['status'] == 'error') {
+                                                                                                    Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                                    setState(() {
+                                                                                                      isDelete = false;
+                                                                                                    });
+                                                                                                  }
+                                                                                                } else {
                                                                                                   Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
                                                                                                   setState(() {
                                                                                                     isDelete = false;
                                                                                                   });
                                                                                                 }
-                                                                                              } else {
-                                                                                                Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                              } on TimeoutException catch (_) {
+                                                                                                Fluttertoast.showToast(msg: "Timed out, Try again");
                                                                                                 setState(() {
                                                                                                   isDelete = false;
                                                                                                 });
+                                                                                              } catch (e) {
+                                                                                                setState(() {
+                                                                                                  isDelete = false;
+                                                                                                });
+                                                                                                print(e);
                                                                                               }
-                                                                                            } on TimeoutException catch (_) {
-                                                                                              Fluttertoast.showToast(msg: "Timed out, Try again");
-                                                                                              setState(() {
-                                                                                                isDelete = false;
-                                                                                              });
-                                                                                            } catch (e) {
-                                                                                              setState(() {
-                                                                                                isDelete = false;
-                                                                                              });
-                                                                                              print(e);
-                                                                                            }
-                                                                                          },
-                                                                                        )
-                                                                                      ],
-                                                                                    ),
-                                                                                  );
-                                                                                },
-                                                                        )),
+                                                                                            },
+                                                                                          )
+                                                                                        ],
+                                                                                      ));
+                                                                              break;
+
+                                                                            default:
+                                                                              break;
+                                                                          }
+                                                                        },
+                                                                        icon: Icon(
+                                                                            Icons.more_vert),
+                                                                        itemBuilder: (context) => isDelete == true ||
+                                                                                isDenied == true ||
+                                                                                isAccept == true ||
+                                                                                isCreate == true ||
+                                                                                isSendingMessage == true
+                                                                            ? null
+                                                                            : [
+                                                                                PopupMenuItem(
+                                                                                  value: PageEnum.kirimPesanPribadi,
+                                                                                  child: Text("Kirim Pesan Pribadi"),
+                                                                                ),
+                                                                                PopupMenuItem(
+                                                                                  value: PageEnum.deletePeserta,
+                                                                                  child: Text("Hapus Peserta"),
+                                                                                ),
+                                                                              ],
+                                                                      ),
                                                         listpesertaevent[index]
                                                                     .status ==
                                                                 'B'
@@ -1161,7 +1308,7 @@ class _ManagePesertaState extends State<ManagePeserta> {
                                                                               Icon(
                                                                             Icons.check,
                                                                           ),
-                                                                          onPressed: isDelete || isAccept || isDenied == true
+                                                                          onPressed: isDelete == true || isDenied == true || isAccept == true || isCreate == true || isSendingMessage == true
                                                                               ? null
                                                                               : () async {
                                                                                   showDialog(
@@ -1251,9 +1398,15 @@ class _ManagePesertaState extends State<ManagePeserta> {
             : DraggableFab(
                 child: FloatingActionButton(
                     shape: StadiumBorder(),
-                    onPressed: () async {
-                      showAddModalPeserta();
-                    },
+                    onPressed: isDelete == true ||
+                            isDenied == true ||
+                            isAccept == true ||
+                            isCreate == true ||
+                            isSendingMessage == true
+                        ? null
+                        : () async {
+                            showAddModalPeserta();
+                          },
                     backgroundColor: primaryButtonColor,
                     child: Icon(
                       Icons.add,
@@ -1277,55 +1430,61 @@ class _ManagePesertaState extends State<ManagePeserta> {
                   : Colors.white,
               child: IconButton(
                 icon: actionIcon,
-                onPressed: () {
-                  setState(() {
-                    if (this.actionIcon.icon == Icons.search) {
-                      actionBackAppBar = false;
-                      iconButtonAppbarColor = false;
-                      this.actionIcon = new Icon(
-                        Icons.close,
-                        color: Colors.grey,
-                      );
-                      this.appBarTitle = Container(
-                        height: 50.0,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          autofocus: true,
-                          controller: _searchQuery,
-                          onChanged: (string) {
-                            if (string != null || string != '') {
-                              _debouncer.run(() {
-                                filterlistpeserta();
-                              });
-                            }
-                          },
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon:
-                                new Icon(Icons.search, color: Colors.grey),
-                            hintText: "Cari Berdasarkan Nama Peserta",
-                            hintStyle: TextStyle(
+                onPressed: isDelete == true ||
+                        isDenied == true ||
+                        isAccept == true ||
+                        isCreate == true ||
+                        isSendingMessage == true
+                    ? null
+                    : () {
+                        setState(() {
+                          if (this.actionIcon.icon == Icons.search) {
+                            actionBackAppBar = false;
+                            iconButtonAppbarColor = false;
+                            this.actionIcon = new Icon(
+                              Icons.close,
                               color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      _handleSearchEnd();
-                    }
-                  });
-                },
+                            );
+                            this.appBarTitle = Container(
+                              height: 50.0,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: TextField(
+                                autofocus: true,
+                                controller: _searchQuery,
+                                onChanged: (string) {
+                                  if (string != null || string != '') {
+                                    _debouncer.run(() {
+                                      filterlistpeserta();
+                                    });
+                                  }
+                                },
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                textAlignVertical: TextAlignVertical.center,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: new Icon(Icons.search,
+                                      color: Colors.grey),
+                                  hintText: "Cari Berdasarkan Nama Peserta",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            _handleSearchEnd();
+                          }
+                        });
+                      },
               ),
             ),
             actionIcon.icon == Icons.close

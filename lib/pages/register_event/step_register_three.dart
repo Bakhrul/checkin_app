@@ -26,7 +26,7 @@ class WaitingEvent extends StatefulWidget {
       : super(key: key);
   final int id;
   final Map dataUser;
-  String type;
+  final String type;
   final String creatorId;
   final String userId;
   final bool selfEvent;

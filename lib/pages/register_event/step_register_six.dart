@@ -68,7 +68,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
       _deleteParticipant();
     } else {
       setState(() {
-        _buttonUndo == false;
+        _buttonUndo = false;
       });
     }
   }
@@ -157,7 +157,7 @@ class _SuccesRegisteredEvent extends State<SuccesRegisteredEvent> {
               .sendrequest();
       if (response['status'] == "success") {
         setState(() {
-          _buttonUndo == false;
+          _buttonUndo = false;
         });
 
         Fluttertoast.showToast(

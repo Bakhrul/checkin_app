@@ -4,7 +4,7 @@ import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
-import 'package:checkin_app/dashboard.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -15,6 +15,8 @@ import 'package:checkin_app/pages/events_all/detail_event.dart';
 import 'dart:core';
 
 String tokenType, accessToken;
+final _debouncer = Debouncer(milliseconds: 500);
+bool actionBackAppBar, iconButtonAppbarColor;
 List<UserParticipant> listParticipant = [];
 bool isLoading, isError, isAction, isSuccess;
 Map<String, String> requestHeaders = Map();
@@ -35,6 +37,21 @@ class EventOrder extends StatefulWidget {
   }
 }
 
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
+
 class _EventOrder extends State<EventOrder> {
   @override
   void initState() {
@@ -43,13 +60,15 @@ class _EventOrder extends State<EventOrder> {
     isError = false;
     isAction = false;
     isSuccess = false;
+    actionBackAppBar = true;
+    iconButtonAppbarColor = true;
     getHeaderHTTP();
     _getUserData();
   }
 
   _outFromEvent(pesertaId, eventId, creatorId, userName) async {
     setState(() {
-      isLoading == true;
+      isLoading = true;
     });
     try {
       dynamic body = {
@@ -212,18 +231,15 @@ class _EventOrder extends State<EventOrder> {
       isLoading = true;
     });
     try {
-      final participant = await http.get(
-        url('api/event/getevent/order'),
-        headers: requestHeaders,
-      );
+      final participant = await http.post(url('api/event/getevent/order'),
+          headers: requestHeaders,
+          body: {
+            'search_query': _searchQuery.text,
+          });
 
       if (participant.statusCode == 200) {
         var listParticipantToJson = json.decode(participant.body);
         var participants = listParticipantToJson;
-        // String jumlahnotifGet = listNotificationJson['jumlahnotif'].toString();
-        // setState(() {
-        //   jumlahnotifX = jumlahnotifGet;
-        // });
         listParticipant = [];
 
         for (var i in participants) {
@@ -256,6 +272,7 @@ class _EventOrder extends State<EventOrder> {
           isLoading = false;
           isError = true;
         });
+        print(participant.body);
         return null;
       }
     } on TimeoutException catch (_) {
@@ -274,27 +291,110 @@ class _EventOrder extends State<EventOrder> {
     return null;
   }
 
+  Icon actionIcon = Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+  Widget appBarTitle = Text(
+    "Daftar Pengguna yang Didaftarkan",
+    style: TextStyle(fontSize: 14),
+  );
+  void _handleSearchEnd() {
+    setState(() {
+      // ignore: new_with_non_type
+      actionBackAppBar = true;
+      iconButtonAppbarColor = true;
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Daftar Pengguna yang Didaftarkan",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+        ),
+      );
+      // listcheckin();
+      _debouncer.run(() {
+        _searchQuery.clear();
+        listParticipants();
+      });
+    });
+  }
+
+  final TextEditingController _searchQuery = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: new AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Daftar Peserta Yang Didaftarkan",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-        backgroundColor: primaryAppBarColor,
-      ),
+      appBar: buildBar(context),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Container(
+              child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 16.0),
+                width: double.infinity,
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300],
+                  highlightColor: Colors.grey[100],
+                  child: Column(
+                    children: [0, 1]
+                        .map((_) => Padding(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 50.0,
+                                    height: 50.0,
+                                    color: Colors.white,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 8.0,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5.0),
+                                        ),
+                                        Container(
+                                          width: 100.0,
+                                          height: 8.0,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5.0),
+                                        ),
+                                        Container(
+                                          width: 60.0,
+                                          height: 8.0,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ))
           : isError == true
               ? Padding(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -522,7 +622,7 @@ class _EventOrder extends State<EventOrder> {
                                                         color:
                                                             Colors.orangeAccent,
                                                       ),
-                                                      child: Text("P"))),
+                                                      child: Text("P",style: TextStyle(color: Colors.white),))),
                                         ),
                                         title: Padding(
                                             padding: const EdgeInsets.only(
@@ -597,5 +697,76 @@ class _EventOrder extends State<EventOrder> {
                         ],
                       )),
     );
+  }
+
+  Widget buildBar(BuildContext context) {
+    return PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          title: appBarTitle,
+          titleSpacing: 0.0,
+          centerTitle: true,
+          backgroundColor: primaryAppBarColor,
+          automaticallyImplyLeading: actionBackAppBar,
+          actions: <Widget>[
+            Container(
+              color: iconButtonAppbarColor == true
+                  ? primaryAppBarColor
+                  : Colors.white,
+              child: IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.actionIcon.icon == Icons.search) {
+                      actionBackAppBar = false;
+                      iconButtonAppbarColor = false;
+                      this.actionIcon = new Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      );
+                      this.appBarTitle = Container(
+                        height: 50.0,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          controller: _searchQuery,
+                          onChanged: (string) {
+                            if (string != null || string != '') {
+                              _debouncer.run(() {
+                                listParticipants();
+                              });
+                            }
+                          },
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon:
+                                new Icon(Icons.search, color: Colors.grey),
+                            hintText: "Cari Berdasarkan Nama Pengguna",
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      _handleSearchEnd();
+                    }
+                  });
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }

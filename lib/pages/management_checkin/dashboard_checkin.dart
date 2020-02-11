@@ -13,7 +13,6 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
-import 'create_participant.dart';
 import 'list_peserta_checkin.dart';
 
 String sifat = 'VIP';
@@ -65,20 +64,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           titleEvent = response[0]['title'];
         });
 
-      // for (var i = 0; i < response.length; i++) {
-      //   UserParticipant peserta = UserParticipant(
-      //     id: response[i]["id"].toString(),
-      //     name: response[i]["name"],
-      //     email: response[i]["email"],
-      //     position: response[i]["position"].toString(),
-      //     status: response[i]["status"],
-      //     picProfile: response[i]["pic_profile"],
-      //     eventId: response[i]["event_id"].toString(),
-          
-      //   );
-
-      //   listPeserta.add(peserta);
-      // }
       setState(() {
         isLoading = false;
         isError = false;

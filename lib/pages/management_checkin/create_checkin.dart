@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 
@@ -8,17 +7,15 @@ import 'package:checkin_app/pages/management_checkin/generate_qrcode.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:checkin_app/utils/utils.dart';
 
 var datepicker;
 
 class ManajemeCreateCheckin extends StatefulWidget {
-  Checkin checkin;
+  final Checkin checkin;
   final String title;
   final idevent;
   

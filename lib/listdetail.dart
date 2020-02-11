@@ -116,7 +116,7 @@ class _DetailListState extends State<DetailList> {
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
-    Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
+
 
     try{
       var _type = widget.type;
@@ -204,8 +204,6 @@ class _DetailListState extends State<DetailList> {
     accessToken = accessTokenStorage;
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-
-    Map<String, dynamic> body = {'category_id':type.toString(),'query_search':query.toString()};
 
   try{
     var _type = widget.type;
@@ -317,7 +315,7 @@ class _DetailListState extends State<DetailList> {
   
   }
 
-  _changeSearch(value) async {
+  changeSearch(value) async {
              
             setState((){
             page = 1;
@@ -328,7 +326,7 @@ class _DetailListState extends State<DetailList> {
 
   }
 
-  void _handleSearchEnd() {
+  void handleSearchEnd() {
     setState(() {
       // ignore: new_with_non_type
       // this.actionIcon = new Icon(

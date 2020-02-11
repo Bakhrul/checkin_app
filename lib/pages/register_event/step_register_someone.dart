@@ -23,19 +23,13 @@ class ConfirmEventGuest extends StatefulWidget {
 }
 
 class _ConfirmEventGuest extends State<ConfirmEventGuest> {
-  // List<Map> _comboBox = [
-  //   {"name": "Vip", "value": 1},
-  //   {"name": "Regular", "value": 2},
-  //   {"name": "Gold", "value": 3}
-  // ];
+
   bool _isLoading = false;
-  // int _valueCombo = 1;
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final addressController = TextEditingController();
   final phoneController = TextEditingController();
-  bool _check = false;
 
   Future postRegister() async {
     setState(() {
