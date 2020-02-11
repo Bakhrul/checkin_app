@@ -4,7 +4,9 @@ import 'package:checkin_app/core/api.dart';
 import 'package:checkin_app/model/checkin.dart';
 import 'package:checkin_app/model/participant.dart';
 import 'package:checkin_app/pages/management_checkin/choice_checkin.dart';
+import 'package:checkin_app/pages/management_checkin/create_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
+import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +16,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'list_peserta_checkin.dart';
+import 'dart:math' as math;
 
 String sifat = 'VIP';
 String tipe = 'Public';
@@ -41,6 +44,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   TabController _tabController;
   File imageProfile;
   String titleEvent;
+  var isEnable;
+  final TextEditingController _keywordController = TextEditingController();
   static const List<IconData> icons = const [
     Icons.sms,
     Icons.mail,
@@ -56,13 +61,12 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     listPeserta = [];
     try {
       dynamic response = await RequestGet(
-              name: "event/getdata/event/",
-              customrequest: "${widget.idevent}")
+              name: "event/getdata/event/", customrequest: "${widget.idevent}")
           .getdata();
-          // print(response[0]['title']);
-        setState((){
-          titleEvent = response[0]['title'];
-        });
+      // print(response[0]['title']);
+      setState(() {
+        titleEvent = response[0]['title'];
+      });
 
       setState(() {
         isLoading = false;
@@ -87,7 +91,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
               name: "event/getdata/participant/",
               customrequest: "${widget.idevent}")
           .getdata();
-          print(response);
+      print(response);
       for (var i = 0; i < response.length; i++) {
         UserParticipant peserta = UserParticipant(
           id: response[i]["id"].toString(),
@@ -97,7 +101,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           status: response[i]["status"],
           picProfile: response[i]["pic_profile"],
           eventId: response[i]["event_id"].toString(),
-          
         );
 
         listPeserta.add(peserta);
@@ -122,11 +125,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     listAdmin = [];
     try {
       dynamic response = await RequestGet(
-              name: "event/getdata/admin/",
-              customrequest: "${widget.idevent}")
+              name: "event/getdata/admin/", customrequest: "${widget.idevent}")
           .getdata();
-          print("as");
-          print(response);
+      print("as");
+      print(response);
       for (var i = 0; i < response.length; i++) {
         UserParticipant admin = UserParticipant(
           id: response[i]["id"].toString(),
@@ -136,7 +138,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           status: response[i]["status"],
           picProfile: response[i]["pic_profile"],
           eventId: response[i]["event_id"].toString(),
-          
         );
 
         listAdmin.add(admin);
@@ -271,12 +272,70 @@ class _DashboardCheckinState extends State<DashboardCheckin>
     }
   }
 
+// Direct checkin function 
+ randomNumberGenerator() {
+    setState(() {
+         isEnable = false;
+          });
+          Fluttertoast.showToast(
+          msg: "Mohon Tunggu Sebentar",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          textColor: Colors.white,
+          fontSize: 16.0);
+         setState(() {
+         isEnable = false;
+          });
+    var rnd = new math.Random();
+    var next = rnd.nextDouble() * 10000;
+    while (next < 1000) {
+      next *= 10;
+    }
+      setState(() {
+  isLoading = true;  
+  });
+    return postDataCheckin(next.toInt().toString());
+  }
+
+  postDataCheckin(_qrcode) async {  
+  await new Future.delayed(const Duration(seconds: 2));
+    dynamic body = {
+      "event_id": widget.idevent.toString(),
+      "checkin_keyword": _keywordController.text.toString(),
+      "types": "D",
+      "chekin_id": _qrcode,
+    };
+
+    dynamic response =
+        await RequestPost(name: "checkin/postdata/checkinreguler", body: body)
+            .sendrequest();
+    if (response != "gagal") {
+      Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => DirectCheckin(idevent: widget.idevent,idcheckin: _qrcode,keyword:_keywordController.text.toString())));
+    }else{
+       Fluttertoast.showToast(
+          msg: "Terjadi Kesalahan, Coba Lagi...",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    setState(() {
+      isLoading = false;
+      isEnable = false;
+    });
+  }
+
   @override
   void initState() {
     getDataMember();
     getDataCheckin();
     getDataAdmin();
     getDataEvent();
+    isEnable = true;
     _tabController = TabController(
         length: 3, vsync: _DashboardCheckinState(), initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
@@ -321,7 +380,8 @@ class _DashboardCheckinState extends State<DashboardCheckin>
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: primaryAppBarColor,
-          title: Text('Manajemen Event $titleEvent', style: TextStyle(fontSize: 14)),
+          title: Text('Manajemen Event $titleEvent',
+              style: TextStyle(fontSize: 14)),
           actions: <Widget>[],
           bottom: TabBar(
             controller: _tabController,
@@ -354,7 +414,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                           )
                         : _buildListViewAdmin(),
                   )
-                  
                 ],
               ),
             ),
@@ -377,11 +436,9 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                           )
                         : _buildListViewMember(),
                   )
-                  
                 ],
               ),
             ),
-            
             SingleChildScrollView(
               padding: EdgeInsets.only(
                 top: 15.0,
@@ -396,11 +453,10 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                     : _builderlistViewCheckin(),
               ),
             ),
-            
           ],
         ),
 
-        floatingActionButton: _bottomButtons(),
+        floatingActionButton: isEnable != true ? Container() : _bottomButtons(),
       ),
     );
   }
@@ -768,24 +824,32 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                         children: <Widget>[
                                           Card(
                                             child: ListTile(
-                                              
-                                                leading: data.checkinType == "Direct" ? Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100.0),
-                                                    child: Container(
-                                                      height: 15.0,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      width: 15.0,
-                                                      color: Color.fromRGBO(
-                                                          41, 30, 47, 1),
-                                                    ),
-                                                  ),
-                                                ) : null,
+                                                leading: data.checkinType ==
+                                                        "Direct"
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100.0),
+                                                          child: Container(
+                                                            height: 15.0,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            width: 15.0,
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    41,
+                                                                    30,
+                                                                    47,
+                                                                    1),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
                                                 title: Text(
                                                   data.checkinKey == null ||
                                                           data.checkinKey == ''
@@ -796,7 +860,6 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                     fontSize: 13,
                                                   ),
                                                 ),
-
                                                 onTap: () async {
                                                   Navigator.push(
                                                       context,
@@ -809,7 +872,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                                       .eventId
                                                                       .toString())));
                                                 },
-                                                trailing:
+                                                trailing: isEnable != true ? Container() :
                                                     PopupMenuButton<PageEnum>(
                                                   onSelected: (PageEnum value) {
                                                     switch (value) {
@@ -909,42 +972,140 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           );
   }
 
+  void showModalInputKeyword() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tambah Checkin Langsung'),
+            content: Container(
+              height: 130,
+              child: Form(
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: _keywordController,
+                        maxLines: 1,
+                        autofocus: true,
+                      decoration: InputDecoration(
+                        hintText: 'Kata Kunci'
+                      ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color:primaryAppBarColor,
+                        child:  Text('Simpan',style: TextStyle(color:Colors.white),),
+                        onPressed:  (){
+                          Navigator.pop(context);
+                          randomNumberGenerator();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void showDialogChoiceCheckin(idEvent) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (builder) {
+          return Container(
+            height: 150.0 + MediaQuery.of(context).viewInsets.bottom,
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                right: 15.0,
+                left: 15.0,
+                top: 15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 7),
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          color: primaryAppBarColor,
+                          child: Text('CheckIn Reguler',
+                              style: TextStyle(color: Colors.white)),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ManajemeCreateCheckin(
+                                        idevent: idEvent)));
+                          },
+                        ))),
+                Center(
+                    child: Container(
+                        margin: EdgeInsets.only(top: 7),
+                        width: double.infinity,
+                        height: 50,
+                        child: RaisedButton(
+                          color: Colors.white,
+                          child: Text('CheckIn Langsung',
+                              style: TextStyle(color: primaryAppBarColor)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showModalInputKeyword();
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             DirectCheckin(idevent: idEvent)));
+                          },
+                        )))
+              ],
+            ),
+          );
+        });
+  }
+
   Widget _bottomButtons() {
-    return 
-    _tabController.index == 2
-        ?
-         DraggableFab(
+    return _tabController.index == 2
+        ? DraggableFab(
             child: FloatingActionButton(
                 shape: StadiumBorder(),
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ChoiceCheckin(idevent: widget.idevent),
-                      ));
+                onPressed:  () async {
+                  showDialogChoiceCheckin(widget.idevent);
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) =>
+                  //           ChoiceCheckin(idevent: widget.idevent),
+                  //     ));
                 },
                 backgroundColor: Color.fromRGBO(254, 86, 14, 1),
                 child: Icon(
                   Icons.add,
                   size: 20.0,
                 )))
-            : null;
-        // : DraggableFab(
-        //     child: FloatingActionButton(
-        //         shape: StadiumBorder(),
-        //         onPressed: () async {
-        //           Navigator.push(
-        //               context,
-        //               MaterialPageRoute(
-        //                 builder: (context) =>
-        //                     CreateParticipant(idevent: widget.idevent),
-        //               ));
-        //         },
-        //         backgroundColor: Color.fromRGBO(254, 86, 14, 1),
-        //         child: Icon(
-        //           Icons.add,
-        //           size: 20.0,
-        //         )));
+        : null;
+    // : DraggableFab(
+    //     child: FloatingActionButton(
+    //         shape: StadiumBorder(),
+    //         onPressed: () async {
+    //           Navigator.push(
+    //               context,
+    //               MaterialPageRoute(
+    //                 builder: (context) =>
+    //                     CreateParticipant(idevent: widget.idevent),
+    //               ));
+    //         },
+    //         backgroundColor: Color.fromRGBO(254, 86, 14, 1),
+    //         child: Icon(
+    //           Icons.add,
+    //           size: 20.0,
+    //         )));
   }
 }

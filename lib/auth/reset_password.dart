@@ -147,6 +147,7 @@ class _ResetPassword extends State<ResetPassword> {
               return null;
             },
       controller: email,
+      keyboardType: TextInputType.emailAddress,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,

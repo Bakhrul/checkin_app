@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
       // print(getToken.statusCode);
       if (getToken.statusCode == 200) {
         if (getTokenDecode['error'] == 'invalid_credentials') {
-          Fluttertoast.showToast(msg: getTokenDecode['message']);
+          // Fluttertoast.showToast("");
           msg = getTokenDecode['message'];
           setState(() {
             _isLoading = false;
@@ -286,6 +286,7 @@ class _LoginPageState extends State<LoginPage> {
       controller: username,
       autofocus: true,
       obscureText: false,
+      keyboardType: TextInputType.emailAddress,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,

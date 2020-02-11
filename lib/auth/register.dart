@@ -283,6 +283,7 @@ class _Register extends State<Register> {
     final emailField = TextField(
       enabled: isRegister == true ? false : true,
       controller: email,
+      keyboardType: TextInputType.emailAddress,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: 16.0,
