@@ -53,8 +53,8 @@ class SearchEvent{
       DateTime yearStart = DateTime.parse(map['ev_time_start']);
       DateTime yearEnd = DateTime.parse(map['ev_time_end']);
       String cekAllday = map['ev_allday'];
-      String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy H:m" : 'dd MMM';
-      String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "H:m" : 'dd MMM yyyy' : cekAllday == 'N' ? "H:m" : 'dd MMM yyyy';
+      String formatStart = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "dd MMM yyyy HH:mm" : 'dd MMM' : cekAllday == 'N' ? "dd MMM yyyy HH:mm" : 'dd MMM';
+      String formatEnd = yearStart.year == yearEnd.year ? cekAllday == 'N' ? "HH:mm" : 'dd MMM yyyy' : cekAllday == 'N' ? "HH:mm" : 'dd MMM yyyy';
       String dateStart = DateFormat(formatStart).format(DateTime.parse(map['ev_time_start']));
       String dateEnd = DateFormat(formatEnd).format(DateTime.parse(map['ev_time_end']));      
       String hours = DateFormat("H:ms").format(DateTime.parse(map['ev_time_start']));

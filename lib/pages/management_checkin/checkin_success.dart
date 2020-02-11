@@ -1,7 +1,6 @@
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:checkin_app/dashboard.dart';
 
 class SuccesRegisteredCheckin extends StatefulWidget {
   SuccesRegisteredCheckin({Key key}) : super(key: key);
@@ -67,14 +66,13 @@ class _SuccesRegisteredCheckinState extends State<SuccesRegisteredCheckin> {
                                 padding: EdgeInsets.all(15.0),
                                 color: Colors.indigo,
                                 child: Text("Kembali Ke Beranda",
-                                    style: TextStyle(color: Colors.white,fontSize: 14)),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14)),
                                 onPressed: () async {
-                                  Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Dashboard(),
-                                                  ));
+                                  Navigator.popUntil(
+                                    context,
+                                    ModalRoute.withName('/dashboard'),
+                                  );
                                 })),
                       ],
                     ))

@@ -221,14 +221,14 @@ class _CheckinManualState extends State<CheckinManual>
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 15.0, left: 10.0, right: 10.0),
-                        child: Text('Punya Kode Checkin ????',
+                        child: Text('Punya Kode CheckIn ????',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 10.0, left: 10.0, right: 10.0),
-                        child: Text('Masukkan Kode Checkin Anda disini',
+                        child: Text('Masukkan Kode CheckIn Anda disini',
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w400)),
@@ -240,7 +240,7 @@ class _CheckinManualState extends State<CheckinManual>
                           maxLines: 1,
                           controller: _controllerCheckin,
                           decoration: InputDecoration(
-                            hintText: 'Example : Checkin01',
+                            hintText: 'Example : CheckIn01',
                             hintStyle:
                                 TextStyle(color: Colors.black45, fontSize: 14),
                           ),
@@ -294,7 +294,7 @@ class _CheckinManualState extends State<CheckinManual>
                         valueColor:
                             new AlwaysStoppedAnimation<Color>(Colors.white)))
                 : Text(
-                    'Checkin Sekarang',
+                    'CheckIn Sekarang',
                     style: TextStyle(fontSize: 18.0),
                   ),
           ),

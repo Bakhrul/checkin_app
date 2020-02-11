@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 import 'package:flutter/material.dart';
@@ -110,23 +109,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top:20.0),
-                    width: double.infinity,
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idEvent) ));
-                        
-                      },
-                      child: Text("Kembali",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          
         
           ],
         ),
@@ -178,10 +161,6 @@ class GenerateScreenState extends State<GenerateScreen> {
       }
     } catch (e) {
       print(e.toString());
-    }
-  
-      
-      
-      
+    }   
   }
 }

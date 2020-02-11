@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -13,7 +12,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'dashboard_checkin.dart';
+String message;
+bool isUpdate;
+
 // Tambahan Untuk Membuat StopWatch
 class ElapsedTime {
   final int hundreds;
@@ -26,19 +27,24 @@ class ElapsedTime {
     this.minutes,
   });
 }
-class Dependencies {
 
-  final List<ValueChanged<ElapsedTime>> timerListeners = <ValueChanged<ElapsedTime>>[];
-  final TextStyle textStyle = const TextStyle(fontSize: 10.0, fontFamily: "Bebas Neue");
+class Dependencies {
+  final List<ValueChanged<ElapsedTime>> timerListeners =
+      <ValueChanged<ElapsedTime>>[];
+  final TextStyle textStyle =
+      const TextStyle(fontSize: 10.0, fontFamily: "Bebas Neue");
   final Stopwatch stopwatch = new Stopwatch();
   final int timerMillisecondsRefreshRate = 30;
 }
+
 // =======
 class DirectCheckin extends StatefulWidget {
   final idevent;
   final idcheckin;
   final keyword;
-  DirectCheckin({Key key,this.idevent,this.idcheckin,this.keyword});
+  final String namaEvent;
+  DirectCheckin(
+      {Key key, this.idevent, this.idcheckin, this.namaEvent, this.keyword});
 
   @override
   _DirectCheckinState createState() => _DirectCheckinState();
@@ -49,7 +55,7 @@ class _DirectCheckinState extends State<DirectCheckin>
   AnimationController _controller;
   // Tambahan StopWatch
   final Dependencies dependencies = new Dependencies();
-   void leftButtonPressed() {
+  void leftButtonPressed() {
     setState(() {
       if (dependencies.stopwatch.isRunning) {
         print("${dependencies.stopwatch.elapsedMilliseconds}");
@@ -58,7 +64,8 @@ class _DirectCheckinState extends State<DirectCheckin>
       }
     });
   }
-void rightButtonPressed() {
+
+  void rightButtonPressed() {
     setState(() {
       if (dependencies.stopwatch.isRunning) {
         dependencies.stopwatch.stop();
@@ -67,23 +74,25 @@ void rightButtonPressed() {
       }
     });
   }
-    Widget buildStopButton(String text, VoidCallback callback) {
-    TextStyle roundTextStyle = const TextStyle(fontSize: 16.0, color: Colors.white);
+
+  Widget buildStopButton(String text, VoidCallback callback) {
+    TextStyle roundTextStyle =
+        const TextStyle(fontSize: 16.0, color: Colors.white);
     return new FloatingActionButton(
-      child: new Text(text, style: roundTextStyle),
-      onPressed: callback);
+        child: new Text(text, style: roundTextStyle), onPressed: callback);
   }
 
   // ========
   GlobalKey globalKey = new GlobalKey();
-  bool _isLoading,_isChange,isBack = false;
-  String _inputErrorText;
-  String eventName,eventId;
-final TextEditingController _controllerGenerate = TextEditingController();
+  bool isBack = false;
+  String eventName, eventId;
 
+  updateDateCheckin() async {
+    setState(() {
+      isUpdate = true;
+    });
 
-updateDateCheckin() async {  
-  // await new Future.delayed(const Duration(seconds: 2));
+    // await new Future.delayed(const Duration(seconds: 2));
     dynamic body = {
       "event_id": widget.idevent.toString(),
       // "checkin_keyword": checkinId.toString(),
@@ -94,7 +103,7 @@ updateDateCheckin() async {
     dynamic response =
         await RequestPost(name: "checkin/updatedata/checkinreguler", body: body)
             .sendrequest();
-            print(response);
+    print(response);
     if (response != "gagal") {
       Fluttertoast.showToast(
           msg: "Checkin Berhenti",
@@ -104,18 +113,17 @@ updateDateCheckin() async {
           // backgroundColor: Colors.green,
           textColor: Colors.white,
           fontSize: 16.0);
-          //  dependencies.stopwatch.isRunning = false;
-        setState(() {
-          isBack = true;
-          _isChange = true;
-          dependencies.stopwatch.stop();
-          //  _b = false;
-            
-          });
+      //  dependencies.stopwatch.isRunning = false;
+      setState(() {
+        isBack = true;
+        isUpdate = false;
+        dependencies.stopwatch.stop();
+        //  _b = false;
+      });
       // Navigator.pushReplacement(context,
       // MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
-    }else{
-       Fluttertoast.showToast(
+    } else {
+      Fluttertoast.showToast(
           msg: "Terjadi Kesalahan, Coba Lagi...",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
@@ -125,17 +133,17 @@ updateDateCheckin() async {
           fontSize: 16.0);
     }
     setState(() {
-      _isLoading = false;
+      isUpdate = false;
     });
   }
 
-  
   @override
   void initState() {
     super.initState();
     isBack = false;
-    _isChange = true;
+    isUpdate = false;
     eventId = widget.idevent;
+    message = '';
     dependencies.stopwatch.start();
     _controller = AnimationController(vsync: this);
   }
@@ -149,10 +157,10 @@ updateDateCheckin() async {
   @override
   Widget build(BuildContext context) {
     final bodyHeight = MediaQuery.of(context).size.height -
-    MediaQuery.of(context).viewInsets.bottom;
-   return WillPopScope(
-     onWillPop: () async => isBack,
-     child: Scaffold(
+        MediaQuery.of(context).viewInsets.bottom;
+    return WillPopScope(
+      onWillPop: () async => isBack,
+      child: Scaffold(
         backgroundColor: Colors.white,
         // key: _scaffoldKeycreatecheckin,
         appBar: new AppBar(
@@ -173,14 +181,30 @@ updateDateCheckin() async {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                message == null || message == ''
+                    ? Container()
+                    : Container(
+                        padding: EdgeInsets.all(15),
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(left: 15.0, right: 15.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color.fromRGBO(0, 204, 65, 1.0),
+                            width: 1.0,
+                          ),
+                          color: Color.fromRGBO(153, 255, 185, 1.0),
+                        ),
+                        child: Text(
+                          message,
+                          style: TextStyle(color: Colors.black, height: 1.5),
+                        )),
                 Card(
                     child: ListTile(
-                  leading: Icon(
-                    Icons.create,
-                    color: Color.fromRGBO(41, 30, 47, 1),
-                  ),
-                  title: Text(widget.keyword)
-                )),
+                        leading: Icon(
+                          Icons.create,
+                          color: Color.fromRGBO(41, 30, 47, 1),
+                        ),
+                        title: Text(widget.keyword))),
                 Container(
                   padding: EdgeInsets.all(20.0),
                   child: Row(
@@ -198,106 +222,129 @@ updateDateCheckin() async {
             ),
           ),
         ),
-      
       ),
-   );
+    );
   }
 
-   Widget _builderGenerateDirect(bodyHeight) {
-       return Column(
-        children: <Widget>[
-          Container(
-            child: RepaintBoundary(
-                key: globalKey,
-                child: QrImage(
-                  data: widget.idcheckin,
-                  size: 0.5 * bodyHeight,
-                ),
-              ),
-          ),
-          Container(
-            
-            width: double.infinity,
-            child: new TimerText(dependencies: dependencies),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 5.0),
-            height: 0.5 * bodyHeight,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                        child: FlatButton(
-                          color: Colors.red,
-                          child: Text("Berhenti",style: TextStyle(color: Colors.white),), onPressed: () {
-                            updateDateCheckin();
-                          },
-                        ),
-                      ),
-                Container(
-                  width: double.infinity,
-                  color: Colors.blue,
-                    child: FlatButton(
-                      child: Text("Unduh",style: TextStyle(color: Colors.white)), onPressed: () {_saveScreen();},),),
-                  Container(
-                    width: double.infinity,
-                    child: FlatButton(
-                      child: Text("Kembali"), onPressed: isBack != true ? null : ()  { 
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idevent,)));
-                      },),)
-              ],
+  Widget _builderGenerateDirect(bodyHeight) {
+    return Column(
+      children: <Widget>[
+        Container(
+          child: RepaintBoundary(
+            key: globalKey,
+            child: QrImage(
+              data: widget.idcheckin,
+              size: 0.5 * bodyHeight,
             ),
           ),
-        ],
-      );
-    
+        ),
+        Container(
+          width: double.infinity,
+          child: new TimerText(dependencies: dependencies),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 5.0),
+          height: 0.5 * bodyHeight,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                child: FlatButton(
+                  color: Colors.red,
+                  disabledColor: Colors.red[400],
+                  child: isUpdate == true
+                      ? Container(
+                          height: 25.0,
+                          width: 25.0,
+                          margin: EdgeInsets.all(5.0),
+                          child: CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                  Colors.white)))
+                      : Text(
+                          "Berhenti",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                  onPressed: isBack == true || isUpdate == true
+                      ? null
+                      : () {
+                          updateDateCheckin();
+                        },
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                color: Colors.blue,
+                child: FlatButton(
+                  child: Text("Unduh", style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    _saveScreen();
+                  },
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: FlatButton(
+                  child: Text("Kembali"),
+                  onPressed: isBack != true
+                      ? null
+                      : () {
+                          Navigator.popUntil(
+                            context,
+                            ModalRoute.withName('/dashboard'),
+                          );
+                        },
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   _saveScreen() async {
     try {
+      PermissionStatus permission = await PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.contacts);
 
-      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
+      if (permission != PermissionStatus.denied) {
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
-      if(permission != PermissionStatus.denied){
-        
-          await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-      
-          RenderRepaintBoundary boundary = globalKey.currentContext.findRenderObject();
-          
-          var image = await boundary.toImage();
-          ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-          Uint8List pngBytes = byteData.buffer.asUint8List();
+        RenderRepaintBoundary boundary =
+            globalKey.currentContext.findRenderObject();
 
-          final tempDir = await getExternalStorageDirectory();
-          var tes = await new Directory('${tempDir.path}/EventZhee').create();
-          var sudahada = await File('${tes.path}/$eventName-$eventId.png').exists();          
-          if(sudahada == true){
-          File('${tes.path}/$eventId.png').delete();
-          final file = await new File('${tes.path}/$eventName-$eventId.png').create();
+        var image = await boundary.toImage();
+        ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+        Uint8List pngBytes = byteData.buffer.asUint8List();
+        final tempDir = await getExternalStorageDirectory();
+        var tes = await new Directory('${tempDir.path}/EventZhee').create();
+        var sudahada = await File(
+                '${tes.path}/${widget.namaEvent} - ${widget.keyword}.png')
+            .exists();
+        if (sudahada == true) {
+          File('${tes.path}/${widget.namaEvent} - ${widget.keyword}.png')
+              .delete();
+          final file = await new File(
+                  '${tes.path}/${widget.namaEvent} - ${widget.keyword}.png')
+              .create();
           await file.writeAsBytes(pngBytes);
-          Fluttertoast.showToast(msg: "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file $eventName-$eventId.png",
-           toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 1,);
           setState(() {
             sudahada = false;
+            message =
+                'Berhasil, Cari Gambar QrCode Pada Folder EventZhee - ${widget.namaEvent} - ${widget.keyword}.png';
           });
-          }else{
-          final file = await new File('${tes.path}/$eventName-$eventId.png').create();
+        } else {
+          final file = await new File(
+                  '${tes.path}/${widget.namaEvent} - ${widget.keyword}.png')
+              .create();
           await file.writeAsBytes(pngBytes);
-          Fluttertoast.showToast(
-            msg: "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file $eventName-$eventId.png",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 1,
-          );
-          }
+          setState(() {
+            message =
+                'Berhasil, Cari Gambar QrCode Pada Folder EventZhee - ${widget.namaEvent} - ${widget.keyword}.png';
+          });
+        }
       }
-      
-      
-      
-
-    } catch(e) {
+    } catch (e) {
       print(e.toString());
     }
   }
@@ -307,7 +354,8 @@ class TimerText extends StatefulWidget {
   TimerText({this.dependencies});
   final Dependencies dependencies;
 
-  TimerTextState createState() => new TimerTextState(dependencies: dependencies);
+  TimerTextState createState() =>
+      new TimerTextState(dependencies: dependencies);
 }
 
 class TimerTextState extends State<TimerText> {
@@ -318,7 +366,9 @@ class TimerTextState extends State<TimerText> {
 
   @override
   void initState() {
-    timer = new Timer.periodic(new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate), callback);
+    timer = new Timer.periodic(
+        new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate),
+        callback);
     super.initState();
   }
 
@@ -352,20 +402,19 @@ class TimerTextState extends State<TimerText> {
       padding: const EdgeInsets.all(8.0),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        
         children: <Widget>[
-            new RepaintBoundary(
-              child: new SizedBox(
-                // height: 50.0,
-                child: new MinutesAndSeconds(dependencies: dependencies),
-              ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              // height: 50.0,
+              child: new MinutesAndSeconds(dependencies: dependencies),
             ),
-            new RepaintBoundary(
-              child: new SizedBox(
-                // height: 50.0,
-                child: new Hundreds(dependencies: dependencies),
-              ),
+          ),
+          new RepaintBoundary(
+            child: new SizedBox(
+              // height: 50.0,
+              child: new Hundreds(dependencies: dependencies),
             ),
+          ),
         ],
       ),
     );
@@ -376,7 +425,8 @@ class MinutesAndSeconds extends StatefulWidget {
   MinutesAndSeconds({this.dependencies});
   final Dependencies dependencies;
 
-  MinutesAndSecondsState createState() => new MinutesAndSecondsState(dependencies: dependencies);
+  MinutesAndSecondsState createState() =>
+      new MinutesAndSecondsState(dependencies: dependencies);
 }
 
 class MinutesAndSecondsState extends State<MinutesAndSeconds> {
@@ -405,7 +455,10 @@ class MinutesAndSecondsState extends State<MinutesAndSeconds> {
   Widget build(BuildContext context) {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    return new AutoSizeText('$minutesStr:$secondsStr.', style: TextStyle(fontSize: 30),);
+    return new AutoSizeText(
+      '$minutesStr:$secondsStr.',
+      style: TextStyle(fontSize: 30),
+    );
   }
 }
 

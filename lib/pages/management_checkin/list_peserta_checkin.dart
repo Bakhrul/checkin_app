@@ -36,10 +36,8 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
     for (var i = 0; i < response.length; i++) {
       UserCheckin peserta = UserCheckin(
         name: response[i]["name"].toString(),
-        email: response[i]["email"].toString(),
-        // position: response[i]["position"].toString(),
+        email: response[i]["email"].toString(),  
         picProfile: response[i]["pic_profile"],
-        // eventId: response[i]["event_id"],
       );
 
       listPeserta.add(peserta);
@@ -159,10 +157,6 @@ class _ListPesertaCheckinState extends State<ListPesertaCheckin>
                               ),
                                 title: Text(f.name),
                                 onTap: () async {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => HomeScreen()));
                                 },
                                 subtitle: Text(f.name.toString()),
                               ),
