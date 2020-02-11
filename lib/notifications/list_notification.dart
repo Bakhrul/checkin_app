@@ -98,7 +98,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
     }
   }
 
-  dynamic deleteNotif(index) async{
+  void deleteNotif(index) async{
     try {
       final removeConfirmation =
           await http.post(
@@ -962,10 +962,7 @@ class _NotificationsState extends State<ManajemenNotifications> {
                                                         child: Text("Menolak"),
                                                       )
                                                     : null,
-                                                // PopupMenuItem(
-                                                //   value: PageEnum.deletePesan,
-                                                //   child: Text("Hapus Pesan"),
-                                                // ),
+                                             
                                               ],
                                             ),
                                             leading: Padding(

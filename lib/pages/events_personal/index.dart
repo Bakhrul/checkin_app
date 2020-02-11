@@ -410,7 +410,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
               color: Colors.white,
             ),
             tooltip: 'Buat Event Sekarang',
-            onPressed: () {
+            onPressed: isDelete == true || isPublish == true ? null : () {
               
               Navigator.push(
                   context,

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:checkin_app/pages/management_checkin/dashboard_checkin.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 import 'package:flutter/material.dart';
@@ -18,23 +17,22 @@ class GenerateScreen extends StatefulWidget {
   final idEvent;
   final codeQr;
   final eventName;
-  String checkinKeyword;
+  final String checkinKeyword;
   
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
 }
 
 class GenerateScreenState extends State<GenerateScreen> {
-  String _codeQr;
+  String codeQr;
   bool isLoading,isError = false;
-  String _eventName,_checkinId;
+  
    
   GlobalKey globalKey = new GlobalKey();
   @override
   void setState(fn) {
-    // TODO: implement setState
     super.setState(fn);
-    _codeQr = widget.codeQr;
+    codeQr = widget.codeQr;
   }
 
 
@@ -44,7 +42,6 @@ class GenerateScreenState extends State<GenerateScreen> {
     super.initState();
   }
 
-  final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -112,23 +109,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top:20.0),
-                    width: double.infinity,
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => DashboardCheckin(idevent: widget.idEvent) ));
-                        
-                      },
-                      child: Text("Kembali",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          
         
           ],
         ),
@@ -141,7 +122,6 @@ class GenerateScreenState extends State<GenerateScreen> {
           .checkPermissionStatus(PermissionGroup.contacts);
 
       if (permission != PermissionStatus.denied) {
-        Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler()
                 .requestPermissions([PermissionGroup.storage]);
 
@@ -181,10 +161,6 @@ class GenerateScreenState extends State<GenerateScreen> {
       }
     } catch (e) {
       print(e.toString());
-    }
-  
-      
-      
-      
+    }   
   }
 }

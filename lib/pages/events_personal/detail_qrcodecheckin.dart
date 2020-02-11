@@ -64,7 +64,7 @@ class _DetailQrCheckinState extends State<DetailQrCheckin> {
           .checkPermissionStatus(PermissionGroup.contacts);
 
       if (permission != PermissionStatus.denied) {
-        Map<PermissionGroup, PermissionStatus> permissions =
+        
             await PermissionHandler()
                 .requestPermissions([PermissionGroup.storage]);
 

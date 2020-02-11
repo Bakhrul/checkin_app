@@ -7,7 +7,6 @@ import 'checkin_success.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:checkin_app/storage/storage.dart';
-import 'package:checkin_app/dashboard.dart';
 
 List<Checkin> listCheckin;
 bool isCheckin, tidakadaCheckin, sudahCheckin, gagalCheckin;
@@ -124,7 +123,8 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
               msg: "Anda Sudah Melakukan Checkin Pada Sesi Checkin Tersebut");
         }
       } else {
-        Fluttertoast.showToast(msg: "Gagal Melakukan Checkin, Silahkan Coba Kembali");
+        Fluttertoast.showToast(
+            msg: "Gagal Melakukan Checkin, Silahkan Coba Kembali");
         setState(() {
           isCheckin = false;
           gagalCheckin = true;
@@ -146,7 +146,6 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
       print(e);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -236,12 +235,10 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
                                         padding: EdgeInsets.all(5.0),
                                         splashColor: Colors.blueAccent,
                                         onPressed: () async {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Dashboard(),
-                                              ));
+                                          Navigator.popUntil(
+                                            context,
+                                            ModalRoute.withName('/dashboard'),
+                                          );
                                         },
                                         child: Text(
                                           "Kembali Ke Beranda",
@@ -302,12 +299,11 @@ class _CheckinQRCodeState extends State<CheckinQRCode> {
                                             padding: EdgeInsets.all(5.0),
                                             splashColor: Colors.blueAccent,
                                             onPressed: () async {
-                                              Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Dashboard(),
-                                                  ));
+                                              Navigator.popUntil(
+                                                context,
+                                                ModalRoute.withName(
+                                                    '/dashboard'),
+                                              );
                                             },
                                             child: Text(
                                               "Kembali Ke Beranda",

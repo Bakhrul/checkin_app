@@ -9,12 +9,12 @@ import 'package:checkin_app/routes/env.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 List<UserCheckin> listPeserta;
+String message;
 
 class GradientText extends StatelessWidget {
   GradientText(
@@ -44,9 +44,11 @@ class GradientText extends StatelessWidget {
 }
 
 class DetailCheckin extends StatefulWidget {
-  DetailCheckin({Key key, @required this.idEvent, this.idCheckin});
+  DetailCheckin(
+      {Key key, @required this.idEvent, this.idCheckin, this.keywordCheckin});
   final idEvent;
   final idCheckin;
+  final String keywordCheckin;
   @override
   _DetailCheckinState createState() => _DetailCheckinState();
 }
@@ -70,12 +72,11 @@ class _DetailCheckinState extends State<DetailCheckin>
     colors: <Color>[Color(0xFF6200EA), Color(0xDD000000)],
   ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
 
-  List<Color> _colors = [Colors.deepOrange, Colors.yellow];
-  List<double> _stops = [0.0, 0.7];
   GlobalKey globalKey = new GlobalKey();
   @override
   void initState() {
     getData();
+    message = '';
     super.initState();
     _controller = AnimationController(vsync: this);
   }
@@ -121,7 +122,7 @@ class _DetailCheckinState extends State<DetailCheckin>
 
     if (response["type"].toString() == "S") {
       typeCheckin = "Checkin Reguler";
-    }else{
+    } else {
       typeCheckin = "Checkin Langsung";
     }
     setState(() {
@@ -132,30 +133,31 @@ class _DetailCheckinState extends State<DetailCheckin>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: new AppBar(
-        backgroundColor: primaryAppBarColor,
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: new Text(
-          "Detail CheckIn",
-          style: TextStyle(
+        backgroundColor: Colors.white,
+        appBar: new AppBar(
+          backgroundColor: primaryAppBarColor,
+          iconTheme: IconThemeData(
             color: Colors.white,
-            fontSize: 14,
           ),
+          title: new Text(
+            "Detail CheckIn",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.file_download),
+              onPressed:_isLoading == true ? null : () {
+                _saveScreen();
+              },
+            ),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_download),
-            onPressed: () {
-              _saveScreen();
-            },
-          ),
-        ],
-      ),
-      body: _isLoading == false? _buildBody() : Center(child:CircularProgressIndicator())
-    );
+        body: _isLoading == false
+            ? _buildBody()
+            : Center(child: CircularProgressIndicator()));
   }
 
   Widget _buildBody() {
@@ -166,6 +168,23 @@ class _DetailCheckinState extends State<DetailCheckin>
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              message == null || message == ''
+                  ? Container()
+                  : Container(
+                      padding: EdgeInsets.all(15),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(left: 15.0, right: 15.0,top:15.0,bottom:15.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color.fromRGBO(0, 204, 65, 1.0),
+                          width: 1.0,
+                        ),
+                        color: Color.fromRGBO(153, 255, 185, 1.0),
+                      ),
+                      child: Text(
+                        message,
+                        style: TextStyle(color: Colors.black, height: 1.5),
+                      )),
               Container(
                 child: RepaintBoundary(
                   key: globalKey,
@@ -231,30 +250,29 @@ class _DetailCheckinState extends State<DetailCheckin>
                                       right: 8.0, bottom: 2.0, left: 8.0),
                                   color: Colors.grey[50],
                                   child: ListTile(
-                                    leading:
-                                    item.picProfile == '-' ?
-                          Container(
-                                margin: EdgeInsets.only(top:20),
-                                height: 50,
-                                width: 50,
-                                child : ClipOval(
-                                  child: Image.asset('images/imgavatar.png',fit:BoxFit.fill)
-                                )
-                              ):
-                          Container(
-                                margin: EdgeInsets.only(top:20),
-                                height: 50,
-                                width: 50,
-                                child : ClipOval(
-                                  child: imageProfile == null ? 
-                                  FadeInImage.assetNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder : 'images/imgavatar.png',
-                                    image:url('storage/image/profile/${item.picProfile}')
-                                  ):
-                                  Image.file(imageProfile)
-                                )
-                              ),
+                                    leading: item.picProfile == '-'
+                                        ? Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            height: 50,
+                                            width: 50,
+                                            child: ClipOval(
+                                                child: Image.asset(
+                                                    'images/imgavatar.png',
+                                                    fit: BoxFit.fill)))
+                                        : Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            height: 50,
+                                            width: 50,
+                                            child: ClipOval(
+                                                child: imageProfile == null
+                                                    ? FadeInImage.assetNetwork(
+                                                        fit: BoxFit.cover,
+                                                        placeholder:
+                                                            'images/imgavatar.png',
+                                                        image: url(
+                                                            'storage/image/profile/${item.picProfile}'))
+                                                    : Image.file(
+                                                        imageProfile))),
                                     title: Text("${item.name}"),
                                     onTap: () {},
                                     subtitle: Text("${item.email}"),
@@ -294,9 +312,7 @@ class _DetailCheckinState extends State<DetailCheckin>
           .checkPermissionStatus(PermissionGroup.contacts);
 
       if (permission != PermissionStatus.denied) {
-        Map<PermissionGroup, PermissionStatus> permissions =
-            await PermissionHandler()
-                .requestPermissions([PermissionGroup.storage]);
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
         RenderRepaintBoundary boundary =
             globalKey.currentContext.findRenderObject();
@@ -307,36 +323,29 @@ class _DetailCheckinState extends State<DetailCheckin>
         final tempDir = await getExternalStorageDirectory();
         var tes = await new Directory('${tempDir.path}/EventZhee').create();
         var sudahada =
-            await File('${tes.path}/$eventName-${widget.idEvent}.png').exists();
+            await File('${tes.path}/$eventName - ${widget.keywordCheckin}.png')
+                .exists();
         if (sudahada == true) {
-          File('${tes.path}/${widget.idEvent}.png').delete();
-          final file =
-              await new File('${tes.path}/$eventName-${widget.idEvent}.png')
-                  .create();
+          File('${tes.path}/$eventName - ${widget.keywordCheckin}.png')
+              .delete();
+          final file = await new File(
+                  '${tes.path}/$eventName - ${widget.keywordCheckin}.png')
+              .create();
           await file.writeAsBytes(pngBytes);
-
-          Fluttertoast.showToast(
-            msg:
-                "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file $eventName-${widget.idEvent}.png",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 1,
-          );
           setState(() {
             sudahada = false;
+            message =
+                'Berhasil, Cari gambar QrCode pada folder EventZhee - $eventName - ${widget.keywordCheckin}.png';
           });
         } else {
-          final file =
-              await new File('${tes.path}/$eventName-${widget.idEvent}.png')
-                  .create();
+          final file = await new File(
+                  '${tes.path}/$eventName - ${widget.keywordCheckin}.png')
+              .create();
           await file.writeAsBytes(pngBytes);
-          Fluttertoast.showToast(
-            msg:
-                "Berhasil, Cari gambar QrCode pada folder EventZhee - nama file $eventName-${widget.idEvent}.png",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 1,
-          );
+          setState(() {
+            message =
+                'Berhasil, Cari gambar QrCode pada folder EventZhee - $eventName - ${widget.keywordCheckin}.png';
+          });
         }
       }
     } catch (e) {

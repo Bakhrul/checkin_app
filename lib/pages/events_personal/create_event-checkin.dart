@@ -5,7 +5,6 @@ import 'package:checkin_app/routes/env.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'create_checkin.dart';
-import 'index.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
@@ -80,14 +79,17 @@ class _ManajemenCreateEventCheckinState
               color: Colors.white,
             ),
             tooltip: 'Tambah Checkin',
-            onPressed: isDelete == true ? null : () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ManajemeCreateCheckin(
-                        listCheckinadd: ListCheckinAdd, event: widget.event),
-                  ));
-            },
+            onPressed: isDelete == true
+                ? null
+                : () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ManajemeCreateCheckin(
+                              listCheckinadd: ListCheckinAdd,
+                              event: widget.event),
+                        ));
+                  },
           ),
         ],
       ),
@@ -96,7 +98,7 @@ class _ManajemenCreateEventCheckinState
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-         isDelete == true
+              isDelete == true
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -155,63 +157,75 @@ class _ManajemenCreateEventCheckinState
                                           child: Icon(
                                             Icons.close,
                                           ),
-                                          onPressed: isDelete == true ? null : () async {
-                                            setState(() {
-                                              isDelete = true;
-                                            });
-                                            try {
-                                              Fluttertoast.showToast(
-                                                  msg: "Mohon Tunggu Sebentar");
-                                              final addadminevent = await http.post(
-                                                  url('api/delete_opsicreateevent'),
-                                                  headers: requestHeaders,
-                                                  body: {
-                                                    'event': widget.event,
-                                                    'keyword': item.keyword,
-                                                    'typehapuscheckin':
-                                                        'checkin',
-                                                  });
-
-                                              if (addadminevent.statusCode ==
-                                                  200) {
-                                                var addadmineventJson = json
-                                                    .decode(addadminevent.body);
-                                                if (addadmineventJson[
-                                                        'status'] ==
-                                                    'success') {
+                                          onPressed: isDelete == true
+                                              ? null
+                                              : () async {
                                                   setState(() {
-                                                    listcheckinAdd.remove(item);
-                                                    isDelete = false;
+                                                    isDelete = true;
                                                   });
+                                                  try {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Mohon Tunggu Sebentar");
+                                                    final addadminevent =
+                                                        await http.post(
+                                                            url(
+                                                                'api/delete_opsicreateevent'),
+                                                            headers:
+                                                                requestHeaders,
+                                                            body: {
+                                                          'event': widget.event,
+                                                          'keyword':
+                                                              item.keyword,
+                                                          'typehapuscheckin':
+                                                              'checkin',
+                                                        });
 
-                                                  Fluttertoast.showToast(
-                                                      msg: "Berhasil !");
-                                                }
-                                              } else {
-                                                print(addadminevent.body);
-                                                Fluttertoast.showToast(
-                                                    msg:
-                                                        "Gagal, Silahkan Coba Kembali");
-                                                setState(() {
-                                                  isDelete = false;
-                                                });
-                                              }
-                                            } on TimeoutException catch (_) {
-                                              Fluttertoast.showToast(
-                                                  msg: "Timed out, Try again");
-                                              setState(() {
-                                                isDelete = false;
-                                              });
-                                            } catch (e) {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Gagal, Silahkan Coba Kembali");
-                                              setState(() {
-                                                isDelete = false;
-                                              });
-                                              print(e);
-                                            }
-                                          },
+                                                    if (addadminevent
+                                                            .statusCode ==
+                                                        200) {
+                                                      var addadmineventJson =
+                                                          json.decode(
+                                                              addadminevent
+                                                                  .body);
+                                                      if (addadmineventJson[
+                                                              'status'] ==
+                                                          'success') {
+                                                        setState(() {
+                                                          listcheckinAdd
+                                                              .remove(item);
+                                                          isDelete = false;
+                                                        });
+
+                                                        Fluttertoast.showToast(
+                                                            msg: "Berhasil !");
+                                                      }
+                                                    } else {
+                                                      print(addadminevent.body);
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              "Gagal, Silahkan Coba Kembali");
+                                                      setState(() {
+                                                        isDelete = false;
+                                                      });
+                                                    }
+                                                  } on TimeoutException catch (_) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Timed out, Try again");
+                                                    setState(() {
+                                                      isDelete = false;
+                                                    });
+                                                  } catch (e) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Gagal, Silahkan Coba Kembali");
+                                                    setState(() {
+                                                      isDelete = false;
+                                                    });
+                                                    print(e);
+                                                  }
+                                                },
                                         )),
                                     title: Text(
                                       '${item.nama} ( ${item.keyword} )',
@@ -239,22 +253,20 @@ class _ManajemenCreateEventCheckinState
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: isDelete == true ? null : () async {
-          setState(() {
-            idEventFinalX = null;
-            listcheckinAdd = [];
-            listKategoriAdd = [];
-            listUseradd = [];
-          });
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => ManajemenEventPersonal()));
-        },
+        onPressed: isDelete == true
+            ? null
+            : () async {
+                setState(() {
+                  idEventFinalX = null;
+                  listcheckinAdd = [];
+                  listKategoriAdd = [];
+                  listUseradd = [];
+                });
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName('/dashboard'),
+                );
+              },
         child: Icon(Icons.check),
         backgroundColor: primaryButtonColor,
       ),

@@ -498,7 +498,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
                                                   }
                                                 },
                                           icon: Icon(Icons.more_vert),
-                                          itemBuilder: (context) => [
+                                          itemBuilder: (context) => isDelete == true ? null : [ 
                                             PopupMenuItem(
                                               value:
                                                   PageEnum.listUsersCheckinPage,
@@ -565,7 +565,7 @@ class _ManageCheckinState extends State<ManageCheckin> {
             : DraggableFab(
                 child: FloatingActionButton(
                     shape: StadiumBorder(),
-                    onPressed: () async {
+                    onPressed: isDelete == true ? null : () async {
                       Navigator.push(
                           context,
                           MaterialPageRoute(

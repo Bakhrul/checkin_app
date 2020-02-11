@@ -291,7 +291,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                           : Text(
                                               eventTimeStart == null || eventTimeEnd == null 
                                                   ? "Memuat ..."
-                                                  : DateFormat('dd MMM yyyy H:m').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('dd MMM yyyy H:m').format(DateTime.parse(eventTimeEnd)),
+                                                  : DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(eventTimeEnd)),
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
 
@@ -310,7 +310,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                                           Text(
                                               eventTimeStart == null || eventTimeEnd == null 
                                                   ? 'Memuat ...'
-                                                  : DateFormat('H:m').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('H:m').format(DateTime.parse(eventTimeEnd)),
+                                                  : DateFormat('HH:mm').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('HH:mm').format(DateTime.parse(eventTimeEnd)),
                                               style: TextStyle(
                                                   color: Colors.grey[600]))
                                         ]))

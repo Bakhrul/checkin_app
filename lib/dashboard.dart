@@ -192,7 +192,7 @@ class _DashboardState extends State<Dashboard> {
     } catch (e) {}
   }
 
-  Future<dynamic> _wish(String wish, eventId, index) async {
+  Future<dynamic> wish(String wish, eventId, index) async {
     var storage = new DataStore();
     var tokenTypeStorage = await storage.getDataString('token_type');
     var accessTokenStorage = await storage.getDataString('access_token');
