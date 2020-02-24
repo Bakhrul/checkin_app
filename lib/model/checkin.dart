@@ -9,6 +9,7 @@ class Checkin {
   String sessionName;
   String titleEvent;
   String locationEvent;
+  String checkinName;
   String eventName;
   String checkinType;
   int totalUsers;
@@ -17,6 +18,7 @@ class Checkin {
   this.checkinKey, this.startTime,this.endTime, this.checkinDate,this.sessionName,
   this.eventName,
   this.checkinType,
+  this.checkinName,
   this.totalUsers,
   });
 }

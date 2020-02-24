@@ -2184,6 +2184,7 @@ class _DashboardState extends State<Dashboard> {
             return WaitingEvent(
               id: eventId,
               creatorId: cratorId,
+              dataUser: dataUser,
               selfEvent: userId == cratorId ? true : false,
             );
           } else {

@@ -85,13 +85,14 @@ class _ConfirmEventGuest extends State<ConfirmEventGuest> {
         }
         
       } else if (ongoingevent.statusCode == 401) {
-        Fluttertoast.showToast(msg: 'Gagal Mendaftar');
+        Fluttertoast.showToast(msg: 'Gagal Mendaftar, Silahkan Coba Kembali');
         print(ongoingevent.body);
         setState(() {
           _isLoading = false;
         });
       } else {
-        Fluttertoast.showToast(msg: 'Gagal Mendaftar');
+        print(ongoingevent.body);
+        Fluttertoast.showToast(msg: 'Gagal Mendaftar, Silahkan Coba Kembali');
         setState(() {
           _isLoading = false;
         });

@@ -27,40 +27,6 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
             builder: (context) =>
                 CheckinQRCode(idevent: widget.id, idcheckin: data.toString())));
     print('testing' + data.toString());
-
-    // var _timeCheckin = DateTime.now().toString();
-    // dynamic body = {
-    //   "event_id": widget.id,
-    //   "checkin_id": data.toString(),
-    //   "checkin_type": "BS",
-    //   "time_checkin": _timeCheckin
-    // };
-
-    // dynamic response =
-    //     await RequestPost(name: "checkin/postdata/usercheckin", body: body)
-    //         .sendrequest();
-    // if (response == "success") {
-    //   Fluttertoast.showToast(
-    //       msg: "Success",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIos: 1,
-    //       backgroundColor: Colors.green,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    //   Navigator.pop(context);
-    // } else {
-    //   Fluttertoast.showToast(
-    //       msg: "Terjadi Kesalahan Server Mohon Coba Lagi",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIos: 1,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // }
-
-    // setState(() {});
   }
 
   @override

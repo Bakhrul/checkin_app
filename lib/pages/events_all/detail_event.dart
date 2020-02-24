@@ -738,10 +738,10 @@ class _RegisterEvent extends State<RegisterEvents> {
                                               color:
                                                   primaryAppBarColor,
                                               textColor: Colors.white,
-                                              disabledColor: Colors.green[400],
+                                              disabledColor: Color.fromRGBO(254, 86, 14, 0.8),
                                               disabledTextColor: Colors.white,
                                               splashColor: Colors.blueAccent,
-                                              onPressed: () async {
+                                              onPressed: _isLoading == true || _isDisconnect == true ? null : () async {
                                                 Navigator.pushReplacement(
                                                     context,
                                                     MaterialPageRoute(

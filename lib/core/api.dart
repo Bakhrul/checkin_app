@@ -181,7 +181,7 @@ class RequestGet{
       return dataresponse;
     }else{
       Fluttertoast.showToast(msg:'Error Code ${data.statusCode}');
-      return 'failure';
+      return data.statusCode;
     }
 
     } on SocketException catch (_) {

@@ -172,6 +172,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
           checkinKey: response[i]["checkin_keyword"],
           startTime: response[i]["start_time"],
           endTime: response[i]["end_time"],
+          checkinName: response[i]['checkin_name'] == null || response[i]['checkin_name'] == '' ? 'Tidak Diketahui' : response[i]['checkin_name'],
           checkinDate: response[i]["checkin_date"],
           totalUsers: response[i]["total_users"],
           checkinType: response[i]["checkin_type"],
@@ -804,9 +805,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                     children: <Widget>[
                                       Card(
                                         child: ListTile(
-                                            leading: data.checkinType ==
-                                                    "Direct"
-                                                ? Padding(
+                                            leading:Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             10.0),
@@ -823,13 +822,13 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                             41, 30, 47, 1),
                                                       ),
                                                     ),
-                                                  )
-                                                : null,
+                                                  ),
+                                                
                                             title: Text(
                                               data.checkinKey == null ||
                                                       data.checkinKey == ''
                                                   ? 'Memuat...'
-                                                  : data.checkinKey,
+                                                  : '${data.checkinName} (${data.checkinKey})',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 13,
@@ -845,6 +844,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
                                                                 ListPesertaCheckin(
                                                                     id: data.id
                                                                         .toString(),
+                                                                    namaCheckin : data.checkinName,
                                                                     eventid: data
                                                                         .eventId
                                                                         .toString())));
