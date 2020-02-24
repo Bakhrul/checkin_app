@@ -7,6 +7,7 @@ import 'package:checkin_app/pages/management_checkin/create_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/detail_checkin.dart';
 import 'package:checkin_app/pages/management_checkin/direct_checkin.dart';
 import 'package:checkin_app/routes/env.dart';
+import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +17,19 @@ import 'package:intl/intl.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'list_peserta_checkin.dart';
 import 'dart:math' as math;
+import 'package:checkin_app/routes/env.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
 
 String sifat = 'VIP';
 String tipe = 'Public';
 var datepicker;
 bool isActionCheckin, isDeletePeserta;
-List<UserParticipant> listPeserta;
-List<UserParticipant> listAdmin;
-List<Checkin> listCheckin;
+List<UserParticipant> listPeserta = [];
+List<UserParticipant> listAdmin = [];
+List<Checkin> listCheckin = [];
+Map<String, String> requestHeaders = Map();
 enum PageEnum { detailCheckin, deleteCheckin }
 
 class DashboardCheckin extends StatefulWidget {
@@ -54,24 +60,68 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   var childButtons = List<UnicornButton>();
 
-  getDataEvent() async {
+
+  Future<void> getHeaderHTTP() async {
+    var storage = new DataStore();
+
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+    return getDataEvent();
+  }
+   Future<List<List>> getDataEvent() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
-    listPeserta = [];
     try {
-      dynamic response = await RequestGet(
-              name: "event/getdata/event/", customrequest: "${widget.idevent}")
-          .getdata();
-      // print(response[0]['title']);
-      setState(() {
-        titleEvent = response[0]['title'];
-      });
+      final getDataEvents = await http.post(
+        url('api/event/getdata/event/${widget.idevent}'),
+        headers: requestHeaders,
+      );
+
+      if (getDataEvents.statusCode == 200) {
+        var dataeventToJson = json.decode(getDataEvents.body);
+        var dataEvent = dataeventToJson;
+        // listPeserta = [];
 
       setState(() {
         isLoading = false;
-        isError = false;
+        titleEvent = dataEvent[0]['title'];
       });
+      } else if (getDataEvents.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -79,36 +129,69 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       });
       debugPrint('$e');
     }
+    return null;
   }
+ Future<List<List>> getDataMember() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
 
-  getDataMember() async {
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
-    listPeserta = [];
     try {
-      dynamic response = await RequestGet(
-              name: "event/getdata/participant/",
-              customrequest: "${widget.idevent}")
-          .getdata();
-      print(response);
-      for (var i = 0; i < response.length; i++) {
+      final getDataMembers = await http.get(
+        url('api/event/getdata/participant/${widget.idevent}'),
+        headers: requestHeaders,
+      );
+
+      if (getDataMembers.statusCode == 200) {
+        var dataMembeToJson = json.decode(getDataMembers.body);
+        var dataEvent = dataMembeToJson;
+        // listPeserta = [];
+
+         for (var i = 0; i < dataEvent.length; i++) {
         UserParticipant peserta = UserParticipant(
-          id: response[i]["id"].toString(),
-          name: response[i]["name"],
-          email: response[i]["email"],
-          position: response[i]["position"].toString(),
-          status: response[i]["status"],
-          picProfile: response[i]["pic_profile"],
-          eventId: response[i]["event_id"].toString(),
+          id: dataEvent[i]["id"].toString(),
+          name: dataEvent[i]["name"],
+          email: dataEvent[i]["email"],
+          position: dataEvent[i]["position"].toString(),
+          status: dataEvent[i]["status"],
+          picProfile: dataEvent[i]["pic_profile"],
+          eventId: dataEvent[i]["event_id"].toString(),
         );
 
         listPeserta.add(peserta);
       }
       setState(() {
         isLoading = false;
-        isError = false;
+        // titleEvent = dataEvent[0]['title'];
       });
+      } else if (getDataMembers.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -116,36 +199,70 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       });
       debugPrint('$e');
     }
+    return null;
   }
+Future<List<List>> getDataAdmin() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
 
-  getDataAdmin() async {
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
-    listAdmin = [];
     try {
-      dynamic response = await RequestGet(
-              name: "event/getdata/admin/", customrequest: "${widget.idevent}")
-          .getdata();
-      print("as");
-      print(response);
-      for (var i = 0; i < response.length; i++) {
+      final getDataAdmins = await http.get(
+        url('api/event/getdata/admin/${widget.idevent}'),
+        headers: requestHeaders,
+      );
+
+      if (getDataAdmins.statusCode == 200) {
+        var dataAdminToJson = json.decode(getDataAdmins.body);
+        var dataAdmin = dataAdminToJson;
+        // listAdmin = [];
+
+       for (var i = 0; i < dataAdmin.length; i++) {
         UserParticipant admin = UserParticipant(
-          id: response[i]["id"].toString(),
-          name: response[i]["name"],
-          email: response[i]["email"],
-          position: response[i]["position"].toString(),
-          status: response[i]["status"],
-          picProfile: response[i]["pic_profile"],
-          eventId: response[i]["event_id"].toString(),
+          id: dataAdmin[i]["id"].toString(),
+          name: dataAdmin[i]["name"],
+          email: dataAdmin[i]["email"],
+          position: dataAdmin[i]["position"].toString(),
+          status: dataAdmin[i]["status"],
+          picProfile: dataAdmin[i]["pic_profile"],
+          eventId: dataAdmin[i]["event_id"].toString(),
         );
 
         listAdmin.add(admin);
       }
       setState(() {
         isLoading = false;
-        isError = false;
+        // titleEvent = dataEvent[0]['title'];
       });
+
+      } else if (getDataAdmins.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -153,37 +270,72 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       });
       debugPrint('$e');
     }
+    return null;
   }
 
-  getDataCheckin() async {
+  Future<List<List>> getDataCheckin() async {
+    var storage = new DataStore();
+    var tokenTypeStorage = await storage.getDataString('token_type');
+    var accessTokenStorage = await storage.getDataString('access_token');
+
+    tokenType = tokenTypeStorage;
+    accessToken = accessTokenStorage;
+    requestHeaders['Accept'] = 'application/json';
+    requestHeaders['Authorization'] = '$tokenType $accessToken';
+
     setState(() {
       isLoading = true;
     });
     try {
-      listCheckin = [];
-      dynamic response = await RequestGet(
-              name: "checkin/getdata/checkin/",
-              customrequest: "${widget.idevent}")
-          .getdata();
-      for (var i = 0; i < response.length; i++) {
+      final getDataCheckins = await http.get(
+        url('api/checkin/getdata/checkin/${widget.idevent}'),
+        headers: requestHeaders,
+      );
+  print(getDataCheckins.statusCode);
+      if (getDataCheckins.statusCode == 200) {
+        var dataCheckinToJson = json.decode(getDataCheckins.body);
+        var dataCheckin = dataCheckinToJson;
+        listCheckin = [];
+
+      for (var i = 0; i < dataCheckin.length; i++) {
         Checkin checkin = Checkin(
-          id: response[i]["id"].toString(),
-          eventId: response[i]["event_id"].toString(),
-          checkinKey: response[i]["checkin_keyword"],
-          startTime: response[i]["start_time"],
-          endTime: response[i]["end_time"],
-          checkinName: response[i]['checkin_name'] == null || response[i]['checkin_name'] == '' ? 'Tidak Diketahui' : response[i]['checkin_name'],
-          checkinDate: response[i]["checkin_date"],
-          totalUsers: response[i]["total_users"],
-          checkinType: response[i]["checkin_type"],
+          id: dataCheckin[i]["id"].toString(),
+          eventId: dataCheckin[i]["event_id"].toString(),
+          checkinKey: dataCheckin[i]["checkin_keyword"],
+          startTime: dataCheckin[i]["start_time"],
+          endTime: dataCheckin[i]["end_time"],
+          checkinName: dataCheckin[i]['checkin_name'] == null || dataCheckin[i]['checkin_name'] == '' ? 'Tidak Diketahui' : dataCheckin[i]['checkin_name'],
+          checkinDate: dataCheckin[i]["checkin_date"],
+          totalUsers: dataCheckin[i]["total_users"],
+          checkinType: dataCheckin[i]["checkin_type"],
         );
 
         listCheckin.add(checkin);
       }
       setState(() {
         isLoading = false;
-        isError = false;
+        // titleEvent = dataEvent[0]['title'];
       });
+      } else if (getDataCheckins.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -191,7 +343,145 @@ class _DashboardCheckinState extends State<DashboardCheckin>
       });
       debugPrint('$e');
     }
+    return null;
   }
+  // getDataEvent() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   listPeserta = [];
+  //   try {
+  //     dynamic response = await RequestGet(
+  //             name: "event/getdata/event/", customrequest: "${widget.idevent}")
+  //         .getdata();
+  //     // print(response[0]['title']);
+  //     setState(() {
+  //       titleEvent = response[0]['title'];
+  //     });
+
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = true;
+  //     });
+  //     debugPrint('$e');
+  //   }
+  // }
+
+  // getDataMember() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   listPeserta = [];
+  //   try {
+  //     dynamic response = await RequestGet(
+  //             name: "event/getdata/participant/",
+  //             customrequest: "${widget.idevent}")
+  //         .getdata();
+  //     print(response);
+  //     for (var i = 0; i < response.length; i++) {
+  //       UserParticipant peserta = UserParticipant(
+  //         id: response[i]["id"].toString(),
+  //         name: response[i]["name"],
+  //         email: response[i]["email"],
+  //         position: response[i]["position"].toString(),
+  //         status: response[i]["status"],
+  //         picProfile: response[i]["pic_profile"],
+  //         eventId: response[i]["event_id"].toString(),
+  //       );
+
+  //       listPeserta.add(peserta);
+  //     }
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = true;
+  //     });
+  //     debugPrint('$e');
+  //   }
+  // }
+
+  // getDataAdmin() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   listAdmin = [];
+  //   try {
+  //     dynamic response = await RequestGet(
+  //             name: "event/getdata/admin/", customrequest: "${widget.idevent}")
+  //         .getdata();
+  //     print("as");
+  //     print(response);
+  //     for (var i = 0; i < response.length; i++) {
+  //       UserParticipant admin = UserParticipant(
+  //         id: response[i]["id"].toString(),
+  //         name: response[i]["name"],
+  //         email: response[i]["email"],
+  //         position: response[i]["position"].toString(),
+  //         status: response[i]["status"],
+  //         picProfile: response[i]["pic_profile"],
+  //         eventId: response[i]["event_id"].toString(),
+  //       );
+
+  //       listAdmin.add(admin);
+  //     }
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = true;
+  //     });
+  //     debugPrint('$e');
+  //   }
+  // }
+
+  // getDataCheckin() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   try {
+  //     listCheckin = [];
+  //     dynamic response = await RequestGet(
+  //             name: "checkin/getdata/checkin/",
+  //             customrequest: "${widget.idevent}")
+  //         .getdata();
+  //     for (var i = 0; i < response.length; i++) {
+  //       Checkin checkin = Checkin(
+  //         id: response[i]["id"].toString(),
+  //         eventId: response[i]["event_id"].toString(),
+  //         checkinKey: response[i]["checkin_keyword"],
+  //         startTime: response[i]["start_time"],
+  //         endTime: response[i]["end_time"],
+  //         checkinDate: response[i]["checkin_date"],
+  //         totalUsers: response[i]["total_users"],
+  //         checkinType: response[i]["checkin_type"],
+  //       );
+
+  //       listCheckin.add(checkin);
+  //     }
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = false;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //       isError = true;
+  //     });
+  //     debugPrint('$e');
+  //   }
+  // }
 
   deleteParticipant(id, index, eventId) async {
     setState(() {
@@ -341,6 +631,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
 
   @override
   void initState() {
+    getHeaderHTTP();
     getDataMember();
     getDataCheckin();
     getDataAdmin();
