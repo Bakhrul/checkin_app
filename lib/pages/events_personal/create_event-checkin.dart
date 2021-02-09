@@ -4,19 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'create_checkin.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
+import 'package:checkin_app/dashboard.dart';
 import 'model.dart';
 import 'package:checkin_app/utils/utils.dart';
-import 'create_event-information.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shimmer/shimmer.dart';
 
 List<ListCheckinAdd> listcheckinAdd = [];
-List<ListKategoriEventAdd> listKategoriAdd = [];
-List<ListUserAdd> listUseradd = [];
 String tokenType, accessToken;
-bool isCreate, isDelete;
+bool isLoading, isError;
 Map<String, String> requestHeaders = Map();
 
 class ManajemenCreateEventCheckin extends StatefulWidget {
@@ -31,9 +32,10 @@ class ManajemenCreateEventCheckin extends StatefulWidget {
 
 class _ManajemenCreateEventCheckinState
     extends State<ManajemenCreateEventCheckin> {
+  ProgressDialog progressApiAction;
   void initState() {
-    isCreate = false;
-    isDelete = false;
+    isLoading = true;
+    isError = false;
     getHeaderHTTP();
     super.initState();
   }
@@ -49,7 +51,77 @@ class _ManajemenCreateEventCheckinState
 
     requestHeaders['Accept'] = 'application/json';
     requestHeaders['Authorization'] = '$tokenType $accessToken';
-    print(requestHeaders);
+    return listcheckin();
+  }
+
+  Future<List<ListCheckinAdd>> listcheckin() async {
+    setState(() {
+      isLoading = true;
+      listcheckinAdd.clear();
+      listcheckinAdd = [];
+    });
+    try {
+      final getCheckin = await http.post(
+        url('api/checkin_createevent'),
+        body: {
+          'event': widget.event,
+        },
+        headers: requestHeaders,
+      );
+
+      if (getCheckin.statusCode == 200) {
+        var checkinEventJson = json.decode(getCheckin.body);
+        var checkins = checkinEventJson['checkin'];
+        setState(() {
+          listcheckinAdd.clear();
+          listcheckinAdd = [];
+        });
+
+        for (var i in checkins) {
+          ListCheckinAdd donex = ListCheckinAdd(
+            idcheckin: i['ec_checkid'],
+            keyword: i['ec_keyword'],
+            nama: i['ec_name'],
+            timestart:
+                DateFormat("dd MMM yyyy HH:mm").format(DateTime.parse(i['ec_time_start'])),
+            timeend:
+                DateFormat("dd MMM yyyy HH:mm").format(DateTime.parse(i['ec_time_end'])),
+          );
+          listcheckinAdd.add(donex);
+        }
+        setState(() {
+          isLoading = false;
+          isError = false;
+        });
+      } else if (getCheckin.statusCode == 401) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        Fluttertoast.showToast(
+            msg: "Token Telah Kadaluwarsa, Silahkan Login Kembali");
+      } else {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        print(getCheckin.body);
+        return null;
+      }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      Fluttertoast.showToast(msg: "Timed out, Try again");
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        isError = true;
+      });
+      debugPrint('$e');
+    }
+    return null;
   }
 
   void dispose() {
@@ -58,6 +130,17 @@ class _ManajemenCreateEventCheckinState
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
@@ -79,197 +162,322 @@ class _ManajemenCreateEventCheckinState
               color: Colors.white,
             ),
             tooltip: 'Tambah Checkin',
-            onPressed: isDelete == true
-                ? null
-                : () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ManajemeCreateCheckin(
-                              listCheckinadd: ListCheckinAdd,
-                              event: widget.event),
-                        ));
-                  },
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ManajemeCreateCheckin(
+                        listCheckinadd: ListCheckinAdd, event: widget.event),
+                  ));
+            },
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              isDelete == true
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                            width: 15.0,
-                            margin: EdgeInsets.only(top: 10.0, right: 15.0),
-                            height: 15.0,
-                            child: CircularProgressIndicator()),
-                      ],
-                    )
-                  : Container(),
-              listcheckinAdd.length == 0
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Column(children: <Widget>[
-                        new Container(
-                          width: 100.0,
-                          height: 100.0,
-                          child: Image.asset("images/empty-white-box.png"),
+      body: isLoading == true
+          ? loadingView()
+          : isError == true
+              ? RefreshIndicator(
+                  onRefresh: () => getHeaderHTTP(),
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Column(children: <Widget>[
+                      new Container(
+                        width: 100.0,
+                        height: 100.0,
+                        child: Image.asset("images/system-eror.png"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 30.0,
+                          left: 15.0,
+                          right: 15.0,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 20.0,
-                            left: 15.0,
-                            right: 15.0,
+                        child: Center(
+                          child: Text(
+                            "Gagal Memuat Halaman, Tekan Tombol Muat Ulang Halaman Untuk Refresh Halaman",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          child: Center(
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 15.0, right: 15.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            textColor: Color.fromRGBO(41, 30, 47, 1),
+                            disabledColor: Colors.grey,
+                            disabledTextColor: Colors.black,
+                            padding: EdgeInsets.all(15.0),
+                            splashColor: Colors.blueAccent,
+                            onPressed: () async {
+                              getHeaderHTTP();
+                            },
                             child: Text(
-                              "Checkin Event Belum Ditambahkan / Masih Kosong",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black45,
-                                height: 1.5,
-                              ),
-                              textAlign: TextAlign.center,
+                              "Muat Ulang Halaman",
+                              style: TextStyle(fontSize: 14.0),
                             ),
                           ),
                         ),
-                      ]),
-                    )
-                  : Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: listcheckinAdd.reversed
-                            .map((ListCheckinAdd item) => Card(
-                                  child: ListTile(
-                                    leading: ButtonTheme(
-                                        minWidth: 0.0,
-                                        child: FlatButton(
-                                          color: Colors.white,
-                                          textColor: Colors.red,
-                                          disabledColor: Colors.white,
-                                          disabledTextColor: Colors.red[400],
-                                          padding: EdgeInsets.all(15.0),
-                                          splashColor: Colors.blueAccent,
-                                          child: Icon(
-                                            Icons.close,
-                                          ),
-                                          onPressed: isDelete == true
-                                              ? null
-                                              : () async {
-                                                  setState(() {
-                                                    isDelete = true;
-                                                  });
-                                                  try {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "Mohon Tunggu Sebentar");
-                                                    final addadminevent =
-                                                        await http.post(
-                                                            url(
-                                                                'api/delete_opsicreateevent'),
-                                                            headers:
-                                                                requestHeaders,
-                                                            body: {
-                                                          'event': widget.event,
-                                                          'keyword':
-                                                              item.keyword,
-                                                          'typehapuscheckin':
-                                                              'checkin',
-                                                        });
-
-                                                    if (addadminevent
-                                                            .statusCode ==
-                                                        200) {
-                                                      var addadmineventJson =
-                                                          json.decode(
-                                                              addadminevent
-                                                                  .body);
-                                                      if (addadmineventJson[
-                                                              'status'] ==
-                                                          'success') {
-                                                        setState(() {
-                                                          listcheckinAdd
-                                                              .remove(item);
-                                                          isDelete = false;
-                                                        });
-
-                                                        Fluttertoast.showToast(
-                                                            msg: "Berhasil !");
-                                                      }
-                                                    } else {
-                                                      print(addadminevent.body);
-                                                      Fluttertoast.showToast(
-                                                          msg:
-                                                              "Gagal, Silahkan Coba Kembali");
-                                                      setState(() {
-                                                        isDelete = false;
-                                                      });
-                                                    }
-                                                  } on TimeoutException catch (_) {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "Timed out, Try again");
-                                                    setState(() {
-                                                      isDelete = false;
-                                                    });
-                                                  } catch (e) {
-                                                    Fluttertoast.showToast(
-                                                        msg:
-                                                            "Gagal, Silahkan Coba Kembali");
-                                                    setState(() {
-                                                      isDelete = false;
-                                                    });
-                                                    print(e);
-                                                  }
-                                                },
-                                        )),
-                                    title: Text(
-                                      '${item.nama} ( ${item.keyword} )',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    subtitle: Padding(
-                                      padding: const EdgeInsets.only(top: 5.0),
-                                      child: Text(
-                                        '${item.timestart} - ${item.timeend}',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ))
-                            .toList(),
                       ),
-                    ),
-            ],
-          ),
-        ),
-      ),
+                    ]),
+                  ),
+                )
+              : listcheckinAdd.length == 0
+                  ? RefreshIndicator(
+                      onRefresh: () => getHeaderHTTP(),
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Column(children: <Widget>[
+                          new Container(
+                            width: 100.0,
+                            height: 100.0,
+                            child: Image.asset("images/empty-white-box.png"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 20.0,
+                              left: 15.0,
+                              right: 15.0,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Checkin Event Belum Ditambahkan / Masih Kosong",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black45,
+                                  height: 1.5,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.only(top:20.0),
+                      child: Column(children: <Widget>[
+                        Expanded(
+                            child: Scrollbar(
+                                child: RefreshIndicator(
+                                    onRefresh: () => getHeaderHTTP(),
+                                    child: ListView.builder(
+                                        itemCount: listcheckinAdd.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Card(
+                                            child: ListTile(
+                                              leading: ButtonTheme(
+                                                  minWidth: 0.0,
+                                                  child: FlatButton(
+                                                    color: Colors.white,
+                                                    textColor: Colors.red,
+                                                    disabledColor: Colors.white,
+                                                    disabledTextColor:
+                                                        Colors.red[400],
+                                                    padding:
+                                                        EdgeInsets.all(15.0),
+                                                    splashColor:
+                                                        Colors.blueAccent,
+                                                    child: Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed: () async {
+                                                      try {
+                                                        await progressApiAction
+                                                            .show();
+                                                        final addadminevent =
+                                                            await http.post(
+                                                                url(
+                                                                    'api/delete_opsicreateevent'),
+                                                                headers:
+                                                                    requestHeaders,
+                                                                body: {
+                                                              'event':
+                                                                  widget.event,
+                                                              'keyword':
+                                                                  listcheckinAdd[
+                                                                          index]
+                                                                      .keyword,
+                                                              'typehapuscheckin':
+                                                                  'checkin',
+                                                            });
+
+                                                        if (addadminevent
+                                                                .statusCode ==
+                                                            200) {
+                                                          var addadmineventJson =
+                                                              json.decode(
+                                                                  addadminevent
+                                                                      .body);
+                                                          if (addadmineventJson[
+                                                                  'status'] ==
+                                                              'success') {
+                                                            progressApiAction
+                                                                .hide()
+                                                                .then(
+                                                                    (isHidden) {
+                                                              print(isHidden);
+                                                            });
+                                                            setState(() {
+                                                              listcheckinAdd.remove(
+                                                                  listcheckinAdd[
+                                                                      index]);
+                                                            });
+
+                                                            Fluttertoast.showToast(
+                                                                msg:
+                                                                    "Berhasil !");
+                                                          }
+                                                        } else {
+                                                          print(addadminevent
+                                                              .body);
+                                                          progressApiAction
+                                                              .hide()
+                                                              .then((isHidden) {
+                                                            print(isHidden);
+                                                          });
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Gagal, Silahkan Coba Kembali");
+                                                        }
+                                                      } on TimeoutException catch (_) {
+                                                        progressApiAction
+                                                            .hide()
+                                                            .then((isHidden) {
+                                                          print(isHidden);
+                                                        });
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Timed out, Try again");
+                                                      } catch (e) {
+                                                        progressApiAction
+                                                            .hide()
+                                                            .then((isHidden) {
+                                                          print(isHidden);
+                                                        });
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Gagal, Silahkan Coba Kembali");
+                                                        print(e);
+                                                      }
+                                                    },
+                                                  )),
+                                              title: Text(
+                                                '${listcheckinAdd[index].nama} ( ${listcheckinAdd[index].keyword} )',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                              subtitle: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5.0,bottom: 10.0),
+                                                child: Text(
+                                                  '${listcheckinAdd[index].timestart} - ${listcheckinAdd[index].timeend}',
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }))))
+                      ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: isDelete == true
-            ? null
-            : () async {
-                setState(() {
-                  idEventFinalX = null;
-                  listcheckinAdd = [];
-                  listKategoriAdd = [];
-                  listUseradd = [];
-                });
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName('/dashboard'),
-                );
-              },
+        onPressed: () async {
+          Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => Dashboard()),
+                      ModalRoute.withName('/'));
+        },
         child: Icon(Icons.check),
         backgroundColor: primaryButtonColor,
       ),
+    );
+  }
+
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
     );
   }
 }

@@ -164,7 +164,9 @@ class _RegisterEvent extends State<RegisterEvents> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _isDisconnect
-              ? Padding(
+              ? RefreshIndicator(
+                onRefresh: () =>  _reload(),
+                child: SingleChildScrollView(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: Column(children: <Widget>[
                               new Container(
@@ -192,7 +194,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 20.0, left: 15.0, right: 15.0),
+                                    top: 20.0, bottom: 20.0, left: 15.0, right: 15.0),
                                 child: SizedBox(
                                   width: double.infinity,
                                   child: RaisedButton(
@@ -213,8 +215,11 @@ class _RegisterEvent extends State<RegisterEvents> {
                                 ),
                               ),
                             ])
-                        )
-              : SingleChildScrollView(
+                        ))
+              : 
+              RefreshIndicator(
+                onRefresh: () => _reload(),
+        child:              SingleChildScrollView(
                   controller: scrollPage,
                   child: Column(children: <Widget>[
                     Stack(children: <Widget>[
@@ -282,18 +287,18 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                   size: 16,
                                                   color: Colors.grey[600])),
                                           allDayEvent == 'N' ?
-                                          Text(
+                                          Expanded(child:Text(
                                               eventTimeStart == null
                                                   ? "Memuat ..."
                                                   : DateFormat('dd MMM yyyy').format(DateTime.parse(eventTimeStart)),
                                               style: TextStyle(
-                                                  color: Colors.grey[600]))
-                                          : Text(
+                                                  color: Colors.grey[600])))
+                                          :Expanded(child: Text(
                                               eventTimeStart == null || eventTimeEnd == null 
                                                   ? "Memuat ..."
                                                   : DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(eventTimeEnd)),
                                               style: TextStyle(
-                                                  color: Colors.grey[600]))
+                                                  color: Colors.grey[600]))),
 
                                         ])),
                                     allDayEvent == 'N' ?
@@ -307,12 +312,13 @@ class _RegisterEvent extends State<RegisterEvents> {
                                                 size: 16,
                                                 color: Colors.grey[600]),
                                           ),
+                                          Expanded(child: 
                                           Text(
                                               eventTimeStart == null || eventTimeEnd == null 
                                                   ? 'Memuat ...'
                                                   : DateFormat('HH:mm').format(DateTime.parse(eventTimeStart)) + ' - ' + DateFormat('HH:mm').format(DateTime.parse(eventTimeEnd)),
                                               style: TextStyle(
-                                                  color: Colors.grey[600]))
+                                                  color: Colors.grey[600]))),
                                         ]))
                                         : Container(),
                                     Divider(),
@@ -728,7 +734,7 @@ class _RegisterEvent extends State<RegisterEvents> {
                         ],
                       ),
                     ]),
-                  ])),
+                  ])),),
                    
         bottomNavigationBar: widget.selfEvent == true ||expired == true ? null: BottomAppBar(
         child: SizedBox(

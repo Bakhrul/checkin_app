@@ -43,7 +43,7 @@ class _ScanQrcodeState extends State<ScanQrcode> with TickerProviderStateMixin {
     });
 
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+        AnimationController(duration: Duration(seconds: 1),vsync: this);
     _animation =
         AlignmentTween(begin: Alignment.topCenter, end: Alignment.bottomCenter)
             .animate(_animationController)

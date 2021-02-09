@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'manage_checkin.dart';
 import 'package:checkin_app/storage/storage.dart';
 
@@ -20,7 +21,6 @@ String tokenType, accessToken;
 Map<String, String> requestHeaders = Map();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 var datepicker;
-bool isUpdate;
 void showInSnackBar(String value) {
   _scaffoldKeyeditcheckin.currentState
       .showSnackBar(new SnackBar(content: new Text(value)));
@@ -56,6 +56,7 @@ class ManajemeEditCheckin extends StatefulWidget {
 
 class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  ProgressDialog progressApiAction;
   DateTime timeReplacement;
   @override
   void initState() {
@@ -63,7 +64,6 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
     firstdate = FocusNode();
     lastdate = FocusNode();
     getHeaderHTTP();
-    isUpdate = false;
     _namacheckinController.text = widget.namacheckin;
     _kodecheckinController.text = widget.kodecheckin;
     _tanggalawal = widget.timestart == 'kosong' ||
@@ -76,17 +76,18 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
             widget.timeend == null
         ? DateTime.now()
         : widget.timeend;
-        timeSetToMinute();
+    timeSetToMinute();
     super.initState();
   }
- void timeSetToMinute() {
+
+  void timeSetToMinute() {
     var time = DateTime.now();
     var newHour = 0;
     var newMinute = 0;
     var newSecond = 0;
     time = time.toLocal();
-    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
-       
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour,
+        newMinute, newSecond, time.millisecond, time.microsecond);
   }
 
   Future<void> getHeaderHTTP() async {
@@ -106,29 +107,17 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
     if (_namacheckinController.text == null ||
         _namacheckinController.text == '') {
       Fluttertoast.showToast(msg: "Nama CheckIn Tidak Boleh Kosong");
-      setState(() {
-        isUpdate = false;
-      });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
       Fluttertoast.showToast(msg: "Kata Kunci CheckIn Tidak Boleh Kosong");
-      setState(() {
-        isUpdate = false;
-      });
     } else if (_tanggalawal == 'kosong' ||
         _tanggalawal == '' ||
         _tanggalawal == null) {
       Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
-      setState(() {
-        isUpdate = false;
-      });
     } else if (_tanggalakhir == 'kosong' ||
         _tanggalakhir == '' ||
         _tanggalakhir == null) {
       Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
-      setState(() {
-        isUpdate = false;
-      });
     } else {
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
@@ -160,6 +149,7 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
 
       requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
       try {
+        await progressApiAction.show();
         final response = await http.post(
           url('api/updatecheckin_event'),
           headers: requestHeadersX,
@@ -174,45 +164,50 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
             Fluttertoast.showToast(msg: "Berhasil Memperbarui Data CheckIn");
-            setState(() {
-              isUpdate = false;
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
             });
             Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManageCheckin(event: widget.event, namaEvent: widget.namaEvent)));
+                    builder: (context) => ManageCheckin(
+                        event: widget.event, namaEvent: widget.namaEvent)));
           } else if (responseJson['status'] == 'keywordsudahdigunakan') {
-            setState(() {
-              isUpdate = false;
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
             });
             Fluttertoast.showToast(
                 msg:
                     "Kata Kunci Sudah Digunakan, Mohon Gunakan Kode Unik Yang Lain");
-          }else if(responseJson['status'] == 'tanggalkurang'){
-             setState(() {
-              isUpdate = false;
-            });          
-            Fluttertoast.showToast(msg: "Waktu Tersebut Sudah Memiliki Jadwal Checkin, Mohon Gunakan Waktu Lainnya");
+          } else if (responseJson['status'] == 'tanggalkurang') {
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
+            });
+            Fluttertoast.showToast(
+                msg:
+                    "Waktu Tersebut Sudah Memiliki Jadwal Checkin, Mohon Gunakan Waktu Lainnya");
           }
           print('response decoded $responseJson');
         } else {
           print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Memperbarui Checkin, Silahkan Coba Kembali");
-          setState(() {
-            isUpdate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         }
       } on TimeoutException catch (_) {
         Fluttertoast.showToast(msg: "Timed out, Try again");
-        setState(() {
-          isUpdate = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
       } catch (e) {
-        setState(() {
-          isUpdate = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
+        Fluttertoast.showToast(
+            msg: "Gagal Memperbarui Checkin, Silahkan Coba Kembali");
         print(e);
       }
     }
@@ -220,6 +215,17 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKeyeditcheckin,
@@ -370,25 +376,13 @@ class _ManajemeEditCheckinState extends State<ManajemeEditCheckin> {
                     disabledTextColor: Colors.white,
                     padding: EdgeInsets.all(15.0),
                     splashColor: Colors.blueAccent,
-                    onPressed: isUpdate == true
-                        ? null
-                        : () async {
-                            setState(() {
-                              isUpdate = true;
-                            });
-                            _updatecheckin();
-                          },
-                    child: isUpdate == true
-                        ? Container(
-                            width: 25.0,
-                            height: 25.0,
-                            child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
-                                    Colors.white)))
-                        : Text(
-                            'Memperbarui Data Checkin',
-                            style: TextStyle(fontSize: 14.0),
-                          ),
+                    onPressed: () async {
+                      _updatecheckin();
+                    },
+                    child: Text(
+                      'Memperbarui Data Checkin',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
                   ),
                 ),
               ),

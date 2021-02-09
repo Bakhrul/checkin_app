@@ -1,4 +1,4 @@
-import 'package:checkin_app/pages/events_personal/create_event-information.dart';
+import 'package:checkin_app/pages/events_personal/create_event-category.dart';
 import 'package:flutter/material.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -6,17 +6,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'model.dart';
 import 'package:http/http.dart' as http;
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'create_event-category.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 List<ListKategoriEvent> listkategoriEvent = [];
-bool isLoading, isError, isSame, isCreate;
+bool isLoading, isError, isSame;
 var datepicker;
 String tokenType, accessToken;
 List<ListUser> listUserItem = [];
-
+Map<String, dynamic> formSerialize;
 Map<String, String> requestHeaders = Map();
+
 
 class ManajemenCreateCategory extends StatefulWidget {
   ManajemenCreateCategory(
@@ -31,15 +34,13 @@ class ManajemenCreateCategory extends StatefulWidget {
 }
 
 class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
+  ProgressDialog progressApiAction;
   @override
   void initState() {
     datepicker = FocusNode();
     super.initState();
     isLoading = true;
     isError = false;
-    isSame = false;
-    isCreate = false;
-    isDelete = false;
     listKategoriEvent();
     getHeaderHTTP();
   }
@@ -124,8 +125,19 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
     return Scaffold(
-      backgroundColor: Color.fromRGBO(242, 242, 242, 1),
+      backgroundColor: Colors.white,
       appBar: new AppBar(
         backgroundColor: primaryAppBarColor,
         iconTheme: IconThemeData(
@@ -140,14 +152,13 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
         ),
       ),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? loadingView()
           : isError == true
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => listKategoriEvent(),
+              ? RefreshIndicator(
+                  onRefresh: () => listKategoriEvent(),
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 20.0),
                     child: Column(children: <Widget>[
                       new Container(
                         width: 100.0,
@@ -201,60 +212,31 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
                     children: <Widget>[
-                      isCreate == true
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Container(
-                                    width: 15.0,
-                                    margin:
-                                        EdgeInsets.only(top: 10.0, right: 15.0,bottom: 10.0),
-                                    height: 15.0,
-                                    child: CircularProgressIndicator()),
-                              ],
-                            )
-                          : Container(),
                       Expanded(
                         child: Scrollbar(
-                          child: ListView.builder(
-                            // scrollDirection: Axis.horizontal,
-                            itemCount: listkategoriEvent.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return InkWell(
-                                child: Container(
-                                  child: Card(
-                                      child: ListTile(
-                                    title: Text(
-                                        listkategoriEvent[index].nama == null
-                                            ? 'Unknown Nama'
-                                            : listkategoriEvent[index].nama),
-                                  )),
-                                ),
-                                onTap: isCreate == true ? null : () async {
-                                  for (int i = 0;
-                                      i < listKategoriAdd.length;
-                                      i++) {
-                                    if (listkategoriEvent[index].id ==
-                                        listKategoriAdd[i].id) {
-                                      setState(() {
-                                        isSame = true;
-                                      });
-                                    }
-                                  }
-                                  if (isSame == true) {
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            'Kategori Event Tersebut Sudah Ada');
-                                    setState(() {
-                                      isSame = false;
-                                    });
-                                  } else {
-                                    _tambahCategory(listkategoriEvent[index].id,
-                                        listkategoriEvent[index].nama);
-                                  }
-                                },
-                              );
-                            },
+                          child: RefreshIndicator(
+                            onRefresh: () => listKategoriEvent(),
+                            child: ListView.builder(
+                              itemCount: listkategoriEvent.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return InkWell(
+                                  child: Container(
+                                    child: Card(
+                                        child: ListTile(
+                                      title: Text(
+                                          listkategoriEvent[index].nama == null
+                                              ? 'Unknown Nama'
+                                              : listkategoriEvent[index].nama),
+                                    )),
+                                  ),
+                                  onTap: () async {
+                                      _tambahCategory(
+                                          listkategoriEvent[index].id,
+                                          listkategoriEvent[index].nama);
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -264,10 +246,82 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
     );
   }
 
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
+    );
+  }
+
   void _tambahCategory(idCategory, namaCategory) async {
-    setState(() {
-      isCreate = true;
-    });
     Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
     formSerialize = Map<String, dynamic>();
     formSerialize['event'] = null;
@@ -283,11 +337,11 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
         : widget.event.toString();
     formSerialize['kategori'] = idCategory;
 
-
     Map<String, dynamic> requestHeadersX = requestHeaders;
 
     requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
     try {
+      await progressApiAction.show();
       final response = await http.post(
         url('api/createcheckin'),
         headers: requestHeadersX,
@@ -300,39 +354,37 @@ class _ManajemeCreateCategoryState extends State<ManajemenCreateCategory> {
 
       if (response.statusCode == 200) {
         dynamic responseJson = jsonDecode(response.body);
-        String idEventFromDB = responseJson['finalidevent'].toString();
         if (responseJson['status'] == 'success') {
-          setState(() {
-            idEventFinalX = idEventFromDB;
-            isCreate = false;
-          });
-          setState(() {
-            ListKategoriEventAdd notax = ListKategoriEventAdd(
-              id: idCategory,
-              nama: namaCategory,
-            );
-            listKategoriAdd.add(notax);
-          });
-          Navigator.pop(context);
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
+          });           
+          Fluttertoast.showToast(msg: 'Berhasil');
+        Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ManajemenCreateEventCategory(event: widget.event)));
+        }else if(responseJson['status'] == 'sudah ada'){
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
+          });           
+          Fluttertoast.showToast(msg: 'Kategori Tersebut Sudah Ada');
         }
       } else {
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
+        });
         Fluttertoast.showToast(
             msg: "Gagal Menambahkan Kategori, Silahkan Coba Kembali");
-        setState(() {
-          isCreate = false;
-        });
       }
     } on TimeoutException catch (_) {
-      Fluttertoast.showToast(msg: "Time Out, Try Again");
-      setState(() {
-        isCreate = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
+      Fluttertoast.showToast(msg: "Time Out, Try Again");
     } catch (e) {
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
+      });
       Fluttertoast.showToast(
           msg: "Gagal Menambahkan Kategori, Silahkan Coba Kembali");
-      setState(() {
-        isCreate = false;
-      });
       print(e);
     }
   }

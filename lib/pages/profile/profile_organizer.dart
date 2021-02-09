@@ -178,8 +178,18 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_allday'] == 'N' ?  DateFormat("dd MMM yyyy H:m").format(DateTime.parse(i['ev_time_start'])) : yearStart.year == yearEnd.year ? DateFormat("dd MMM").format(DateTime.parse(i['ev_time_start'])) : DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: i['ev_allday'] == 'N' ?  DateFormat("H:m").format(DateTime.parse(i['ev_time_end'])) :  DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: i['ev_allday'] == 'N'
+                ? DateFormat("dd MMM yyyy H:m")
+                    .format(DateTime.parse(i['ev_time_start']))
+                : yearStart.year == yearEnd.year
+                    ? DateFormat("dd MMM")
+                        .format(DateTime.parse(i['ev_time_start']))
+                    : DateFormat("dd MMM yyyy")
+                        .format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: i['ev_allday'] == 'N'
+                ? DateFormat("H:m").format(DateTime.parse(i['ev_time_end']))
+                : DateFormat("dd MMM yyyy")
+                    .format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -285,8 +295,18 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
             creatorName: i['us_name'],
             image: i['ev_image'],
             title: i['ev_title'],
-            waktuawal: i['ev_allday'] == 'N' ?  DateFormat("dd MMM yyyy HH:mm").format(DateTime.parse(i['ev_time_start'])) : yearStart.year == yearEnd.year ? DateFormat("dd MMM").format(DateTime.parse(i['ev_time_start'])) : DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_start'])),
-            waktuakhir: i['ev_allday'] == 'N' ?  DateFormat("HH:mm").format(DateTime.parse(i['ev_time_end'])) :  DateFormat("dd MMM yyyy").format(DateTime.parse(i['ev_time_end'])),
+            waktuawal: i['ev_allday'] == 'N'
+                ? DateFormat("dd MMM yyyy HH:mm")
+                    .format(DateTime.parse(i['ev_time_start']))
+                : yearStart.year == yearEnd.year
+                    ? DateFormat("dd MMM")
+                        .format(DateTime.parse(i['ev_time_start']))
+                    : DateFormat("dd MMM yyyy")
+                        .format(DateTime.parse(i['ev_time_start'])),
+            waktuakhir: i['ev_allday'] == 'N'
+                ? DateFormat("HH:mm").format(DateTime.parse(i['ev_time_end']))
+                : DateFormat("dd MMM yyyy")
+                    .format(DateTime.parse(i['ev_time_end'])),
             fullday: i['ev_allday'].toString(),
             alamat: i['ev_location'],
             wishlist: i['ew_wish'].toString(),
@@ -590,6 +610,7 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                 .center,
                                                             style: TextStyle(
                                                                 height: 1.5,
+                                                                fontSize: 14,
                                                                 color: Colors
                                                                     .black87),
                                                           ),
@@ -775,21 +796,27 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                       const EdgeInsets.only(
                                                           top: 10.0,
                                                           bottom: 5.0),
-                                                  child: Text(
-                                                    'Sedang Berlangsung',
-                                                    style: TextStyle(
-                                                        color: getNowfilter ==
-                                                                'berlangsung'
-                                                            ? Color.fromRGBO(
-                                                                41, 30, 47, 1)
-                                                            : Colors.grey,
-                                                        fontWeight:
-                                                            getNowfilter ==
-                                                                    'berlangsung'
-                                                                ? FontWeight
-                                                                    .w500
-                                                                : FontWeight
-                                                                    .w400),
+                                                  child: Expanded(
+                                                    child: Text(
+                                                      'Sedang Berlangsung',
+                                                      style: TextStyle(
+                                                          color: getNowfilter ==
+                                                                  'berlangsung'
+                                                              ? Color.fromRGBO(
+                                                                  41, 30, 47, 1)
+                                                              : Colors.grey,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              getNowfilter ==
+                                                                      'berlangsung'
+                                                                  ? FontWeight
+                                                                      .w500
+                                                                  : FontWeight
+                                                                      .w400),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -827,22 +854,28 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           top: 10.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    'Akan Datang',
-                                                    style: TextStyle(
-                                                        color: getNowfilter ==
-                                                                'akan datang'
-                                                            ? Color.fromRGBO(
-                                                                41, 30, 47, 1)
-                                                            : Colors.grey,
-                                                        fontWeight:
-                                                            getNowfilter ==
-                                                                    'akan datang'
-                                                                ? FontWeight
-                                                                    .w500
-                                                                : FontWeight
-                                                                    .w400),
+                                                          bottom: 5.0),
+                                                  child: Expanded(
+                                                    child: Text(
+                                                      'Akan Datang',
+                                                      style: TextStyle(
+                                                          color: getNowfilter ==
+                                                                  'akan datang'
+                                                              ? Color.fromRGBO(
+                                                                  41, 30, 47, 1)
+                                                              : Colors.grey,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              getNowfilter ==
+                                                                      'akan datang'
+                                                                  ? FontWeight
+                                                                      .w500
+                                                                  : FontWeight
+                                                                      .w400),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -879,22 +912,27 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           top: 10.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    'Sudah Selesai',
-                                                    style: TextStyle(
-                                                        color: getNowfilter ==
-                                                                'selesai'
-                                                            ? Color.fromRGBO(
-                                                                41, 30, 47, 1)
-                                                            : Colors.grey,
-                                                        fontWeight:
-                                                            getNowfilter ==
-                                                                    'selesai'
-                                                                ? FontWeight
-                                                                    .w500
-                                                                : FontWeight
-                                                                    .w400),
+                                                          bottom: 5.0),
+                                                  child: Expanded(
+                                                    child: Text(
+                                                      'Sudah Selesai',
+                                                      style: TextStyle(
+                                                          color: getNowfilter ==
+                                                                  'selesai'
+                                                              ? Color.fromRGBO(
+                                                                  41, 30, 47, 1)
+                                                              : Colors.grey,
+                                                          fontWeight:
+                                                              getNowfilter ==
+                                                                      'selesai'
+                                                                  ? FontWeight
+                                                                      .w500
+                                                                  : FontWeight
+                                                                      .w400),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -905,10 +943,10 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                 ),
                               ),
                               isFilter == true
-                                  ?  Container(
-                                      margin: EdgeInsets.only(top:20.0),
-                                        child: SingleChildScrollView(
-                                            child: Container(
+                                  ? Container(
+                                      margin: EdgeInsets.only(top: 20.0),
+                                      child: SingleChildScrollView(
+                                          child: Container(
                                         width: double.infinity,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 15.0),
@@ -1210,23 +1248,23 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                             switch (item
                                                                 .statusdaftar) {
                                                               case 'B':
-                                                              Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                RegisterEvents(
-                                                                          id: int.parse(
-                                                                              item.id),
-                                                                          selfEvent:
-                                                                              true,
-                                                                          dataUser:
-                                                                              dataUser,
-                                                                          creatorId:
-                                                                              item.idcreator,
-                                                                        ),
-                                                                      ));
-                                                              break;
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              RegisterEvents(
+                                                                        id: int.parse(
+                                                                            item.id),
+                                                                        selfEvent:
+                                                                            true,
+                                                                        dataUser:
+                                                                            dataUser,
+                                                                        creatorId:
+                                                                            item.idcreator,
+                                                                      ),
+                                                                    ));
+                                                                break;
                                                               case 'P':
                                                                 if (item.posisi ==
                                                                     '2') {
@@ -1261,8 +1299,8 @@ class _ProfileOrganizerState extends State<ProfileOrganizer> {
                                                                               true,
                                                                           creatorId:
                                                                               item.idcreator,
-                                                                              dataUser:
-                                                                    dataUser,
+                                                                          dataUser:
+                                                                              dataUser,
                                                                         ),
                                                                       ));
                                                                 } else {}

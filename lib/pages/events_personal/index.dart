@@ -9,9 +9,11 @@ import 'package:checkin_app/pages/events_personal/create_event-information.dart'
 import 'package:checkin_app/storage/storage.dart';
 import 'package:checkin_app/routes/env.dart';
 import 'package:http/http.dart' as http;
+import 'package:progress_dialog/progress_dialog.dart';
 import 'manage_checkin.dart';
 import 'list_multicheckin.dart';
 import 'dart:async';
+import 'package:shimmer/shimmer.dart';
 import 'dart:convert';
 import 'model.dart';
 import 'detail_index.dart';
@@ -20,7 +22,7 @@ import 'manage_peserta.dart';
 
 import 'package:checkin_app/utils/utils.dart';
 
-bool isLoading, isError, isDelete, isPublish;
+bool isLoading, isError;
 List<ListCheckinAdd> listcheckinAdd = [];
 List<ListKategoriEventAdd> listKategoriAdd = [];
 List<ListUserAdd> listUseradd = [];
@@ -52,6 +54,7 @@ class ManajemenEventPersonal extends StatefulWidget {
 }
 
 class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
+  ProgressDialog progressApiAction;
   var height;
   var futureheight;
   var pastheight;
@@ -110,9 +113,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
             textColor: Colors.green,
             child: Text('Ya'),
             onPressed: () async {
-              setState(() {
-                isDelete = true;
-              });
               Navigator.pop(context);
               _deleteEvent(idevent);
             },
@@ -174,18 +174,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
         // print(ongoingevents)
         for (var i in ongoingevents) {
           ListOngoingEvent notax = ListOngoingEvent(
-            id: '${i['ev_id']}',
-            title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
-            deskripsi: i['ev_detail'],
-            lokasi: i['ev_location'],
-            fullday: i['ev_allday'],
-            status: i['status'],
-            publish: i['ev_ispublish'],
-            participant: i['peserta'].toString(),
-            admin: i['admin'].toString()
-          );
+              id: '${i['ev_id']}',
+              title: i['ev_title'],
+              waktuawal: i['ev_time_start'],
+              waktuakhir: i['ev_time_end'],
+              deskripsi: i['ev_detail'],
+              lokasi: i['ev_location'],
+              fullday: i['ev_allday'],
+              status: i['status'],
+              publish: i['ev_ispublish'],
+              participant: i['peserta'].toString(),
+              admin: i['admin'].toString());
           listItemOngoing.add(notax);
         }
         setState(() {
@@ -230,7 +229,6 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       totalRefresh += 1;
     });
   }
-  
 
   Future<List<ListWillComeEvent>> listWillComeEvent() async {
     var storage = new DataStore();
@@ -389,6 +387,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
@@ -410,21 +419,20 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
               color: Colors.white,
             ),
             tooltip: 'Buat Event Sekarang',
-            onPressed: isDelete == true || isPublish == true ? null : () {
-              
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ManajemeCreateEvent(),
-                  ));
-            },
+            onPressed: isDelete == true || isPublish == true
+                ? null
+                : () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ManajemeCreateEvent(),
+                        ));
+                  },
           ),
         ],
       ),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? loadingView()
           : isError == true
               ? Padding(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -456,7 +464,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 20.0, left: 15.0, right: 15.0),
+                            top: 20.0, bottom: 20.0, left: 15.0, right: 15.0),
                         child: SizedBox(
                           width: double.infinity,
                           child: RaisedButton(
@@ -479,9 +487,12 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                     ]),
                   ),
                 )
-              : Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    getHeaderHTTP();
+                  },
                   child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 30.0),
                     child: Column(
                       children: <Widget>[
                         isDelete == true || isPublish == true
@@ -505,13 +516,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                     onTap: currentEvent,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                            Colors.white,
-                                            Colors.grey[50]
-                                          ])),
+                                          color:Colors.grey[50]),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -520,15 +525,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            Text(
-                                                (jumlahongoingX == null
-                                                        ? 'Event Berlangsung  ( 0 Event )'
-                                                        : 'Event Berlangsung  ( $jumlahongoingX Event )')
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
+                                            Expanded(
+                                                child: Text(
+                                                    (jumlahongoingX == null
+                                                            ? 'Event Berlangsung  ( 0 Event )'
+                                                            : 'Event Berlangsung  ( $jumlahongoingX Event )')
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ))),
                                             Icon(height == null
                                                 ? Icons.arrow_drop_down
                                                 : Icons.arrow_drop_up),
@@ -676,7 +683,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             false,
-                                                                        namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -688,10 +696,10 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                       ManagePeserta(
                                                                         event: item
                                                                             .id,
-                                                                        namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                         eventEnd:
                                                                             false,
-                                                                        
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -705,18 +713,22 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             false,
-                                                                        namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ListMultiCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                          namaEvent: item.title,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -725,9 +737,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   builder: (BuildContext
                                                                           context) =>
                                                                       PointEvents(
-                                                                          idevent:
-                                                                              item.id,
-                                                                              namaEvent: item.title,)));
+                                                                        idevent:
+                                                                            item.id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:
@@ -827,13 +841,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                   onTap: futureEvent,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                          Colors.white,
-                                          Colors.grey[50]
-                                        ])),
+                                        color:  Colors.grey[50]),
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -842,15 +850,16 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(
-                                              (jumlahwillcomeX == null
-                                                      ? 'Event Akan Datang  ( 0 Event )'
-                                                      : 'Event Akan Datang  ( $jumlahwillcomeX Event )')
-                                                  .toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              )),
+                                          Expanded(
+                                              child: Text(
+                                                  (jumlahwillcomeX == null
+                                                          ? 'Event Akan Datang  ( 0 Event )'
+                                                          : 'Event Akan Datang  ( $jumlahwillcomeX Event )')
+                                                      .toUpperCase(),
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ))),
                                           Icon(futureheight == null
                                               ? Icons.arrow_drop_down
                                               : Icons.arrow_drop_up),
@@ -999,15 +1008,18 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                               break;
                                                             case PageEnum
                                                                 .kelolaadminPage:
-                                                              Navigator.of(context).push(CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ManageAdmin(
-                                                                          event: item
-                                                                              .id,
-                                                                          eventEnd:
-                                                                              false,
-                                                                              namaEvent: item.title,)));
+                                                              Navigator.of(context).push(
+                                                                  CupertinoPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          ManageAdmin(
+                                                                            event:
+                                                                                item.id,
+                                                                            eventEnd:
+                                                                                false,
+                                                                            namaEvent:
+                                                                                item.title,
+                                                                          )));
                                                               break;
                                                             case PageEnum
                                                                 .kelolaPesertaPage:
@@ -1020,7 +1032,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                                 item.id,
                                                                             eventEnd:
                                                                                 false,
-                                                                                namaEvent: item.title,
+                                                                            namaEvent:
+                                                                                item.title,
                                                                           )));
                                                               break;
                                                             case PageEnum
@@ -1034,26 +1047,35 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                                 item.id,
                                                                             eventEnd:
                                                                                 false,
-                                                                                namaEvent: item.title,
+                                                                            namaEvent:
+                                                                                item.title,
                                                                           )));
                                                               break;
                                                             case PageEnum
                                                                 .kelolaCheckinPesertaPage:
-                                                              Navigator.of(context).push(CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ListMultiCheckin(
-                                                                          event:
-                                                                              item.id,namaEvent: item.title,)));
+                                                              Navigator.of(context).push(
+                                                                  CupertinoPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          ListMultiCheckin(
+                                                                            event:
+                                                                                item.id,
+                                                                            namaEvent:
+                                                                                item.title,
+                                                                          )));
                                                               break;
                                                             case PageEnum
                                                                 .kelolaHasilAKhirPage:
-                                                              Navigator.of(context).push(CupertinoPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      PointEvents(
-                                                                          idevent:
-                                                                              item.id,namaEvent: item.title,)));
+                                                              Navigator.of(context).push(
+                                                                  CupertinoPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          PointEvents(
+                                                                            idevent:
+                                                                                item.id,
+                                                                            namaEvent:
+                                                                                item.title,
+                                                                          )));
                                                               break;
                                                             case PageEnum
                                                                 .publishEvent:
@@ -1189,13 +1211,7 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                     onTap: pastEvent,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                            Colors.white,
-                                            Colors.grey[50]
-                                          ])),
+                                         color: Colors.grey[50]),
                                       margin: EdgeInsets.only(bottom: 10.0),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -1204,15 +1220,17 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            Text(
-                                                (jumlahdoneeventX == null
-                                                        ? 'Event Telah Selesai  ( 0 Event )'
-                                                        : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
-                                                    .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                )),
+                                            Expanded(
+                                                child: Text(
+                                                    (jumlahdoneeventX == null
+                                                            ? 'Event Telah Selesai  ( 0 Event )'
+                                                            : 'Event Telah Selesai ( $jumlahdoneeventX Event )')
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ))),
                                             Icon(pastheight == null
                                                 ? Icons.arrow_drop_down
                                                 : Icons.arrow_drop_up),
@@ -1359,7 +1377,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             true,
-                                                                            namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -1373,29 +1392,37 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                             .id,
                                                                         eventEnd:
                                                                             true,
-                                                                            namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaWaktuCheckinPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                      eventEnd:
-                                                                          true,
-                                                                          namaEvent: item.title,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            true,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ListMultiCheckin(
-                                                                      event: item
-                                                                          .id,namaEvent: item.title,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -1404,8 +1431,11 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
                                                                   builder: (BuildContext
                                                                           context) =>
                                                                       PointEvents(
-                                                                          idevent:
-                                                                              item.id,namaEvent: item.title,)));
+                                                                        idevent:
+                                                                            item.id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:
@@ -1541,9 +1571,70 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
     );
   }
 
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 60.0,
+                                height: 40.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
+    );
+  }
+
   void _deleteEvent(idevent) async {
     try {
-      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      await progressApiAction.show();
       final deleteEvent = await http
           .post(url('api/deleteevent'), headers: requestHeaders, body: {
         'event': idevent,
@@ -1552,26 +1643,26 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       if (deleteEvent.statusCode == 200) {
         var deleteEventJson = json.decode(deleteEvent.body);
         if (deleteEventJson['status'] == 'success') {
-          setState(() {
-            isDelete = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
           listOngoingEvent();
           Fluttertoast.showToast(msg: "Berhasil Menghapus Event");
         }
       } else {
-        setState(() {
-          isDelete = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
-      setState(() {
-        isDelete = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      setState(() {
-        isDelete = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
       Fluttertoast.showToast(msg: "${e.toString()}");
       print(e);
@@ -1579,10 +1670,8 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
   }
 
   void konfirmasiPublish(idevent, publish) async {
-    setState(() {
-      isPublish = true;
-    });
     try {
+      await progressApiAction.show();
       Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
       final publishEvent = await http
           .post(url('api/publishEvent'), headers: requestHeaders, body: {
@@ -1592,39 +1681,43 @@ class _ManajemenEventPersonalState extends State<ManajemenEventPersonal> {
       if (publishEvent.statusCode == 200) {
         var publishEventJson = json.decode(publishEvent.body);
         if (publishEventJson['status'] == 'berhasil publish') {
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
+          });
           setState(() {
             publish = 'Y';
-            isPublish = false;
           });
-           listOngoingEvent();
+          listOngoingEvent();
           Fluttertoast.showToast(msg: "Berhasil");
         } else if (publishEventJson['status'] == 'berhasil batal publish') {
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
+          });
           setState(() {
             publish = 'N';
-            isPublish = false;
           });
           listOngoingEvent();
           Fluttertoast.showToast(msg: "Berhasil");
         } else if (publishEventJson['status'] == 'tidak ada') {
           Fluttertoast.showToast(msg: "Event Tidak Ditemukan");
-          setState(() {
-            isPublish = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         }
       } else {
-        setState(() {
-          isPublish = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
       }
     } on TimeoutException catch (_) {
-      setState(() {
-        isPublish = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
       Fluttertoast.showToast(msg: "Timed out, Try again");
     } catch (e) {
-      setState(() {
-        isPublish = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
       Fluttertoast.showToast(msg: "${e.toString()}");
       print(e);

@@ -7,6 +7,7 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'detail_user_checkin.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 bool isLoading, isError, isFilter, isErrorfilter;
@@ -35,7 +36,8 @@ class Debouncer {
 }
 
 class PointEvents extends StatefulWidget {
-  PointEvents({Key key, this.title, this.idevent, this.namaEvent}) : super(key: key);
+  PointEvents({Key key, this.title, this.idevent, this.namaEvent})
+      : super(key: key);
   final String title, idevent, namaEvent;
   @override
   State<StatefulWidget> createState() {
@@ -50,7 +52,7 @@ class _PointEventsState extends State<PointEvents> {
     isLoading = true;
     isError = false;
     ideventget = widget.idevent;
-    namaEventX = widget.namaEvent;  
+    namaEventX = widget.namaEvent;
     actionBackAppBar = true;
     iconButtonAppbarColor = true;
     getHeaderHTTP();
@@ -81,7 +83,9 @@ class _PointEventsState extends State<PointEvents> {
       actionBackAppBar = true;
       iconButtonAppbarColor = true;
       this.appBarTitle = new Text(
-        namaEventX == null ?  "Hasil Akhir Peserta Event" : "Hasil Akhir Peserta Event $namaEventX",
+        namaEventX == null
+            ? "Hasil Akhir Peserta Event"
+            : "Hasil Akhir Peserta Event $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -107,6 +111,9 @@ class _PointEventsState extends State<PointEvents> {
 
     setState(() {
       isLoading = true;
+      isError = false;
+      isFilter = false;
+      isErrorfilter = false;
       this.appBarTitle = Text(
         "Hasil Akhir Peserta Event $namaEventX",
         style: TextStyle(
@@ -196,6 +203,9 @@ class _PointEventsState extends State<PointEvents> {
 
     setState(() {
       isFilter = true;
+      isErrorfilter = false;
+      isLoading = false;
+      isError = false;
     });
     try {
       final resultCheckinParticipantFilter = await http.post(
@@ -267,7 +277,9 @@ class _PointEventsState extends State<PointEvents> {
   }
 
   Widget appBarTitle = Text(
-    namaEventX == null || namaEventX == '' ? "Hasil Akhir Peserta Event" : "Hasil Akhir Peserta Event $namaEventX",
+    namaEventX == null || namaEventX == ''
+        ? "Hasil Akhir Peserta Event"
+        : "Hasil Akhir Peserta Event $namaEventX",
     style: TextStyle(fontSize: 14),
   );
   Icon actionIcon = Icon(
@@ -278,79 +290,105 @@ class _PointEventsState extends State<PointEvents> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(242, 242, 242, 1),
-      appBar: buildBar(context),
-      body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : isError == true
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => listUser(),
-                    child: Column(children: <Widget>[
-                      new Container(
-                        width: 100.0,
-                        height: 100.0,
-                        child: Image.asset("images/system-eror.png"),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 30.0,
-                          left: 15.0,
-                          right: 15.0,
+        backgroundColor: Colors.white,
+        appBar: buildBar(context),
+        body: isLoading == true
+            ? loadingView()
+            : isError == true
+                ? RefreshIndicator(
+                    onRefresh: () => listUserfilter(),
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Column(children: <Widget>[
+                        new Container(
+                          width: 100.0,
+                          height: 100.0,
+                          child: Image.asset("images/system-eror.png"),
                         ),
-                        child: Center(
-                          child: Text(
-                            "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 30.0,
+                            left: 15.0,
+                            right: 15.0,
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 15.0, right: 15.0),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: RaisedButton(
-                            color: Colors.white,
-                            textColor: Color.fromRGBO(41, 30, 47, 1),
-                            disabledColor: Colors.grey,
-                            disabledTextColor: Colors.black,
-                            padding: EdgeInsets.all(15.0),
-                            splashColor: Colors.blueAccent,
-                            onPressed: () async {
-                              getHeaderHTTP();
-                            },
+                          child: Center(
                             child: Text(
-                              "Muat Ulang Halaman",
-                              style: TextStyle(fontSize: 14.0),
+                              "Gagal memuat halaman, tekan tombol muat ulang halaman untuk refresh halaman",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                      ),
-                    ]),
-                  ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: <Widget>[
-                      isFilter == true
-                          ? Center(
-                            child: Container(
-                                padding: EdgeInsets.only(top: 20.0),
-                                child: CircularProgressIndicator(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, bottom: 20.0, left: 15.0, right: 15.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: RaisedButton(
+                              color: Colors.white,
+                              textColor: Color.fromRGBO(41, 30, 47, 1),
+                              disabledColor: Colors.grey,
+                              disabledTextColor: Colors.black,
+                              padding: EdgeInsets.all(15.0),
+                              splashColor: Colors.blueAccent,
+                              onPressed: () async {
+                                listUserfilter();
+                              },
+                              child: Text(
+                                "Muat Ulang Halaman",
+                                style: TextStyle(fontSize: 14.0),
                               ),
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
+                  )
+                : isFilter == true
+                    ? loadingView()
+                    : isErrorfilter == true
+                        ? RefreshIndicator(
+                            onRefresh: () => listUserfilter(),
+                            child: SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Column(children: <Widget>[
+                                new Container(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  child: Image.asset("images/system-eror.png"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 20.0,
+                                    left: 15.0,
+                                    right: 15.0,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Gagal Memuat Data, Silahkan Coba Kembali",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black54,
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ),
                           )
-                          : listpointcheckin.length == 0
-                              ? Padding(
+                        : listpointcheckin.length == 0
+                            ? RefreshIndicator(
+                                onRefresh: () => listUserfilter(),
+                                child: SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(top: 20.0),
                                   child: Column(children: <Widget>[
                                     new Container(
@@ -378,44 +416,15 @@ class _PointEventsState extends State<PointEvents> {
                                       ),
                                     ),
                                   ]),
-                                )
-                              : isErrorfilter == true
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
+                                ))
+                            : Padding(
+                                padding: EdgeInsets.only(top:10.0),
+                                child: Column(children: <Widget>[
+                                  Expanded(
+                                    child: Scrollbar(
                                       child: RefreshIndicator(
-                                        onRefresh: () => listUser(),
-                                        child: Column(children: <Widget>[
-                                          new Container(
-                                            width: 80.0,
-                                            height: 80.0,
-                                            child: Image.asset(
-                                                "images/system-eror.png"),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 20.0,
-                                              left: 15.0,
-                                              right: 15.0,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                "Gagal Memuat Data, Silahkan Coba Kembali",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black54,
-                                                  height: 1.5,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ),
-                                        ]),
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: Scrollbar(
-                                        child: ListView.builder(
-                                          // scrollDirection: Axis.horizontal,
+                                        onRefresh: () => listUserfilter(),
+                                        child: ListView.builder(                                         
                                           itemCount: listpointcheckin.length,
                                           itemBuilder: (BuildContext context,
                                               int index) {
@@ -509,81 +518,153 @@ class _PointEventsState extends State<PointEvents> {
                                         ),
                                       ),
                                     ),
-                    ],
-                  ),
-                ),
+                                  ),
+                                ])));
+  }
+
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
     );
   }
 
   Widget buildBar(BuildContext context) {
-    return PreferredSize( preferredSize: Size.fromHeight(50.0),
-     child : AppBar(
-    
-      title: appBarTitle,
-      titleSpacing: 0.0,
-      centerTitle: true,
-      backgroundColor: primaryAppBarColor,
-      automaticallyImplyLeading: actionBackAppBar,
-      actions: <Widget>[
-        Container(
-          color: iconButtonAppbarColor == true ? primaryAppBarColor : Colors.white,
-          child: IconButton(
-            icon: actionIcon,
-            onPressed: () {
-              setState(() {
-                if (this.actionIcon.icon == Icons.search) {
-                  actionBackAppBar = false;
-                  iconButtonAppbarColor = false;
-                  this.actionIcon = new Icon(
-                    
-                    Icons.close,
-                    color: Colors.grey,
-                    
-                  );
-                  this.appBarTitle = Container(
-                    height: 50.0,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: TextField(
-                      autofocus: true,
-                      controller: _searchQuery,
-                      onChanged: (string) {
-                        if (string != null || string != '') {
-                          _debouncer.run(() {
-                            listUserfilter();
-                          });
-                        }
-                      },
-                      style: TextStyle(
+    return PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          title: appBarTitle,
+          titleSpacing: 0.0,
+          centerTitle: true,
+          backgroundColor: primaryAppBarColor,
+          automaticallyImplyLeading: actionBackAppBar,
+          actions: <Widget>[
+            Container(
+              color: iconButtonAppbarColor == true
+                  ? primaryAppBarColor
+                  : Colors.white,
+              child: IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.actionIcon.icon == Icons.search) {
+                      actionBackAppBar = false;
+                      iconButtonAppbarColor = false;
+                      this.actionIcon = new Icon(
+                        Icons.close,
                         color: Colors.grey,
-                        fontSize: 14,
-                        
-                      ),
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          prefixIcon: new Icon(Icons.search, color: Colors.grey),
-                          hintText: "Cari Berdasarkan Nama Peserta",
-                          hintStyle: TextStyle(
+                      );
+                      this.appBarTitle = Container(
+                        height: 50.0,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          controller: _searchQuery,
+                          onChanged: (string) {
+                            if (string != null || string != '') {
+                              _debouncer.run(() {
+                                listUserfilter();
+                              });
+                            }
+                          },
+                          style: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
-                            
-                          ),),
-                    ),
-                  );
-                } else {
-                  _handleSearchEnd();
-                }
-              });
-            },
-          ),
-        ),
-      ],
-    )
-    );
+                          ),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon:
+                                new Icon(Icons.search, color: Colors.grey),
+                            hintText: "Cari Berdasarkan Nama Peserta",
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      _handleSearchEnd();
+                    }
+                  });
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }

@@ -7,6 +7,7 @@ import 'model.dart';
 import 'package:http/http.dart' as http;
 import 'package:checkin_app/routes/env.dart';
 import 'detail_user_checkin.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:checkin_app/utils/utils.dart';
 
 var list = ['one', 'two', 'three', 'four'];
@@ -36,7 +37,8 @@ class Debouncer {
 }
 
 class ListMultiCheckin extends StatefulWidget {
-  ListMultiCheckin({Key key, this.title, this.event, this.namaEvent}) : super(key: key);
+  ListMultiCheckin({Key key, this.title, this.event, this.namaEvent})
+      : super(key: key);
   final String title, event, namaEvent;
   @override
   State<StatefulWidget> createState() {
@@ -49,7 +51,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
   void initState() {
     datepicker = FocusNode();
     super.initState();
-    namaEventX = widget.namaEvent;  
+    namaEventX = widget.namaEvent;
     actionBackAppBar = true;
     iconButtonAppbarColor = true;
     getHeaderHTTP();
@@ -81,6 +83,9 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
     setState(() {
       isLoading = true;
+      isError = false;
+      isFilter = false;
+      isErrorfilter = false;
       this.appBarTitle = Text(
         "Kelola Checkin Peserta $namaEventX",
         style: TextStyle(
@@ -167,6 +172,9 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
 
     setState(() {
       isFilter = true;
+      isLoading = false;
+      isError = false;
+      isErrorfilter = false;
     });
     try {
       final resultCheckinParticipant = await http.post(
@@ -245,7 +253,9 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
       actionBackAppBar = true;
       iconButtonAppbarColor = true;
       this.appBarTitle = new Text(
-        namaEventX == null ? "Kelola Checkin Peserta" : "Kelola Checkin Peserta $namaEventX",
+        namaEventX == null
+            ? "Kelola Checkin Peserta"
+            : "Kelola Checkin Peserta $namaEventX",
         style: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -273,14 +283,13 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
       backgroundColor: Colors.white,
       appBar: buildBar(context),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? loadingView()
           : isError == true
-              ? Padding(
+              ? RefreshIndicator(
+                onRefresh: () => listUserFilter(),
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => listUser(),
+                    
                     child: Column(children: <Widget>[
                       new Container(
                         width: 100.0,
@@ -307,7 +316,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 20.0, left: 15.0, right: 15.0),
+                            top: 20.0, bottom: 20.0, left: 15.0, right: 15.0),
                         child: SizedBox(
                           width: double.infinity,
                           child: RaisedButton(
@@ -318,7 +327,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                             padding: EdgeInsets.all(15.0),
                             splashColor: Colors.blueAccent,
                             onPressed: () async {
-                              getHeaderHTTP();
+                              listUserFilter();
                             },
                             child: Text(
                               "Muat Ulang Halaman",
@@ -331,18 +340,18 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                   ),
                 )
               : isFilter == true
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? loadingView()
                   : Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Column(
                         children: <Widget>[
                           isErrorfilter == true
-                              ? Padding(
+                              ? RefreshIndicator(
+                                onRefresh: () => listUserFilter(),
+                                child: SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   padding: const EdgeInsets.only(top: 20.0),
-                                  child: RefreshIndicator(
-                                    onRefresh: () => listUser(),
+                                    
                                     child: Column(children: <Widget>[
                                       new Container(
                                         width: 80.0,
@@ -403,6 +412,8 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                     )
                                   : Expanded(
                                       child: Scrollbar(
+                                        child: RefreshIndicator(
+                                          onRefresh: () => listUserFilter(),
                                         child: ListView.builder(
                                           // scrollDirection: Axis.horizontal,
                                           itemCount: listCheckinUser.length,
@@ -428,6 +439,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                       ));
                                                 },
                                                 child: Card(
+                                                  elevation: 0.5,
                                                     child: ListTile(
                                                   leading: Container(
                                                     width: 40.0,
@@ -469,6 +481,9 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                           : listCheckinUser[
                                                                   index]
                                                               .nama,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
                                                       style: TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:
@@ -477,17 +492,22 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             top: 10.0),
-                                                    child: Text(listCheckinUser[
-                                                                        index]
-                                                                    .email ==
-                                                                null ||
-                                                            listCheckinUser[
-                                                                        index]
-                                                                    .email ==
-                                                                ''
-                                                        ? 'Email Tidak Diketahui'
-                                                        : listCheckinUser[index]
-                                                            .email),
+                                                    child: Text(
+                                                      listCheckinUser[index]
+                                                                      .email ==
+                                                                  null ||
+                                                              listCheckinUser[
+                                                                          index]
+                                                                      .email ==
+                                                                  ''
+                                                          ? 'Email Tidak Diketahui'
+                                                          : listCheckinUser[
+                                                                  index]
+                                                              .email,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
                                                   ),
                                                   trailing: Row(
                                                     mainAxisSize:
@@ -597,6 +617,7 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
                                         ),
                                       ),
                                     ),
+                                  ),
                         ],
                       ),
                     ),
@@ -681,6 +702,80 @@ class _ListMultiCheckinState extends State<ListMultiCheckin> {
   //     actions: <Widget>[],
   //   );
   // }
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
+    );
+  }
 
   Widget appendFive() {
     return Row(

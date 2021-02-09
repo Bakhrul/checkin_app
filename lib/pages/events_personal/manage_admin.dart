@@ -8,18 +8,20 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'tambah_admin.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'model.dart';
 import 'dart:core';
 import 'package:email_validator/email_validator.dart';
 
 import 'package:checkin_app/utils/utils.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType, accessToken, jumlahAdminactive;
 TextEditingController _controllerAddadmin = new TextEditingController();
 List<ListAdminEvent> listadminevent = [];
 bool actionBackAppBar, iconButtonAppbarColor;
-bool isLoading, isError, isFilter, isErrorfilter, isDelete;
+bool isLoading, isError, isFilter, isErrorfilter;
 final _debouncer = Debouncer(milliseconds: 500);
 Map<String, String> requestHeaders = Map();
 String namaEventX;
@@ -51,15 +53,14 @@ class ManageAdmin extends StatefulWidget {
 }
 
 class _ManageAdminState extends State<ManageAdmin> {
+  ProgressDialog progressApiAction;
   @override
   void initState() {
     super.initState();
     isLoading = true;
     isError = false;
-    isCreate = false;
     isFilter = false;
     isErrorfilter = false;
-    isDelete = false;
     namaEventX = widget.namaEvent;
     actionBackAppBar = true;
     iconButtonAppbarColor = true;
@@ -76,83 +77,73 @@ class _ManageAdminState extends State<ManageAdmin> {
         isScrollControlled: true,
         context: context,
         builder: (builder) {
-          return Container(
-            height: 200.0 + MediaQuery.of(context).viewInsets.bottom,
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                right: 15.0,
-                left: 15.0,
-                top: 15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    margin: EdgeInsets.only(bottom: 20.0, top: 10.0),
-                    child: TextField(
-                      controller: _controllerAddadmin,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Masukkan Email Admin/Pengelola',
-                          hintStyle: TextStyle(
-                            fontSize: 12,
-                          )),
-                    )),
-                Center(
-                    child: Container(
-                        width: double.infinity,
-                        height: 45.0,
-                        child: RaisedButton(
-                            onPressed: isCreate == true
-                                ? null
-                                : () async {
-                                    String emailValid =
-                                        _controllerAddadmin.text;
-                                    final bool isValid =
-                                        EmailValidator.validate(emailValid);
-
-                                    print('Email is valid? ' +
-                                        (isValid ? 'yes' : 'no'));
-                                    if (_controllerAddadmin.text == null ||
-                                        _controllerAddadmin.text == '') {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                          msg: "Email Tidak Boleh Kosong");
-                                    } else if (!isValid) {
-                                      Fluttertoast.showToast(
-                                          msg: "Masukkan Email Yang Valid");
-                                    } else {
-                                      _tambahadmin(_controllerAddadmin.text);
-                                    }
-                                  },
-                            color: primaryAppBarColor,
-                            textColor: Colors.white,
-                            disabledColor: Color.fromRGBO(254, 86, 14, 0.7),
-                            disabledTextColor: Colors.white,
-                            splashColor: Colors.blueAccent,
-                            child: isCreate == true
-                                ? Container(
-                                    height: 25.0,
-                                    width: 25.0,
-                                    child: CircularProgressIndicator(
-                                        valueColor:
-                                            new AlwaysStoppedAnimation<Color>(
-                                                Colors.white)))
-                                : Text("Tambahkan Admin",
-                                    style: TextStyle(color: Colors.white)))))
-              ],
+          return SingleChildScrollView(
+            child: Container(
+              height: 170.0 + MediaQuery.of(context).viewInsets.bottom,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  right: 15.0,
+                  left: 15.0,
+                  top: 15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                      height: 80.0,
+                      margin: EdgeInsets.only(bottom: 0.0, top: 10.0),
+                      child: TextField(
+                        controller: _controllerAddadmin,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Masukkan Email Admin/Pengelola',
+                            hintStyle: TextStyle(
+                              fontSize: 12,
+                            )),
+                      )),
+                  Center(
+                      child: Container(
+                          width: double.infinity,
+                          height: 45.0,
+                          child: RaisedButton(
+                              onPressed: isCreate == true
+                                  ? null
+                                  : () async {
+                                      String emailValid =
+                                          _controllerAddadmin.text;
+                                      final bool isValid =
+                                          EmailValidator.validate(emailValid);
+                                      if (_controllerAddadmin.text == null ||
+                                          _controllerAddadmin.text == '') {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                            msg: "Email Tidak Boleh Kosong");
+                                      } else if (!isValid) {
+                                        Fluttertoast.showToast(
+                                            msg: "Masukkan Email Yang Valid");
+                                      } else {
+                                        _tambahadmin(_controllerAddadmin.text);
+                                      }
+                                    },
+                              color: primaryAppBarColor,
+                              textColor: Colors.white,
+                              disabledColor: Color.fromRGBO(254, 86, 14, 0.7),
+                              disabledTextColor: Colors.white,
+                              splashColor: Colors.blueAccent,
+                              child: Text("Tambahkan Admin",
+                                  style: TextStyle(color: Colors.white)))))
+                ],
+              ),
             ),
           );
         });
   }
 
   void _tambahadmin(admin) async {
-    setState(() {
-      isCreate = true;
-    });
     Navigator.pop(context);
+    await progressApiAction.show();
     try {
       Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
       final addadminevent = await http
@@ -164,69 +155,69 @@ class _ManageAdminState extends State<ManageAdmin> {
       if (addadminevent.statusCode == 200) {
         var addadmineventJson = json.decode(addadminevent.body);
         if (addadmineventJson['status'] == 'success') {
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
           Fluttertoast.showToast(msg: "Berhasil !");
-          listcheckin();
+          filterlistadmin();
         } else if (addadmineventJson['status'] == 'user tidak ditemukan') {
           Fluttertoast.showToast(
               msg: "Email ini belum terdaftar pada akun eventzhee");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else if (addadmineventJson['status'] == 'sudah ada') {
           Fluttertoast.showToast(
               msg: "Member ini sudah terdaftar menjadi admin event anda");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else if (addadmineventJson['status'] == 'creator') {
           Fluttertoast.showToast(msg: "Member ini merupakan pembuat event");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else if (addadmineventJson['status'] == 'pending') {
           Fluttertoast.showToast(
               msg: "Permintaan menjadi admin menunggu persetujuan");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else if (addadmineventJson['status'] == 'sudahpeserta') {
           Fluttertoast.showToast(
               msg: "Member ini sudah menjadi peserta event anda");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else if (addadmineventJson['status'] == 'pendingpeserta') {
           Fluttertoast.showToast(
               msg:
                   "Member ini sudah mendaftar event anda sebagai peserta dan menunggu persetujuan anda");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         } else {
           Fluttertoast.showToast(msg: "Status tidak diketahui");
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
         }
       } else {
         print(addadminevent.body);
         Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
-        setState(() {
-          isCreate = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
       }
     } on TimeoutException catch (_) {
       Fluttertoast.showToast(msg: "Timed out, Try again");
-      setState(() {
-        isCreate = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
     } catch (e) {
       Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
-      setState(() {
-        isCreate = false;
+      progressApiAction.hide().then((isHidden) {
+        print(isHidden);
       });
       print(e);
     }
@@ -257,6 +248,9 @@ class _ManageAdminState extends State<ManageAdmin> {
 
     setState(() {
       isLoading = true;
+      isError = false;
+      isFilter = false;
+      isErrorfilter = false;
       this.appBarTitle = Text(
         "Kelola Co-Host / Admin Event $namaEventX",
         style: TextStyle(
@@ -347,7 +341,10 @@ class _ManageAdminState extends State<ManageAdmin> {
     requestHeaders['Authorization'] = '$tokenType $accessToken';
 
     setState(() {
+      isLoading = false;
+      isError = false;
       isFilter = true;
+      isErrorfilter = false;
     });
     try {
       final checkinevent = await http.post(
@@ -418,7 +415,6 @@ class _ManageAdminState extends State<ManageAdmin> {
 
   void _handleSearchEnd() {
     setState(() {
-      // ignore: new_with_non_type
       actionBackAppBar = true;
       iconButtonAppbarColor = true;
       this.actionIcon = new Icon(
@@ -452,18 +448,28 @@ class _ManageAdminState extends State<ManageAdmin> {
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: buildBar(context),
         body: isLoading == true
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
+            ? loadingView()
             : isError == true
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: RefreshIndicator(
-                      onRefresh: () => getHeaderHTTP(),
+                ? RefreshIndicator(
+                    onRefresh: () => filterlistadmin(),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.only(top: 20.0),
                       child: Column(children: <Widget>[
                         new Container(
                           width: 100.0,
@@ -490,7 +496,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 20.0, left: 15.0, right: 15.0),
+                              top: 20.0, bottom:20.0, left: 15.0, right: 15.0),
                           child: SizedBox(
                             width: double.infinity,
                             child: RaisedButton(
@@ -501,7 +507,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                               padding: EdgeInsets.all(15.0),
                               splashColor: Colors.blueAccent,
                               onPressed: () async {
-                                getHeaderHTTP();
+                                filterlistadmin();
                               },
                               child: Text(
                                 "Muat Ulang Halaman",
@@ -514,17 +520,13 @@ class _ManageAdminState extends State<ManageAdmin> {
                     ),
                   )
                 : isFilter == true
-                    ? Center(
-                        child: Container(
-                          padding: EdgeInsets.only(top: 20.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
+                    ? loadingView()
                     : isErrorfilter == true
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: RefreshIndicator(
-                              onRefresh: () => filterlistadmin(),
+                        ? RefreshIndicator(
+                            onRefresh: () => filterlistadmin(),
+                            child: SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.only(top: 20.0),
                               child: Column(children: <Widget>[
                                 new Container(
                                   width: 80.0,
@@ -556,25 +558,13 @@ class _ManageAdminState extends State<ManageAdmin> {
                             padding: const EdgeInsets.only(top: 0.0),
                             child: Column(
                               children: <Widget>[
-                                isDelete == true || isCreate == true
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Container(
-                                              width: 15.0,
-                                              margin: EdgeInsets.only(
-                                                  top: 10.0, right: 15.0),
-                                              height: 15.0,
-                                              child:
-                                                  CircularProgressIndicator()),
-                                        ],
-                                      )
-                                    : Container(),
                                 listadminevent.length == 0
                                     ? Container()
                                     : Container(
-                                        margin: EdgeInsets.only(right:5.0,left: 5.0,bottom:10.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0,
+                                            left: 5.0,
+                                            bottom: 10.0),
                                         padding: EdgeInsets.only(
                                             top: 15.0, bottom: 15.0),
                                         decoration: BoxDecoration(
@@ -590,267 +580,278 @@ class _ManageAdminState extends State<ManageAdmin> {
                                             Expanded(
                                                 child: Text(
                                                     'Jumlah Admin Terdaftar',
-                                                    style: TextStyle(
-                                                        ))),
-                                            Expanded(
-                                                child: Text(
+                                                    style: TextStyle())),
+                                            Text(
                                               '$jumlahAdminactive Admin',
                                               textAlign: TextAlign.right,
-                                            )),
+                                            ),
                                           ],
                                         ),
                                       ),
                                 listadminevent.length == 0
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 20.0),
-                                        child: Column(children: <Widget>[
-                                          new Container(
-                                            width: 100.0,
-                                            height: 100.0,
-                                            child: Image.asset(
-                                                "images/empty-white-box.png"),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 30.0,
-                                              left: 15.0,
-                                              right: 15.0,
+                                    ? RefreshIndicator(
+                                        onRefresh: () async {
+                                          filterlistadmin();
+                                        },
+                                        child: SingleChildScrollView(
+                                          physics:
+                                              AlwaysScrollableScrollPhysics(),
+                                          padding:
+                                              const EdgeInsets.only(top: 20.0),
+                                          child: Column(children: <Widget>[
+                                            new Container(
+                                              width: 100.0,
+                                              height: 100.0,
+                                              child: Image.asset(
+                                                  "images/empty-white-box.png"),
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                "Event Belum Memiliki Admin Sama Sekali",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black45,
-                                                  height: 1.5,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 30.0,
+                                                left: 15.0,
+                                                right: 15.0,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Admin Event Yang Dicari Tidak Ditemukan",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black45,
+                                                    height: 1.5,
+                                                  ),
+                                                  textAlign: TextAlign.center,
                                                 ),
-                                                textAlign: TextAlign.center,
                                               ),
                                             ),
-                                          ),
-                                        ]),
-                                      )
+                                          ]),
+                                        ))
                                     : Expanded(
                                         child: Scrollbar(
-                                          child: ListView.builder(
-                                            // scrollDirection: Axis.horizontal,
-                                            itemCount: listadminevent.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return Card(
-                                                  child: ListTile(
-                                                leading: Container(
-                                                  width: 40.0,
-                                                  height: 40.0,
-                                                  child: ClipOval(
-                                                    child: FadeInImage
-                                                        .assetNetwork(
-                                                      placeholder:
-                                                          'images/loading.gif',
-                                                      image: listadminevent[
-                                                                          index]
-                                                                      .image ==
+                                          child: RefreshIndicator(
+                                            onRefresh: () => filterlistadmin(),
+                                            child: ListView.builder(
+                                              itemCount: listadminevent.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Card(
+                                                    child: ListTile(
+                                                  leading: Container(
+                                                    width: 40.0,
+                                                    height: 40.0,
+                                                    child: ClipOval(
+                                                      child: FadeInImage
+                                                          .assetNetwork(
+                                                        placeholder:
+                                                            'images/loading.gif',
+                                                        image: listadminevent[
+                                                                            index]
+                                                                        .image ==
+                                                                    null ||
+                                                                listadminevent[
+                                                                            index]
+                                                                        .image ==
+                                                                    '' ||
+                                                                listadminevent[
+                                                                            index]
+                                                                        .image ==
+                                                                    'null'
+                                                            ? url(
+                                                                'assets/images/imgavatar.png')
+                                                            : url(
+                                                                'storage/image/profile/${listadminevent[index].image}'),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                      listadminevent[index]
+                                                                      .nama ==
                                                                   null ||
                                                               listadminevent[
                                                                           index]
-                                                                      .image ==
-                                                                  '' ||
-                                                              listadminevent[
+                                                                      .nama ==
+                                                                  ''
+                                                          ? 'Nama Tidak Diketahui'
+                                                          : listadminevent[
+                                                                  index]
+                                                              .nama,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500)),
+                                                  subtitle: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 15.0,
+                                                            bottom: 10.0),
+                                                    child: Text(
+                                                      listadminevent[index]
+                                                                  .status ==
+                                                              'P'
+                                                          ? 'Menunggu Konfirmasi'
+                                                          : listadminevent[
                                                                           index]
-                                                                      .image ==
-                                                                  'null'
-                                                          ? url(
-                                                              'assets/images/imgavatar.png')
-                                                          : url(
-                                                              'storage/image/profile/${listadminevent[index].image}'),
-                                                      fit: BoxFit.cover,
+                                                                      .status ==
+                                                                  'C'
+                                                              ? 'Pendaftaran Ditolak'
+                                                              : listadminevent[
+                                                                              index]
+                                                                          .status ==
+                                                                      'A'
+                                                                  ? 'Pendaftaran Diterima'
+                                                                  : 'Status Tidak Diketahui',
+                                                      style: listadminevent[index]
+                                                                  .status ==
+                                                              'P'
+                                                          ? TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)
+                                                          : listadminevent[index]
+                                                                      .status ==
+                                                                  'C'
+                                                              ? TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .red)
+                                                              : listadminevent[index].status ==
+                                                                      'A'
+                                                                  ? TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .green)
+                                                                  : TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
                                                     ),
                                                   ),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                ),
-                                                title: Text(
-                                                    listadminevent[index]
-                                                                    .nama ==
-                                                                null ||
-                                                            listadminevent[
-                                                                        index]
-                                                                    .nama ==
-                                                                ''
-                                                        ? 'Nama Tidak Diketahui'
-                                                        : listadminevent[index]
-                                                            .nama,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500)),
-                                                subtitle: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 15.0),
-                                                  child: Text(
-                                                    listadminevent[index]
-                                                                .status ==
-                                                            'P'
-                                                        ? 'Menunggu Konfirmasi'
-                                                        : listadminevent[index]
-                                                                    .status ==
-                                                                'C'
-                                                            ? 'Pendaftaran Ditolak'
-                                                            : listadminevent[
-                                                                            index]
-                                                                        .status ==
-                                                                    'A'
-                                                                ? 'Pendaftaran Diterima'
-                                                                : 'Status Tidak Diketahui',
-                                                    style: listadminevent[index]
-                                                                .status ==
-                                                            'P'
-                                                        ? TextStyle(
-                                                            fontWeight: FontWeight
-                                                                .w500)
-                                                        : listadminevent[index]
-                                                                    .status ==
-                                                                'C'
-                                                            ? TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color:
-                                                                    Colors.red)
-                                                            : listadminevent[index]
-                                                                        .status ==
-                                                                    'A'
-                                                                ? TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
+                                                  trailing: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      listadminevent[index]
+                                                                      .status ==
+                                                                  'P' ||
+                                                              listadminevent[
+                                                                          index]
+                                                                      .status ==
+                                                                  'C'
+                                                          ? Container()
+                                                          : widget.eventEnd ==
+                                                                  true
+                                                              ? Container()
+                                                              : ButtonTheme(
+                                                                  minWidth: 0.0,
+                                                                  child:
+                                                                      FlatButton(
                                                                     color: Colors
-                                                                        .green)
-                                                                : TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
+                                                                        .white,
+                                                                    textColor:
+                                                                        Colors
+                                                                            .red,
+                                                                    disabledColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    disabledTextColor:
+                                                                        Colors.red[
+                                                                            400],
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            0.0),
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .blueAccent,
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .delete,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () async {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext context) =>
+                                                                                AlertDialog(
+                                                                          title:
+                                                                              Text('Peringatan!'),
+                                                                          content:
+                                                                              Text('Apakah Anda Ingin Menghapus Admin Event?'),
+                                                                          actions: <
+                                                                              Widget>[
+                                                                            FlatButton(
+                                                                              child: Text('Tidak'),
+                                                                              onPressed: () {
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                            ),
+                                                                            FlatButton(
+                                                                              textColor: Colors.green,
+                                                                              child: Text('Ya'),
+                                                                              onPressed: () async {
+                                                                                try {
+                                                                                  Navigator.pop(context);
+                                                                                  await progressApiAction.show();
+                                                                                  final removeAdmin = await http.post(url('api/deleteadmin_event'), headers: requestHeaders, body: {
+                                                                                    'peserta': listadminevent[index].idpeserta,
+                                                                                    'event': listadminevent[index].idevent
+                                                                                  });
+                                                                                  if (removeAdmin.statusCode == 200) {
+                                                                                    var removeAdminJson = json.decode(removeAdmin.body);
+                                                                                    if (removeAdminJson['status'] == 'success') {
+                                                                                      Fluttertoast.showToast(msg: "Berhasil");
+                                                                                      progressApiAction.hide().then((isHidden) {
+                                                                                        print(isHidden);
+                                                                                      });
+                                                                                      setState(() {
+                                                                                        jumlahAdminactive = removeAdminJson['countAdminActive'].toString();
+                                                                                        listadminevent.remove(listadminevent[index]);
+                                                                                      });
+                                                                                    } else if (removeAdminJson['status'] == 'Error') {
+                                                                                      Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                      progressApiAction.hide().then((isHidden) {
+                                                                                        print(isHidden);
+                                                                                      });
+                                                                                    }
+                                                                                  } else {
+                                                                                    Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                    progressApiAction.hide().then((isHidden) {
+                                                                                      print(isHidden);
+                                                                                    });
+                                                                                  }
+                                                                                } on TimeoutException catch (_) {
+                                                                                  Fluttertoast.showToast(msg: "Timed out, Try again");
+                                                                                  progressApiAction.hide().then((isHidden) {
+                                                                                    print(isHidden);
+                                                                                  });
+                                                                                } catch (e) {
+                                                                                  Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
+                                                                                  progressApiAction.hide().then((isHidden) {
+                                                                                    print(isHidden);
+                                                                                  });
+                                                                                  print(e);
+                                                                                }
+                                                                              },
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  )),
+                                                    ],
                                                   ),
-                                                ),
-                                                trailing: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    listadminevent[index]
-                                                                    .status ==
-                                                                'P' ||
-                                                            listadminevent[
-                                                                        index]
-                                                                    .status ==
-                                                                'C'
-                                                        ? Container()
-                                                        : widget.eventEnd ==
-                                                                true
-                                                            ? Container()
-                                                            : ButtonTheme(
-                                                                minWidth: 0.0,
-                                                                child:
-                                                                    FlatButton(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  textColor:
-                                                                      Colors
-                                                                          .red,
-                                                                  disabledColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  disabledTextColor:
-                                                                      Colors.red[
-                                                                          400],
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              0.0),
-                                                                  splashColor:
-                                                                      Colors
-                                                                          .blueAccent,
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                  ),
-                                                                  onPressed:
-                                                                      isDelete == true || isCreate == true
-                                                                          ? null
-                                                                          : () async {
-                                                                              showDialog(
-                                                                                context: context,
-                                                                                builder: (BuildContext context) => AlertDialog(
-                                                                                  title: Text('Peringatan!'),
-                                                                                  content: Text('Apakah Anda Ingin Menghapus Admin Event?'),
-                                                                                  actions: <Widget>[
-                                                                                    FlatButton(
-                                                                                      child: Text('Tidak'),
-                                                                                      onPressed: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                    ),
-                                                                                    FlatButton(
-                                                                                      textColor: Colors.green,
-                                                                                      child: Text('Ya'),
-                                                                                      onPressed: () async {
-                                                                                        Navigator.pop(context);
-                                                                                        setState(() {
-                                                                                          isDelete = true;
-                                                                                        });
-                                                                                        try {
-                                                                                          Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
-                                                                                          final removeAdmin = await http.post(url('api/deleteadmin_event'), headers: requestHeaders, body: {
-                                                                                            'peserta': listadminevent[index].idpeserta,
-                                                                                            'event': listadminevent[index].idevent
-                                                                                          });
-                                                                                          if (removeAdmin.statusCode == 200) {
-                                                                                            var removeAdminJson = json.decode(removeAdmin.body);
-                                                                                            if (removeAdminJson['status'] == 'success') {
-                                                                                              Fluttertoast.showToast(msg: "Berhasil");
-                                                                                              setState(() {
-                                                                                                isDelete = false;
-                                                                                                jumlahAdminactive =removeAdminJson['countAdminActive'].toString();
-                                                                                              });
-                                                                                              setState(() {
-                                                                                                listadminevent.remove(listadminevent[index]);
-                                                                                              });
-                                                                                            } else if (removeAdminJson['status'] == 'Error') {
-                                                                                              Fluttertoast.showToast(msg: "Request failed with status: ${removeAdmin.statusCode}");
-                                                                                              setState(() {
-                                                                                                isDelete = false;
-                                                                                              });
-                                                                                            }
-                                                                                          } else {
-                                                                                            Fluttertoast.showToast(msg: "Request failed with status: ${removeAdmin.statusCode}");
-                                                                                            setState(() {
-                                                                                              isDelete = false;
-                                                                                            });
-                                                                                          }
-                                                                                        } on TimeoutException catch (_) {
-                                                                                          Fluttertoast.showToast(msg: "Timed out, Try again");
-                                                                                          setState(() {
-                                                                                            isDelete = false;
-                                                                                          });
-                                                                                        } catch (e) {
-                                                                                          setState(() {
-                                                                                            isDelete = false;
-                                                                                          });
-                                                                                          print(e);
-                                                                                        }
-                                                                                      },
-                                                                                    )
-                                                                                  ],
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                )),
-                                                  ],
-                                                ),
-                                              ));
-                                            },
+                                                ));
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -862,16 +863,89 @@ class _ManageAdminState extends State<ManageAdmin> {
             : DraggableFab(
                 child: FloatingActionButton(
                     shape: StadiumBorder(),
-                    onPressed: isDelete == true || isCreate == true
-                        ? null
-                        : () async {           
-                           showAddModalAdmin();             
-                          },
+                    onPressed: () async {
+                      showAddModalAdmin();
+                    },
                     backgroundColor: primaryButtonColor,
                     child: Icon(
                       Icons.add,
                       size: 20.0,
                     ))));
+  }
+
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
+    );
   }
 
   Widget buildBar(BuildContext context) {
@@ -890,7 +964,7 @@ class _ManageAdminState extends State<ManageAdmin> {
                   : Colors.white,
               child: IconButton(
                 icon: actionIcon,
-                onPressed: isDelete == true || isCreate == true ? null : () {
+                onPressed: () {
                   setState(() {
                     if (this.actionIcon.icon == Icons.search) {
                       actionBackAppBar = false;

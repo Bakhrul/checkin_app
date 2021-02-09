@@ -68,10 +68,6 @@ class _DetailCheckinState extends State<DetailCheckin>
       dateCheckin;
   bool _isLoading = true;
   //shader gradient Color for text
-  final Shader linearGradient = LinearGradient(
-    colors: <Color>[Color(0xFF6200EA), Color(0xDD000000)],
-  ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
-
   GlobalKey globalKey = new GlobalKey();
   @override
   void initState() {
@@ -197,12 +193,8 @@ class _DetailCheckinState extends State<DetailCheckin>
               ),
               Divider(),
               Center(
-                child: GradientText(
-                  '$keyword',
-                  gradient: LinearGradient(colors: [
-                    Colors.purpleAccent.shade400,
-                    Colors.blue.shade900,
-                  ]),
+                child: Text(
+                  '$keyword',                 
                 ),
               ),
               Divider(),

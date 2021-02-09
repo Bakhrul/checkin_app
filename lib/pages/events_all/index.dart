@@ -587,7 +587,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                     padding: const EdgeInsets.only(
                         top: 10.0, bottom: 10.0, right: 5.0, left: 5.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(left: 10.0, bottom: 0),
@@ -713,9 +714,8 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                   )
                                 : _isLoading
                                     ? Container(
-                                      margin: EdgeInsets.only(top:20.0),
-                                        child: SingleChildScrollView(
-                                            child: Container(
+                                         
+                                          child: Container(
                                         width: double.infinity,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20.0),
@@ -723,7 +723,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                           baseColor: Colors.grey[300],
                                           highlightColor: Colors.grey[100],
                                           child: Column(
-                                            children: [0, 1]
+                                            children: [0, 1,2,3,4,5]
                                                 .map((_) => Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -792,7 +792,7 @@ class _ManajemenEventState extends State<ManajemenEvent> {
                                                 .toList(),
                                           ),
                                         ),
-                                      )))
+                                      ))
                                     : Container(
                                         child: SingleChildScrollView(
                                             controller: pageScroll,

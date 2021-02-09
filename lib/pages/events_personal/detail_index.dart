@@ -13,6 +13,7 @@ import 'list_multicheckin.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'model.dart';
+import 'package:shimmer/shimmer.dart';
 import 'point_person.dart';
 import 'manage_peserta.dart';
 
@@ -140,18 +141,17 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
         listMoreMyEvent = [];
         for (var i in ongoingevents) {
           ListMoreMyEvent notax = ListMoreMyEvent(
-            id: '${i['ev_id']}',
-            title: i['ev_title'],
-            waktuawal: i['ev_time_start'],
-            waktuakhir: i['ev_time_end'],
-            deskripsi: i['ev_detail'],
-            lokasi: i['ev_location'],
-            fullday: i['ev_allday'],
-            status: i['status'],
-            publish: i['ev_ispublish'],
-            participant: i['peserta'].toString(),
-            admin: i['admin'].toString()
-          );
+              id: '${i['ev_id']}',
+              title: i['ev_title'],
+              waktuawal: i['ev_time_start'],
+              waktuakhir: i['ev_time_end'],
+              deskripsi: i['ev_detail'],
+              lokasi: i['ev_location'],
+              fullday: i['ev_allday'],
+              status: i['status'],
+              publish: i['ev_ispublish'],
+              participant: i['peserta'].toString(),
+              admin: i['admin'].toString());
           listMoreMyEvent.add(notax);
         }
         setState(() {
@@ -213,14 +213,13 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
         ),
       ),
       body: isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? loadingView()
           : isError == true
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: RefreshIndicator(
-                    onRefresh: () => getHeaderHTTP(),
+              ? RefreshIndicator(
+                  onRefresh: () => getHeaderHTTP(),
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 20.0),
                     child: Column(children: <Widget>[
                       new Container(
                         width: 100.0,
@@ -427,16 +426,18 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                           break;
                                                         case PageEnum
                                                             .kelolaadminPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ManageAdmin(
-                                                                      event: item
-                                                                          .id,
-                                                                      eventEnd:
-                                                                          widget
-                                                                              .eventEnd,
-                                                                              namaEvent: item.title,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ManageAdmin(
+                                                                        event: item
+                                                                            .id,
+                                                                        eventEnd:
+                                                                            widget.eventEnd,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaPesertaPage:
@@ -449,7 +450,8 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                             .id,
                                                                         eventEnd:
                                                                             widget.eventEnd,
-                                                                            namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
@@ -463,18 +465,22 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                             .id,
                                                                         eventEnd:
                                                                             widget.eventEnd,
-                                                                            namaEvent: item.title,
+                                                                        namaEvent:
+                                                                            item.title,
                                                                       )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaCheckinPesertaPage:
-                                                          Navigator.of(context).push(CupertinoPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ListMultiCheckin(
-                                                                      event: item
-                                                                          .id,
-                                                                          namaEvent: item.title,)));
+                                                          Navigator.of(context).push(
+                                                              CupertinoPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ListMultiCheckin(
+                                                                        event: item
+                                                                            .id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .kelolaHasilAKhirPage:
@@ -483,9 +489,11 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                                                                   builder: (BuildContext
                                                                           context) =>
                                                                       PointEvents(
-                                                                          idevent:
-                                                                              item.id,
-                                                                              namaEvent: item.title,)));
+                                                                        idevent:
+                                                                            item.id,
+                                                                        namaEvent:
+                                                                            item.title,
+                                                                      )));
                                                           break;
                                                         case PageEnum
                                                             .publishEvent:
@@ -578,6 +586,67 @@ class _ManajemenMoreMyEventState extends State<ManajemenMoreMyEvent> {
                     ),
                   ),
                 ),
+    );
+  }
+
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 60.0,
+                                height: 40.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
     );
   }
 

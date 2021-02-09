@@ -16,6 +16,8 @@ import 'edit_categoryevent.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:checkin_app/utils/utils.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shimmer/shimmer.dart';
 
 String tokenType, accessToken, gambarX;
 Map<String, dynamic> formSerialize;
@@ -25,7 +27,7 @@ TextEditingController _namaeventController = new TextEditingController();
 TextEditingController _alamateventController = new TextEditingController();
 TextEditingController _deskripsieventController = new TextEditingController();
 var firstdate, lastdate, _tanggalawalevent, _tanggalakhirevent;
-bool isLoading, isError, isEdit, isUpdate;
+bool isLoading, isError;
 File _image;
 
 class ManajemeEditEvent extends StatefulWidget {
@@ -48,6 +50,7 @@ class ManajemeEditEvent extends StatefulWidget {
 
 class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     with SingleTickerProviderStateMixin {
+  ProgressDialog progressApiAction;
   TabController _tabController;
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
   DateTime timeReplacement;
@@ -56,8 +59,6 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     super.initState();
     getHeaderHTTP();
     timeSetToMinute();
-    isEdit = false;
-    isUpdate = false;
     gambarX = null;
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController.addListener(_handleTabIndex);
@@ -79,14 +80,15 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
     _alamateventController.text = widget.lokasi;
     _deskripsieventController.text = widget.deskripsi;
   }
- void timeSetToMinute() {
+
+  void timeSetToMinute() {
     var time = DateTime.now();
     var newHour = 0;
     var newMinute = 0;
     var newSecond = 0;
     time = time.toLocal();
-    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
-       
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour,
+        newMinute, newSecond, time.millisecond, time.microsecond);
   }
 
   Future<void> getHeaderHTTP() async {
@@ -199,9 +201,22 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
+
     return SafeArea(
       top: false,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: primaryAppBarColor,
           title: Text('Edit Data Event', style: TextStyle(fontSize: 14)),
@@ -219,40 +234,33 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                 color: Colors.white,
               ),
               tooltip: 'Update Data Event',
-              onPressed: isEdit == true
-                  ? null
-                  : () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: Text('Peringatan!'),
-                          content: Text(
-                              'Apakah Anda Ingin Memperbarui Data Event Anda Sekarang? '),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Tidak'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            FlatButton(
-                              textColor: Colors.green,
-                              child: Text(
-                                  isEdit == true ? 'Tunggu Sebentar' : 'Ya'),
-                              onPressed: isEdit == true
-                                  ? null
-                                  : () async {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        isEdit = true;
-                                      });
-                                      _updateEvent();
-                                    },
-                            )
-                          ],
-                        ),
-                      );
-                    },
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text('Peringatan!'),
+                    content: Text(
+                        'Apakah Anda Ingin Memperbarui Data Event Anda Sekarang? '),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Tidak'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      FlatButton(
+                        textColor: Colors.green,
+                        child: Text('Ya'),
+                        onPressed: () async {
+                          Navigator.pop(context);
+
+                          _updateEvent();
+                        },
+                      )
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ), //
@@ -260,20 +268,8 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
           controller: _tabController,
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(0),
               child: Column(children: <Widget>[
-                isEdit == true
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Container(
-                              width: 20.0,
-                              margin: EdgeInsets.all(15.0),
-                              height: 20.0,
-                              child: CircularProgressIndicator()),
-                        ],
-                      )
-                    : Container(),
                 _image == null
                     ? Container()
                     : Row(
@@ -307,25 +303,24 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                           onTap: getImage,
                           child: Container(
                               margin: EdgeInsets.only(
-                                  left: 5.0,
-                                  right: 5.0,
-                                  bottom: 20.0,
-                                  top: 10.0),
+                                bottom: 20.0,
+                              ),
                               width: double.infinity,
-                              height: 250.0,
+                              height: 200.0,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   border: Border.all(
                                     width: 1.0,
-                                    color: Colors.grey,
+                                    color: Colors.grey[300],
                                   )),
                               child: isLoading == true
                                   ? CircularProgressIndicator()
                                   : gambarX == null || gambarX == ''
                                       ? Text('Tidak Ada Gambar Yang Dipilih.')
                                       : FadeInImage.assetNetwork(
-                                          placeholder: 'images/loading-event.png',
+                                          placeholder:
+                                              'images/loading-event.png',
                                           image:
                                               gambarX != null || gambarX != ''
                                                   ? url(
@@ -339,33 +334,34 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                         )
                       : Container(
                           width: double.infinity,
-                          height: 250.0,
-                          margin: EdgeInsets.only(
-                              left: 5.0, right: 5.0, bottom: 20.0),
+                          height: 200.0,
+                          margin: EdgeInsets.only(bottom: 20.0),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                               border: Border.all(
                             width: 1.0,
-                            color: Colors.grey,
+                            color: Colors.grey[300],
                           )),
                           child: Image.file(_image),
                         ),
                 ),
                 Card(
+                    elevation: 0.5,
                     child: ListTile(
-                  leading: Icon(
-                    Icons.assignment_ind,
-                  ),
-                  title: TextField(
-                    controller: _namaeventController,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Nama Event / Acara',
-                        hintStyle:
-                            TextStyle(fontSize: 13, color: Colors.black)),
-                  ),
-                )),
+                      leading: Icon(
+                        Icons.assignment_ind,
+                      ),
+                      title: TextField(
+                        controller: _namaeventController,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Nama Event / Acara',
+                            hintStyle:
+                                TextStyle(fontSize: 13, color: Colors.black)),
+                      ),
+                    )),
                 Card(
+                    elevation: 0.5,
                     child: ListTile(
                         leading: Icon(
                           Icons.access_time,
@@ -410,6 +406,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                           },
                         ))),
                 Card(
+                    elevation: 0.5,
                     child: ListTile(
                         leading: Icon(
                           Icons.access_time,
@@ -454,35 +451,37 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
                           },
                         ))),
                 Card(
+                    elevation: 0.5,
                     child: ListTile(
-                  leading: Icon(
-                    Icons.create,
-                  ),
-                  title: TextField(
-                    controller: _deskripsieventController,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Deskripsi Event',
-                        hintStyle:
-                            TextStyle(fontSize: 13, color: Colors.black)),
-                  ),
-                )),
+                      leading: Icon(
+                        Icons.create,
+                      ),
+                      title: TextField(
+                        controller: _deskripsieventController,
+                        maxLines: 8,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Deskripsi Event',
+                            hintStyle:
+                                TextStyle(fontSize: 13, color: Colors.black)),
+                      ),
+                    )),
                 Card(
+                    elevation: 0.5,
                     child: ListTile(
-                  leading: Icon(
-                    Icons.location_on,
-                  ),
-                  title: TextField(
-                    controller: _alamateventController,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Alamat Lengkap',
-                        hintStyle:
-                            TextStyle(fontSize: 13, color: Colors.black)),
-                  ),
-                )),
+                      leading: Icon(
+                        Icons.location_on,
+                      ),
+                      title: TextField(
+                        controller: _alamateventController,
+                        maxLines: 8,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Alamat Lengkap',
+                            hintStyle:
+                                TextStyle(fontSize: 13, color: Colors.black)),
+                      ),
+                    )),
               ]),
             ),
             SingleChildScrollView(
@@ -490,88 +489,73 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
               child: Column(
                 children: <Widget>[
                   isLoading == true
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : isEdit == true
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Container(
-                                    width: 20.0,
-                                    margin: EdgeInsets.all(15.0),
-                                    height: 20.0,
-                                    child: CircularProgressIndicator()),
-                              ],
-                            )
-                          : Container(),
-                  listkategoriEventEdit.length == 0
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Column(children: <Widget>[
-                            new Container(
-                              width: 100.0,
-                              height: 100.0,
-                              child: Image.asset("images/empty-white-box.png"),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 30.0,
-                                left: 15.0,
-                                right: 15.0,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Kategori Event Belum Ditambahkan / Masih Kosong",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black45,
-                                    height: 1.5,
-                                  ),
-                                  textAlign: TextAlign.center,
+                      ? loadingView()
+                      : listkategoriEventEdit.length == 0
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: Column(children: <Widget>[
+                                new Container(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child:
+                                      Image.asset("images/empty-white-box.png"),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 30.0,
+                                    left: 15.0,
+                                    right: 15.0,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Kategori Event Belum Ditambahkan / Masih Kosong",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black45,
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            )
+                          : Container(
+                              margin: EdgeInsets.only(
+                                top: 10.0,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: listkategoriEventEdit.reversed
+                                    .map((ListEditKategoriEvent item) => Card(
+                                            child: ListTile(
+                                          leading: ButtonTheme(
+                                              minWidth: 0.0,
+                                              child: FlatButton(
+                                                color: Colors.white,
+                                                textColor: Colors.red,
+                                                disabledColor:
+                                                    Colors.green[400],
+                                                disabledTextColor: Colors.white,
+                                                padding: EdgeInsets.all(15.0),
+                                                splashColor: Colors.blueAccent,
+                                                child: Icon(
+                                                  Icons.close,
+                                                ),
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    listkategoriEventEdit
+                                                        .remove(item);
+                                                  });
+                                                },
+                                              )),
+                                          title: Text(item.nama == null
+                                              ? 'Unknown Nama'
+                                              : item.nama),
+                                        )))
+                                    .toList(),
                               ),
                             ),
-                          ]),
-                        )
-                      : Container(
-                          margin: EdgeInsets.only(
-                            top: 10.0,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: listkategoriEventEdit.reversed
-                                .map((ListEditKategoriEvent item) => Card(
-                                        child: ListTile(
-                                      leading: ButtonTheme(
-                                          minWidth: 0.0,
-                                          child: FlatButton(
-                                            color: Colors.white,
-                                            textColor: Colors.red,
-                                            disabledColor: Colors.green[400],
-                                            disabledTextColor: Colors.white,
-                                            padding: EdgeInsets.all(15.0),
-                                            splashColor: Colors.blueAccent,
-                                            child: Icon(
-                                              Icons.close,
-                                            ),
-                                            onPressed: () async {
-                                              setState(() {
-                                                listkategoriEventEdit
-                                                    .remove(item);
-                                              });
-                                            },
-                                          )),
-                                      title: Text(item.nama == null
-                                          ? 'Unknown Nama'
-                                          : item.nama),
-                                    )))
-                                .toList(),
-                          ),
-                        ),
                 ],
               ),
             ),
@@ -579,6 +563,81 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         ),
         floatingActionButton: _bottomButtons(),
       ),
+    );
+  }
+
+  Widget loadingView() {
+    return SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 25.0),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300],
+              highlightColor: Colors.grey[100],
+              child: Column(
+                children: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((_) => Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRect(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    color: Colors.white,
+                                  ),
+                                  width: 40.0,
+                                  height: 40.0,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                    Container(
+                                      width: 100.0,
+                                      height: 8.0,
+                                      color: Colors.white,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5.0),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+          )),
     );
   }
 
@@ -636,37 +695,21 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
   void _updateEvent() async {
     if (_namaeventController.text == null || _namaeventController.text == '') {
       Fluttertoast.showToast(msg: "Nama Event Tidak Boleh Kosong");
-      setState(() {
-        isEdit = false;
-      });
     } else if (_deskripsieventController.text == null ||
         _deskripsieventController.text == '') {
       Fluttertoast.showToast(msg: "Deskripsi Event Tidak Boleh Kosong");
-      setState(() {
-        isEdit = false;
-      });
     } else if (_alamateventController.text == '' ||
         _alamateventController.text == '') {
       Fluttertoast.showToast(msg: "Alamat Event Tidak Boleh Kosong");
-      setState(() {
-        isEdit = false;
-      });
     } else if (_tanggalawalevent == null ||
         _tanggalawalevent == 'kosong' ||
         _tanggalawalevent == '') {
       Fluttertoast.showToast(msg: "Tanggal Awal Event Tidak Boleh Kosong");
-      setState(() {
-        isEdit = false;
-      });
     } else if (_tanggalakhirevent == null ||
         _tanggalakhirevent == 'kosong' ||
         _tanggalakhirevent == '') {
       Fluttertoast.showToast(msg: "Tanggal Akhir Event Tidak Boleh Kosong");
-      setState(() {
-        isEdit = false;
-      });
     } else {
-      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar!");
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
       formSerialize['title'] = null;
@@ -681,7 +724,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
       if (_image != null) {
         formSerialize['gambar'] = base64Encode(_image.readAsBytesSync());
       }
-      
+
       formSerialize['title'] = _namaeventController.text;
       formSerialize['deskripsi'] = _deskripsieventController.text;
       formSerialize['lokasi'] = _alamateventController.text;
@@ -706,6 +749,7 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
 
       requestHeadersX['Content-Type'] = "application/x-www-form-urlencoded";
       try {
+        await progressApiAction.show();
         final response = await http.post(
           url('api/updatedataevent'),
           headers: requestHeadersX,
@@ -718,34 +762,34 @@ class _ManajemeCreateEventState extends State<ManajemeEditEvent>
         if (response.statusCode == 200) {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
-            setState(() {
-              isEdit = false;
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
             });
             Fluttertoast.showToast(msg: "Berhasil Memperbarui Data Event");
             Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ManajemenEventPersonal()));
           }
         } else {
-          setState(() {
-            isEdit = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
           Fluttertoast.showToast(
               msg: "Gagal Memperbarui Event, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
-        Fluttertoast.showToast(msg: 'Timed out, Try again');
-        setState(() {
-          isEdit = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
+        Fluttertoast.showToast(msg: 'Timed out, Try again');
       } catch (e) {
-        Fluttertoast.showToast(msg: 'Timed out, Try again');
-        setState(() {
-          isEdit = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
+        Fluttertoast.showToast(msg: 'Timed out, Try again');
+
         print(e);
       }
     }

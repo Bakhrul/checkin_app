@@ -5,11 +5,8 @@ import '../core/api.dart';
 import 'register.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:checkin_app/storage/storage.dart';
-import 'dart:async';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:checkin_app/routes/env.dart';
@@ -56,24 +53,13 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  login() async {
-    // print('login');
-    // await Auth(username: username,password: password ,name: 'login',nameStringsession: headsession , dataStringsession: getsession).getuser();
+  login() async {    
     await Auth(username: username.text, password: password.text).process();
     Navigator.pushReplacementNamed(context, "/dashboard");
     loading = false;
   }
 
-  String msg = '';
-
-  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  // void showInSnackBar(String value, {SnackBarAction action}) {
-  //   _scaffoldKey.currentState.showSnackBar(new SnackBar(
-  //     content: new Text(value),
-  //     action: action,
-  //   ));
-  // }
+  String msg = ''; 
   _login() async {
     setState(() {
       _isLoading = true;
@@ -147,8 +133,7 @@ class _LoginPageState extends State<LoginPage> {
         requestHeaders['Authorization'] = '$tokenType $accessToken';
         try {
           final getUser =
-              await http.get(url("api/user"), headers: requestHeaders);
-          // print('getUser ' + getUser.body);
+              await http.get(url("api/user"), headers: requestHeaders);       
 
           if (getUser.statusCode == 200) {
             dynamic datauser = json.decode(getUser.body);
@@ -165,12 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                 "location",
                 datauser['us_location'] == null
                     ? '-'
-                    : datauser['us_location']);
-
-            // var dir = await getApplicationDocumentsDirectory().path;
-            // var type_image = datauser['us_image'].split('.').last;
-            //     print(type_image);
-            // File profileImageDownload = File('$dir/profile.$type_image');
+                    : datauser['us_location']);     
 
             try {
               Map body = {
@@ -243,42 +223,7 @@ class _LoginPageState extends State<LoginPage> {
       });
       Fluttertoast.showToast(msg: "Terjadi Kesalahan Server");
     }
-  }
-
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<FirebaseUser> signin() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
-    if (user.displayName != '' || user.displayName != null) {
-      Navigator.pushNamed(context, '/dashboard');
-    }
-    return user;
-  }
-
-  // void signfacebook() async {
-  //   var facebooklogin = await FacebookLogin();
-  //   var result = await facebooklogin.logIn(['email']);
-  //   final token = result.accessToken.token;
-  //   final graphResponse = await http.get(
-  //       'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
-  //   final profile = json.decode(graphResponse.body);
-  //   print(profile);
-  //   if (profile != null) {
-  //     Navigator.pushNamed(context, '/dashboard');
-  //   }
-  // }
+  } 
 
   @override
   Widget build(BuildContext context) {

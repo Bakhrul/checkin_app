@@ -21,7 +21,7 @@ class _Tes extends State<Tes> with SingleTickerProviderStateMixin {
 
   void initState(){
 
-    controller = AnimationController(duration: Duration(seconds:1),vsync:this);
+    controller = AnimationController(duration: Duration(seconds:1),vsync: this);
     animation = Tween<double> (begin:0,end:100).animate(controller)
                 ..addListener((){
                   print('ok');

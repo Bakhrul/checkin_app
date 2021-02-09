@@ -14,10 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:unicorndial/unicorndial.dart';
 import 'list_peserta_checkin.dart';
 import 'dart:math' as math;
-import 'package:checkin_app/routes/env.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -52,13 +50,7 @@ class _DashboardCheckinState extends State<DashboardCheckin>
   String titleEvent;
   var isEnable;
   final TextEditingController _keywordController = TextEditingController();
-  static const List<IconData> icons = const [
-    Icons.sms,
-    Icons.mail,
-    Icons.phone
-  ];
 
-  var childButtons = List<UnicornButton>();
 
 
   Future<void> getHeaderHTTP() async {

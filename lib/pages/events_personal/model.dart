@@ -134,6 +134,7 @@ class ListUserAdd {
 class ListCheckinAdd {
    String keyword;
    String nama;
+   int idcheckin;
    String timestart;
    String timeend;
   
@@ -142,6 +143,7 @@ class ListCheckinAdd {
       this.nama,
       this.timestart,
       this.timeend,
+      this.idcheckin,
       });
 }
 

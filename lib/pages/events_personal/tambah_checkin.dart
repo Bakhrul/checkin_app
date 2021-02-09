@@ -8,6 +8,7 @@ import 'package:checkin_app/routes/env.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'manage_checkin.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:checkin_app/storage/storage.dart';
 import 'dart:ui';
 import 'package:flutter/rendering.dart';
@@ -18,12 +19,12 @@ TextEditingController _namacheckinController = new TextEditingController();
 TextEditingController _kodecheckinController = new TextEditingController();
 
 String tokenType, accessToken;
-bool isCreate;
 Map<String, String> requestHeaders = Map();
 var firstdate, lastdate, _tanggalawal, _tanggalakhir;
 
 class ManajemenTambahCheckin extends StatefulWidget {
-  ManajemenTambahCheckin({Key key, this.title, this.event, this.namaEvent}) : super(key: key);
+  ManajemenTambahCheckin({Key key, this.title, this.event, this.namaEvent})
+      : super(key: key);
   final String title, event;
   final String namaEvent;
   @override
@@ -34,12 +35,12 @@ class ManajemenTambahCheckin extends StatefulWidget {
 
 class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
   final format = DateFormat("yyyy-MM-dd HH:mm:ss");
+  ProgressDialog progressApiAction;
   DateTime timeReplacement;
   @override
   void initState() {
     firstdate = FocusNode();
     lastdate = FocusNode();
-    isCreate = false;
     _namacheckinController.text = '';
     _kodecheckinController.text = '';
     _tanggalawal = 'kosong';
@@ -49,14 +50,14 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     super.initState();
   }
 
- void timeSetToMinute() {
+  void timeSetToMinute() {
     var time = DateTime.now();
     var newHour = 0;
     var newMinute = 0;
     var newSecond = 0;
     time = time.toLocal();
-    timeReplacement = new DateTime(time.year, time.month, time.day, newHour, newMinute, newSecond, time.millisecond, time.microsecond);
-       
+    timeReplacement = new DateTime(time.year, time.month, time.day, newHour,
+        newMinute, newSecond, time.millisecond, time.microsecond);
   }
 
   Future<void> getHeaderHTTP() async {
@@ -82,27 +83,15 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
     if (_namacheckinController.text == null ||
         _namacheckinController.text == '') {
       Fluttertoast.showToast(msg: "Nama Checkin Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
     } else if (_kodecheckinController.text == null ||
         _kodecheckinController.text == '') {
       Fluttertoast.showToast(msg: "Kata Kunci Checkin Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
     } else if (_tanggalawal == 'kosong') {
       Fluttertoast.showToast(msg: "Waktu Awal Checkin Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
     } else if (_tanggalakhir == 'kosong') {
       Fluttertoast.showToast(msg: "Waktu Akhir Checkin Tidak Boleh Kosong");
-      setState(() {
-        isCreate = false;
-      });
     } else {
-      Fluttertoast.showToast(msg: "Mohon Tunggu Sebentar");
+      await progressApiAction.show();
       formSerialize = Map<String, dynamic>();
       formSerialize['event'] = null;
       formSerialize['namacheckin'] = null;
@@ -142,22 +131,26 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         if (response.statusCode == 200) {
           dynamic responseJson = jsonDecode(response.body);
           if (responseJson['status'] == 'success') {
-            Fluttertoast.showToast(msg: "Berhasil Membuat Checkin");
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
+            });
+            Fluttertoast.showToast(msg: "Berhasil");
             Navigator.pop(context);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManageCheckin(event: widget.event, namaEvent: widget.namaEvent)));
+                    builder: (context) => ManageCheckin(
+                        event: widget.event, namaEvent: widget.namaEvent)));
           } else if (responseJson['status'] == 'keywordsudahdigunakan') {
-            setState(() {
-              isCreate = false;
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
             });
             Fluttertoast.showToast(
                 msg:
                     "kode unik sudah digunakan, mohon gunakan kode unik yang lain");
           } else if (responseJson['status'] == 'tanggalkurang') {
-            setState(() {
-              isCreate = false;
+            progressApiAction.hide().then((isHidden) {
+              print(isHidden);
             });
             Fluttertoast.showToast(
                 msg:
@@ -165,23 +158,23 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
           }
           print('response decoded $responseJson');
         } else {
-          setState(() {
-            isCreate = false;
+          progressApiAction.hide().then((isHidden) {
+            print(isHidden);
           });
           print('${response.body}');
           Fluttertoast.showToast(
               msg: "Gagal Menambahkan Checkin, Silahkan Coba Kembali");
         }
       } on TimeoutException catch (_) {
-        setState(() {
-          isCreate = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
         Fluttertoast.showToast(msg: "Timed out, Try again");
       } catch (e) {
-        setState(() {
-          isCreate = false;
+        progressApiAction.hide().then((isHidden) {
+          print(isHidden);
         });
-        Fluttertoast.showToast(msg: "Timed out, Try again");
+        Fluttertoast.showToast(msg: "Gagal, Silahkan Coba Kembali");
         print(e);
       }
     }
@@ -189,6 +182,18 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
 
   @override
   Widget build(BuildContext context) {
+    progressApiAction = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    progressApiAction.style(
+        message: 'Tunggu Sebentar...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 12.0, fontWeight: FontWeight.w600));
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
@@ -332,14 +337,9 @@ class _ManajemeTambahCheckinState extends State<ManajemenTambahCheckin> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: isCreate == true
-            ? null
-            : () async {
-                setState(() {
-                  isCreate = true;
-                });
-                _tambahcheckin();
-              },
+        onPressed: () async {
+          _tambahcheckin();
+        },
         child: Icon(Icons.check),
         backgroundColor: primaryButtonColor,
       ),

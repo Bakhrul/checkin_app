@@ -668,7 +668,58 @@ class _DashboardState extends State<Dashboard> {
             eventList(types != null ? types : 1);
           },
           child: _builderBody(),
-        )
+        ),
+        // bottomNavigationBar: BottomAppBar(
+        //   color: Colors.white,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: <Widget>[
+        //       IconButton(
+        //         icon: Icon(
+        //           Icons.home,
+        //           color: primaryAppBarColor,
+        //         ),
+        //         tooltip: "Beranda",
+        //         onPressed: () {
+        //           setState(() {});
+        //         },
+        //       ),
+        //       IconButton(
+        //         icon: Icon(
+        //           Icons.star_border,
+        //           color: Colors.grey,
+        //         ),
+        //         tooltip: "Favorite",
+        //         onPressed: () {
+        //           setState(() {});
+        //         },
+        //       ),
+        //       IconButton(
+        //         icon: Icon(
+        //           Icons.search,
+        //           color: Colors.grey,
+        //         ),
+        //         tooltip: "Cari",
+        //         onPressed: () {
+        //           setState(() {});
+        //         },
+        //       ),
+        //       IconButton(
+        //         icon: Icon(
+        //           Icons.person_outline,
+        //           color: Colors.grey,
+        //         ),
+        //         tooltip: "Profile",
+        //         color: Colors.grey,
+        //         onPressed: () {
+        //           setState(() {});
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        //   shape: CircularNotchedRectangle(),
+        // )
 
         // ),
         );
@@ -985,24 +1036,18 @@ class _DashboardState extends State<Dashboard> {
                                                                                         children: <Widget>[
                                                                                           Padding(
                                                                                             padding: const EdgeInsets.only(left: 8.0),
-                                                                                            child: Text("${item.title}", 
-                                                                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), 
-                                                                                            maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            child: Text("${item.title}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           ),
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 8.0,top: 4),
+                                                                                            padding: const EdgeInsets.only(left: 8.0, top: 4),
                                                                                             child: Text(
                                                                                               DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                              style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                                                                                             ),
                                                                                           ),
                                                                                           Padding(
                                                                                             padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
-                                                                                            child: Text(
-                                                                                              "${item.location}",
-                                                                                              style: TextStyle(fontSize: 11,color: Colors.grey),
-                                                                                               maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
-                                                                                            ),
+                                                                                            child: Text("${item.location}", style: TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           )
                                                                                         ],
                                                                                       ),
@@ -1159,58 +1204,54 @@ class _DashboardState extends State<Dashboard> {
                                                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: <Widget>[
-                                                                                    
-                                                                                   
-                                                                                    Stack(children: <Widget>[
-                                                                                       Container(
-                                                                                      height: 140.0,
-                                                                                      margin: EdgeInsets.only(bottom: 10.0),
-                                                                                      width: double.infinity,
-                                                                                      child: FadeInImage.assetNetwork(
-                                                                                        placeholder: 'images/loading-event.png',
-                                                                                        image: item.image == null || item.image == '' || item.image == 'null'
-                                                                                            ? url('assets/images/noimage.jpg')
-                                                                                            : url(
-                                                                                                'storage/image/event/event_thumbnail/${item.image}',
-                                                                                              ),
-                                                                                        fit: BoxFit.cover,
-                                                                                      ),
-                                                                                      
-                                                                                    ),
-                                                                                    
-                                                                                    Align(
-                                                                                      alignment: Alignment.topRight,
-                                                                                      child: IconButton(
-                                                                                            icon:Icon(Icons.favorite, color: item.wish == null || item.wish == '0' ? Colors.grey : Colors.pink, size: 16),
-                                                                                            color: Colors.red,
-                                                                                            alignment: Alignment.topRight,
-                                                                                            // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                            // padding: EdgeInsets.all(5.0),
-                                                                                            onPressed: () async {
-                                                                                              final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
-                                                                                                'event': item.id.toString(),
-                                                                                              });
+                                                                                    Stack(
+                                                                                      children: <Widget>[
+                                                                                        Container(
+                                                                                          height: 140.0,
+                                                                                          margin: EdgeInsets.only(bottom: 10.0),
+                                                                                          width: double.infinity,
+                                                                                          child: FadeInImage.assetNetwork(
+                                                                                            placeholder: 'images/loading-event.png',
+                                                                                            image: item.image == null || item.image == '' || item.image == 'null'
+                                                                                                ? url('assets/images/noimage.jpg')
+                                                                                                : url(
+                                                                                                    'storage/image/event/event_thumbnail/${item.image}',
+                                                                                                  ),
+                                                                                            fit: BoxFit.cover,
+                                                                                          ),
+                                                                                        ),
+                                                                                        Align(
+                                                                                          alignment: Alignment.topRight,
+                                                                                          child: IconButton(
+                                                                                              icon: Icon(Icons.favorite, color: item.wish == null || item.wish == '0' ? Colors.grey : Colors.pink, size: 16),
+                                                                                              color: Colors.red,
+                                                                                              alignment: Alignment.topRight,
+                                                                                              // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                              // padding: EdgeInsets.all(5.0),
+                                                                                              onPressed: () async {
+                                                                                                final hapuswishlist = await http.post(url('api/actionwishlist'), headers: requestHeaders, body: {
+                                                                                                  'event': item.id.toString(),
+                                                                                                });
 
-                                                                                              if (hapuswishlist.statusCode == 200) {
-                                                                                                var hapuswishlistJson = json.decode(hapuswishlist.body);
-                                                                                                if (hapuswishlistJson['status'] == 'tambah') {
-                                                                                                  setState(() {
-                                                                                                    item.wish = item.id.toString();
-                                                                                                  });
-                                                                                                } else if (hapuswishlistJson['status'] == 'hapus') {
-                                                                                                  setState(() {
-                                                                                                    item.wish = null;
-                                                                                                  });
+                                                                                                if (hapuswishlist.statusCode == 200) {
+                                                                                                  var hapuswishlistJson = json.decode(hapuswishlist.body);
+                                                                                                  if (hapuswishlistJson['status'] == 'tambah') {
+                                                                                                    setState(() {
+                                                                                                      item.wish = item.id.toString();
+                                                                                                    });
+                                                                                                  } else if (hapuswishlistJson['status'] == 'hapus') {
+                                                                                                    setState(() {
+                                                                                                      item.wish = null;
+                                                                                                    });
+                                                                                                  }
+                                                                                                } else {
+                                                                                                  print(hapuswishlist.body);
+                                                                                                  Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
                                                                                                 }
-                                                                                              } else {
-                                                                                                print(hapuswishlist.body);
-                                                                                                Fluttertoast.showToast(msg: "Request failed with status: ${hapuswishlist.statusCode}");
-                                                                                              }
-                                                                                            }),
-                                                                                    )
-                                                                                     
-
-                                                                                    ],),
+                                                                                              }),
+                                                                                        )
+                                                                                      ],
+                                                                                    ),
                                                                                     Container(
                                                                                       margin: EdgeInsets.only(top: 5),
                                                                                       child: Column(
@@ -1219,22 +1260,18 @@ class _DashboardState extends State<Dashboard> {
                                                                                         children: <Widget>[
                                                                                           Padding(
                                                                                             padding: const EdgeInsets.only(left: 8.0),
-                                                                                            child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                            child: Text("${item.title}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           ),
                                                                                           Padding(
-                                                                                            padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                            padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                                                                                             child: Text(
                                                                                               DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                              style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                                                                                             ),
                                                                                           ),
                                                                                           Padding(
                                                                                             padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
-                                                                                            child: Text(
-                                                                                              "${item.location}",
-                                                                                              style: TextStyle(fontSize: 11,color: Colors.grey),
-                                                                                               maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
-                                                                                            ),
+                                                                                            child: Text("${item.location}", style: TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                           )
                                                                                         ],
                                                                                       ),
@@ -1252,7 +1289,6 @@ class _DashboardState extends State<Dashboard> {
                                                                                       padding: EdgeInsets.all(2),
                                                                                       child: _buildTextStatus(item.userStatus, item.userPosition),
                                                                                     ),
-                                                                                   
                                                                                   ],
                                                                                 ),
                                                                               ),
@@ -1398,22 +1434,18 @@ class _DashboardState extends State<Dashboard> {
                                                                                     children: <Widget>[
                                                                                       Padding(
                                                                                         padding: const EdgeInsets.only(left: 8.0),
-                                                                                        child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                        child: Text("${item.title}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                       ),
                                                                                       Padding(
-                                                                                        padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                        padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                                                                                         child: Text(
                                                                                           DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                          style: TextStyle( fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                                                                                         ),
                                                                                       ),
                                                                                       Padding(
                                                                                         padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
-                                                                                        child: Text(
-                                                                                          "${item.location}",
-                                                                                          style: TextStyle(fontSize: 11,color: Colors.grey),
-                                                                                           maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
-                                                                                        ),
+                                                                                        child: Text("${item.location}", style: TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                       )
                                                                                     ],
                                                                                   ))
@@ -1575,23 +1607,21 @@ class _DashboardState extends State<Dashboard> {
                                                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                                                           children: <Widget>[
                                                                                             Padding(
-                                                                                              padding: const EdgeInsets.only(left: 8.0,),
-                                                                                              child: Text("${item.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                              padding: const EdgeInsets.only(
+                                                                                                left: 8.0,
+                                                                                              ),
+                                                                                              child: Text("${item.title}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                             ),
                                                                                             Padding(
-                                                                                              padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                              padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                                                                                               child: Text(
                                                                                                 DateFormat("dd MMM yyyy").format(DateTime.parse(item.dateEvent)).toString(),
-                                                                                                style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                                                                                               ),
                                                                                             ),
                                                                                             Padding(
                                                                                               padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
-                                                                                              child: Text(
-                                                                                                "${item.location}",
-                                                                                                style: TextStyle(fontSize: 11,color: Colors.grey),
-                                                                                                 maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
-                                                                                              ),
+                                                                                              child: Text("${item.location}", style: TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                             )
                                                                                           ],
                                                                                         ))
@@ -1736,22 +1766,18 @@ class _DashboardState extends State<Dashboard> {
                                                                                           children: <Widget>[
                                                                                             Padding(
                                                                                               padding: const EdgeInsets.only(left: 8.0),
-                                                                                              child: Text("${itemAdmin.title}", style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
+                                                                                              child: Text("${itemAdmin.title}", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), maxLines: 2, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                             ),
                                                                                             Padding(
-                                                                                              padding: const EdgeInsets.only(left: 8.0,top: 4.0),
+                                                                                              padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                                                                                               child: Text(
                                                                                                 DateFormat("dd MMM yyyy").format(DateTime.parse(itemAdmin.dateEvent)).toString(),
-                                                                                                style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.green),
+                                                                                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green),
                                                                                               ),
                                                                                             ),
                                                                                             Padding(
                                                                                               padding: const EdgeInsets.only(left: 8.0, right: 5.0, top: 2.0),
-                                                                                              child: Text(
-                                                                                                "${itemAdmin.location}",
-                                                                                                style: TextStyle(fontSize: 11,color: Colors.grey),
-                                                                                                 maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis
-                                                                                              ),
+                                                                                              child: Text("${itemAdmin.location}", style: TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
                                                                                             )
                                                                                           ],
                                                                                         ))
